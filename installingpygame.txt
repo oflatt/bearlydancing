@@ -1,0 +1,13 @@
+﻿Make sure python installation is 32 bit
+https://www.webucator.com/blog/2015/03/installing-the-windows-64-bit-version-of-pygame/
+
+
+Link for download for wheel file of Pygame
+http://www.lfd.uci.edu/~gohlke/pythonlibs/#pygame
+
+
+Make sure when running pip install pygame that you are running cmd as administrator.
+
+
+set PATH=%PATH%;"C:\Program Files\Racket-6.3.90.900"
+That is an example of how to manually set the PATH environment variable for that cmd window only.
