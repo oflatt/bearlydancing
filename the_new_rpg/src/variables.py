@@ -1,8 +1,13 @@
 import pygame
 
+# Setup
+pygame.init()
+
 # Set the width and height of the screen [width,height]
-size = [1000, 1000]
-screen = pygame.display.set_mode(size)
+displayinfo = pygame.display.Info()
+height = displayinfo.current_h - 200
+hh = height/2
+screen = pygame.display.set_mode([height, height])
 
 # Define some colors
 BLACK = (0, 0, 0)

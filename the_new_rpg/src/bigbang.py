@@ -1,9 +1,6 @@
 #!/usr/bin/python
 import pygame, variables, maps
 
-# Setup
-pygame.init()
-
 from Player import Player
 
 pygame.display.set_caption("theNewRpg")
@@ -18,7 +15,8 @@ clock = pygame.time.Clock()
 pygame.mouse.set_visible(0)
 
 #variables
-player = Player(0, 0)
+player = Player(100, 100)
+current_map = maps.testmap1
 
 # -------- Main Program Loop -----------
 while not done:
@@ -43,8 +41,8 @@ while not done:
 
     # --- Drawing Code
     variables.screen.fill(variables.WHITE)
-    maps.testmap1.draw()
-    player.draw()
+    maps.current_map.draw(player.xpos, player.ypos)
+    player.draw(current_map)
 
 
     # Go ahead and update the screen with what we've drawn.
