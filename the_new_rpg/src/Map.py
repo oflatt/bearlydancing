@@ -1,6 +1,13 @@
 #!/usr/bin/python
 #Oliver Flatt works on Classes
-import pygame, variables
+import variables
+
+def draw_map(b, t):
+    i = b
+    for x in range(0, len(t)):
+        r = t[x]
+        i.blit(r.base, [r.x, r.y])
+    return i
 
 class Map():
     def __init__(self, base, terrain):
@@ -8,6 +15,7 @@ class Map():
         self.base = base
         #terrain is a list of Rock
         self.terrain= terrain
+        self.finalimage = draw_map(base, terrain)
 
     #x and y are the player's x and y pos
     def draw(self, x, y):
@@ -25,5 +33,5 @@ class Map():
             drawy = h - variables.height
         else:
             drawy = y - variables.hh
-        variables.screen.blit(self.base, [-drawx, -drawy])
-        #need to draw all Rock too
+
+        variables.screen.blit(self.finalimage, [-drawx, -drawy])

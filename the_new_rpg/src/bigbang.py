@@ -37,11 +37,11 @@ while not done:
             player.keyrelease(event.key)
 
     # --- Game Logic
-    player.move()
+    player.move(current_map)
 
     # --- Drawing Code
     variables.screen.fill(variables.WHITE)
-    maps.current_map.draw(player.xpos, player.ypos)
+    current_map.draw(player.xpos, player.ypos)
     player.draw(current_map)
 
 

@@ -1,5 +1,8 @@
 #!/usr/bin/python
-import pygame, Rock, variables, graphics
+import pygame, variables, graphics
 from Map import Map
+from Rock import Rock
 
-testmap1 = Map(graphics.testmapimage, "this is where a list of rocks would be")
+block = graphics.test_rock.get_width()
+testmap1 = Map(graphics.testmapimage, [Rock(graphics.test_rock, 2*block, 2*block),
+                                       Rock(graphics.test_rock, 3*block, 2*block)])

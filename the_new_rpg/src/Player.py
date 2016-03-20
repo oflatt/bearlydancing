@@ -70,6 +70,6 @@ class Player():
             else:
                 self.yspeed = 3
 
-    def move(self):
+    def move(self, m):
         self.xpos += self.xspeed
         self.ypos += self.yspeed
