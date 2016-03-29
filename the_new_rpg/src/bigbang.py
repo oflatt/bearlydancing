@@ -15,8 +15,8 @@ clock = pygame.time.Clock()
 pygame.mouse.set_visible(0)
 
 #variables
-player = Player(100, 100)
 current_map = maps.testmap1
+player = Player(current_map.startpoint[0], current_map.startpoint[1])
 
 # -------- Main Program Loop -----------
 while not done:
