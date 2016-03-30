@@ -12,7 +12,7 @@ done = False
 clock = pygame.time.Clock()
 
 # Hide the mouse cursor
-pygame.mouse.set_visible(0)
+#pygame.mouse.set_visible(0)
 
 #variables
 current_map = maps.testmap1

@@ -68,7 +68,7 @@ class Player():
             if self.uppresstime == 0:
                 self.yspeed = 0
             else:
-                self.yspeed = 3
+                self.yspeed = -3
 
     def move(self, m):
         self.xpos += self.xspeed
