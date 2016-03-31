@@ -13,7 +13,7 @@ class Player():
         self.xpos = xpos
         self.ypos = ypos
 
-    def draw(self, m): #movement is combination of top down scrolling and free range
+    def draw(self): #movement is combination of top down scrolling and free range
         mw = m.base.get_width()
         mh = m.base.get_height()
         if self.xpos >= variables.hh and self.xpos <= (mw - variables.hh):#If in scrolling area
@@ -70,6 +70,8 @@ class Player():
             else:
                 self.yspeed = -3
 
-    def move(self, m):
+    #moves with collision detections
+    def move(self):
+        
         self.xpos += self.xspeed
         self.ypos += self.yspeed
