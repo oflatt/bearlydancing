@@ -5,7 +5,7 @@ pygame.init()
 
 # Set the width and height of the screen [width,height]
 displayinfo = pygame.display.Info()
-height = displayinfo.current_h - 200
+height = 800#displayinfo.current_h - 200
 hh = height/2
 screen = pygame.display.set_mode([height, height])
 
