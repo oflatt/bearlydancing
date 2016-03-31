@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import pygame, variables
+import pygame, variables, maps
 
 class Player():
     xspeed = 0
@@ -14,6 +14,7 @@ class Player():
         self.ypos = ypos
 
     def draw(self): #movement is combination of top down scrolling and free range
+        m = maps.current_map
         mw = m.base.get_width()
         mh = m.base.get_height()
         if self.xpos >= variables.hh and self.xpos <= (mw - variables.hh):#If in scrolling area

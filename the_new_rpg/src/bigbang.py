@@ -15,7 +15,7 @@ clock = pygame.time.Clock()
 #pygame.mouse.set_visible(0)
 
 #variables
-player = Player(variables.current_map.startpoint[0], variables.current_map.startpoint[1])
+player = Player(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
 
 # -------- Main Program Loop -----------
 while not done:
@@ -40,7 +40,7 @@ while not done:
 
     # --- Drawing Code
     variables.screen.fill(variables.WHITE)
-    variables.current_map.draw(player.xpos, player.ypos)
+    maps.current_map.draw(player.xpos, player.ypos)
     player.draw()
 
 

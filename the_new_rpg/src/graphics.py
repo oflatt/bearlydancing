@@ -23,14 +23,13 @@ def sscale(img):
         smaller = h
     else:
         smaller = w
-    print(smaller)
     return pygame.transform.scale(img, [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)])
 
 #Oliver's example- make sure to put .convert() at the end to make it run faster (as a png)
-testmapimage = pygame.image.load(os.path.join('pics', 'testmap.jpg')).convert()
+testmapimage = pygame.image.load(os.path.join('pics', 'testmap.jpg'))
 testmapimage = sscale_customfactor(testmapimage, 2)
 
-test_rock = pygame.image.load(os.path.join('pics', 'pokemon_grass.png')).convert()
+test_rock = pygame.image.load(os.path.join('pics', 'pokemon_grass.png'))
 test_rock = sscale(test_rock)
 
 #Art by Jacob and Spirit imported
