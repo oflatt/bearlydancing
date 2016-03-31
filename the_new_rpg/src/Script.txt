@@ -12,5 +12,13 @@ monster: No one may pass!
 	Honey: So what, do you want me to fight you?
 monster: No! I want to DANCE fight you!
 	Honey: Well that's a relief. I'm way better at dancing than fighting...
+	
+	(PENULTIMATE FIGHT)
+Honey: Oh wow, they must be the last boss!
+	Monster:ARGHGHGHGH!
+Honey: *gulp* Alright, let's go!
 
+	(LAST FIGHT)
+Honey:What, I thought I was done! Well, this should be easy.
+	Monster: Hehehehehe...
 
