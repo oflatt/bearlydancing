@@ -9,6 +9,8 @@ class Rock():
         self.y = y
         #iscollideable is a bool
         self.iscollideable = c
+        self.w = base.get_width()
+        self.h = base.get_height()
 
     def draw(self):
         variables.screen.blit(self.base, [self.x, self.y])

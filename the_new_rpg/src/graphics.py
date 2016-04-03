@@ -27,11 +27,15 @@ def sscale(img):
 
 #Oliver's example- make sure to put .convert() at the end to make it run faster (as a png)
 testmapimage = pygame.image.load(os.path.join('pics', 'testmap.jpg'))
-testmapimage = sscale_customfactor(testmapimage, 2)
+testmapimage = sscale_customfactor(testmapimage, 2)#do not use custom factor without reason-preserve pixil sizes
 
-test_rock = pygame.image.load(os.path.join('pics', 'pokemon_grass.png'))
-test_rock = sscale(test_rock)
+#example code of loading an image
+#test_rock = pygame.image.load(os.path.join('pics', 'pokemon_grass.png'))
+#test_rock = sscale(test_rock)
 
 #Art by Jacob and Spirit imported
 front_honey = pygame.image.load(os.path.join('pics', "honeySILR_0.png"))
 front_honey = sscale(front_honey)
+
+bed = pygame.image.load(os.path.join('pics', "Bed JV.png"))
+bed = sscale(bed)

@@ -73,6 +73,35 @@ class Player():
 
     #moves with collision detections
     def move(self):
+        movedxpos = self.xpos + self.xspeed
+        movedypos = self.ypos + self.yspeed
+        iscollisionx = False
+        iscollisiony= False
+        m = maps.current_map
+        t = m.terrain
+        numofrocks = len(t)
+
+        #checks if the moved position on within the coordinates of a single rock
+        def collisioncheck(arock, x, y):
+            return arock.iscollideable and x>=arock.x and x<=(arock.x + arock.w) \
+                   and y>=arock.y and y<=(arock.y + arock.h)
+
+        #collision detection for the moved x pos with the unmoved y pos
+        for x in range(0, numofrocks-1):
+            r = t[x]
+            if collisioncheck(r, movedxpos, self.ypos):
+                iscollisionx = True
+                x = numofrocks
         
-        self.xpos += self.xspeed
-        self.ypos += self.yspeed
+        #collision detection for the moved y pos with the unmoved x pos
+        for x in range(0, numofrocks-1):
+            r = t[x]
+            if collisioncheck(r, self.xpos, movedypos):
+                iscollisiony = True
+                x = numofrocks
+
+        if not iscollisionx:
+            self.xpos = movedxpos
+
+        if not iscollisiony:
+            self.ypos = movedypos

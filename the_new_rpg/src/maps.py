@@ -3,9 +3,9 @@ import pygame, variables, graphics
 from Map import Map
 from Rock import Rock
 
-block = graphics.test_rock.get_width()
-testmap1 = Map(graphics.testmapimage, [Rock(graphics.test_rock, 2*block, 2*block, True),
-                                       Rock(graphics.test_rock, 3*block, 2*block, True),
+block = graphics.front_honey.get_width()
+testmap1 = Map(graphics.testmapimage, [Rock(graphics.bed, 2*block, 2*block, True),
+                                       Rock(graphics.bed, 3*block, 2*block, True),
                                        Rock(graphics.front_honey, 6*block, 2*block, False)])
 
 testmap1.startpoint = [block * 10, block*10]
