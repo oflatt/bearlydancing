@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import pygame, variables, maps
+import pygame, variables, maps, graphics
 
 class Player():
     xspeed = 0
@@ -8,6 +8,9 @@ class Player():
     rightpresstime = 0
     uppresstime = 0
     downpresstime = 0
+    current_frame = graphics.honey_right1
+    normal_width = current_frame.get_width()
+    normal_height = current_frame.get_height()
 
     def __init__(self, xpos, ypos):
         self.xpos = xpos
@@ -29,7 +32,7 @@ class Player():
             drawy = self.ypos - (mh - variables.height) #mh - variables.height is the height of the scrolling area
         else:
             drawy = self.ypos
-        pygame.draw.ellipse(variables.screen, variables.RED, [drawx, drawy, 20, 20], 0)
+        variables.screen.blit(self.current_frame, [drawx, drawy])
 
     def keypress(self, k):
         if k == pygame.K_LEFT:
@@ -81,22 +84,28 @@ class Player():
         t = m.terrain
         numofrocks = len(t)
 
-        #checks if the moved position on within the coordinates of a single rock
+        #checks if a single coordinate is within the coordinates of a single rock
         def collisioncheck(arock, x, y):
             return arock.iscollideable and x>=arock.x and x<=(arock.x + arock.w) \
                    and y>=arock.y and y<=(arock.y + arock.h)
 
+        #checks for collisions with a single rock for all four corners of the moved pos
+        def collisioncheckcorners(arock, x, y):
+            return collisioncheck(arock, x, y) or collisioncheck(arock, x+self.normal_width, y) or \
+                   collisioncheck(arock, x, y+self.normal_height) or \
+                   collisioncheck(arock, x+self.normal_width, y+self.normal_height)
+
         #collision detection for the moved x pos with the unmoved y pos
         for x in range(0, numofrocks-1):
             r = t[x]
-            if collisioncheck(r, movedxpos, self.ypos):
+            if collisioncheckcorners(r, movedxpos, self.ypos):
                 iscollisionx = True
                 x = numofrocks
-        
+
         #collision detection for the moved y pos with the unmoved x pos
         for x in range(0, numofrocks-1):
             r = t[x]
-            if collisioncheck(r, self.xpos, movedypos):
+            if collisioncheckcorners(r, self.xpos, movedypos):
                 iscollisiony = True
                 x = numofrocks
 
