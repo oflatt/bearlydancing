@@ -10,6 +10,9 @@ def draw_map(b, t):
     return i
 
 class Map():
+    startpoint = [10, 10] #xy coordinates of spawn point
+    exitarea = [80, 80, 100, 100] #two sets of coordinates, specifying an area for the exit. x, y, x, y
+
     def __init__(self, base, terrain):
         #base is a png
         self.base = base

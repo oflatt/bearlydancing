@@ -15,7 +15,7 @@ def sscale_customfactor(img, factor):
     return pygame.transform.scale(img, [int((w/smaller)*endsize), int((h/smaller)*endsize)])
 
 def sscale(img):
-    factor = 0.02 #This basically determines how much of the map we can see
+    factor = 0.0025 #This basically determines how much of the map we can see
     w = img.get_width()
     h = img.get_height()
     endsize = variables.height*factor
@@ -23,11 +23,21 @@ def sscale(img):
         smaller = h
     else:
         smaller = w
-    return pygame.transform.scale(img, [int((w/smaller)*endsize), int((h/smaller)*endsize)])
+    return pygame.transform.scale(img, [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)])
 
 #Oliver's example- make sure to put .convert() at the end to make it run faster (as a png)
-testmapimage = pygame.image.load(os.path.join('pics', 'testmap.jpg')).convert()
-testmapimage = sscale_customfactor(testmapimage, 2)
+testmapimage = pygame.image.load(os.path.join('pics', 'testmap.jpg'))
+testmapimage = sscale_customfactor(testmapimage, 2)#do not use custom factor without reason-preserve pixil sizes
 
-test_rock = pygame.image.load(os.path.join('pics', 'pokemon_grass.png')).convert()
-test_rock = sscale(test_rock)
+#example code of loading an image
+#test_rock = pygame.image.load(os.path.join('pics', 'pokemon_grass.png'))
+#test_rock = sscale(test_rock)
+
+#Art by Jacob and Spirit imported
+front_honey = pygame.image.load(os.path.join('pics', "honeySILR_0.png"))
+front_honey = sscale(front_honey)
+honey_right1 = pygame.image.load(os.path.join('pics', "HoneyRightSILR_0.png"))
+honey_right1 = sscale(honey_right1)
+
+bed = pygame.image.load(os.path.join('pics', "Bed JV.png"))
+bed = sscale(bed)
