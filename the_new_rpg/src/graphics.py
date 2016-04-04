@@ -31,5 +31,3 @@ testmapimage = sscale_customfactor(testmapimage, 2)
 
 test_rock = pygame.image.load(os.path.join('pics', 'pokemon_grass.png')).convert()
 test_rock = sscale(test_rock)
-
-#Spirit and Jacob's graphics
