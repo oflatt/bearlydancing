@@ -63,3 +63,6 @@ fmonkey_orange = sscale(fmonkey_orange)
 
 fmonkey_red = pygame.image.load(os.path.join('pics', "FMonkeyJV3.png"))
 fmonkey_red = sscale(fmonkey_red)
+
+map_base = pygame.image.load(os.path.join('pics', "a path.png"))
+map_base = sscale(map_base)
