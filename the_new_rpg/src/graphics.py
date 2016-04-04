@@ -66,3 +66,80 @@ fmonkey_red = sscale(fmonkey_red)
 
 map_base = pygame.image.load(os.path.join('pics', "a path.png"))
 map_base = sscale(map_base)
+
+bush = pygame.image.load(os.path.join('pics', "bushbkgrdSILR_0.png"))
+bush = sscale(bush)
+
+creepcat0 = pygame.image.load(os.path.join('pics', "creepCatSILR_0.png"))
+creepcat0 = sscale(creepcat0)
+
+creepcat1 = pygame.image.load(os.path.join('pics', "creepCatSILR_1.png"))
+creepcat1 = sscale(creepcat1)
+
+creepcat2 = pygame.image.load(os.path.join('pics', "creepCatSILR_2.png"))
+creepcat2 = sscale(creepcat2)
+
+creepcat3 = pygame.image.load(os.path.join('pics', "creepCatSILR_3.png"))
+creepcat3 = sscale(creepcat3)
+
+dancelion0 = pygame.image.load(os.path.join('pics', "DanceLionSILR_0.png"))
+dancelion0 = sscale(dancelion0)
+
+dancelion1 = pygame.image.load(os.path.join('pics', "DanceLionSILR_1.png"))
+dancelion1 = sscale(dancelion1)
+
+evilblob0 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_00.png"))
+evilblob0 = sscale(evilblob0)
+
+evilblob1 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_01.png"))
+evilblob1 = sscale(evilblob1)
+
+evilblob2 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_02.png"))
+evilblob2 = sscale(evilblob2)
+
+evilblob3 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_03.png"))
+evilblob3 = sscale(evilblob3)
+
+evilblob4 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_04.png"))
+evilblob4 = sscale(evilblob4)
+
+evilblob5 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_05.png"))
+evilblob5 = sscale(evilblob5)
+
+evilblob6 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_06.png"))
+evilblob6 = sscale(evilblob6)
+
+evilblob7 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_07.png"))
+evilblob7 = sscale(evilblob7)
+
+evilblob8 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_08.png"))
+evilblob8 = sscale(evilblob8)
+
+evilblob9 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_09.png")))
+
+evilblob10 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_10.png")))
+
+evilblob11 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_11.png")))
+
+evilblob12 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_12.png")))
+
+evilblob13 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_13.png")))
+
+evilblob14 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_14.png")))
+
+evilblob15 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_15.png")))
+
+evilblob16 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_16.png")))
+
+evilblob17 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_17.png")))
+
+evilblob18 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_18.png")))
+
+evilblob19 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_19.png")))
+
+evilblob20 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_20.png")))
+
+evilblob21 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_21.png")))
+
+
+
