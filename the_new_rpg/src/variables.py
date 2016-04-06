@@ -6,11 +6,12 @@ pygame.init()
 # Set the width and height of the screen [width,height]
 displayinfo = pygame.display.Info()
 height = 800#displayinfo.current_h - 200
+width = height #for not it is a square window
 hh = height/2
 screen = pygame.display.set_mode([height, height])
 
 #state can be world, battle, or story
-state = "world"
+state = "conversation"
 
 # Define some colors
 BLACK = (0, 0, 0)
