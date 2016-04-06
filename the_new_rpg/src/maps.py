@@ -12,6 +12,8 @@ testmap1.startpoint = [block * 10, block*10]
 testmap1.endarea = [block * 50, block * 50, block * 55, block*55]
 
 path1 = Map(graphics.map_base, [Rock(graphics.rock, 2*block, 2*block, True),
-                                Rock(graphics.bed, 5*block, 4*block, True)])
+                                Rock(graphics.bed, 5*block, 4*block, True),
+                                Rock(graphics.warddrobe, 10*block, 10*block, True),
+                                Rock(graphics.warddrobe2, 3*block, 3*block, True)])
 
 current_map = path1
