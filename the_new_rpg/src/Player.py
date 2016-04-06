@@ -35,39 +35,39 @@ class Player():
         variables.screen.blit(self.current_frame, [drawx, drawy])
 
     def keypress(self, k):
-        if k == pygame.K_LEFT:
+        if k == pygame.K_LEFT or k == pygame.K_a:
             self.leftpresstime = pygame.time.get_ticks()
             self.xspeed = -3
-        elif k == pygame.K_RIGHT:
+        elif k == pygame.K_RIGHT or k == pygame.K_d:
             self.rightpresstime = pygame.time.get_ticks()
             self.xspeed = 3
-        elif k == pygame.K_UP:
+        elif k == pygame.K_UP or k == pygame.K_w:
             self.uppresstime = pygame.time.get_ticks()
             self.yspeed = -3
-        elif k == pygame.K_DOWN:
+        elif k == pygame.K_DOWN or k == pygame.K_s:
             self.downpresstime = pygame.time.get_ticks()
             self.yspeed = 3
 
     def keyrelease(self, k):
-        if k == pygame.K_LEFT:
+        if k == pygame.K_LEFT or k == pygame.K_a:
             self.leftpresstime = 0
             if self.rightpresstime == 0:
                 self.xspeed = 0
             else:
                 self.xspeed = 3
-        elif k == pygame.K_RIGHT:
+        elif k == pygame.K_RIGHT or k == pygame.K_d:
             self.rightpresstime = 0
             if self.leftpresstime == 0:
                 self.xspeed = 0
             else:
                 self.xspeed = -3
-        elif k == pygame.K_UP:
+        elif k == pygame.K_UP or k == pygame.K_w:
             self.uppresstime = 0
             if self.downpresstime == 0:
                 self.yspeed = 0
             else:
                 self.yspeed = 3
-        elif k == pygame.K_DOWN:
+        elif k == pygame.K_DOWN or k == pygame.K_s:
             self.downpresstime = 0
             if self.uppresstime == 0:
                 self.yspeed = 0

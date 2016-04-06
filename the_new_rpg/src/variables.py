@@ -9,6 +9,9 @@ height = 800#displayinfo.current_h - 200
 hh = height/2
 screen = pygame.display.set_mode([height, height])
 
+#state can be world, battle, or story
+state = "world"
+
 # Define some colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
