@@ -140,6 +140,3 @@ evilblob19 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSIL
 evilblob20 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_20.png")))
 
 evilblob21 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_21.png")))
-
-
-
