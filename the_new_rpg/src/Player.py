@@ -35,18 +35,19 @@ class Player():
         variables.screen.blit(self.current_frame, [drawx, drawy])
 
     def keypress(self, k):
+        s = variables.playerspeed
         if k == pygame.K_LEFT or k == pygame.K_a:
             self.leftpresstime = pygame.time.get_ticks()
-            self.xspeed = -3
+            self.xspeed = -s
         elif k == pygame.K_RIGHT or k == pygame.K_d:
             self.rightpresstime = pygame.time.get_ticks()
-            self.xspeed = 3
+            self.xspeed = s
         elif k == pygame.K_UP or k == pygame.K_w:
             self.uppresstime = pygame.time.get_ticks()
-            self.yspeed = -3
+            self.yspeed = -s
         elif k == pygame.K_DOWN or k == pygame.K_s:
             self.downpresstime = pygame.time.get_ticks()
-            self.yspeed = 3
+            self.yspeed = s
 
     def keyrelease(self, k):
         if k == pygame.K_LEFT or k == pygame.K_a:

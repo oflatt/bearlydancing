@@ -5,10 +5,13 @@ pygame.init()
 
 # Set the width and height of the screen [width,height]
 displayinfo = pygame.display.Info()
-height = 800#displayinfo.current_h - 200
+height =800#displayinfo.current_h - 200
 width = height #for not it is a square window
 hh = height/2
 screen = pygame.display.set_mode([height, height])
+font = pygame.font.Font(None, 30)
+
+playerspeed = height/800 * 3
 
 #state can be world, battle, or story
 state = "conversation"
