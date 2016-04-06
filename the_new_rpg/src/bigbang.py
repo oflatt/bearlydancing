@@ -2,6 +2,7 @@
 import pygame, variables, maps
 
 from Player import Player
+import conversations
 
 pygame.display.set_caption("theNewRpg")
 
@@ -41,6 +42,8 @@ while not done:
     # --- Drawing Code
     variables.screen.fill(variables.WHITE)
     maps.current_map.draw(player.xpos, player.ypos)
+    if variables.state == "conversation":
+        conversations.currentconversation.draw()
     player.draw()
 
 
