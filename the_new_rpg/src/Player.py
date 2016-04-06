@@ -84,30 +84,26 @@ class Player():
         t = m.terrain
         numofrocks = len(t)
 
-        #checks if a single coordinate is within the coordinates of a single rock
+        #checks if the player's right side collides with a rock
         def collisioncheck(arock, x, y):
-            return arock.iscollideable and x>=arock.x and x<=(arock.x + arock.w) \
-                   and y>=arock.y and y<=(arock.y + arock.h)
+            return arock.iscollideable and (x+self.normal_width)>=arock.x and x<=(arock.x + arock.w) \
+                   and (y+self.normal_height)>=arock.y and y<=(arock.y + arock.h)
 
-        #checks for collisions with a single rock for all four corners of the moved pos
-        def collisioncheckcorners(arock, x, y):
-            return collisioncheck(arock, x, y) or collisioncheck(arock, x+self.normal_width, y) or \
-                   collisioncheck(arock, x, y+self.normal_height) or \
-                   collisioncheck(arock, x+self.normal_width, y+self.normal_height)
+        if not self.xspeed == 0:
+            #collision detection for the moved x pos with the unmoved y pos
+            for x in range(0, numofrocks):
+                r = t[x]
+                if collisioncheck(r, movedxpos, self.ypos):
+                    iscollisionx = True
+                    x = numofrocks
 
-        #collision detection for the moved x pos with the unmoved y pos
-        for x in range(0, numofrocks-1):
-            r = t[x]
-            if collisioncheckcorners(r, movedxpos, self.ypos):
-                iscollisionx = True
-                x = numofrocks
-
-        #collision detection for the moved y pos with the unmoved x pos
-        for x in range(0, numofrocks-1):
-            r = t[x]
-            if collisioncheckcorners(r, self.xpos, movedypos):
-                iscollisiony = True
-                x = numofrocks
+        if not self.yspeed == 0:
+            #collision detection for the moved y pos with the unmoved x pos
+            for x in range(0, numofrocks):
+                r = t[x]
+                if collisioncheck(r, self.xpos, movedypos):
+                    iscollisiony = True
+                    x = numofrocks
 
         if not iscollisionx:
             self.xpos = movedxpos
