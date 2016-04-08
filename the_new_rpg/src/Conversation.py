@@ -21,3 +21,7 @@ class Conversation():
         variables.screen.blit(line1, [w/2 - line1.get_width()/2, b])
         variables.screen.blit(line2, [w/2 - line2.get_width()/2, b+line1.get_height()])
         variables.screen.blit(line3, [w/2 - line3.get_width()/2, b+line1.get_height()+line2.get_height()])
+
+    def keypress(self, key):
+        if self.line < len(self.dialogue) - 3:
+            self.line += 1
