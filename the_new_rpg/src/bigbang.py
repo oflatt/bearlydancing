@@ -29,7 +29,12 @@ while not done:
         elif event.type == pygame.KEYDOWN:
             # Figure out if it was an arrow key. If so
             # adjust speed.
-            player.keypress(event.key)
+            if event.key == pygame.K_ESCAPE:
+                done = True
+            if variables.state == "conversation":
+                conversations.currentconversation.keypress(event.key)
+            else:
+                player.keypress(event.key)
 
         # User let up on a key
         elif event.type == pygame.KEYUP:
