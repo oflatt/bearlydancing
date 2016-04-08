@@ -9,12 +9,13 @@ height =800#displayinfo.current_h - 200
 width = height #for not it is a square window
 hh = height/2
 screen = pygame.display.set_mode([height, height])
+scaleoffset = 1
 font = pygame.font.Font(None, 30)
 
 playerspeed = height/800 * 3
 
 #state can be world, battle, or story
-state = "conversation"
+state = "world"
 
 # Define some colors
 BLACK = (0, 0, 0)

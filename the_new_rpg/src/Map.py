@@ -39,3 +39,6 @@ class Map():
             drawy = y - variables.hh
 
         variables.screen.blit(self.finalimage, [-drawx, -drawy])
+
+    def scale_by_offset(self):
+        self.finalimage *= variables.scaleoffset

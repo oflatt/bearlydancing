@@ -111,3 +111,8 @@ class Player():
 
         if not iscollisiony:
             self.ypos = movedypos
+
+    def scale_by_offset(self):
+        self.current_frame *= variables.scaleoffset
+        normal_width = self.current_frame.get_width()
+        normal_height = self.current_frame.get_height()

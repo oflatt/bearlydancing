@@ -18,6 +18,19 @@ clock = pygame.time.Clock()
 #variables
 player = Player(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
 
+def new_scale_offset():
+    mapw = maps.current_map.finalimage.get_width
+    maph = maps.current_map.finalimage.get_height
+    if mapw<maph:
+        smaller = mapw
+    else:
+        smaller = maph
+    variables.scaleoffset = variables.width/smaller
+    maps.current_map.scale_by_offset()
+    player.scale_by_offset()
+
+new_scale_offset()
+
 # -------- Main Program Loop -----------
 while not done:
     # --- Event Processing- this is like keyPressed
