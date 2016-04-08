@@ -144,3 +144,9 @@ evilblob21 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSIL
 warddrobe = sscale(pygame.image.load(os.path.join('pics', "wardrobe.png")))
 
 warddrobe2 = sscale(pygame.image.load(os.path.join('pics', "wardrobe v2.png")))
+
+tree1 = sscale(pygame.image.load(os.path.join('pics', "TreebobSILR_0.png")))
+
+tree2 = sscale(pygame.image.load(os.path.join('pics', "treeSILR_0.png")))
+
+tree3 = sscale(pygame.image.load(os.path.join('pics', "SophiaTree_0")))
