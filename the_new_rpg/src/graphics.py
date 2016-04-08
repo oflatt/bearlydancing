@@ -149,4 +149,4 @@ tree1 = sscale(pygame.image.load(os.path.join('pics', "TreebobSILR_0.png")))
 
 tree2 = sscale(pygame.image.load(os.path.join('pics', "treeSILR_0.png")))
 
-tree3 = sscale(pygame.image.load(os.path.join('pics', "SophiaTree_0")))
+tree3 = sscale(pygame.image.load(os.path.join('pics', "SophiaTree_0.png")))
