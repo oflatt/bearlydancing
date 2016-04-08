@@ -11,6 +11,6 @@ testmap1 = Map(graphics.testmapimage, [Rock(graphics.bed, 2*block, 2*block, True
 testmap1.startpoint = [block * 10, block*10]
 testmap1.endarea = [block * 50, block * 50, block * 55, block*55]
 
-path1 = Map(graphics.houseInside, [Rock(graphics.house, 1*block, 1*block, True)])
+path1 = Map(graphics.houseInside, [])
 
 current_map = path1

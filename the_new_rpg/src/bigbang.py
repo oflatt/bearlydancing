@@ -19,8 +19,8 @@ clock = pygame.time.Clock()
 player = Player(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
 
 def new_scale_offset():
-    mapw = maps.current_map.finalimage.get_width
-    maph = maps.current_map.finalimage.get_height
+    mapw = maps.current_map.finalimage.get_width()
+    maph = maps.current_map.finalimage.get_height()
     if mapw<maph:
         smaller = mapw
     else:

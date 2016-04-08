@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #Oliver Flatt works on Classes
-import variables
+import variables, pygame
 
 def draw_map(b, t):
     i = b
@@ -23,8 +23,8 @@ class Map():
 
     #x and y are the player's x and y pos
     def draw(self, x, y):
-        w = self.base.get_width()
-        h = self.base.get_height()
+        w = self.finalimage.get_width()
+        h = self.finalimage.get_height()
         if x < variables.hh: #if it is in the left side of the map
             drawx = 0 #do not scroll the map at all
         elif x > (w - variables.hh): #if it is on the right side of the map
@@ -41,4 +41,5 @@ class Map():
         variables.screen.blit(self.finalimage, [-drawx, -drawy])
 
     def scale_by_offset(self):
-        self.finalimage *= variables.scaleoffset
+        self.finalimage = pygame.transform.scale(self.finalimage, [int(self.finalimage.get_width()*variables.scaleoffset),
+                                                 int(self.finalimage.get_height()*variables.scaleoffset)])

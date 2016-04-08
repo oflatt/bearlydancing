@@ -18,8 +18,8 @@ class Player():
 
     def draw(self): #movement is combination of top down scrolling and free range
         m = maps.current_map
-        mw = m.base.get_width()
-        mh = m.base.get_height()
+        mw = m.finalimage.get_width()
+        mh = m.finalimage.get_height()
         if self.xpos >= variables.hh and self.xpos <= (mw - variables.hh):#If in scrolling area
             drawx = variables.hh #middle of screen
         elif self.xpos > (mw - variables.hh): #if on right side
@@ -113,6 +113,7 @@ class Player():
             self.ypos = movedypos
 
     def scale_by_offset(self):
-        self.current_frame *= variables.scaleoffset
+        self.current_frame = pygame.transform.scale(self.current_frame, [int(self.current_frame.get_width()*variables.scaleoffset),
+                                                 int(self.current_frame.get_height()*variables.scaleoffset)])
         normal_width = self.current_frame.get_width()
         normal_height = self.current_frame.get_height()
