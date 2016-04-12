@@ -12,9 +12,20 @@ testmap1.startpoint = [block * 10, block*10]
 testmap1.endarea = [block * 50, block * 50, block * 55, block*55]
 
 #Rock(graphics.(whatever picture), x value, y value, Collision Detection)
-path1 = Map(graphics.houseInside, [Rock(graphics.welcomeMat, 2.25*block, 5.1*block, True),
+house1 = Map(graphics.houseInside, [Rock(graphics.welcomeMat, 2.25*block, 5.3*block, True),
                                    Rock(graphics.bed, 0*block, 0*block, False),
                                    Rock(graphics.warddrobe2, 2*block, 0*block, False),
-                                   Rock(graphics.tpanda, 4*block, 4*block, True)])
+                                   Rock(graphics.tpanda, 4*block, 5*block, True)])
 
-current_map = path1
+
+outsideiguess1 = Map(graphics.scrub1, [Rock(graphics.house, 0*block, 0*block, True),
+                                       Rock(graphics.welcomeMat, 0.4*block,3*block, False),
+                                       Rock(graphics.tree1, 5*block, 3*block, True),
+                                       Rock(graphics.tree1, 2.1*block, 3*block, True),
+                                       Rock(graphics.tree3, 2.2*block, 3*block, True),
+                                       Rock(graphics.tree3, 2.5*block, 3.2*block, True)])
+
+outsideiguess1.startpoint = [block *0.85, block*2.9]
+outsideiguess1.endpoint = [block*50,block*50,block*55,block*55]
+
+current_map = outsideiguess1
