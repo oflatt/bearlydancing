@@ -160,3 +160,5 @@ welcomeMat = sscale(pygame.image.load(os.path.join('pics', 'welcomematt.png')))
 sheep1 = sscale(pygame.image.load(os.path.join('pics', 'Sheep1stfightSILR_0.png')))
 
 sheep2 = sscale(pygame.image.load(os.path.join('pics', 'Sheep1stfightSILR_1.png')))
+
+scrub1 = sscale(pygame.image.load(os.path.join('pics', 'scrubSILR_0.png')))
