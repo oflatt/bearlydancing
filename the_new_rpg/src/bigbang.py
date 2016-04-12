@@ -2,6 +2,8 @@
 import pygame, variables, maps
 
 from Player import Player
+from Battle import Battle
+from Enemy import Enemy
 import conversations
 
 pygame.display.set_caption("theNewRpg")
@@ -17,6 +19,7 @@ clock = pygame.time.Clock()
 
 #variables
 player = Player(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
+battle = Battle(Enemy())
 
 def new_scale_offset():
     mapw = maps.current_map.finalimage.get_width()
@@ -62,7 +65,11 @@ while not done:
     maps.current_map.draw(player.xpos, player.ypos)
     if variables.state == "conversation":
         conversations.currentconversation.draw()
-    player.draw()
+        player.draw()
+    elif variables.state == "world":
+        player.draw()
+    else:
+        battle.draw()
 
 
     # Go ahead and update the screen with what we've drawn.
