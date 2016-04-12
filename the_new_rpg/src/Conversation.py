@@ -5,10 +5,9 @@ import variables, pygame, graphics
 class Conversation():
     line = 0
 
-    def __init__(self, dialogue, pics):
+    def __init__(self, dialogue):
         #dialogue is a list of strings, one per line. Writer has to make sure they fit
         self.dialogue = dialogue
-        self.pics = pics
 
     def draw(self):
         h = variables.height
