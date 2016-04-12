@@ -46,11 +46,9 @@ bed = sscale(bed)
 rock = pygame.image.load(os.path.join('pics', "Rock JV.png"))
 rock = sscale(rock)
 
-tpanda = pygame.image.load(os.path.join('pics', "Trash Panda aka T.P JV.png"))
-tpanda = sscale(tpanda)
+tpanda = pygame.image.load(os.path.join('pics', "racoon.png"))
 
 tpanda_worried = pygame.image.load(os.path.join('pics', "Trash Panda aka T.P worried face JV.png"))
-tpanda_worried= sscale(tpanda_worried)
 
 fmonkey_green = pygame.image.load(os.path.join('pics', "FMonkeyJV0.png"))
 fmonkey_green = sscale(fmonkey_green)
