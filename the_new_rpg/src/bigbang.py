@@ -3,8 +3,7 @@ import pygame, variables, maps
 
 from Player import Player
 from Battle import Battle
-from Enemy import Enemy
-import conversations
+import conversations, enemies
 
 pygame.display.set_caption("theNewRpg")
 
@@ -16,10 +15,8 @@ clock = pygame.time.Clock()
 
 # Hide the mouse cursor
 #pygame.mouse.set_visible(0)
-
-#variables
 player = Player(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
-battle = Battle(Enemy())
+battle = Battle(enemies.sheep, player)
 
 def new_scale_offset():
     mapw = maps.current_map.finalimage.get_width()
