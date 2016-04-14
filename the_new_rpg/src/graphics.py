@@ -34,39 +34,20 @@ testmapimage = sscale_customfactor(testmapimage, 2)#do not use custom factor wit
 #test_rock = sscale(test_rock)
 
 #Art by Jacob and Spirit imported
-front_honey = pygame.image.load(os.path.join('pics', "honeySILR_0.png"))
-front_honey = sscale(front_honey)
+map_base = pygame.image.load(os.path.join('pics', "a path.png"))
+map_base = sscale(map_base)
 
-honey_right1 = pygame.image.load(os.path.join('pics', "HoneyRightSILR_0.png"))
-honey_right1 = sscale(honey_right1)
+houseInside = sscale(pygame.image.load(os.path.join('pics', "BearHome.png")))
 
 bed = pygame.image.load(os.path.join('pics', "Bed JV.png"))
 bed = sscale(bed)
 
-rock = pygame.image.load(os.path.join('pics', "Rock JV.png"))
-rock = sscale(rock)
-
-tpanda = pygame.image.load(os.path.join('pics', "racoon.png"))
-
-tpanda_worried = pygame.image.load(os.path.join('pics', "Trash Panda aka T.P worried face JV.png"))
-
-fmonkey_green = pygame.image.load(os.path.join('pics', "FMonkeyJV0.png"))
-fmonkey_green = sscale(fmonkey_green)
-
-fmonkey_yellow = pygame.image.load(os.path.join('pics', "FMonkeyJV1.png"))
-fmonkey_yellow = sscale(fmonkey_yellow)
-
-fmonkey_orange = pygame.image.load(os.path.join('pics', "FMonkeyJV2.png"))
-fmonkey_orange = sscale(fmonkey_orange)
-
-fmonkey_red = pygame.image.load(os.path.join('pics', "FMonkeyJV3.png"))
-fmonkey_red = sscale(fmonkey_red)
-
-map_base = pygame.image.load(os.path.join('pics', "a path.png"))
-map_base = sscale(map_base)
-
 bush = pygame.image.load(os.path.join('pics', "bushbkgrdSILR_0.png"))
 bush = sscale(bush)
+
+cowBoy0 = pygame.image.load(os.path.join('pics', 'cowboySILR_0.png'))
+
+cowBoy1 = pygame.image.load(os.path.join('pics', 'cowboySILR_1.png'))
 
 creepcat0 = pygame.image.load(os.path.join('pics', "creepCatSILR_0.png"))
 creepcat0 = sscale(creepcat0)
@@ -139,19 +120,126 @@ evilblob20 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSIL
 
 evilblob21 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_21.png")))
 
-warddrobe = sscale(pygame.image.load(os.path.join('pics', "wardrobe.png")))
+fmonkey_green = pygame.image.load(os.path.join('pics', "FMonkeyJV0.png"))
+fmonkey_green = sscale(fmonkey_green)
 
-warddrobe2 = sscale(pygame.image.load(os.path.join('pics', "wardrobe v2.png")))
+fmonkey_yellow = pygame.image.load(os.path.join('pics', "FMonkeyJV1.png"))
+fmonkey_yellow = sscale(fmonkey_yellow)
 
-tree1 = sscale(pygame.image.load(os.path.join('pics', "TreebobSILR_0.png")))
+fmonkey_orange = pygame.image.load(os.path.join('pics', "FMonkeyJV2.png"))
+fmonkey_orange = sscale(fmonkey_orange)
 
-tree2 = sscale(pygame.image.load(os.path.join('pics', "treeSILR_0.png")))
+fmonkey_red = pygame.image.load(os.path.join('pics', "FMonkeyJV3.png"))
+fmonkey_red = sscale(fmonkey_red)
 
-tree3 = sscale(pygame.image.load(os.path.join('pics', "SophiaTree_0.png")))
+#Honey to Horizontal
+front_honey = pygame.image.load(os.path.join('pics', "honeySILR_0.png"))
+front_honey = sscale(front_honey)
+
+honey_right1 = pygame.image.load(os.path.join('pics', "HoneyRightSILR_0.png"))
+honey_right1 = sscale(honey_right1)
+#Honey to Horizontal
+
+scrub1 = sscale(pygame.image.load(os.path.join('pics','horizontal.png')))
 
 house = sscale(pygame.image.load(os.path.join('pics', "HouseSILR.png")))
 
-houseInside = sscale(pygame.image.load(os.path.join('pics', "BearHome.png")))
+jumpy1 = sscale(pygame.image.load(os.path.join('pics','JumpySILR_0.png')))
+
+jumpy2 = sscale(pygame.image.load(os.path.join('pics', 'JumpySILR_1.png')))
+
+leftTurn = sscale(pygame.image.load(os.path.join('pics', 'leftTurn.png')))
+
+meanGreen0 = sscale(pygame.image.load(os.path.join('pics', 'MeanGreenSILR_0.png')))
+
+meanGreen1 = sscale(pygame.image.load(os.path.join('pics','MeanGreenSILR_1.png')))
+
+niceDog0 = sscale(pygame.image.load(os.path.join('pics','NiceDogSILR_0.png')))
+
+niceDog1 = sscale(pygame.image.load(os.path.join('pics','NiceDogSILR_1.png')))
+
+niceDog2 = sscale(pygame.image.load(os.path.join('pics','NiceDogSILR_2.png')))
+
+niceDog3 = sscale(pygame.image.load(os.path.join('pics','NiceDogSILR_3.png')))
+
+pinkFreak0 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_00.png')))
+
+pinkFreak1 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_01.png')))
+
+pinkFreak2 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_02.png')))
+
+pinkFreak3 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_03.png')))
+
+pinkFreak4 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_04.png')))
+
+pinkFreak5 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_05.png')))
+
+pinkFreak6 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_06.png')))
+
+pinkFreak7 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_07.png')))
+
+pinkFreak8 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_08.png')))
+
+pinkFreak9 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_09.png')))
+
+pinkFreak10 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_10.png')))
+
+purplePerp0 = sscale(pygame.image.load(os.path.join('pics','PurpleperpSILR_0.png')))
+
+purplePerp1 = sscale(pygame.image.load(os.path.join('pics','PurpleperpSILR_1.png')))
+
+purplePerp2 = sscale(pygame.image.load(os.path.join('pics','PurpleperpSILR_2.png')))
+
+purplePerp3 = sscale(pygame.image.load(os.path.join('pics','PurpleperpSILR_3.png')))
+
+queenBird0 = sscale(pygame.image.load(os.path.join('pics','QueenBirdSILR_0.png')))
+
+quiche0 = sscale(pygame.image.load(os.path.join('pics','QuicheSILR_0.png')))
+
+tpanda_worried = pygame.image.load(os.path.join('pics', "racoon sad.png"))
+
+tpanda = pygame.image.load(os.path.join('pics', "racoon.png"))
+
+rightTurn = pygame.image.load(os.path.join('pics','rightTurn.png'))
+
+river = pygame.image.load(os.path.join('pics','river.png'))
+
+rock = pygame.image.load(os.path.join('pics', "Rock JV.png"))
+rock = sscale(rock)
+
+ruderoo0 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_00.png')))
+
+ruderoo1 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_01.png')))
+
+ruderoo2 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_02.png')))
+
+ruderoo3 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_03.png')))
+
+ruderoo4 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_04.png')))
+
+ruderoo5 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_05.png')))
+
+ruderoo6 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_06.png')))
+
+mostImportantMob0 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_0.png')))
+
+mostImportantMob1 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_1.png')))
+
+mostImportantMob2 = sscale(pygame.image.load(os.path.join('pics', 'ScaryStevenSILR_2.png')))
+
+mostImportantMob3 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_3.png')))
+
+tree1 = sscale(pygame.image.load(os.path.join('pics', "Tree1.png")))
+
+tree2 = sscale(pygame.image.load(os.path.join('pics', "Tree2.png")))
+
+tree3 = sscale(pygame.image.load(os.path.join('pics', "Tree3.png")))
+
+scrub2 = sscale(pygame.image.load(os.path.join('pics', 'vertical.png')))
+
+
+
+
 
 welcomeMat = sscale(pygame.image.load(os.path.join('pics', 'welcomematt.png')))
 
@@ -159,4 +247,7 @@ sheep1 = sscale(pygame.image.load(os.path.join('pics', 'Sheep1stfightSILR_0.png'
 
 sheep2 = sscale(pygame.image.load(os.path.join('pics', 'Sheep1stfightSILR_1.png')))
 
-scrub1 = sscale(pygame.image.load(os.path.join('pics', 'vertical.png')))
+warddrobe = sscale(pygame.image.load(os.path.join('pics', "wardrobe.png")))
+
+warddrobe2 = sscale(pygame.image.load(os.path.join('pics', "wardrobe v2.png")))
+

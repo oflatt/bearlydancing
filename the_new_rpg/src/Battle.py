@@ -3,10 +3,9 @@
 import variables, pygame, graphics
 
 class Battle():
-    def __init__(self, enemy, player):
+    def __init__(self, enemy):
         self.enemy = enemy
         self.state = "choose"
-        self.player = player
 
     def draw(self):
         h = variables.height

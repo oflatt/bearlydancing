@@ -39,7 +39,7 @@ class Player():
         variables.screen.blit(self.current_frame, [drawx, drawy])
 
     def keypress(self, k):
-        s = variables.playerspeed
+        s = variables.playerspeed * variables.scaleoffset
         if k == pygame.K_LEFT or k == pygame.K_a:
             self.leftpresstime = pygame.time.get_ticks()
             self.xspeed = -s
