@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #Oliver Flatt works on Classes
-import variables, pygame
+import variables, pygame, classvar
+from Exit import Exit
 
 def draw_map(b, t):
     i = b
@@ -11,7 +12,7 @@ def draw_map(b, t):
 
 class Map():
     startpoint = [10, 10] #xy coordinates of spawn point
-    exitarea = [80, 80, 100, 100] #two sets of coordinates, specifying an area for the exit. x, y, x, y
+    exitareas = []#list of exit
     enemies = []
 
     def __init__(self, base, terrain):
@@ -43,3 +44,15 @@ class Map():
     def scale_by_offset(self):
         self.finalimage = pygame.transform.scale(self.finalimage, [int(self.finalimage.get_width()*variables.scaleoffset),
                                                  int(self.finalimage.get_height()*variables.scaleoffset)])
+
+    def checkexit(self):
+        currentexit = False
+        for x in range(0, len(self.exitareas)):
+            e = self.exitareas[x]
+            p = classvar.player
+            s = variables.scaleoffset
+            if (p.xpos+p.normal_width) >= e.area[0]*s and p.xpos<=(e.area[2]*s) \
+                and (p.ypos + p.normal_height)>=e.area[1]*s and p.ypos<=(e.area[3]*s):
+                currentexit = e
+                x = len(self.exitareas)
+        return currentexit
