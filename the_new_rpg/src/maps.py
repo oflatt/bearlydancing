@@ -23,14 +23,15 @@ house1.endpoint = [block*2,block*4,block*2.5,block*5.5]
 
 houserock = Rock(graphics.house, 0, 0, True)
 houserock.h = houserock.h * 3/5
+
 outside1 = Map(graphics.scrub1, [houserock,
-                                       Rock(graphics.welcomeMat, 0.4*block,3*block, False),
-                                       Rock(graphics.tree1, 5*block, 3*block, True),
-                                       Rock(graphics.tree1, 2.1*block, 3*block, True),
-                                       Rock(graphics.tree3, 2.2*block, 3*block, True),
-                                       Rock(graphics.tree3, 2.5*block, 3.2*block, True)])
+                                Rock(graphics.welcomeMat, 0.4*block,3*block, False),
+                                Rock(graphics.tree1, 5*block, 3*block, True),
+                                Rock(graphics.tree1, 2.1*block, 3*block, True),
+                                Rock(graphics.tree3, 2.2*block, 3*block, True),
+                                Rock(graphics.tree3, 2.5*block, 3.2*block, True)])
 
 outside1.startpoint = [block *0.85, block*2.9]
 outside1.endpoint = [block*50,block*50,block*55,block*55]
 
-current_map = outside1
+current_map = testmap1
