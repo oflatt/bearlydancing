@@ -157,22 +157,22 @@ front_honey1 = sscale(pygame.image.load(os.path.join('pics','HoneyFrontSILR_1.pn
 front_honey2 = sscale(pygame.image.load(os.path.join('pics','HoneyFrontSILR_2.png')))
 
 front_honey3 = sscale(pygame.image.load(os.path.join('pics','HoneyFrontSILR_3.png')))
-
-left_honey0 = sscale(pygame.image.load(os.path.join('pics','honeyLeftSILR_0.png')))
-
+#this is left
+front_honey = sscale(pygame.image.load(os.path.join('pics','honeyLeftSILR_0.png')))
+#this is left
 left_honey1 = sscale(pygame.image.load(os.path.join('pics','honeyLeftSILR_1.png')))
 
 left_honey2 = sscale(pygame.image.load(os.path.join('pics','honeyLeftSILR_2.png')))
 
 left_honey3 = sscale(pygame.image.load(os.path.join('pics','honeyLeftSILR_3.png')))
 
-honeyRight0 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_0.png')))
+honey_right0 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_0.png')))
 
-honeyRight1 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_1.png')))
+honey_right1 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_1.png')))
 
-honeyRight2 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_2.png')))
+honey_right2 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_2.png')))
 
-honeyRight3 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_3.png')))
+honey_right3 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_3.png')))
 #Honey
 #Horizontal Map
 scrub1 = sscale(pygame.image.load(os.path.join('pics','horizontal.png')))
