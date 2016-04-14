@@ -3,7 +3,7 @@ import pygame, variables, maps
 
 from Player import Player
 from Battle import Battle
-import conversations, enemies
+import conversations, enemies, classvar
 
 pygame.display.set_caption("theNewRpg")
 
@@ -15,8 +15,7 @@ clock = pygame.time.Clock()
 
 # Hide the mouse cursor
 #pygame.mouse.set_visible(0)
-player = Player(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
-battle = Battle(enemies.sheep, player)
+battle = Battle(enemies.sheep)
 
 def new_scale_offset():
     mapw = maps.current_map.finalimage.get_width()
@@ -25,9 +24,12 @@ def new_scale_offset():
         smaller = mapw
     else:
         smaller = maph
-    variables.scaleoffset = variables.width/smaller
+    if mapw<variables.width or maph<variables.height:
+        variables.scaleoffset = variables.width/smaller
+    else:
+        variables.scaleoffset = 1
     maps.current_map.scale_by_offset()
-    player.scale_by_offset()
+    classvar.player.scale_by_offset()
 
 new_scale_offset()
 
@@ -46,25 +48,26 @@ while not done:
                 done = True
             if variables.state == "conversation":
                 conversations.currentconversation.keypress(event.key)
-            else:
-                player.keypress(event.key)
+            elif variables.state == "world":
+                classvar.player.keypress(event.key)
+
 
         # User let up on a key
         elif event.type == pygame.KEYUP:
             # If it is an arrow key, reset vector back to zero
-            player.keyrelease(event.key)
+            classvar.player.keyrelease(event.key)
 
     # --- Game Logic
-    player.move()
+    classvar.player.move()
 
     # --- Drawing Code
     variables.screen.fill(variables.WHITE)
-    maps.current_map.draw(player.xpos, player.ypos)
+    maps.current_map.draw(classvar.player.xpos, classvar.player.ypos)
     if variables.state == "conversation":
         conversations.currentconversation.draw()
-        player.draw()
+        classvar.player.draw()
     elif variables.state == "world":
-        player.draw()
+        classvar.player.draw()
     else:
         battle.draw()
 
