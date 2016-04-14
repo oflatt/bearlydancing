@@ -32,7 +32,8 @@ outside1 = Map(graphics.scrub1, [houserock,
                                 Rock(graphics.tree3, 2.5*block, 3.2*block, True)])
 
 outside1.startpoint = [block *0.85, block*2.9]
-outside1.exitareas = [Exit([block*8, block*8, block*9, block*9], True, 'house1')]
+outside1.exitareas = [Exit([block*8, block*8, block*9, block*9], True, 'outside1'),
+                      Exit([block*0.85, block*0.29, block, block*0.29], True, 'house1')]
 
 current_map = outside1
 
@@ -52,9 +53,11 @@ def new_scale_offset():
     classvar.player.scale_by_offset()
 
 def change_map(name):
+    global current_map
     if name == "house1":
-        global current_map
         current_map = house1
+    if name == 'outside1':
+        current_map = outside1
     new_scale_offset()
 
 def on_key(key):
