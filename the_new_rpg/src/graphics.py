@@ -194,7 +194,7 @@ purplePerp3 = sscale(pygame.image.load(os.path.join('pics','PurpleperpSILR_3.png
 
 queenBird0 = sscale(pygame.image.load(os.path.join('pics','QueenBirdSILR_0.png')))
 
-quiche0 = sscale(pygame.image.load(os.path.join('pics','QuicheSILR_0')))
+quiche0 = sscale(pygame.image.load(os.path.join('pics','QuicheSILR_0.png')))
 
 tpanda_worried = pygame.image.load(os.path.join('pics', "racoon sad.png"))
 
@@ -216,6 +216,10 @@ ruderoo2 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_02.png')))
 ruderoo3 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_03.png')))
 
 ruderoo4 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_04.png')))
+
+ruderoo5 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_05.png')))
+
+ruderoo6 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_06.png')))
 
 mostImportantMob0 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_0.png')))
 
