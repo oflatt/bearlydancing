@@ -4,4 +4,4 @@ class Exit():
     def __init__(self, area, isbutton, name):
         self.area = area
         self.isbutton = isbutton
-        self.name = name
+        self.name = name #name of map it exits to

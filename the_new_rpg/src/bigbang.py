@@ -17,21 +17,7 @@ clock = pygame.time.Clock()
 #pygame.mouse.set_visible(0)
 battle = Battle(enemies.sheep)
 
-def new_scale_offset():
-    mapw = maps.current_map.finalimage.get_width()
-    maph = maps.current_map.finalimage.get_height()
-    if mapw<maph:
-        smaller = mapw
-    else:
-        smaller = maph
-    if mapw<variables.width or maph<variables.height:
-        variables.scaleoffset = variables.width/smaller
-    else:
-        variables.scaleoffset = 1
-    maps.current_map.scale_by_offset()
-    classvar.player.scale_by_offset()
-
-new_scale_offset()
+maps.new_scale_offset()
 
 # -------- Main Program Loop -----------
 while not done:
@@ -50,6 +36,7 @@ while not done:
                 conversations.currentconversation.keypress(event.key)
             elif variables.state == "world":
                 classvar.player.keypress(event.key)
+                maps.on_key(event.key)
 
 
         # User let up on a key
@@ -59,6 +46,7 @@ while not done:
 
     # --- Game Logic
     classvar.player.move()
+    maps.checkexit()
 
     # --- Drawing Code
     variables.screen.fill(variables.WHITE)
