@@ -40,6 +40,9 @@ class Map():
             drawy = y - variables.hh
 
         variables.screen.blit(self.finalimage, [-drawx, -drawy])
+        e = self.checkexit()
+        if not e == False:
+            pygame.draw.ellipse(variables.screen, variables.WHITE, [e.area[0], e.area[1], 20, 20])
 
     def scale_by_offset(self):
         self.finalimage = pygame.transform.scale(self.finalimage, [int(self.finalimage.get_width()*variables.scaleoffset),
