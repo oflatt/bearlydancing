@@ -19,7 +19,6 @@ house1 = Map(graphics.houseInside, [Rock(graphics.welcomeMat, 2.25*block, 5.3*bl
 
 houserock = Rock(graphics.house, 0, 0, True)
 houserock.h = houserock.h * 3/5
-
 outsideiguess1 = Map(graphics.scrub1, [houserock,
                                        Rock(graphics.welcomeMat, 0.4*block,3*block, False),
                                        Rock(graphics.tree1, 5*block, 3*block, True),
@@ -30,4 +29,4 @@ outsideiguess1 = Map(graphics.scrub1, [houserock,
 outsideiguess1.startpoint = [block *0.85, block*2.9]
 outsideiguess1.endpoint = [block*50,block*50,block*55,block*55]
 
-current_map = testmap1
+current_map = outsideiguess1

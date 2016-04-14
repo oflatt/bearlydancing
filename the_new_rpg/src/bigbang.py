@@ -3,7 +3,7 @@ import pygame, variables, maps
 
 from Player import Player
 from Battle import Battle
-import conversations, enemies, classvar
+import conversations, enemies
 
 pygame.display.set_caption("theNewRpg")
 
@@ -15,7 +15,8 @@ clock = pygame.time.Clock()
 
 # Hide the mouse cursor
 #pygame.mouse.set_visible(0)
-battle = Battle(enemies.sheep)
+player = Player(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
+battle = Battle(enemies.sheep, player)
 
 def new_scale_offset():
     mapw = maps.current_map.finalimage.get_width()
@@ -24,12 +25,9 @@ def new_scale_offset():
         smaller = mapw
     else:
         smaller = maph
-    if mapw<variables.width or maph<variables.height:
-        variables.scaleoffset = variables.width/smaller
-    else:
-        variables.scaleoffset = 1
+    variables.scaleoffset = variables.width/smaller
     maps.current_map.scale_by_offset()
-    classvar.player.scale_by_offset()
+    player.scale_by_offset()
 
 new_scale_offset()
 
@@ -48,26 +46,25 @@ while not done:
                 done = True
             if variables.state == "conversation":
                 conversations.currentconversation.keypress(event.key)
-            elif variables.state == "world":
-                classvar.player.keypress(event.key)
-
+            else:
+                player.keypress(event.key)
 
         # User let up on a key
         elif event.type == pygame.KEYUP:
             # If it is an arrow key, reset vector back to zero
-            classvar.player.keyrelease(event.key)
+            player.keyrelease(event.key)
 
     # --- Game Logic
-    classvar.player.move()
+    player.move()
 
     # --- Drawing Code
     variables.screen.fill(variables.WHITE)
-    maps.current_map.draw(classvar.player.xpos, classvar.player.ypos)
+    maps.current_map.draw(player.xpos, player.ypos)
     if variables.state == "conversation":
         conversations.currentconversation.draw()
-        classvar.player.draw()
+        player.draw()
     elif variables.state == "world":
-        classvar.player.draw()
+        player.draw()
     else:
         battle.draw()
 
