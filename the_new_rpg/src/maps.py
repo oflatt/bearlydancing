@@ -28,4 +28,4 @@ outsideiguess1 = Map(graphics.scrub1, [Rock(graphics.house, 0*block, 0*block, Tr
 outsideiguess1.startpoint = [block *0.85, block*2.9]
 outsideiguess1.endpoint = [block*50,block*50,block*55,block*55]
 
-current_map = outsideiguess1
+current_map = house1
