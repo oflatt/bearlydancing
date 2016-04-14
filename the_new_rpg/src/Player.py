@@ -12,6 +12,10 @@ class Player():
     normal_width = current_frame.get_width()
     normal_height = current_frame.get_height()
 
+    lv = 1
+    health = 20
+    exp = 0
+
     def __init__(self, xpos, ypos):
         self.xpos = xpos
         self.ypos = ypos
@@ -84,11 +88,12 @@ class Player():
         m = maps.current_map
         t = m.terrain
         numofrocks = len(t)
+        s = variables.scaleoffset #used because actual rocks are not really scaled
 
         #checks if the player's right side collides with a rock
         def collisioncheck(arock, x, y):
-            return arock.iscollideable and (x+self.normal_width)>=arock.x and x<=(arock.x + arock.w) \
-                   and (y+self.normal_height)>=arock.y and y<=(arock.y + arock.h)
+            return arock.iscollideable and (x+self.normal_width)>=arock.x*s and x<=(arock.x*s + arock.w*s) \
+                   and (y+self.normal_height)>=arock.y*s and y<=(arock.y*s + arock.h*s)
 
         if not self.xspeed == 0:
             #collision detection for the moved x pos with the unmoved y pos
@@ -115,5 +120,5 @@ class Player():
     def scale_by_offset(self):
         self.current_frame = pygame.transform.scale(self.current_frame, [int(self.current_frame.get_width()*variables.scaleoffset),
                                                  int(self.current_frame.get_height()*variables.scaleoffset)])
-        normal_width = self.current_frame.get_width()
-        normal_height = self.current_frame.get_height()
+        self.normal_width = self.current_frame.get_width()
+        self.normal_height = self.current_frame.get_height()

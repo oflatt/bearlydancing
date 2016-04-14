@@ -17,8 +17,9 @@ house1 = Map(graphics.houseInside, [Rock(graphics.welcomeMat, 2.25*block, 5.3*bl
                                    Rock(graphics.warddrobe2, 2*block, 0*block, False),
                                    Rock(graphics.tpanda, 4*block, 5*block, True)])
 
-
-outsideiguess1 = Map(graphics.scrub1, [Rock(graphics.house, 0*block, 0*block, True),
+houserock = Rock(graphics.house, 0, 0, True)
+houserock.h = houserock.h * 3/5
+outsideiguess1 = Map(graphics.scrub1, [houserock,
                                        Rock(graphics.welcomeMat, 0.4*block,3*block, False),
                                        Rock(graphics.tree1, 5*block, 3*block, True),
                                        Rock(graphics.tree1, 2.1*block, 3*block, True),
