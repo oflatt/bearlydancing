@@ -248,9 +248,6 @@ tpanda = pygame.image.load(os.path.join('pics', "racoon.png"))
 #Right Turn Map
 rightTurn = pygame.image.load(os.path.join('pics','rightTurn.png'))
 #Right Turn Map
-#Something that should be deleted
-river = pygame.image.load(os.path.join('pics','river.png'))
-#Something that should be deleted
 #Rock
 rock = pygame.image.load(os.path.join('pics', "Rock JV.png"))
 rock = sscale(rock)
@@ -272,11 +269,11 @@ ruderoo6 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_06.png')))
 
 ruderoo7 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_07.png')))
 
-ruderoo8 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR08.png')))
+ruderoo8 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_08.png')))
 
-ruderoo9 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR09.png')))
+ruderoo9 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_09.png')))
 
-ruderoo10 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR10.png')))
+ruderoo10 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_10.png')))
 #Ruderoo
 #Most important Mob in the game
 mostImportantMob0 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_0.png')))
