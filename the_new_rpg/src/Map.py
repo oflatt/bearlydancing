@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #Oliver Flatt works on Classes
-import variables, pygame, classvar, classvar
+import variables, pygame, classvar
 from Exit import Exit
 
 def draw_map(b, t):
@@ -44,12 +44,10 @@ class Map():
         #draw button above exits
         e = self.checkexit()
         pw = classvar.player.normal_width/2
-        s = variables.scaleoffset
         if not e == False:
             pygame.draw.ellipse(variables.screen,
                                 variables.WHITE,
-                                [e.area[0]*s + ((e.area[2]-e.area[0])/2 - pw/2),
-                                              e.area[1]*s-((e.area[3]-e.area[1])/2 - pw/2), pw, pw])
+                                [e.area[0] + e.area[2]/2 - pw/2, e.area[1] - pw/2, pw, pw])
 
     def scale_by_offset(self):
         self.finalimage = pygame.transform.scale(self.finalimage, [int(self.finalimage.get_width()*variables.scaleoffset),
@@ -61,8 +59,8 @@ class Map():
             e = self.exitareas[x]
             p = classvar.player
             s = variables.scaleoffset
-            if (p.xpos+p.normal_width) >= e.area[0]*s and p.xpos<=(e.area[2]*s) \
-                and (p.ypos + p.normal_height)>=e.area[1]*s and p.ypos<=(e.area[3]*s):
+            if (p.xpos+p.normal_width) >= e.area[0] and p.xpos<=(e.area[0] + e.area[2]) \
+                and (p.ypos + p.normal_height)>=e.area[1] and p.ypos<=(e.area[1] + e.area[3]):
                 currentexit = e
                 x = len(self.exitareas)
         return currentexit

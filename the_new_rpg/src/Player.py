@@ -11,12 +11,16 @@ class Player():
     current_frame = graphics.honey_right1
     normal_width = current_frame.get_width()
     normal_height = current_frame.get_height()
-    xpos = 400
-    ypos = 400
+    xpos = 0
+    ypos = 0
 
     lv = 1
     health = 20
     exp = 0
+
+    def teleport(self, x, y):
+        self.xpos = x
+        self.ypos = y
 
     def draw(self): #movement is combination of top down scrolling and free range
         m = maps.current_map

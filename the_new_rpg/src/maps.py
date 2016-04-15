@@ -32,10 +32,10 @@ outside1 = Map(graphics.scrub1, [houserock,
                                 Rock(graphics.tree3, 2.5*block, 3.2*block, True)])
 
 outside1.startpoint = [block *0.85, block*2.9]
-outside1.exitareas = [Exit([block*8, block*8, block*9, block*8.29], True, 'outside1'),
-                      Exit([block*4, block*4, block*5, block*4.29], True, 'house1')]
+outside1.exitareas = [Exit([300, 500, 100, 100], True, 'outside1', block *0.85, block*2.9)]
 
 current_map = outside1
+classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
 
 def new_scale_offset():
     global current_map
@@ -64,10 +64,12 @@ def on_key(key):
     if key == pygame.K_SPACE:
         e = current_map.checkexit()
         if not e == False:
+            classvar.player.teleport(e.newx, e.newy)
             change_map(e.name)
 
 def checkexit():
     e = current_map.checkexit()
     if not e == False:
         if e.isbutton == False:
+            classvar.player.teleport(e.newx, e.newy)
             change_map(e.name)
