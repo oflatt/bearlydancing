@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #Oliver Flatt works on Classes
-import variables, pygame, classvar
+import variables, pygame, classvar, classvar
 from Exit import Exit
 
 def draw_map(b, t):
@@ -40,9 +40,16 @@ class Map():
             drawy = y - variables.hh
 
         variables.screen.blit(self.finalimage, [-drawx, -drawy])
+
+        #draw button above exits
         e = self.checkexit()
+        pw = classvar.player.normal_width/2
+        s = variables.scaleoffset
         if not e == False:
-            pygame.draw.ellipse(variables.screen, variables.WHITE, [e.area[0], e.area[1], 20, 20])
+            pygame.draw.ellipse(variables.screen,
+                                variables.WHITE,
+                                [e.area[0]*s + ((e.area[2]-e.area[0])/2 - pw/2),
+                                              e.area[1]*s-((e.area[3]-e.area[1])/2 - pw/2), pw, pw])
 
     def scale_by_offset(self):
         self.finalimage = pygame.transform.scale(self.finalimage, [int(self.finalimage.get_width()*variables.scaleoffset),

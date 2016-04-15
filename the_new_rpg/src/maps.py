@@ -32,8 +32,8 @@ outside1 = Map(graphics.scrub1, [houserock,
                                 Rock(graphics.tree3, 2.5*block, 3.2*block, True)])
 
 outside1.startpoint = [block *0.85, block*2.9]
-outside1.exitareas = [Exit([block*8, block*8, block*9, block*9], True, 'outside1'),
-                      Exit([block*0.85, block*0.29, block, block*0.29], True, 'house1')]
+outside1.exitareas = [Exit([block*8, block*8, block*9, block*8.29], True, 'outside1'),
+                      Exit([block*4, block*4, block*5, block*4.29], True, 'house1')]
 
 current_map = outside1
 
