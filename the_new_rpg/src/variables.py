@@ -15,7 +15,7 @@ font = pygame.font.Font(None, 30)
 playerspeed = height/800 * 3
 
 #state can be world, battle, or conversation
-state = "world"
+state = "battle"
 
 # Define some colors
 BLACK = (0, 0, 0)

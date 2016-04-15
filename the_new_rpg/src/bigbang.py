@@ -37,6 +37,8 @@ while not done:
             elif variables.state == "world":
                 classvar.player.keypress(event.key)
                 maps.on_key(event.key)
+            elif variables.state == "battle":
+                battle.onkey(event.key)
 
 
         # User let up on a key
