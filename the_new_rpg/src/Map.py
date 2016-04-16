@@ -58,7 +58,6 @@ class Map():
         for x in range(0, len(self.exitareas)):
             e = self.exitareas[x]
             p = classvar.player
-            s = variables.scaleoffset
             if (p.xpos+p.normal_width) >= e.area[0] and p.xpos<=(e.area[0] + e.area[2]) \
                 and (p.ypos + p.normal_height)>=e.area[1] and p.ypos<=(e.area[1] + e.area[3]):
                 currentexit = e

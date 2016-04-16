@@ -32,7 +32,7 @@ outside1 = Map(graphics.scrub1, [houserock,
                                 Rock(graphics.tree3, 2.5*block, 3.2*block, True)])
 
 outside1.startpoint = [block *0.85, block*2.9]
-outside1.exitareas = [Exit([300, 500, 100, 100], True, 'outside1', block *0.85, block*2.9)]
+outside1.exitareas = [Exit([block*6, block*6, block, classvar.player.normal_height], True, 'outside1', block *0.85, block*2.9)]
 
 current_map = outside1
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])

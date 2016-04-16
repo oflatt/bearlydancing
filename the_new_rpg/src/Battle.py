@@ -82,6 +82,7 @@ class Battle():
                                                             epicw*percenthealthleft,
                                                             enemyhealthh])
 
+    #for things like the attack animation
     def ontick(self):
         if self.state == "attacking":
             if self.isplayernext == True:
