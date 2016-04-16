@@ -1,4 +1,4 @@
-import pygame
+import pygame, ctypes
 
 # Setup
 pygame.init()
@@ -8,6 +8,7 @@ current_time = 0
 
 # Set the width and height of the screen [width,height]
 modes = pygame.display.list_modes()
+ctypes.windll.user32.SetProcessDPIAware()
 mode = modes[0]
 height = mode[1]#displayinfo.current_h - 200
 width = height #for not it is a square window
