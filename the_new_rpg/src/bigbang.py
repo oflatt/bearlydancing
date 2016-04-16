@@ -47,8 +47,11 @@ while not done:
             classvar.player.keyrelease(event.key)
 
     # --- Game Logic
-    classvar.player.move()
-    maps.checkexit()
+    if variables.state == "world":
+        classvar.player.move()
+        maps.checkexit()
+    elif variables.state == "battle":
+        battle.ontick()
 
     # --- Drawing Code
     variables.screen.fill(variables.WHITE)
@@ -58,7 +61,7 @@ while not done:
         classvar.player.draw()
     elif variables.state == "world":
         classvar.player.draw()
-    else:
+    elif variables.state == "battle":
         battle.draw()
 
 

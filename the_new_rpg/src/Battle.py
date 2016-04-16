@@ -17,7 +17,6 @@ class Battle():
         self.option = 1
         self.enemy.pic = pygame.transform.scale(self.enemy.pic, [int(variables.width/5), int(variables.height/5)])
 
-    #draw has a lot of the battle's logic, being the function called every loop
     def draw(self):
         h = variables.height
         w = variables.width
@@ -47,41 +46,6 @@ class Battle():
             dancepic = variables.font.render("DANCE!", 0, variables.BLACK)
             dance = pygame.transform.scale(dancepic, [int(w/2 - (w/5)), int(h*3/16 - h/10)])
             variables.screen.blit(dance, [w/2-(w/2 - (w/5))/2, b])
-        elif self.state == "attacking":
-            if self.isplayernext == True:
-                damage = self.oldplayerhealth - self.newplayerhealth
-                differenceintime = pygame.time.get_ticks()-self.animationtime
-                hs = variables.healthanimationspeed
-                damagefactor = (hs-differenceintime)/hs
-                #set player's health to somewhere between the old and new depending on time (damagefactor)
-                classvar.player.health = self.newplayerhealth + damage*damagefactor
-                #if the player's health is now at the end of the animation
-                if classvar.player.health <= self.newplayerhealth:
-                    classvar.player.health = self.newplayerhealth
-                    if self.newplayerhealth <= 0:
-                        self.state = "lose"
-                    if self.newenemyhealth == self.enemy.health: #if done with the animation
-                        self.state = "dance" #exit
-                    else:
-                        self.isplayernext = False
-                        self.animationtime = pygame.time.get_ticks()
-            elif self.isplayernext == False:
-                damage = self.oldenemyhealth - self.newenemyhealth
-                differenceintime = pygame.time.get_ticks()-self.animationtime
-                hs = variables.healthanimationspeed
-                damagefactor = (hs-differenceintime)/hs
-                #set enemy's health to somewhere between the old and new depending on time (damagefactor)
-                self.enemy.health = self.newenemyhealth + damage*damagefactor
-                #if the enemy's health is now at the end of the animation
-                if self.enemy.health <= self.newenemyhealth:
-                    self.enemy.health = self.newenemyhealth
-                    if self.newenemyhealth <= 0:
-                        self.state = "lose"
-                    if classvar.player.health == self.newplayerhealth: #if done with the animation
-                        self.state = "dance" #exit
-                    else:
-                        self.isplayernext = True
-                        self.animationtime = pygame.time.get_ticks()
 
 
         epic = self.enemy.pic
@@ -117,6 +81,43 @@ class Battle():
                                                             epich,
                                                             epicw*percenthealthleft,
                                                             enemyhealthh])
+
+    def ontick(self):
+        if self.state == "attacking":
+            if self.isplayernext == True:
+                damage = self.oldplayerhealth - self.newplayerhealth
+                differenceintime = pygame.time.get_ticks()-self.animationtime
+                hs = variables.healthanimationspeed
+                damagefactor = (hs-differenceintime)/hs
+                #set player's health to somewhere between the old and new depending on time (damagefactor)
+                classvar.player.health = self.newplayerhealth + damage*damagefactor
+                #if the player's health is now at the end of the animation
+                if classvar.player.health <= self.newplayerhealth:
+                    classvar.player.health = self.newplayerhealth
+                    if self.newplayerhealth <= 0:
+                        self.state = "lose"
+                    if self.newenemyhealth == self.enemy.health: #if done with the animation
+                        self.state = "dance" #exit
+                    else:
+                        self.isplayernext = False
+                        self.animationtime = pygame.time.get_ticks()
+            elif self.isplayernext == False:
+                damage = self.oldenemyhealth - self.newenemyhealth
+                differenceintime = pygame.time.get_ticks()-self.animationtime
+                hs = variables.healthanimationspeed
+                damagefactor = (hs-differenceintime)/hs
+                #set enemy's health to somewhere between the old and new depending on time (damagefactor)
+                self.enemy.health = self.newenemyhealth + damage*damagefactor
+                #if the enemy's health is now at the end of the animation
+                if self.enemy.health <= self.newenemyhealth:
+                    self.enemy.health = self.newenemyhealth
+                    if self.newenemyhealth <= 0:
+                        self.state = "lose"
+                    if classvar.player.health == self.newplayerhealth: #if done with the animation
+                        self.state = "dance" #exit
+                    else:
+                        self.isplayernext = True
+                        self.animationtime = pygame.time.get_ticks()
 
 
     def onkey(self, key):
