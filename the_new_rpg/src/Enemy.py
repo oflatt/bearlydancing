@@ -3,6 +3,7 @@
 
 class Enemy():
     lv = 1
+    health = 20
 
     def __init__(self, pic, rarity):
         self.pic = pic

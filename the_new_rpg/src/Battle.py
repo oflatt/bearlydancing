@@ -1,13 +1,23 @@
 #!/usr/bin/python
 #Oliver works on classes
-import variables, pygame, stathandeling, classvar
+import variables, pygame, stathandeling, classvar, random
 
 class Battle():
+    #for attacking animation
+    isplayernext = False #if the player is currently being damaged
+    oldenemyhealth = 20
+    oldplayerhealth = 20
+    newplayerhealth = 10
+    newenemyhealth = 10
+    animationtime = 0
+
     def __init__(self, enemy):
         self.enemy = enemy
         self.state = "choose"
         self.option = 1
+        self.enemy.pic = pygame.transform.scale(self.enemy.pic, [int(variables.width/5), int(variables.height/5)])
 
+    #draw has a lot of the battle's logic, being the function called every loop
     def draw(self):
         h = variables.height
         w = variables.width
@@ -31,12 +41,56 @@ class Battle():
             flee = pygame.transform.scale(fleepic, [int(w/2 - (w/5)), int(h*3/16 - h/10)])
             variables.screen.blit(dance, [w/10, b])
             variables.screen.blit(flee, [w/2+w/10, b])
+        elif self.state == "dance":
+            dancerectcolor = variables.GREEN
+            pygame.draw.rect(variables.screen, dancerectcolor, [w/2-(w/2 - (w/5))/2, b, w/2 - (w/5), h*3/16 - h/10])
+            dancepic = variables.font.render("DANCE!", 0, variables.BLACK)
+            dance = pygame.transform.scale(dancepic, [int(w/2 - (w/5)), int(h*3/16 - h/10)])
+            variables.screen.blit(dance, [w/2-(w/2 - (w/5))/2, b])
+        elif self.state == "attacking":
+            if self.isplayernext == True:
+                damage = self.oldplayerhealth - self.newplayerhealth
+                differenceintime = pygame.time.get_ticks()-self.animationtime
+                hs = variables.healthanimationspeed
+                damagefactor = (hs-differenceintime)/hs
+                #set player's health to somewhere between the old and new depending on time (damagefactor)
+                classvar.player.health = self.newplayerhealth + damage*damagefactor
+                #if the player's health is now at the end of the animation
+                if classvar.player.health <= self.newplayerhealth:
+                    classvar.player.health = self.newplayerhealth
+                    if self.newplayerhealth <= 0:
+                        self.state = "lose"
+                    if self.newenemyhealth == self.enemy.health: #if done with the animation
+                        self.state = "dance" #exit
+                    else:
+                        self.isplayernext = False
+                        self.animationtime = pygame.time.get_ticks()
+            elif self.isplayernext == False:
+                damage = self.oldenemyhealth - self.newenemyhealth
+                differenceintime = pygame.time.get_ticks()-self.animationtime
+                hs = variables.healthanimationspeed
+                damagefactor = (hs-differenceintime)/hs
+                #set enemy's health to somewhere between the old and new depending on time (damagefactor)
+                self.enemy.health = self.newenemyhealth + damage*damagefactor
+                #if the enemy's health is now at the end of the animation
+                if self.enemy.health <= self.newenemyhealth:
+                    self.enemy.health = self.newenemyhealth
+                    if self.newenemyhealth <= 0:
+                        self.state = "lose"
+                    if classvar.player.health == self.newplayerhealth: #if done with the animation
+                        self.state = "dance" #exit
+                    else:
+                        self.isplayernext = True
+                        self.animationtime = pygame.time.get_ticks()
+
 
         epic = self.enemy.pic
         variables.screen.blit(epic, [w-epic.get_width(), 0])
 
+        #confidece bar
         healthh = h*(1/18)
-        percenthealthleft = p.health/stathandeling.max_health(p.lv)
+        playermaxh = stathandeling.max_health(p.lv)
+        percenthealthleft = p.health/playermaxh
         if percenthealthleft<=0.2:
             healthbarcolor = variables.RED
         else:
@@ -45,11 +99,29 @@ class Battle():
                                                             h-healthh,
                                                             w*percenthealthleft,
                                                             healthh])
+        barlabelunscaled = variables.font.render("Confidence "+str(p.health)+" / "+str(playermaxh), 0, variables.WHITE)
+        barlabel = pygame.transform.scale(barlabelunscaled, [int(healthh*5), int(healthh*2/3)])
+        variables.screen.blit(barlabel, [0,h-2-healthh-healthh/2])
+
+        #enemy bar
+        enemyhealthh = h*(1/50)
+        e = self.enemy
+        epicw = epic.get_width()
+        epich = epic.get_height()
+        percenthealthleft = e.health/stathandeling.max_health(e.lv)
+        if percenthealthleft<=0.2:
+            healthbarcolor = variables.RED
+        else:
+            healthbarcolor = variables.GREEN
+        pygame.draw.rect(variables.screen, healthbarcolor, [w-epicw,
+                                                            epich,
+                                                            epicw*percenthealthleft,
+                                                            enemyhealthh])
 
 
     def onkey(self, key):
         if self.state == "choose":
-            if key == pygame.K_SPACE:
+            if key in variables.enterkeys:
                 if self.option == 1:
                     self.state = "dance"
                 else:
@@ -59,3 +131,29 @@ class Battle():
                     self.option = 2
                 else:
                     self.option = 1
+        elif self.state == "dance" and key in variables.enterkeys:
+            self.trade()
+
+    def trade(self):
+        playerlv = classvar.player.lv
+        enemylv = self.enemy.lv
+        self.state = "attacking"
+        self.oldenemyhealth = self.enemy.health
+        self.oldplayerhealth = classvar.player.health
+        self.animationtime = pygame.time.get_ticks()
+        def damageplayer():
+            self.newplayerhealth = classvar.player.health - stathandeling.damage(enemylv)
+            if self.newplayerhealth <= 0:
+                self.newplayerhealth = 0
+        def damageenemy():
+            self.newenemyhealth = self.enemy.health - stathandeling.damage(playerlv)
+            if self.newenemyhealth <= 0:
+                self.newenemyhealth = 0
+        if playerlv > enemylv or (playerlv == enemylv and random.choice([True, False])):
+            self.isplayernext = False
+            damageenemy()
+            damageplayer()
+        else:
+            self.isplayernext = True
+            damageplayer()
+            damageenemy()

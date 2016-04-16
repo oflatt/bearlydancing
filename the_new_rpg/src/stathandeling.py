@@ -5,4 +5,8 @@ def max_health(lv):
 
 #calculated the exp needed to get to the next level
 def exp_needed(lv):
-    (lv+1)^3 - lv^3
+    return (lv+1)^3 - lv^3
+
+#amount of damage done to enemy
+def damage(lv):
+    return 5 + lv*3
