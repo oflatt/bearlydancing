@@ -13,6 +13,8 @@ class Player():
     normal_height = current_frame.get_height()
     xpos = 0
     ypos = 0
+    lastxupdate = 0
+    lastyupdate = 0
 
     lv = 1
     health = 25
@@ -41,50 +43,69 @@ class Player():
         variables.screen.blit(self.current_frame, [drawx, drawy])
 
     def keypress(self, k):
+        self.move()
+        t = variables.current_time
         s = variables.playerspeed * variables.scaleoffset
         if k == pygame.K_LEFT or k == pygame.K_a:
-            self.leftpresstime = pygame.time.get_ticks()
+            self.leftpresstime = variables.current_time
             self.xspeed = -s
+            self.lastxupdate = t
         elif k == pygame.K_RIGHT or k == pygame.K_d:
-            self.rightpresstime = pygame.time.get_ticks()
+            self.rightpresstime = variables.current_time
+            self.lastxupdate = t
             self.xspeed = s
         elif k == pygame.K_UP or k == pygame.K_w:
-            self.uppresstime = pygame.time.get_ticks()
+            self.uppresstime = variables.current_time
             self.yspeed = -s
+            self.lastyupdate = t
         elif k == pygame.K_DOWN or k == pygame.K_s:
-            self.downpresstime = pygame.time.get_ticks()
+            self.downpresstime = variables.current_time
             self.yspeed = s
+            self.lastyupdate = t
 
     def keyrelease(self, k):
+        self.move()
+        s = variables.playerspeed * variables.scaleoffset
+        t = variables.current_time
         if k == pygame.K_LEFT or k == pygame.K_a:
             self.leftpresstime = 0
+            self.lastxupdate = t
             if self.rightpresstime == 0:
                 self.xspeed = 0
             else:
-                self.xspeed = 3
+                self.xspeed = s
         elif k == pygame.K_RIGHT or k == pygame.K_d:
             self.rightpresstime = 0
+            self.lastxupdate = t
             if self.leftpresstime == 0:
                 self.xspeed = 0
             else:
-                self.xspeed = -3
+                self.xspeed = -s
         elif k == pygame.K_UP or k == pygame.K_w:
+            self.lastyupdate = t
             self.uppresstime = 0
             if self.downpresstime == 0:
                 self.yspeed = 0
             else:
-                self.yspeed = 3
+                self.yspeed = s
         elif k == pygame.K_DOWN or k == pygame.K_s:
+            self.lastyupdate = t
             self.downpresstime = 0
             if self.uppresstime == 0:
                 self.yspeed = 0
             else:
-                self.yspeed = -3
+                self.yspeed = -s
 
     #moves with collision detections
     def move(self):
-        movedxpos = self.xpos + self.xspeed
-        movedypos = self.ypos + self.yspeed
+        t = variables.current_time
+        #calculate moved positions
+        xtime_factor = t-self.lastxupdate
+        ytime_factor = t-self.lastyupdate
+        movedxpos = self.xpos + self.xspeed*xtime_factor
+        movedypos = self.ypos + self.yspeed*ytime_factor
+
+        #collision detection
         iscollisionx = False
         iscollisiony= False
         m = maps.current_map
@@ -118,6 +139,8 @@ class Player():
 
         if not iscollisiony:
             self.ypos = movedypos
+        self.lastxupdate = variables.current_time
+        self.lastyupdate = variables.current_time
 
     def scale_by_offset(self):
         self.current_frame = pygame.transform.scale(self.current_frame, [int(self.current_frame.get_width()*variables.scaleoffset),

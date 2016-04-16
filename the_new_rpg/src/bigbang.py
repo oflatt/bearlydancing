@@ -74,5 +74,8 @@ while not done:
     # Limit frames per second
     clock.tick(60)
 
+    #add the past tick to the current time
+    variables.current_time += clock.get_time()
+
 # Close the window and quit, this is after the main loop has finished
 pygame.quit()

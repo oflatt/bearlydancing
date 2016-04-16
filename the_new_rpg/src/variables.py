@@ -3,6 +3,9 @@ import pygame
 # Setup
 pygame.init()
 
+#master clock
+current_time = 0
+
 # Set the width and height of the screen [width,height]
 modes = pygame.display.list_modes()
 mode = modes[0]
@@ -14,7 +17,7 @@ wide_screen = pygame.display.set_mode(mode, pygame.FULLSCREEN)
 scaleoffset = 1
 font = pygame.font.Font(None, 30)
 
-playerspeed = height/800 * 3
+playerspeed = height/800 * 0.15 #factor against time
 healthanimationspeed = 2000#time in milliseconds for the health bar animation to go
 
 #encountering enemies
