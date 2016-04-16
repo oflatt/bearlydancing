@@ -14,7 +14,7 @@ class Player():
     xpos = 0
     ypos = 0
 
-    lv = 2
+    lv = 1
     health = 25
     exp = 0
 

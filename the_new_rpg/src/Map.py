@@ -1,7 +1,6 @@
 #!/usr/bin/python
 #Oliver Flatt works on Classes
-import variables, pygame, classvar
-from random import random
+import variables, pygame, classvar, random, stathandeling
 from Battle import Battle
 
 def draw_map(b, t):
@@ -77,9 +76,9 @@ class Map():
 
         #if it is time to check, the player is moving, and we do encounter an enemy
         if (pygame.time.get_ticks() - self.last_encounter_check) >= variables.encounter_check_rate and \
-                        classvar.player.ismoving() and random()<variables.encounter_chance:
+                        classvar.player.ismoving() and random.random()<variables.encounter_chance:
             currentenemy = False
-            random_factor = random()
+            random_factor = random.random()
             for x in range(0, len(self.enemies)):
                 e = self.enemies[x]
                 #if the random factor is below all of the chances previously to now added up
@@ -89,4 +88,6 @@ class Map():
             if currentenemy == False:
                 currentenemy = self.enemies[len(self.enemies)-1]
             variables.state = "battle"
+            currentenemy.lv = random.randint(self.lvrange[0], self.lvrange[1])
+            currentenemy.health = stathandeling.max_health(currentenemy.lv)
             classvar.battle = Battle(currentenemy)

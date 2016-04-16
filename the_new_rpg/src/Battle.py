@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #Oliver works on classes
-import variables, pygame, stathandeling, classvar, random
+import variables, pygame, stathandeling, classvar, random, graphics
 
 class Battle():
     #for attacking animation
@@ -9,6 +9,8 @@ class Battle():
     oldplayerhealth = 20
     newplayerhealth = 10
     newenemyhealth = 10
+
+    #animation time is used for all animations
     animationtime = 0
 
     def __init__(self, enemy):
@@ -32,6 +34,14 @@ class Battle():
             else:
                 dancerectcolor = variables.WHITE
                 fleerectcolor = variables.GREEN
+
+            #enemy name
+            enemyname = variables.font.render("LV "+str(self.enemy.lv) + " " + self.enemy.name + " appears!", 0,
+                                              variables.WHITE)
+            enemynamescaled = graphics.sscale(enemyname)
+            variables.screen.blit(enemynamescaled, [w/2-(enemynamescaled.get_width()/2), h/2])
+
+            #two buttons
             pygame.draw.rect(variables.screen, dancerectcolor, [w/10, b, w/2 - (w/5), h*3/16 - h/10])
             pygame.draw.rect(variables.screen, fleerectcolor, [w/2+w/10, b, w/2 - (w/5), h*3/16 - h/10])
             dancepic = variables.font.render("DANCE!", 0, variables.BLACK)
@@ -40,12 +50,32 @@ class Battle():
             flee = pygame.transform.scale(fleepic, [int(w/2 - (w/5)), int(h*3/16 - h/10)])
             variables.screen.blit(dance, [w/10, b])
             variables.screen.blit(flee, [w/2+w/10, b])
+
         elif self.state == "dance":
             dancerectcolor = variables.GREEN
             pygame.draw.rect(variables.screen, dancerectcolor, [w/2-(w/2 - (w/5))/2, b, w/2 - (w/5), h*3/16 - h/10])
             dancepic = variables.font.render("DANCE!", 0, variables.BLACK)
             dance = pygame.transform.scale(dancepic, [int(w/2 - (w/5)), int(h*3/16 - h/10)])
             variables.screen.blit(dance, [w/2-(w/2 - (w/5))/2, b])
+
+        elif self.state == "lose" or self.state == "win":
+            #button
+            rectcolor = variables.GREEN
+            pygame.draw.rect(variables.screen, rectcolor, [w/2-(w/2 - (w/5))/2, b, w/2 - (w/5), h*3/16 - h/10])
+            if self.state== "lose":
+                continuepic = variables.font.render("go home", 0, variables.BLACK)
+            else:
+                continuepic = variables.font.render("continue", 0, variables.BLACK)
+            text = pygame.transform.scale(continuepic, [int(w/2 - (w/5)), int(h*3/16 - h/10)])
+            variables.screen.blit(text, [w/2-(w/2 - (w/5))/2, b])
+
+            #text
+            if self.state == "lose":
+                text = variables.font.render("your confidence has never been so low...", 0, variables.WHITE)
+            else:
+                text = variables.font.render("you win!", 0, variables.WHITE)
+            textscaled = graphics.sscale(text)
+            variables.screen.blit(textscaled, [w/2-(textscaled.get_width()/2), h/2])
 
 
         epic = self.enemy.pic
@@ -77,10 +107,11 @@ class Battle():
             healthbarcolor = variables.RED
         else:
             healthbarcolor = variables.GREEN
-        pygame.draw.rect(variables.screen, healthbarcolor, [w-epicw,
-                                                            epich,
-                                                            epicw*percenthealthleft,
-                                                            enemyhealthh])
+        if not e.health == 0:
+            pygame.draw.rect(variables.screen, healthbarcolor, [w-epicw,
+                                                                epich,
+                                                                epicw*percenthealthleft,
+                                                                enemyhealthh])
 
     #for things like the attack animation
     def ontick(self):
@@ -94,7 +125,7 @@ class Battle():
                 classvar.player.health = self.newplayerhealth + damage*damagefactor
                 #if the player's health is now at the end of the animation
                 if classvar.player.health <= self.newplayerhealth:
-                    classvar.player.health = self.newplayerhealth
+                    classvar.player.health = self.newplayerhealth#set it to the new health when done
                     if self.newplayerhealth <= 0:
                         self.state = "lose"
                     if self.newenemyhealth == self.enemy.health: #if done with the animation
@@ -113,7 +144,7 @@ class Battle():
                 if self.enemy.health <= self.newenemyhealth:
                     self.enemy.health = self.newenemyhealth
                     if self.newenemyhealth <= 0:
-                        self.state = "lose"
+                        self.state = "win"
                     if classvar.player.health == self.newplayerhealth: #if done with the animation
                         self.state = "dance" #exit
                     else:
@@ -135,6 +166,11 @@ class Battle():
                     self.option = 1
         elif self.state == "dance" and key in variables.enterkeys:
             self.trade()
+        elif self.state == "lose":
+            #reset game
+            variables.state = "world"
+        elif self.state == "win":
+            self.state = "exp"
 
     def trade(self):
         playerlv = classvar.player.lv
