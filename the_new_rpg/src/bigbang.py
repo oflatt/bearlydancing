@@ -3,7 +3,7 @@ import pygame, variables, maps
 
 from Player import Player
 from Battle import Battle
-import conversations, enemies, classvar
+import conversations, classvar
 
 pygame.display.set_caption("theNewRpg")
 
@@ -15,7 +15,6 @@ clock = pygame.time.Clock()
 
 # Hide the mouse cursor
 #pygame.mouse.set_visible(0)
-battle = Battle(enemies.sheep)
 
 maps.new_scale_offset()
 
@@ -38,7 +37,7 @@ while not done:
                 classvar.player.keypress(event.key)
                 maps.on_key(event.key)
             elif variables.state == "battle":
-                battle.onkey(event.key)
+                classvar.battle.onkey(event.key)
 
 
         # User let up on a key
@@ -50,8 +49,9 @@ while not done:
     if variables.state == "world":
         classvar.player.move()
         maps.checkexit()
+        maps.current_map.checkenemy()
     elif variables.state == "battle":
-        battle.ontick()
+        classvar.battle.ontick()
 
     # --- Drawing Code
     variables.screen.fill(variables.WHITE)
@@ -62,7 +62,7 @@ while not done:
     elif variables.state == "world":
         classvar.player.draw()
     elif variables.state == "battle":
-        battle.draw()
+        classvar.battle.draw()
 
 
     # Go ahead and update the screen with what we've drawn.

@@ -2,3 +2,4 @@
 from Player import Player
 
 player = Player()
+battle = "none"

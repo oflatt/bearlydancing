@@ -15,8 +15,12 @@ font = pygame.font.Font(None, 30)
 playerspeed = height/800 * 3
 healthanimationspeed = 2000#time in milliseconds for the health bar animation to go
 
+#encountering enemies
+encounter_check_rate = 100 #rate of check
+encounter_chance = 0.005#chance per check
+
 #state can be world, battle, or conversation
-state = "battle"
+state = "world"
 
 #keybindings
 enterkeys = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_KP_ENTER]

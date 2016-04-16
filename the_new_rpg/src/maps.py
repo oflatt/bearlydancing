@@ -3,12 +3,12 @@ import pygame, variables, graphics, classvar
 from Map import Map
 from Rock import Rock
 from Exit import Exit
+from Enemy import Enemy
 
-block = graphics.front_honey.get_width()
+block = variables.width/10
 testmap1 = Map(graphics.testmapimage, [Rock(graphics.bed, 2*block, 2*block, True),
                                        Rock(graphics.bed, 3*block, 2*block, True),
                                        Rock(graphics.front_honey, 6*block, 2*block, False)])
-
 testmap1.startpoint = [block * 10, block*10]
 
 #Rock(graphics.(whatever picture), x value, y value, Collision Detection)
@@ -32,7 +32,9 @@ outside1 = Map(graphics.scrub1, [houserock,
                                 Rock(graphics.tree3, 2.5*block, 3.2*block, True)])
 
 outside1.startpoint = [block *0.85, block*2.9]
-outside1.exitareas = [Exit([block*6, block*6, block, classvar.player.normal_height], True, 'outside1', block *0.85, block*2.9)]
+outside1.exitareas = [Exit([block*6, block*6, block, block], True, 'outside1', block *0.85, block*2.9)]
+outside1.enemies = [Enemy(graphics.sheep1, 0.9, "sheep"), Enemy(graphics.meanGreen0, 1.0, "greenie")]
+outside1.lvrange = [1, 2]
 
 current_map = outside1
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])

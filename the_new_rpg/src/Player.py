@@ -14,8 +14,8 @@ class Player():
     xpos = 0
     ypos = 0
 
-    lv = 1
-    health = 20
+    lv = 2
+    health = 25
     exp = 0
 
     def teleport(self, x, y):
@@ -103,7 +103,7 @@ class Player():
                 r = t[x]
                 if collisioncheck(r, movedxpos, self.ypos):
                     iscollisionx = True
-                    x = numofrocks
+                    break
 
         if not self.yspeed == 0:
             #collision detection for the moved y pos with the unmoved x pos
@@ -111,7 +111,7 @@ class Player():
                 r = t[x]
                 if collisioncheck(r, self.xpos, movedypos):
                     iscollisiony = True
-                    x = numofrocks
+                    break
 
         if not iscollisionx:
             self.xpos = movedxpos
@@ -124,3 +124,6 @@ class Player():
                                                  int(self.current_frame.get_height()*variables.scaleoffset)])
         self.normal_width = self.current_frame.get_width()
         self.normal_height = self.current_frame.get_height()
+
+    def ismoving(self):
+        return not (self.xspeed==0 and self.yspeed==0)
