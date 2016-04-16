@@ -74,9 +74,11 @@ class Map():
                 chance+=self.enemies[x].rarity
             return chance
 
-        #if it is time to check, the player is moving, and we do encounter an enemy
+        #if it is time to check, the player is moving, we do encounter an enemy, and there are enemies available
         if (pygame.time.get_ticks() - self.last_encounter_check) >= variables.encounter_check_rate and \
-                        classvar.player.ismoving() and random.random()<variables.encounter_chance:
+                        classvar.player.ismoving() and \
+                        random.random()<variables.encounter_chance and \
+                        len(self.enemies)>0:
             currentenemy = False
             random_factor = random.random()
             for x in range(0, len(self.enemies)):

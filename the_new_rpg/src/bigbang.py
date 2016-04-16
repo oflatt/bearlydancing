@@ -64,6 +64,9 @@ while not done:
     elif variables.state == "battle":
         classvar.battle.draw()
 
+    #put the screen on the widescreen
+    pygame.draw.rect(variables.wide_screen, variables.BLACK, [0,0, variables.mode[0], variables.mode[1]])
+    variables.wide_screen.blit(variables.screen, [int(variables.mode[0]/2-variables.width/2), 0])
 
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()

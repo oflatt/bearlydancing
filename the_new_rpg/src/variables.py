@@ -4,11 +4,13 @@ import pygame
 pygame.init()
 
 # Set the width and height of the screen [width,height]
-displayinfo = pygame.display.Info()
-height =600#displayinfo.current_h - 200
+modes = pygame.display.list_modes()
+mode = modes[0]
+height = mode[1]#displayinfo.current_h - 200
 width = height #for not it is a square window
 hh = height/2
-screen = pygame.display.set_mode([height, height])
+screen = pygame.Surface([height, width])
+wide_screen = pygame.display.set_mode(mode, pygame.FULLSCREEN)
 scaleoffset = 1
 font = pygame.font.Font(None, 30)
 
@@ -16,8 +18,8 @@ playerspeed = height/800 * 3
 healthanimationspeed = 2000#time in milliseconds for the health bar animation to go
 
 #encountering enemies
-encounter_check_rate = 100 #rate of check
-encounter_chance = 0.005#chance per check
+encounter_check_rate = 100 #rate of check in milliseconds
+encounter_chance = 0.0025#chance per check
 
 #state can be world, battle, or conversation
 state = "world"
