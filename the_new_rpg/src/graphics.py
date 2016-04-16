@@ -25,9 +25,11 @@ def sscale(img):
         smaller = w
     return pygame.transform.scale(img, [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)])
 
-#Oliver's example- make sure to put .convert() at the end to make it run faster (as a png)
-testmapimage = pygame.image.load(os.path.join('pics', 'testmap.jpg'))
-testmapimage = sscale_customfactor(testmapimage, 2)#do not use custom factor without reason-preserve pixil sizes
+def importpic(filename):
+    return pygame.image.load(os.path.join('pics', filename)).convert_alpha()
+
+testmapimage = importpic('testmap.jpg')
+testmapimage = sscale_customfactor(testmapimage, 2)#do not use custom factor on normal art, preserve pixil sizes
 
 #example code of loading an image
 #test_rock = pygame.image.load(os.path.join('pics', 'pokemon_grass.png'))
@@ -35,14 +37,14 @@ testmapimage = sscale_customfactor(testmapimage, 2)#do not use custom factor wit
 
 #Art by Jacob and Spirit imported
 #path
-map_base = pygame.image.load(os.path.join('pics', "a path.png"))
+map_base = pygame.image.load(os.path.join('pics', "a path.png")).convert()
 map_base = sscale(map_base)
 #path
 #Inside of Bear House
-houseInside = sscale(pygame.image.load(os.path.join('pics', "BearHome.png")))
+houseInside = sscale(pygame.image.load(os.path.join('pics', "BearHome.png"))).convert()
 #Inside of Bear House
 #Bed
-bed = pygame.image.load(os.path.join('pics', "Bed JV.png"))
+bed = pygame.image.load(os.path.join('pics', "Bed JV.png")).convert()
 bed = sscale(bed)
 #Bed
 #Bush
@@ -142,11 +144,11 @@ fmonkey_red = pygame.image.load(os.path.join('pics', "FMonkeyJV3.png"))
 fmonkey_red = sscale(fmonkey_red)
 #FMonkey
 #Honey
-back_honey0 = sscale(pygame.image.load(os.path.join('pics','HoneyBackSILR_0.png')))
+back_honey0 = sscale(pygame.image.load(os.path.join('pics','HoneyBackSILR_0.png'))).convert()
 
-back_honey1 = sscale(pygame.image.load(os.path.join('pics','HoneyBackSILR_1.png')))
+back_honey1 = sscale(pygame.image.load(os.path.join('pics','HoneyBackSILR_1.png'))).convert()
 
-back_honey2 = sscale(pygame.image.load(os.path.join('pics','HoneyBackSILR_2.png')))
+back_honey2 = sscale(pygame.image.load(os.path.join('pics','HoneyBackSILR_2.png'))).convert()
 
 back_honey3 = sscale(pygame.image.load(os.path.join('pics','HoneyBackSILR_3.png')))
 
@@ -168,17 +170,17 @@ left_honey3 = sscale(pygame.image.load(os.path.join('pics','honeyLeftSILR_3.png'
 
 honey_right0 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_0.png')))
 
-honey_right1 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_1.png')))
+honey_right1 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_1.png'))).convert_alpha()
 
 honey_right2 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_2.png')))
 
 honey_right3 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_3.png')))
 #Honey
 #Horizontal Map
-scrub1 = sscale(pygame.image.load(os.path.join('pics','horizontal.png')))
+scrub1 = sscale(pygame.image.load(os.path.join('pics','horizontal.png'))).convert()
 #Horizontal Map
 #House Sprite
-house = sscale(pygame.image.load(os.path.join('pics', "HouseSILR.png")))
+house = sscale(pygame.image.load(os.path.join('pics', "HouseSILR.png"))).convert()
 #House Sprite
 #Jumpy
 jumpy1 = sscale(pygame.image.load(os.path.join('pics','JumpySILR_0.png')))
@@ -246,10 +248,10 @@ tpanda_worried = pygame.image.load(os.path.join('pics', "racoon sad.png"))
 tpanda = pygame.image.load(os.path.join('pics', "racoon.png"))
 #Trash Panda
 #Right Turn Map
-rightTurn = pygame.image.load(os.path.join('pics','rightTurn.png'))
+rightTurn = pygame.image.load(os.path.join('pics','rightTurn.png')).convert()
 #Right Turn Map
 #Rock
-rock = pygame.image.load(os.path.join('pics', "Rock JV.png"))
+rock = pygame.image.load(os.path.join('pics', "Rock JV.png")).convert()
 rock = sscale(rock)
 #Rock
 #Ruderoo
@@ -269,41 +271,41 @@ ruderoo6 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_06.png')))
 
 ruderoo7 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_07.png')))
 
-ruderoo8 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_08.png')))
+ruderoo8 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_08.png'))).convert()
 
-ruderoo9 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_09.png')))
+ruderoo9 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_09.png'))).convert()
 
-ruderoo10 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_10.png')))
+ruderoo10 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_10.png'))).convert()
 #Ruderoo
 #Most important Mob in the game
-mostImportantMob0 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_0.png')))
+mostImportantMob0 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_0.png'))).convert()
 
-mostImportantMob1 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_1.png')))
+mostImportantMob1 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_1.png'))).convert()
 
-mostImportantMob2 = sscale(pygame.image.load(os.path.join('pics', 'ScaryStevenSILR_2.png')))
+mostImportantMob2 = sscale(pygame.image.load(os.path.join('pics', 'ScaryStevenSILR_2.png'))).convert()
 
-mostImportantMob3 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_3.png')))
+mostImportantMob3 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_3.png'))).convert()
 #Most important mob in the game
 #Sheep
-sheep1 = sscale(pygame.image.load(os.path.join('pics', 'Sheep1stfightSILR_0.png')))
+sheep1 = sscale(pygame.image.load(os.path.join('pics', 'Sheep1stfightSILR_0.png'))).convert()
 
-sheep2 = sscale(pygame.image.load(os.path.join('pics', 'Sheep1stfightSILR_1.png')))
+sheep2 = sscale(pygame.image.load(os.path.join('pics', 'Sheep1stfightSILR_1.png'))).convert()
 #Sheep
 #Trees
-tree1 = sscale(pygame.image.load(os.path.join('pics', "Tree1.png")))
+tree1 = sscale(pygame.image.load(os.path.join('pics', "Tree1.png"))).convert_alpha()
 
-tree2 = sscale(pygame.image.load(os.path.join('pics', "Tree2.png")))
+tree2 = sscale(pygame.image.load(os.path.join('pics', "Tree2.png"))).convert_alpha()
 
-tree3 = sscale(pygame.image.load(os.path.join('pics', "Tree3.png")))
+tree3 = sscale(pygame.image.load(os.path.join('pics', "Tree3.png"))).convert_alpha()
 #Trees
 #Vertical map
-scrub2 = sscale(pygame.image.load(os.path.join('pics', 'vertical.png')))
+scrub2 = sscale(pygame.image.load(os.path.join('pics', 'vertical.png'))).convert()
 #Vertical map
 #Wardrobe
-warddrobe = sscale(pygame.image.load(os.path.join('pics', "wardrobe.png")))
+warddrobe = sscale(pygame.image.load(os.path.join('pics', "wardrobe.png"))).convert()
 
-warddrobe2 = sscale(pygame.image.load(os.path.join('pics', "wardrobe v2.png")))
+warddrobe2 = sscale(pygame.image.load(os.path.join('pics', "wardrobe v2.png"))).convert()
 #Wardrobe
 #Welcome Mat
-welcomeMat = sscale(pygame.image.load(os.path.join('pics', 'welcomematt.png')))
+welcomeMat = sscale(pygame.image.load(os.path.join('pics', 'welcomematt.png'))).convert()
 #Welcome Mat

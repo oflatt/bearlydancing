@@ -13,8 +13,10 @@ mode = modes[0]
 height = mode[1]#displayinfo.current_h - 200
 width = height #for not it is a square window
 hh = height/2
-screen = pygame.Surface([height, width])
+flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
 wide_screen = pygame.display.set_mode(mode, pygame.FULLSCREEN)
+screen = pygame.Surface([height, width])
+
 scaleoffset = 1
 font = pygame.font.Font(None, 30)
 
