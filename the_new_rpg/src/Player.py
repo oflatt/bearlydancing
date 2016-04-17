@@ -1,7 +1,8 @@
 #!/usr/bin/python
-import pygame, variables, maps, graphics
+import pygame, variables, maps, graphics, stathandeling
+from Dancer import Dancer
 
-class Player():
+class Player(Dancer):
     xspeed = 0
     yspeed = 0
     leftpresstime = 0
@@ -15,10 +16,6 @@ class Player():
     ypos = 0
     lastxupdate = 0
     lastyupdate = 0
-
-    lv = 1
-    health = 25
-    exp = 0
 
     def teleport(self, x, y):
         self.xpos = x
@@ -150,3 +147,6 @@ class Player():
 
     def ismoving(self):
         return not (self.xspeed==0 and self.yspeed==0)
+
+    def heal(self):
+        self.health = stathandeling.max_health(self.lv)

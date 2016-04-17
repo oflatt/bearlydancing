@@ -13,6 +13,10 @@ class Battle():
     #animation time is used for all animations
     animationtime = 0
 
+    #for win animation
+    newexp = 0
+    oldexp = 0
+
     def __init__(self, enemy):
         self.enemy = enemy
         self.state = "choose"
@@ -77,6 +81,35 @@ class Battle():
             textscaled = graphics.sscale(text)
             variables.screen.blit(textscaled, [w/2-(textscaled.get_width()/2), h/2])
 
+        elif self.state == "exp" or self.state == "got exp":
+            #continue button
+            rectcolor = variables.GREEN
+            pygame.draw.rect(variables.screen, rectcolor, [w/2-(w/2 - (w/5))/2, b, w/2 - (w/5), h*3/16 - h/10])
+            continuepic = variables.font.render("continue", 0, variables.BLACK)
+            text = pygame.transform.scale(continuepic, [int(w/2 - (w/5)), int(h*3/16 - h/10)])
+            variables.screen.blit(text, [w/2-(w/2 - (w/5))/2, b])
+
+            #text
+            text = variables.font.render("EXP", 0, variables.WHITE)
+            textscaled = graphics.sscale(text)
+            variables.screen.blit(textscaled, [w/2-(textscaled.get_width()/2), h/3])
+            text = variables.font.render("Lv " + str(classvar.player.lv), 0, variables.WHITE)
+            textscaled = graphics.sscale(text)
+            variables.screen.blit(textscaled, [0, h/3 - textscaled.get_height()])
+
+            #exp bar
+            percentofneeded = (p.exp - stathandeling.lvexp(p.lv))/stathandeling.exp_needed(p.lv)
+            pygame.draw.rect(variables.screen, variables.BLUE, [0,
+                                                            h/2,
+                                                            w*percentofneeded,
+                                                            h/18])
+
+            #level up text
+            if self.state == "got exp" and stathandeling.explv(self.oldexp) < stathandeling.explv(self.newexp):
+                text = variables.font.render("LEVEL UP!", 0, variables.GREEN)
+                textscaled = graphics.sscale(text)
+                variables.screen.blit(textscaled, [w/2-(textscaled.get_width()/2), h/3 - textscaled.get_height()])
+
 
         epic = self.enemy.pic
         variables.screen.blit(epic, [w-epic.get_width(), 0])
@@ -118,7 +151,7 @@ class Battle():
         if self.state == "attacking":
             if self.isplayernext == True:
                 damage = self.oldplayerhealth - self.newplayerhealth
-                differenceintime = pygame.time.get_ticks()-self.animationtime
+                differenceintime = variables.current_time-self.animationtime
                 hs = variables.healthanimationspeed
                 damagefactor = (hs-differenceintime)/hs
                 #set player's health to somewhere between the old and new depending on time (damagefactor)
@@ -132,10 +165,10 @@ class Battle():
                         self.state = "dance" #exit
                     else:
                         self.isplayernext = False
-                        self.animationtime = pygame.time.get_ticks()
+                        self.animationtime = variables.current_time
             elif self.isplayernext == False:
                 damage = self.oldenemyhealth - self.newenemyhealth
-                differenceintime = pygame.time.get_ticks()-self.animationtime
+                differenceintime = variables.current_time-self.animationtime
                 hs = variables.healthanimationspeed
                 damagefactor = (hs-differenceintime)/hs
                 #set enemy's health to somewhere between the old and new depending on time (damagefactor)
@@ -149,7 +182,19 @@ class Battle():
                         self.state = "dance" #exit
                     else:
                         self.isplayernext = True
-                        self.animationtime = pygame.time.get_ticks()
+                        self.animationtime = variables.current_time
+        elif self.state == "exp":
+            differenceintime = variables.current_time-self.animationtime
+            es = variables.expanimationspeed
+            timefactor = differenceintime/es
+            expgained = self.newexp - self.oldexp
+            classvar.player.exp = self.oldexp + expgained*timefactor
+            if classvar.player.exp >= self.newexp:
+                classvar.player.exp = self.newexp
+                if stathandeling.explv(self.oldexp) < stathandeling.explv(self.newexp):
+                    classvar.player.heal()
+                self.state = "got exp"
+            classvar.player.lv = stathandeling.explv(classvar.player.exp)
 
 
     def onkey(self, key):
@@ -166,11 +211,18 @@ class Battle():
                     self.option = 1
         elif self.state == "dance" and key in variables.enterkeys:
             self.trade()
-        elif self.state == "lose":
+        elif self.state == "lose" and key in variables.enterkeys:
             #reset game
+            classvar.player.heal()
             variables.state = "world"
-        elif self.state == "win":
+        elif self.state == "win" and key in variables.enterkeys:
             self.state = "exp"
+            self.newexp = classvar.player.exp + stathandeling.exp_gained(self.enemy.lv)
+            self.animationtime = variables.current_time
+            self.oldexp = classvar.player.exp
+        elif self.state == "got exp" and key in variables.enterkeys:
+            variables.state = "world" #finally exit Battle
+
 
     def trade(self):
         playerlv = classvar.player.lv
@@ -178,7 +230,7 @@ class Battle():
         self.state = "attacking"
         self.oldenemyhealth = self.enemy.health
         self.oldplayerhealth = classvar.player.health
-        self.animationtime = pygame.time.get_ticks()
+        self.animationtime = variables.current_time
         def damageplayer():
             self.newplayerhealth = classvar.player.health - stathandeling.damage(enemylv)
             if self.newplayerhealth <= 0:

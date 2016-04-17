@@ -22,6 +22,7 @@ font = pygame.font.Font(None, 30)
 
 playerspeed = height/800 * 0.15 #factor against time
 healthanimationspeed = 2000#time in milliseconds for the health bar animation to go
+expanimationspeed = 3000
 
 #encountering enemies
 encounter_check_rate = 100 #rate of check in milliseconds
@@ -38,3 +39,4 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
+BLUE = (0, 0, 255)
