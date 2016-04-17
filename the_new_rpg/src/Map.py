@@ -44,13 +44,18 @@ class Map():
 
         variables.screen.blit(self.finalimage, [-drawx, -drawy])
 
-        #draw button above exits
+        #draw button above exits and conversations
         e = self.checkexit()
         pw = classvar.player.normal_width/2
         if not e == False:
-            pygame.draw.ellipse(variables.screen,
-                                variables.WHITE,
-                                [e.area[0] + e.area[2]/2 - pw/2, e.area[1] - pw/2, pw, pw])
+            self.draw_interation_button(e.area[0] + e.area[2]/2 - pw/2, e.area[1] - pw/2, pw)
+        c = self.checkconversation()
+        if not c == False:
+            self.draw_interation_button(c.area[0] + c.area[2]/2 - pw/2, c.area[1] - pw/2, pw)
+
+    def draw_interation_button(self, xpos, ypos, width):
+        pygame.draw.ellipse(variables.screen, variables.WHITE, [xpos, ypos, width, width])
+        pygame.draw.ellipse(variables.screen, variables.GRAY, [xpos+width/4, ypos+width/4, width/2, width/2])
 
     def scale_by_offset(self):
         self.finalimage = pygame.transform.scale(self.finalimage, [int(self.finalimage.get_width()*variables.scaleoffset),

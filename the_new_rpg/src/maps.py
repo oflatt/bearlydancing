@@ -24,6 +24,7 @@ house1.endpoint = [block*2,block*4,block*2.5,block*5.5]
 houserock = Rock(graphics.house, 0, 0, True)
 houserock.h = houserock.h * 3/5
 
+# outside 1
 outside1 = Map(graphics.scrub1, [houserock,
                                 Rock(graphics.welcomeMat, 0.4*block,3*block, False),
                                 Rock(graphics.tree1, 5*block, 3*block, True),
@@ -35,6 +36,8 @@ outside1.startpoint = [block *0.85, block*2.9]
 outside1.exitareas = [Exit([block*6, block*6, block, block], True, 'outside1', block *0.85, block*2.9)]
 outside1.enemies = [Enemy(graphics.sheep1, 0.9, "sheep"), Enemy(graphics.meanGreen0, 1.0, "greenie")]
 outside1.lvrange = [1, 2]
+conversations.firstscene.area = [block*4, block*4, block, block*2]
+outside1.conversations = [conversations.firstscene]
 
 current_map = outside1
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])

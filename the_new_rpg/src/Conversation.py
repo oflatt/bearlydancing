@@ -12,18 +12,27 @@ class Conversation():
         #dialogue is a list of strings, one per line. Writer has to make sure they fit
         self.dialogue = dialogue
 
+    def lines_in_sceen(self):
+        line1 = graphics.sscale_customfactor(variables.font.render(self.dialogue[0], 0, variables.WHITE), self.textsize)
+        return int((variables.height*3/16)/line1.get_height())
+
     def draw(self):
+        line1 = graphics.sscale_customfactor(variables.font.render(self.dialogue[0], 0, variables.WHITE), self.textsize)
+        line_height = line1.get_height()
         h = variables.height
         w = variables.height
         b = h*13/16
         pygame.draw.rect(variables.screen, variables.BLACK, [0, b, w, h])
-        line1 = graphics.sscale_customfactor(variables.font.render(self.dialogue[self.line], 0, variables.WHITE), self.textsize)
-        line2 = graphics.sscale_customfactor(variables.font.render(self.dialogue[self.line+1], 0, variables.WHITE), self.textsize)
-        line3 = graphics.sscale_customfactor(variables.font.render(self.dialogue[self.line+2], 0, variables.WHITE), self.textsize)
-        variables.screen.blit(line1, [w/2 - line1.get_width()/2, b])
-        variables.screen.blit(line2, [w/2 - line2.get_width()/2, b+line1.get_height()])
-        variables.screen.blit(line3, [w/2 - line3.get_width()/2, b+line1.get_height()+line2.get_height()])
+        numoflines = self.lines_in_sceen()
+        if numoflines > len(self.dialogue):
+            numoflines = len(self.dialogue)
+        for x in range(0, numoflines):
+            text = variables.font.render(self.dialogue[self.line+x], 0, variables.WHITE)
+            line = graphics.sscale_customfactor(text, self.textsize)
+            variables.screen.blit(line, [w/2 - line.get_width()/2, b+(line_height*x)])
 
     def keypress(self, key):
-        if self.line < len(self.dialogue) - 3:
+        if self.line < len(self.dialogue) - self.lines_in_sceen():
             self.line += 1
+        elif key in variables.enterkeys:
+            variables.state = "world"
