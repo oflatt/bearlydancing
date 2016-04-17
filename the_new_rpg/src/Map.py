@@ -13,9 +13,10 @@ def draw_map(b, t):
 class Map():
     startpoint = [10, 10] #xy coordinates of spawn point
     exitareas = []#list of exit
-    enemies = []
+    enemies = []#list of possible enemy encounters
     lvrange = [1]
     last_encounter_check = 0
+    conversations = [] #list of conversation on the map
 
     def __init__(self, base, terrain):
         #base is a png
@@ -63,8 +64,22 @@ class Map():
             if (p.xpos+p.normal_width) >= e.area[0] and p.xpos<=(e.area[0] + e.area[2]) \
                 and (p.ypos + p.normal_height)>=e.area[1] and p.ypos<=(e.area[1] + e.area[3]):
                 currentexit = e
-                x = len(self.exitareas)
+                break
         return currentexit
+
+    def on_tick(self):
+        self.checkenemy()
+
+    def checkconversation(self):
+        currentconversation = False
+        for x in range(0, len(self.conversations)):
+            e = self.conversations[x]
+            p = classvar.player
+            if (p.xpos+p.normal_width) >= e.area[0] and p.xpos<=(e.area[0] + e.area[2]) \
+                and (p.ypos + p.normal_height)>=e.area[1] and p.ypos<=(e.area[1] + e.area[3]):
+                currentconversation = e
+                break
+        return currentconversation
 
     def checkenemy(self):
         #goes through the list of enemies, adding up all the encounter chances up until that list number

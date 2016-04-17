@@ -49,7 +49,8 @@ while not done:
     if variables.state == "world":
         classvar.player.move()
         maps.checkexit()
-        maps.current_map.checkenemy()
+        maps.current_map.on_tick()
+        maps.checkconversation()
     elif variables.state == "battle":
         classvar.battle.ontick()
 

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import pygame, variables, graphics, classvar
+import pygame, variables, graphics, classvar, conversations
 from Map import Map
 from Rock import Rock
 from Exit import Exit
@@ -63,11 +63,15 @@ def change_map(name):
     new_scale_offset()
 
 def on_key(key):
-    if key == pygame.K_SPACE:
+    if key in variables.enterkeys:
         e = current_map.checkexit()
+        c = current_map.checkconversation()
         if not e == False:
             classvar.player.teleport(e.newx, e.newy)
             change_map(e.name)
+        elif not c == False:
+            variables.state = "conversation"
+            conversations.currentconversation = c
 
 def checkexit():
     e = current_map.checkexit()
@@ -75,3 +79,10 @@ def checkexit():
         if e.isbutton == False:
             classvar.player.teleport(e.newx, e.newy)
             change_map(e.name)
+
+def checkconversation():
+    c = current_map.checkconversation()
+    if not c == False:
+        if c.isbutton == False:
+            variables.state = "conversation"
+            conversations.currentconversation = c
