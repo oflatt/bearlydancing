@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #Oliver works on classes
 import variables, pygame, stathandeling, classvar, random, graphics
+from Button import Button
 
 class Battle():
     #for attacking animation
@@ -17,6 +18,9 @@ class Battle():
     newexp = 0
     oldexp = 0
 
+    #drawing buttons
+    buttons = []
+
     def __init__(self, enemy):
         self.enemy = enemy
         self.state = "choose"
@@ -32,13 +36,6 @@ class Battle():
         pygame.draw.rect(variables.screen, variables.BLACK, [0, 0, w, h])
 
         if self.state == "choose":
-            if self.option == 1:
-                dancerectcolor = variables.GREEN
-                fleerectcolor = variables.WHITE
-            else:
-                dancerectcolor = variables.WHITE
-                fleerectcolor = variables.GREEN
-
             #enemy name
             enemyname = variables.font.render("LV "+str(self.enemy.lv) + " " + self.enemy.name + " appears!", 0,
                                               variables.WHITE)
@@ -46,36 +43,35 @@ class Battle():
             variables.screen.blit(enemynamescaled, [w/2-(enemynamescaled.get_width()/2), h/2])
 
             #two buttons
-            pygame.draw.rect(variables.screen, dancerectcolor, [w/10, b, w/2 - (w/5), h*3/16 - h/10])
-            pygame.draw.rect(variables.screen, fleerectcolor, [w/2+w/10, b, w/2 - (w/5), h*3/16 - h/10])
-            dancepic = variables.font.render("DANCE!", 0, variables.BLACK)
-            dance = pygame.transform.scale(dancepic, [int(w/2 - (w/5)), int(h*3/16 - h/10)])
-            fleepic = variables.font.render("flee....", 0, variables.BLACK)
-            flee = pygame.transform.scale(fleepic, [int(w/2 - (w/5)), int(h*3/16 - h/10)])
-            variables.screen.blit(dance, [w/10, b])
-            variables.screen.blit(flee, [w/2+w/10, b])
+            dancebutton = Button(w/4, b, "DANCE!", 1.5)
+            fleebutton = Button(w*3/4, b, "Flee..", 1.5)
+            if self.option == 1:
+                dancebutton.ison = True
+            else:
+                fleebutton.ison = True
+            self.buttons = [dancebutton, fleebutton]
+            self.draw_buttons()
 
         elif self.state == "dance":
-            dancerectcolor = variables.GREEN
-            pygame.draw.rect(variables.screen, dancerectcolor, [w/2-(w/2 - (w/5))/2, b, w/2 - (w/5), h*3/16 - h/10])
-            dancepic = variables.font.render("DANCE!", 0, variables.BLACK)
-            dance = pygame.transform.scale(dancepic, [int(w/2 - (w/5)), int(h*3/16 - h/10)])
-            variables.screen.blit(dance, [w/2-(w/2 - (w/5))/2, b])
+            dancebutton = Button(w/2, b, "DANCE!", 1.5)
+            dancebutton.ison = True
+            self.buttons = [dancebutton]
+            self.draw_buttons()
 
         elif self.state == "lose" or self.state == "win":
             #button
-            rectcolor = variables.GREEN
-            pygame.draw.rect(variables.screen, rectcolor, [w/2-(w/2 - (w/5))/2, b, w/2 - (w/5), h*3/16 - h/10])
             if self.state== "lose":
-                continuepic = variables.font.render("go home", 0, variables.BLACK)
+                text = "go home..."
             else:
-                continuepic = variables.font.render("continue", 0, variables.BLACK)
-            text = pygame.transform.scale(continuepic, [int(w/2 - (w/5)), int(h*3/16 - h/10)])
-            variables.screen.blit(text, [w/2-(w/2 - (w/5))/2, b])
+                text = "continue"
+            continuebutton = Button(w/2, b, text, 1.5)
+            continuebutton.ison = True
+            self.buttons = [continuebutton]
+            self.draw_buttons()
 
             #text
             if self.state == "lose":
-                text = variables.font.render("your confidence has never been so low...", 0, variables.WHITE)
+                text = variables.font.render("you can't go on...", 0, variables.WHITE)
             else:
                 text = variables.font.render("you win!", 0, variables.WHITE)
             textscaled = graphics.sscale(text)
@@ -83,11 +79,10 @@ class Battle():
 
         elif self.state == "exp" or self.state == "got exp":
             #continue button
-            rectcolor = variables.GREEN
-            pygame.draw.rect(variables.screen, rectcolor, [w/2-(w/2 - (w/5))/2, b, w/2 - (w/5), h*3/16 - h/10])
-            continuepic = variables.font.render("continue", 0, variables.BLACK)
-            text = pygame.transform.scale(continuepic, [int(w/2 - (w/5)), int(h*3/16 - h/10)])
-            variables.screen.blit(text, [w/2-(w/2 - (w/5))/2, b])
+            continuebutton = Button(w/2, b, "continue", 1.5)
+            continuebutton.ison = True
+            self.buttons = [continuebutton]
+            self.draw_buttons()
 
             #text
             text = variables.font.render("EXP", 0, variables.WHITE)
@@ -126,9 +121,9 @@ class Battle():
                                                             h-healthh,
                                                             w*percenthealthleft,
                                                             healthh])
-        barlabelunscaled = variables.font.render("Confidence "+str(p.health)+" / "+str(playermaxh), 0, variables.WHITE)
-        barlabel = pygame.transform.scale(barlabelunscaled, [int(healthh*5), int(healthh*2/3)])
-        variables.screen.blit(barlabel, [0,h-2-healthh-healthh/2])
+        barlabelunscaled = variables.font.render("Health "+str(p.health)+" / "+str(playermaxh), 0, variables.WHITE)
+        barlabel = graphics.sscale_customfactor(barlabelunscaled, 0.75)
+        variables.screen.blit(barlabel, [0,h-healthh-barlabel.get_height()])
 
         #enemy bar
         enemyhealthh = h*(1/50)
@@ -161,7 +156,7 @@ class Battle():
                     classvar.player.health = self.newplayerhealth#set it to the new health when done
                     if self.newplayerhealth <= 0:
                         self.state = "lose"
-                    if self.newenemyhealth == self.enemy.health: #if done with the animation
+                    elif self.newenemyhealth == self.enemy.health: #if done with the animation
                         self.state = "dance" #exit
                     else:
                         self.isplayernext = False
@@ -247,3 +242,7 @@ class Battle():
             self.isplayernext = True
             damageplayer()
             damageenemy()
+
+    def draw_buttons(self):
+        for x in range(0, len(self.buttons)):
+            self.buttons[x].draw()

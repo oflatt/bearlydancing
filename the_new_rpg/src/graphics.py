@@ -2,18 +2,6 @@
 
 import pygame, os, variables
 
-#sscale means smart scale, Oliver works on this
-#this one does not preserve the original pixel size
-def sscale_customfactor(img, factor):
-    w = img.get_width()
-    h = img.get_height()
-    endsize = variables.height*factor
-    if w > h:
-        smaller = h
-    else:
-        smaller = w
-    return pygame.transform.scale(img, [int((w/smaller)*endsize), int((h/smaller)*endsize)])
-
 def sscale(img):
     factor = 0.0025 #This basically determines how much of the map we can see
     w = img.get_width()
@@ -24,6 +12,20 @@ def sscale(img):
     else:
         smaller = w
     return pygame.transform.scale(img, [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)])
+
+#sscale means smart scale, Oliver works on this
+#this one does not preserve the original pixel size
+def sscale_customfactor(img, factor):
+    factor = factor * 0.0025 #This basically determines how much of the map we can see
+    w = img.get_width()
+    h = img.get_height()
+    endsize = variables.height*factor
+    if w > h:
+        smaller = h
+    else:
+        smaller = w
+    return pygame.transform.scale(img, [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)])
+
 
 def importpic(filename):
     return pygame.image.load(os.path.join('pics', filename)).convert_alpha()
