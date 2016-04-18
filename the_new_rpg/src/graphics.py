@@ -26,6 +26,15 @@ def sscale_customfactor(img, factor):
         smaller = w
     return pygame.transform.scale(img, [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)])
 
+#use if you want pictures where the smaller dimension is a set size
+def scale_pure(img, s):
+    w = img.get_width()
+    h = img.get_height()
+    if w > h:
+        smaller = h
+    else:
+        smaller = w
+    return pygame.transform.scale(img, [int((w/smaller) * s), int((h/smaller) * s)])
 
 def importpic(filename):
     return pygame.image.load(os.path.join('pics', filename)).convert_alpha()

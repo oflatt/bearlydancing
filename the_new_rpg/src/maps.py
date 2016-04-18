@@ -36,8 +36,8 @@ outside1.startpoint = [block *0.85, block*2.9]
 outside1.exitareas = [Exit([block*6, block*6, block, block], True, 'outside1', block *0.85, block*2.9)]
 outside1.enemies = [Enemy(graphics.sheep1, 0.9, "sheep"), Enemy(graphics.meanGreen0, 1.0, "greenie")]
 outside1.lvrange = [1, 2]
-conversations.firstscene.area = [block*4, block*4, block, block*2]
-outside1.conversations = [conversations.firstscene]
+conversations.testconversation.area = [block*4, block*4, block, block*2]
+outside1.conversations = [conversations.testconversation]
 
 current_map = outside1
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])

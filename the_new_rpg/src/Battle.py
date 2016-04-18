@@ -25,7 +25,7 @@ class Battle():
         self.enemy = enemy
         self.state = "choose"
         self.option = 1
-        self.enemy.pic = pygame.transform.scale(self.enemy.pic, [int(variables.width/5), int(variables.height/5)])
+        self.enemy.pic = graphics.scale_pure(self.enemy.pic, variables.width/5)
 
     def draw(self):
         h = variables.height

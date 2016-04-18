@@ -1,12 +1,16 @@
 #!/usr/bin/python
 #Spirit and Jacob work on script
+import graphics
 from Conversation import Conversation
+from Speak import Speak
 
-testconversation = Conversation(["hello",
-                                 "I am on the second line now",
-                                 "and by now it should be workin'",
-                                 "bla",
-                                 "bla"])
+longtestdialogue = ["bla", "bla", "a", "monster", "did", "do", "that", "really", "good", "dancin", "he was honey"]
+shorttestdialoge = ["I talk just a little"]
+
+testconversation = Conversation([Speak(graphics.honey_right0, longtestdialogue),
+                                 Speak(graphics.honey_right2, shorttestdialoge),
+                                 Speak(graphics.honey_right0, longtestdialogue),
+                                 Speak(graphics.honey_right2, shorttestdialoge)])
 
 firstscene = Conversation(["Honey: Oh goody its lunch, I'm",
       "STARVING! But no, I left my glorious",
@@ -50,4 +54,4 @@ lastfight = Conversation(["Honey: What, I thought I was done!",
 finalscene = Conversation(["Honey: *sniff sniff* Finally",
                            "... lunch time."])
 
-currentconversation = firstscene
+currentconversation = testconversation

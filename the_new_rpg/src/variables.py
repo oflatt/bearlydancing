@@ -17,19 +17,26 @@ flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
 wide_screen = pygame.display.set_mode(mode, pygame.FULLSCREEN)
 screen = pygame.Surface([height, width])
 
+#state can be world, battle, or conversation
+state = "world"
+
+#general
 scaleoffset = 1
 font = pygame.font.Font(None, 30)
 
-playerspeed = height/800 * 0.15 #factor against time
+#battle
 healthanimationspeed = 2000#time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
 
+#conversation
+textbox_height = height*1/4
+photo_size = width/6
+
+#world
+playerspeed = height/800 * 0.15 #factor against time
 #encountering enemies
 encounter_check_rate = 100 #rate of check in milliseconds
 encounter_chance = 0.0025#chance per check
-
-#state can be world, battle, or conversation
-state = "world"
 
 #keybindings
 enterkeys = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_KP_ENTER]
