@@ -51,262 +51,240 @@ tree2 = simport("Tree2.png")
 tree3 = simport("Tree3.png")
 house = simport("HouseSILR.png")
 
-houseInside = sscale(pygame.image.load(os.path.join('pics', "BearHome.png"))).convert()
+houseInside = simport("BearHome.png")
 #Inside of Bear House
 #Bed
-bed = pygame.image.load(os.path.join('pics', "Bed JV.png")).convert()
-bed = sscale(bed)
+bed = simport("Bed JV.png")
 #Bed
 #Bush
-bush = pygame.image.load(os.path.join('pics', "bushbkgrdSILR_0.png"))
-bush = sscale(bush)
+bush = simport("bushbkgrdSILR_0.png")
 #Bush
 #CowBoy
-cowBoy0 = pygame.image.load(os.path.join('pics', 'cowboySILR_0.png'))
+cowBoy0 = simport('cowboySILR_0.png')
 
-cowBoy1 = pygame.image.load(os.path.join('pics', 'cowboySILR_1.png'))
+cowBoy1 = simport('cowboySILR_1.png')
 #CowBoy
 #CreepCat
-creepcat0 = pygame.image.load(os.path.join('pics', "creepCatSILR_0.png"))
-creepcat0 = sscale(creepcat0)
+creepcat0 = simport("creepCatSILR_0.png")
 
-creepcat1 = pygame.image.load(os.path.join('pics', "creepCatSILR_1.png"))
-creepcat1 = sscale(creepcat1)
+creepcat1 = simport("creepCatSILR_1.png")
 
-creepcat2 = pygame.image.load(os.path.join('pics', "creepCatSILR_2.png"))
-creepcat2 = sscale(creepcat2)
+creepcat2 = simport("creepCatSILR_2.png")
 
-creepcat3 = pygame.image.load(os.path.join('pics', "creepCatSILR_3.png"))
-creepcat3 = sscale(creepcat3)
+creepcat3 = simport("creepCatSILR_3.png")
 #CreepCat
 #DanceLion
-dancelion0 = pygame.image.load(os.path.join('pics', "DanceLionSILR_0.png"))
-dancelion0 = sscale(dancelion0)
+dancelion0 = simport("DanceLionSILR_0.png")
 
-dancelion1 = pygame.image.load(os.path.join('pics', "DanceLionSILR_1.png"))
-dancelion1 = sscale(dancelion1)
+dancelion1 = simport("DanceLionSILR_1.png")
 #DanceLion
 #EvilBlob
-evilblob0 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_00.png"))
-evilblob0 = sscale(evilblob0)
+evilblob0 = simport("EvilBlobLastFightSILR_00.png")
 
-evilblob1 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_01.png"))
-evilblob1 = sscale(evilblob1)
+evilblob1 = simport("EvilBlobLastFightSILR_01.png")
 
-evilblob2 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_02.png"))
-evilblob2 = sscale(evilblob2)
+evilblob2 = simport("EvilBlobLastFightSILR_02.png")
 
-evilblob3 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_03.png"))
-evilblob3 = sscale(evilblob3)
+evilblob3 = simport("EvilBlobLastFightSILR_03.png")
 
-evilblob4 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_04.png"))
-evilblob4 = sscale(evilblob4)
+evilblob4 = simport("EvilBlobLastFightSILR_04.png")
 
-evilblob5 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_05.png"))
-evilblob5 = sscale(evilblob5)
+evilblob5 = simport("EvilBlobLastFightSILR_05.png")
 
-evilblob6 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_06.png"))
-evilblob6 = sscale(evilblob6)
+evilblob6 = simport("EvilBlobLastFightSILR_06.png")
 
-evilblob7 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_07.png"))
-evilblob7 = sscale(evilblob7)
+evilblob7 = simport("EvilBlobLastFightSILR_07.png")
 
-evilblob8 = pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_08.png"))
-evilblob8 = sscale(evilblob8)
+evilblob8 = simport("EvilBlobLastFightSILR_08.png")
 
-evilblob9 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_09.png")))
+evilblob9 = simport("EvilBlobLastFightSILR_09.png")
 
-evilblob10 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_10.png")))
+evilblob10 = simport("EvilBlobLastFightSILR_10.png")
 
-evilblob11 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_11.png")))
+evilblob11 = simport("EvilBlobLastFightSILR_11.png")
 
-evilblob12 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_12.png")))
+evilblob12 = simport("EvilBlobLastFightSILR_12.png")
 
-evilblob13 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_13.png")))
+evilblob13 = simport("EvilBlobLastFightSILR_13.png")
 
-evilblob14 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_14.png")))
+evilblob14 = simport("EvilBlobLastFightSILR_14.png")
 
-evilblob15 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_15.png")))
+evilblob15 = simport("EvilBlobLastFightSILR_15.png")
 
-evilblob16 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_16.png")))
+evilblob16 = simport("EvilBlobLastFightSILR_16.png")
 
-evilblob17 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_17.png")))
+evilblob17 = simport("EvilBlobLastFightSILR_17.png")
 
-evilblob18 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_18.png")))
+evilblob18 = simport("EvilBlobLastFightSILR_18.png")
 
-evilblob19 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_19.png")))
+evilblob19 = simport("EvilBlobLastFightSILR_19.png")
 
-evilblob20 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_20.png")))
+evilblob20 = simport("EvilBlobLastFightSILR_20.png")
 
-evilblob21 = sscale(pygame.image.load(os.path.join('pics', "EvilBlobLastFightSILR_21.png")))
+evilblob21 = simport("EvilBlobLastFightSILR_21.png")
 #EvilBlob
 #FMonkey
-fmonkey_green = pygame.image.load(os.path.join('pics', "FMonkeyJV0.png"))
-fmonkey_green = sscale(fmonkey_green)
+fmonkey_green = simport("FMonkeyJV0.png")
 
-fmonkey_yellow = pygame.image.load(os.path.join('pics', "FMonkeyJV1.png"))
-fmonkey_yellow = sscale(fmonkey_yellow)
+fmonkey_yellow = simport("FMonkeyJV1.png")
 
-fmonkey_orange = pygame.image.load(os.path.join('pics', "FMonkeyJV2.png"))
-fmonkey_orange = sscale(fmonkey_orange)
+fmonkey_orange = simport("FMonkeyJV2.png")
 
-fmonkey_red = pygame.image.load(os.path.join('pics', "FMonkeyJV3.png"))
-fmonkey_red = sscale(fmonkey_red)
+fmonkey_red = simport("FMonkeyJV3.png")
 #FMonkey
 #Honey
-back_honey0 = sscale(pygame.image.load(os.path.join('pics','HoneyBackSILR_0.png'))).convert()
+back_honey0 = simport('HoneyBackSILR_0.png')
 
-back_honey1 = sscale(pygame.image.load(os.path.join('pics','HoneyBackSILR_1.png'))).convert()
+back_honey1 = simport('HoneyBackSILR_1.png')
 
-back_honey2 = sscale(pygame.image.load(os.path.join('pics','HoneyBackSILR_2.png'))).convert()
+back_honey2 = simport('HoneyBackSILR_2.png')
 
-back_honey3 = sscale(pygame.image.load(os.path.join('pics','HoneyBackSILR_3.png')))
+back_honey3 = simport('HoneyBackSILR_3.png')
 
-front_honey0 = sscale(pygame.image.load(os.path.join('pics','HoneyFrontSILR_0.png')))
+front_honey0 = simport('HoneyFrontSILR_0.png')
 
-front_honey1 = sscale(pygame.image.load(os.path.join('pics','HoneyFrontSILR_1.png')))
+front_honey1 = simport('HoneyFrontSILR_1.png')
 
-front_honey2 = sscale(pygame.image.load(os.path.join('pics','HoneyFrontSILR_2.png')))
+front_honey2 = simport('HoneyFrontSILR_2.png')
 
-front_honey3 = sscale(pygame.image.load(os.path.join('pics','HoneyFrontSILR_3.png')))
+front_honey3 = simport('HoneyFrontSILR_3.png')
 #this is left
-front_honey = sscale(pygame.image.load(os.path.join('pics','honeyLeftSILR_0.png')))
+front_honey = simport('honeyLeftSILR_0.png')
 #this is left
-left_honey1 = sscale(pygame.image.load(os.path.join('pics','honeyLeftSILR_1.png')))
+left_honey1 = simport('honeyLeftSILR_1.png')
 
-left_honey2 = sscale(pygame.image.load(os.path.join('pics','honeyLeftSILR_2.png')))
+left_honey2 = simport('honeyLeftSILR_2.png')
 
-left_honey3 = sscale(pygame.image.load(os.path.join('pics','honeyLeftSILR_3.png')))
+left_honey3 = simport('honeyLeftSILR_3.png')
 
-honey_right0 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_0.png')))
+honey_right0 = simport('HoneyRightSILR_0.png')
 
-honey_right1 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_1.png'))).convert_alpha()
+honey_right1 = simport('HoneyRightSILR_1.png')
 
-honey_right2 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_2.png')))
+honey_right2 = simport('HoneyRightSILR_2.png')
 
-honey_right3 = sscale(pygame.image.load(os.path.join('pics','HoneyRightSILR_3.png')))
+honey_right3 = simport('HoneyRightSILR_3.png')
 #Honey
 #Horizontal Map
-scrub1 = sscale(pygame.image.load(os.path.join('pics','horizontal.png'))).convert()
+scrub1 = simport('horizontal.png')
 #Horizontal Map
 #Jumpy
-jumpy1 = sscale(pygame.image.load(os.path.join('pics','JumpySILR_0.png')))
+jumpy1 = simport('JumpySILR_0.png')
 
-jumpy2 = sscale(pygame.image.load(os.path.join('pics', 'JumpySILR_1.png')))
+jumpy2 = simport('JumpySILR_1.png')
 #Jumpy
 #Left Turn Map
-leftTurn = sscale(pygame.image.load(os.path.join('pics', 'leftTurn.png')))
+leftTurn = simport('leftTurn.png')
 #Left Turn Map
 #Mean Green
-meanGreen0 = sscale(pygame.image.load(os.path.join('pics', 'MeanGreenSILR_0.png')))
+meanGreen0 = simport('MeanGreenSILR_0.png')
 
-meanGreen1 = sscale(pygame.image.load(os.path.join('pics','MeanGreenSILR_1.png')))
+meanGreen1 =simport('MeanGreenSILR_1.png')
 #MeanGreen
 #Nice Dog
-niceDog0 = sscale(pygame.image.load(os.path.join('pics','NiceDogSILR_0.png')))
+niceDog0 = simport('NiceDogSILR_0.png')
 
-niceDog1 = sscale(pygame.image.load(os.path.join('pics','NiceDogSILR_1.png')))
+niceDog1 = simport('NiceDogSILR_1.png')
 
-niceDog2 = sscale(pygame.image.load(os.path.join('pics','NiceDogSILR_2.png')))
+niceDog2 = simport('NiceDogSILR_2.png')
 
-niceDog3 = sscale(pygame.image.load(os.path.join('pics','NiceDogSILR_3.png')))
+niceDog3 = simport('NiceDogSILR_3.png')
 #NiceDog
 #PinkFreak
-pinkFreak0 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_00.png')))
+pinkFreak0 = simport('PinkFreakSILR_00.png')
 
-pinkFreak1 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_01.png')))
+pinkFreak1 = simport('PinkFreakSILR_01.png')
 
-pinkFreak2 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_02.png')))
+pinkFreak2 = simport('PinkFreakSILR_02.png')
 
-pinkFreak3 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_03.png')))
+pinkFreak3 = simport('PinkFreakSILR_03.png')
 
-pinkFreak4 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_04.png')))
+pinkFreak4 = simport('PinkFreakSILR_04.png')
 
-pinkFreak5 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_05.png')))
+pinkFreak5 = simport('PinkFreakSILR_05.png')
 
-pinkFreak6 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_06.png')))
+pinkFreak6 = simport('PinkFreakSILR_06.png')
 
-pinkFreak7 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_07.png')))
+pinkFreak7 = simport('PinkFreakSILR_07.png')
 
-pinkFreak8 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_08.png')))
+pinkFreak8 = simport('PinkFreakSILR_08.png')
 
-pinkFreak9 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_09.png')))
+pinkFreak9 = simport('PinkFreakSILR_09.png')
 
-pinkFreak10 = sscale(pygame.image.load(os.path.join('pics','PinkFreakSILR_10.png')))
+pinkFreak10 = simport('PinkFreakSILR_10.png')
 #PinkFreak
 #PurplePerp
-purplePerp0 = sscale(pygame.image.load(os.path.join('pics','PurpleperpSILR_0.png')))
+purplePerp0 = simport('PurpleperpSILR_0.png')
 
-purplePerp1 = sscale(pygame.image.load(os.path.join('pics','PurpleperpSILR_1.png')))
+purplePerp1 = simport('PurpleperpSILR_1.png')
 
-purplePerp2 = sscale(pygame.image.load(os.path.join('pics','PurpleperpSILR_2.png')))
+purplePerp2 = simport('PurpleperpSILR_2.png')
 
-purplePerp3 = sscale(pygame.image.load(os.path.join('pics','PurpleperpSILR_3.png')))
+purplePerp3 = simport('PurpleperpSILR_3.png')
 #PurplePerp
 #Queen Bird
-queenBird0 = sscale(pygame.image.load(os.path.join('pics','QueenBirdSILR_0.png')))
+queenBird0 = simport('QueenBirdSILR_0.png')
 #Queen Bird
 #Quiche
-quiche0 = sscale(pygame.image.load(os.path.join('pics','QuicheSILR_0.png')))
+quiche0 = simport('QuicheSILR_0.png')
 #Quiche
 #Trash Panda
-tpanda_worried = pygame.image.load(os.path.join('pics', "racoon sad.png"))
+tpanda_worried = simport("racoon sad.png")
 
-tpanda = pygame.image.load(os.path.join('pics', "racoon.png"))
+tpanda =simport("racoon.png")
 #Trash Panda
 #Right Turn Map
-rightTurn = pygame.image.load(os.path.join('pics','rightTurn.png'))
+rightTurn = simport('rightTurn.png')
 #Right Turn Map
 #Rock
-rock = pygame.image.load(os.path.join('pics', "Rock JV.png"))
-rock = sscale(rock)
+rock = simport("Rock JV.png")
 #Rock
 #Ruderoo
-ruderoo0 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_00.png')))
+ruderoo0 = simport('ruderooSILR_00.png')
 
-ruderoo1 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_01.png')))
+ruderoo1 = simport('ruderooSILR_01.png')
 
-ruderoo2 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_02.png')))
+ruderoo2 = simport('ruderooSILR_02.png')
 
-ruderoo3 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_03.png')))
+ruderoo3 = simport('ruderooSILR_03.png')
 
-ruderoo4 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_04.png')))
+ruderoo4 = simport('ruderooSILR_04.png')
 
-ruderoo5 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_05.png')))
+ruderoo5 = simport('ruderooSILR_05.png')
 
-ruderoo6 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_06.png')))
+ruderoo6 = simport('ruderooSILR_06.png')
 
-ruderoo7 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_07.png')))
+ruderoo7 = simport('ruderooSILR_07.png')
 
-ruderoo8 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_08.png'))).convert()
+ruderoo8 = simport('ruderooSILR_08.png')
 
-ruderoo9 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_09.png'))).convert()
+ruderoo9 =simport('ruderooSILR_09.png')
 
-ruderoo10 = sscale(pygame.image.load(os.path.join('pics','ruderooSILR_10.png'))).convert()
+ruderoo10 = simport('ruderooSILR_10.png')
 #Ruderoo
 #Most important Mob in the game
-mostImportantMob0 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_0.png'))).convert()
+mostImportantMob0 = simport('ScaryStevenSILR_0.png')
 
-mostImportantMob1 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_1.png'))).convert()
+mostImportantMob1 = simport('ScaryStevenSILR_1.png')
 
-mostImportantMob2 = sscale(pygame.image.load(os.path.join('pics', 'ScaryStevenSILR_2.png'))).convert()
+mostImportantMob2 = simport('ScaryStevenSILR_2.png')
 
-mostImportantMob3 = sscale(pygame.image.load(os.path.join('pics','ScaryStevenSILR_3.png'))).convert()
+mostImportantMob3 = simport('ScaryStevenSILR_3.png')
 #Most important mob in the game
 #Sheep
-sheep1 = sscale(pygame.image.load(os.path.join('pics', 'Sheep1stfightSILR_0.png'))).convert()
+sheep1 = simport('Sheep1stfightSILR_0.png')
 
-sheep2 = sscale(pygame.image.load(os.path.join('pics', 'Sheep1stfightSILR_1.png'))).convert()
+sheep2 = simport('Sheep1stfightSILR_1.png')
 #Sheep
 
 #Vertical map
-scrub2 = sscale(pygame.image.load(os.path.join('pics', 'vertical.png'))).convert()
+scrub2 = simport('vertical.png')
 #Vertical map
 #Wardrobe
-warddrobe = sscale(pygame.image.load(os.path.join('pics', "wardrobe.png"))).convert()
+warddrobe = simport("wardrobe.png")
 
-warddrobe2 = sscale(pygame.image.load(os.path.join('pics', "wardrobe v2.png"))).convert()
+warddrobe2 = simport("wardrobe v2.png")
 #Wardrobe
 #Welcome Mat
-welcomeMat = sscale(pygame.image.load(os.path.join('pics', 'welcomematt.png'))).convert()
+welcomeMat = simport('welcomematt.png')
 #Welcome Mat
