@@ -140,6 +140,7 @@ class Player(Dancer):
         self.lastyupdate = variables.current_time
 
     def scale_by_offset(self):
+        self.current_frame = graphics.honey_right1
         self.current_frame = pygame.transform.scale(self.current_frame, [int(self.current_frame.get_width()*variables.scaleoffset),
                                                  int(self.current_frame.get_height()*variables.scaleoffset)])
         self.normal_width = self.current_frame.get_width()
