@@ -60,6 +60,8 @@ class Map():
     def scale_by_offset(self):
         self.finalimage = pygame.transform.scale(self.finalimage, [int(self.finalimage.get_width()*variables.scaleoffset),
                                                  int(self.finalimage.get_height()*variables.scaleoffset)])
+        for x in range(0, len(self.exitareas)):
+            self.exitareas[x].scale_by_offset()
 
     def checkexit(self):
         currentexit = False

@@ -1,4 +1,5 @@
 #Oliver Flatt works on classes
+import variables
 
 class Exit():
     def __init__(self, area, isbutton, name, newx, newy):
@@ -7,3 +8,8 @@ class Exit():
         self.name = name #name of map it exits to
         self.newx = newx
         self.newy = newy
+
+    def scale_by_offset(self):
+        s = variables.scaleoffset
+        print(s)
+        self.area = [self.area[0]*s, self.area[1]*s, self.area[2]*s, self.area[3]*s]

@@ -65,8 +65,8 @@ def new_scale_offset():
 
 def change_map(name):
     global current_map
-    if name == "house1":
-        current_map = house1
+    if name == "honeyhome":
+        current_map = honeyhome
     if name == 'outside1':
         current_map = outside1
     new_scale_offset()
