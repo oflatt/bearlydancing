@@ -6,6 +6,7 @@ class Conversation():
     area = [0, 0, 0, 0] #x, y, width, height in a list (a Rect)
     isbutton = True #true if you have to hit a button to enter
     progress = 0
+    part_of_story = "none"
 
     def __init__(self, speaks):
         #a list of Speak
@@ -30,7 +31,12 @@ class Conversation():
     def keypress(self, key):
         r = self.speaks[self.progress].keypress(key)
         if r == "done":
-            if self.progress <= len(self.speaks):
+            if self.progress < len(self.speaks)-1:
                 self.progress += 1
             else:
+                self.progress = 0
                 variables.state = "world"
+
+    def scale_by_offset(self):
+        s = variables.scaleoffset
+        self.area = [self.area[0]*s, self.area[1]*s, self.area[2]*s, self.area[3]*s]

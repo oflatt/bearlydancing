@@ -50,7 +50,7 @@ class Map():
         if not e == False:
             self.draw_interation_button(e.area[0] + e.area[2]/2 - pw/2, e.area[1] - pw/2, pw)
         c = self.checkconversation()
-        if not c == False:
+        if not c == False and c.isbutton:
             self.draw_interation_button(c.area[0] + c.area[2]/2 - pw/2, c.area[1] - pw/2, pw)
 
     def draw_interation_button(self, xpos, ypos, width):
@@ -62,6 +62,8 @@ class Map():
                                                  int(self.finalimage.get_height()*variables.scaleoffset)])
         for x in range(0, len(self.exitareas)):
             self.exitareas[x].scale_by_offset()
+        for x in range(0, len(self.conversations)):
+            self.conversations[x].scale_by_offset()
 
     def checkexit(self):
         currentexit = False
@@ -84,8 +86,10 @@ class Map():
             p = classvar.player
             if (p.xpos+p.normal_width) >= e.area[0] and p.xpos<=(e.area[0] + e.area[2]) \
                 and (p.ypos + p.normal_height)>=e.area[1] and p.ypos<=(e.area[1] + e.area[3]):
-                currentconversation = e
-                break
+                #then check if it is part of main storyline
+                if e.part_of_story == "none" or e.part_of_story == classvar.player.storyprogress:
+                    currentconversation = e
+                    break
         return currentconversation
 
     def checkenemy(self):

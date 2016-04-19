@@ -43,7 +43,8 @@ while not done:
         # User let up on a key
         elif event.type == pygame.KEYUP:
             # If it is an arrow key, reset vector back to zero
-            classvar.player.keyrelease(event.key)
+            if variables.state == "world":
+                classvar.player.keyrelease(event.key)
 
     # --- Game Logic
     if variables.state == "world":

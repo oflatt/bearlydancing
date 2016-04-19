@@ -36,4 +36,5 @@ class Speak():
             self.line += 1
             return "talking"
         elif key in variables.enterkeys:
+            self.line = 0
             return "done"

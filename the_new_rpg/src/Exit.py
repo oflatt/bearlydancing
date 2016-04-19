@@ -11,5 +11,4 @@ class Exit():
 
     def scale_by_offset(self):
         s = variables.scaleoffset
-        print(s)
         self.area = [self.area[0]*s, self.area[1]*s, self.area[2]*s, self.area[3]*s]

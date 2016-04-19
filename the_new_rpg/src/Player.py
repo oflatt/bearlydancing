@@ -16,6 +16,7 @@ class Player(Dancer):
     ypos = 0
     lastxupdate = 0
     lastyupdate = 0
+    storyprogress = 1
 
     def teleport(self, x, y):
         self.xpos = x

@@ -27,10 +27,9 @@ outside1.startpoint = [block *0.85, block*2.9]
 outside1.exitareas = [Exit([block*6, block*6, block, block], True, 'outside1', block *0.85, block*2.9)]
 outside1.enemies = [Enemy(graphics.sheep1, 0.9, "sheep"), Enemy(graphics.meanGreen0, 1.0, "greenie")]
 outside1.lvrange = [1, 2]
-conversations.testconversation.area = [block*4, block*4, block, block*2]
-conversations.testconversation.isbutton = False
 outside1.conversations = [conversations.testconversation]
 
+#honeyhome
 insidewidth = graphics.houseInside.get_width()
 insideheight = graphics.houseInside.get_height()
 insideb = insidewidth/10
@@ -44,6 +43,11 @@ honeyhome = Map(graphics.houseInside, [Rock(graphics.welcomeMat,
 
 honeyhome.startpoint = [0,0]
 honeyhome.exitareas = [Exit([insidewidth/2-graphics.welcomeMat.get_width()/2, insideheight, graphics.welcomeMat.get_width(), insideb], False, 'outside1', insideb*0.85, insideb*2.9)]
+racoonc = conversations.testconversation
+racoonc.area = [0, 5*insideb, insidewidth, 50]#50 because it does not matter how thick it is down
+racoonc.isbutton = True
+racoonc.part_of_story = 1 #makes it so you can only have the conversation once
+honeyhome.conversations = [racoonc]
 
 current_map = honeyhome
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
@@ -71,6 +75,15 @@ def change_map(name):
         current_map = outside1
     new_scale_offset()
 
+def engage_conversation(c):
+    if c.part_of_story == "none":
+        variables.state = "conversation"
+        conversations.currentconversation = c
+    elif c.part_of_story == classvar.player.storyprogress:
+        variables.state = "conversation"
+        classvar.player.storyprogress += 1
+        conversations.currentconversation = c
+
 def on_key(key):
     if key in variables.enterkeys:
         e = current_map.checkexit()
@@ -79,8 +92,7 @@ def on_key(key):
             classvar.player.teleport(e.newx, e.newy)
             change_map(e.name)
         elif not c == False:
-            variables.state = "conversation"
-            conversations.currentconversation = c
+            engage_conversation(c)
 
 def checkexit():
     e = current_map.checkexit()
@@ -93,5 +105,4 @@ def checkconversation():
     c = current_map.checkconversation()
     if not c == False:
         if c.isbutton == False:
-            variables.state = "conversation"
-            conversations.currentconversation = c
+            engage_conversation(c)
