@@ -39,13 +39,13 @@ honeyhome = Map(graphics.houseInside, [Rock(graphics.welcomeMat,
                                             False),
                                        Rock(graphics.bed, 0*insideb, 0*insideb, False),
                                        Rock(graphics.warddrobe2, 2*insideb, 0*insideb, False),
-                                       Rock(graphics.tpanda, 4*insideb, 5*insideb, False)])
+                                       Rock(graphics.tpanda, 8*insideb, 7*insideb, False)])
 
 honeyhome.startpoint = [0,0]
 honeyhome.exitareas = [Exit([insidewidth/2-graphics.welcomeMat.get_width()/2, insideheight, graphics.welcomeMat.get_width(), insideb], False, 'outside1', insideb*0.85, insideb*2.9)]
-racoonc = conversations.testconversation
-racoonc.area = [0, 5*insideb, insidewidth, 50]#50 because it does not matter how thick it is down
-racoonc.isbutton = True
+racoonc = conversations.firstscene
+racoonc.area = [0, 7*insideb, insidewidth, 50]#50 because it does not matter how thick it is down
+racoonc.isbutton = False
 racoonc.part_of_story = 1 #makes it so you can only have the conversation once
 honeyhome.conversations = [racoonc]
 

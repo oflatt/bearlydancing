@@ -12,11 +12,17 @@ testconversation = Conversation([Speak(graphics.honey_right0, longtestdialogue),
                                  Speak(graphics.honey_right0, longtestdialogue),
                                  Speak(graphics.honey_right2, shorttestdialoge)])
 
-firstscene = Conversation(["Honey: Oh goody its lunch, I'm",
-      "STARVING! But no, I left my glorious",
-      "spinach-mushroom-provalone-bacon-",
-      "broccoli quiche in the forest!",
-      "I'll have to go get it.",
+ohhoney = ["Honey: Oh goody its lunch, I'm STARVING!",
+           "But no, I left my glorious spinach-mushroom-provalone-",
+          "bacon-broccoli quiche in the forest!",
+           "I'll have to go get it."]
+ohtp = ["bla"]
+
+firstscene = Conversation([Speak(graphics.honey_right0, ohhoney),
+                           Speak(graphics.tpanda, ohtp )])
+
+oldfirst = Conversation([
+      "",
       "Trash Panda: But Honey, those",
       "forests are infested with monsters!",
       " You shouldn't fight all of them",
