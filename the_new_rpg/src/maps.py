@@ -68,6 +68,7 @@ def new_scale_offset():
     classvar.player.scale_by_offset()
 
 def change_map(name):
+    classvar.player.change_of_state()
     global current_map
     if name == "honeyhome":
         current_map = honeyhome
@@ -76,6 +77,7 @@ def change_map(name):
     new_scale_offset()
 
 def engage_conversation(c):
+    classvar.player.change_of_state()
     if c.part_of_story == "none":
         variables.state = "conversation"
         conversations.currentconversation = c
