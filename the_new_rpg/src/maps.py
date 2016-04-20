@@ -20,7 +20,8 @@ outside1 = Map(graphics.scrub1, [
                                 Rock(graphics.tree3, 1.4*block, 2.3*block, True),
                                 Rock(graphics.tree3, 1.9*block, 2.3*block, True),
                                 Rock(graphics.tree3, 2.4*block, 2.3*block, True),
-                                Rock(graphics.house, 0*block, 0*block, True)])
+                                Rock(graphics.house, 0*block, 0*block, True),
+                                Rock(graphics.tall_Tree, 6*block, 6*block, True)])
 
 outsidewidth = graphics.scrub1.get_width()
 outsideheight = graphics.scrub1.get_height()
@@ -51,7 +52,7 @@ racoonc.isbutton = False
 racoonc.part_of_story = 1 #makes it so you can only have the conversation once
 honeyhome.conversations = [racoonc]
 
-outside2 = Map(graphics.leftTurn, [Rock(graphics.bed, 2*outsideheight, 4*outsidewidth, False)])
+outside2 = Map(graphics.leftTurn, [Rock(graphics.bed, 2*block, 4*block, False)])
 
 current_map = outside1
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
