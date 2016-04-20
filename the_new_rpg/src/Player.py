@@ -153,3 +153,11 @@ class Player(Dancer):
 
     def heal(self):
         self.health = stathandeling.max_health(self.lv)
+
+    def change_of_state(self):
+        self.downpresstime = 0
+        self.uppresstime = 0
+        self.leftpresstime = 0
+        self.rightpresstime = 0
+        self.xspeed = 0
+        self.yspeed = 0
