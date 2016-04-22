@@ -16,26 +16,20 @@ ohhoney = ["Honey: Oh goody its lunch, I'm STARVING!",
            "But no, I left my glorious spinach-mushroom-provalone-",
           "bacon-broccoli quiche in the forest!",
            "I'll have to go get it."]
-ohtp = ["bla"]
+ohtp = ["Trash Panda: But Honey, those forests are infested with monsters!",
+        "You shouldn't fight all of them just for a quiche!",]
+ohhoney2 = ["Honey: It is no ordinary quiche,Trash Panda.",
+             "It is my glorious spinach-mushroom-provalone-bacon-broccoli quiche!",
+            "Lunch is the most important meal of the day, I need to do this."]
+ohtp2 = ["TP: I thought breakfast was the-"]
+ohhoney3 = ["Honey: Shush, I'm leaving now. Time for adventure!"]
 
 firstscene = Conversation([Speak(graphics.honey_right0, ohhoney),
-                           Speak(graphics.tpanda, ohtp )])
+                           Speak(graphics.tpanda, ohtp),
+                           Speak(graphics.honey_right0, ohhoney2),
+                           Speak(graphics.tpanda, ohtp2),
+                           Speak(graphics.honey_right0, ohhoney3)])
 
-oldfirst = Conversation([
-      "",
-      "Trash Panda: But Honey, those",
-      "forests are infested with monsters!",
-      " You shouldn't fight all of them",
-      "just for a quiche!",
-      "Honey: It is no ordinary quiche",
-      ", Trash Panda. It is my glorious",
-      "spinach-mushroom-provalone-bacon-",
-      "broccoli quiche! Lunch is the most",
-      " important meal of the day, I need",
-      " to do this.",
-      "TP: I thought breakfast was the-",
-      "Honey: Shush, I'm leaving now.",
-      " Time for adventure."])
 
 secondscene = Conversation(["Monster: Who goes there!",
       "Honey: It's me, Honey! I'm just",

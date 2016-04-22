@@ -17,17 +17,19 @@ houserock.h = houserock.h * 3/5
 
 # outside 1
 outside1 = Map(graphics.scrub1, [
-                                Rock(graphics.welcomeMat, 0.4*block,3*block, False),
-                                Rock(graphics.tree1, 5*block, 3*block, True),
-                                Rock(graphics.tree1, 2.1*block, 3*block, True),
-                                Rock(graphics.tree3, 2.2*block, 3*block, True),
-                                Rock(graphics.tree3, 2.5*block, 3.2*block, True)])
+                                Rock(graphics.tree3, 1.4*block, 2.3*block, True),
+                                Rock(graphics.tree3, 1.9*block, 2.3*block, True),
+                                Rock(graphics.tree3, 2.4*block, 2.3*block, True),
+                                Rock(graphics.house, 0*block, 0*block, True),
+                                Rock(graphics.tall_Tree, 6*block, 6*block, True)])
 
-outside1.startpoint = [block *0.85, block*2.9]
-outside1.exitareas = [Exit([block*6, block*6, block, block], True, 'outside1', block *0.85, block*2.9)]
-outside1.enemies = [Enemy(graphics.sheep1, 0.9, "sheep"), Enemy(graphics.meanGreen0, 1.0, "greenie")]
-outside1.lvrange = [1, 2]
-outside1.conversations = [conversations.testconversation]
+outsidewidth = graphics.scrub1.get_width()
+outsideheight = graphics.scrub1.get_height()
+outside1.startpoint= [block*8,block*4]
+outside1.exitareas = [Exit([outsidewidth, 0, 100, outsideheight], False, 'outside2', 0, block*4)]
+#outside1.enemies = [Enemy(graphics.sheep1, 0.9, "sheep"), Enemy(graphics.meanGreen0, 1.0, "greenie")]
+#outside1.lvrange = [1, 2]
+#outside1.conversations = [conversations.testconversation]
 
 #honeyhome
 insidewidth = graphics.houseInside.get_width()
@@ -42,14 +44,17 @@ honeyhome = Map(graphics.houseInside, [Rock(graphics.welcomeMat,
                                        Rock(graphics.tpanda, 8*insideb, 7*insideb, False)])
 
 honeyhome.startpoint = [0,0]
-honeyhome.exitareas = [Exit([insidewidth/2-graphics.welcomeMat.get_width()/2, insideheight, graphics.welcomeMat.get_width(), insideb], False, 'outside1', insideb*0.85, insideb*2.9)]
+honeyhome.exitareas = [Exit([insidewidth/2-graphics.welcomeMat.get_width()/2, insideheight,
+                             graphics.welcomeMat.get_width(), insideb], False, 'outside1', insideb*0.85, insideb*6)]
 racoonc = conversations.firstscene
 racoonc.area = [0, 7*insideb, insidewidth, 50]#50 because it does not matter how thick it is down
 racoonc.isbutton = False
 racoonc.part_of_story = 1 #makes it so you can only have the conversation once
 honeyhome.conversations = [racoonc]
 
-current_map = honeyhome
+outside2 = Map(graphics.leftTurn, [Rock(graphics.bed, 2*block, 4*block, False)])
+
+current_map = outside1
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
 
 def new_scale_offset():
@@ -74,6 +79,8 @@ def change_map(name):
         current_map = honeyhome
     if name == 'outside1':
         current_map = outside1
+    if name == "outside2":
+        current_map = outside2
     new_scale_offset()
 
 def engage_conversation(c):
