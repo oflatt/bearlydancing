@@ -13,20 +13,22 @@ testmap1 = Map(graphics.testmapimage, [Rock(graphics.bed, 2*block, 2*block, True
 testmap1.startpoint = [block * 10, block*10]
 
 houserock = Rock(graphics.house, 0, 0, True)
-houserock.h = houserock.h * 3/5
+houserock.h = houserock.h * (3/5)
+housewidth = graphics.house.get_width()
 
 # outside 1
-outside1 = Map(graphics.scrub1, [
-                                Rock(graphics.tree3, 1.4*block, 2.3*block, True),
-                                Rock(graphics.tree3, 1.9*block, 2.3*block, True),
-                                Rock(graphics.tree3, 2.4*block, 2.3*block, True),
-                                Rock(graphics.house, 0*block, 0*block, True),
-                                Rock(graphics.tall_Tree, 6*block, 6*block, True)])
+outside1 = Map(graphics.scrub1, [houserock,
+                                 Rock(graphics.tree3, 1.4*block, 1.9*block, True),
+                                 Rock(graphics.tree3, 1.9*block, 1.9*block, True),
+                                 Rock(graphics.tree3, 2.4*block, 1.9*block, True),
+                                 Rock(graphics.tall_Tree, 4*block, 4*block, True),
+                                 Rock(graphics.tall_Tree, 2.5*block, 4*block, True)])
 
 outsidewidth = graphics.scrub1.get_width()
 outsideheight = graphics.scrub1.get_height()
 outside1.startpoint= [block*8,block*4]
-outside1.exitareas = [Exit([outsidewidth, 0, 100, outsideheight], False, 'outside2', 0, block*4)]
+outside1.exitareas = [Exit([outsidewidth, 0, 100, outsideheight], False, 'outside2', 0, block*4),
+                      Exit([housewidth*(1/5), housewidth*(3/5), housewidth*(1/5), housewidth*(3/5)], True, 'honeyhome', 0, 0)]
 #outside1.enemies = [Enemy(graphics.sheep1, 0.9, "sheep"), Enemy(graphics.meanGreen0, 1.0, "greenie")]
 #outside1.lvrange = [1, 2]
 #outside1.conversations = [conversations.testconversation]
@@ -52,9 +54,9 @@ racoonc.isbutton = False
 racoonc.part_of_story = 1 #makes it so you can only have the conversation once
 honeyhome.conversations = [racoonc]
 
-outside2 = Map(graphics.leftTurn, [Rock(graphics.bed, 2*block, 4*block, False)])
+outside2 = Map(graphics.leftTurn, [Rock(graphics.tall_Tree, 2*block, 2*block, True)])
 
-current_map = outside1
+current_map = honeyhome
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
 
 def new_scale_offset():
