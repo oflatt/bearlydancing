@@ -73,7 +73,6 @@ def new_scale_offset():
     classvar.player.scale_by_offset()
 
 def change_map(name):
-    classvar.player.change_of_state()
     global current_map
     if name == "honeyhome":
         current_map = honeyhome
