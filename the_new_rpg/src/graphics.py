@@ -289,3 +289,5 @@ warddrobe2 = simport("wardrobe v2.png")
 welcomeMat = simport('welcomematt.png')
 #Tall Tree
 tall_Tree = simport('tallTree_0.png')
+#Tall Tree 2
+tall_Tree2 = simport('Bigtree.png')
