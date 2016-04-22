@@ -27,8 +27,6 @@ while not done:
 
         # User pressed down on a key
         elif event.type == pygame.KEYDOWN:
-            # Figure out if it was an arrow key. If so
-            # adjust speed.
             if event.key == pygame.K_ESCAPE:
                 done = True
             if variables.state == "conversation":
@@ -42,7 +40,6 @@ while not done:
 
         # User let up on a key
         elif event.type == pygame.KEYUP:
-            # If it is an arrow key, reset vector back to zero
             if variables.state == "world":
                 classvar.player.keyrelease(event.key)
 

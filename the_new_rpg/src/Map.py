@@ -116,6 +116,7 @@ class Map():
             if currentenemy == False:
                 currentenemy = self.enemies[len(self.enemies)-1]
             variables.state = "battle"
+            classvar.player.change_of_state()
             currentenemy.lv = random.randint(self.lvrange[0], self.lvrange[1])
             currentenemy.health = stathandeling.max_health(currentenemy.lv)
             classvar.battle = Battle(currentenemy)

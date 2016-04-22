@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import pygame, variables, maps, graphics, stathandeling
 from Dancer import Dancer
+from Animation import Animation
 
 class Player(Dancer):
     xspeed = 0
@@ -9,14 +10,23 @@ class Player(Dancer):
     rightpresstime = 0
     uppresstime = 0
     downpresstime = 0
-    current_frame = graphics.honey_right1
-    normal_width = current_frame.get_width()
-    normal_height = current_frame.get_height()
+    normal_width = 10
+    normal_height = 10
     xpos = 0
     ypos = 0
     lastxupdate = 0
     lastyupdate = 0
     storyprogress = 1
+
+    #animation
+    left_animation = Animation([graphics.left_honey1, graphics.left_honey2, graphics.left_honey3], 100)
+    right_animation = Animation([graphics.honey_right0, graphics.honey_right1,
+                                 graphics.honey_right2, graphics.honey_right3], 100)
+    up_animation = Animation([graphics.back_honey0, graphics.back_honey1,
+                              graphics.back_honey2, graphics.back_honey3], 100)
+    down_animation = Animation([graphics.front_honey0, graphics.front_honey1,
+                                graphics.front_honey2, graphics.front_honey3], 100)
+    current_animation = left_animation
 
     def teleport(self, x, y):
         self.xpos = x
@@ -38,9 +48,22 @@ class Player(Dancer):
             drawy = self.ypos - (mh - variables.height) #mh - variables.height is the height of the scrolling area
         else:
             drawy = self.ypos
-        variables.screen.blit(self.current_frame, [drawx, drawy])
+        variables.screen.blit(self.current_pic_scaled(), [drawx, drawy])
+
+    def change_animation(self):
+        if self.xspeed == 0:
+            if self.yspeed < 0:
+                self.current_animation = self.up_animation
+            elif self.yspeed > 0:
+                self.current_animation = self.down_animation
+        elif self.xspeed < 0:
+            self.current_animation = self.left_animation
+        elif self.xspeed > 0:
+            self.current_animation = self.right_animation
+        self.current_animation.reset()
 
     def keypress(self, k):
+        print(k)
         self.move()
         t = variables.current_time
         s = variables.playerspeed * variables.scaleoffset
@@ -48,18 +71,20 @@ class Player(Dancer):
             self.leftpresstime = variables.current_time
             self.xspeed = -s
             self.lastxupdate = t
-        elif k == pygame.K_RIGHT or k == pygame.K_d:
+        if k == pygame.K_RIGHT or k == pygame.K_d:
             self.rightpresstime = variables.current_time
             self.lastxupdate = t
             self.xspeed = s
-        elif k == pygame.K_UP or k == pygame.K_w:
+        if k == pygame.K_UP or k == pygame.K_w:
+            print("up")
             self.uppresstime = variables.current_time
             self.yspeed = -s
             self.lastyupdate = t
-        elif k == pygame.K_DOWN or k == pygame.K_s:
+        if k == pygame.K_DOWN or k == pygame.K_s:
             self.downpresstime = variables.current_time
             self.yspeed = s
             self.lastyupdate = t
+        self.change_animation()
 
     def keyrelease(self, k):
         self.move()
@@ -93,6 +118,7 @@ class Player(Dancer):
                 self.yspeed = 0
             else:
                 self.yspeed = -s
+        self.change_animation()
 
     #moves with collision detections
     def move(self):
@@ -140,13 +166,20 @@ class Player(Dancer):
         self.lastxupdate = variables.current_time
         self.lastyupdate = variables.current_time
 
+    def current_pic_scaled(self): #returns the current pic to display
+        if self.leftpresstime == 0 and self.rightpresstime == 0 and \
+            self.uppresstime == 0 and self.downpresstime == 0:
+            c = self.current_animation.pics[0]
+        else:
+            c = self.current_animation.current_frame()
+        c = pygame.transform.scale(c,
+                                    [int(c.get_width()*variables.scaleoffset),
+                                     int(c.get_height()*variables.scaleoffset)])
+        return c
+
     def scale_by_offset(self):
-        self.current_frame = graphics.honey_right1
-        self.current_frame = pygame.transform.scale(self.current_frame,
-                                                    [int(self.current_frame.get_width()*variables.scaleoffset),
-                                                     int(self.current_frame.get_height()*variables.scaleoffset)])
-        self.normal_width = self.current_frame.get_width()
-        self.normal_height = self.current_frame.get_height()
+        self.normal_width = self.current_pic_scaled().get_width()
+        self.normal_height = self.current_pic_scaled().get_height()
 
     def ismoving(self):
         return not (self.xspeed==0 and self.yspeed==0)
