@@ -68,12 +68,16 @@ honeyhome.conversations = [racoonc]
 
 outside2 = Map(graphics.leftTurn, [Rock(graphics.tall_Tree, 4*block, 5*block, True),
                                    Rock(graphics.tall_Tree2, 5.5*block, 4.5*block, True),
-                                   Rock(graphics.tall_Tree, 2*block, 5*block, True),
-                                   Rock(graphics.tall_Tree2, 6.7*block, 2*block, True)])
+                                   Rock(graphics.tall_Tree, 2*block, 4.7*block, True),
+                                   Rock(graphics.tall_Tree2, 6.7*block, 2*block, True),
+                                   Rock(graphics.rock, 5*block, 4*block, False),
+                                   Rock(graphics.tall_Tree, 1.7*block, 0.3*block, True)])
 
 outside2.exitareas = [Exit([outsidewidth, outsideheight, 0, 100], False, 'outside1', 4*block, 4*block)]
+outside2.enemies = [Enemy(graphics.sheep1, 0.9, "sheep"), Enemy(graphics.meanGreen0, 0.7, "greenie"), Enemy(graphics.purplePerp0, 0.5, "purpur")]
+outside2.lvrange = [1, 2]
 
-current_map = outside2
+current_map = honeyhome
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
 
 def new_scale_offset():
