@@ -65,17 +65,7 @@ classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
 
 def new_scale_offset():
     global current_map
-    mapw = current_map.finalimage.get_width()
-    maph = current_map.finalimage.get_height()
-    if mapw<maph:
-        smaller = mapw
-    else:
-        smaller = maph
-    if mapw<variables.width or maph<variables.height:
-        variables.scaleoffset = variables.width/smaller
-    else:
-        variables.scaleoffset = 1
-    current_map.scale_by_offset()
+    variables.scaleoffset = current_map.map_scale_offset
     classvar.player.scale_by_offset()
 
 def change_map(name):

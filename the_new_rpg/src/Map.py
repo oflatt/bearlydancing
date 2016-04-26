@@ -17,6 +17,7 @@ class Map():
     lvrange = [1]
     last_encounter_check = 0
     conversations = [] #list of conversation on the map
+    isscaled = False #if scale stuff has been called
 
     def __init__(self, base, terrain):
         #base is a png
@@ -24,6 +25,25 @@ class Map():
         #terrain is a list of Rock
         self.terrain= terrain
         self.finalimage = draw_map(base, terrain)
+        mapw = self.finalimage.get_width()
+        maph = self.finalimage.get_height()
+        if mapw<maph:
+            smaller = mapw
+        else:
+            smaller = maph
+        if mapw<variables.width or maph<variables.height:
+            self.map_scale_offset = variables.width/smaller
+        else:
+            self.map_scale_offset = 1
+
+    def scale_stuff(self):
+        self.finalimage = pygame.transform.scale(self.finalimage,
+                                                 [int(self.finalimage.get_width()*self.map_scale_offset),
+                                                 int(self.finalimage.get_height()*self.map_scale_offset)])
+        for x in range(0, len(self.exitareas)):
+            self.exitareas[x].scale_by_offset(self.map_scale_offset)
+        for x in range(0, len(self.conversations)):
+            self.conversations[x].scale_by_offset(self.map_scale_offset)
 
     #x and y are the player's x and y pos
     def draw(self, x, y):
@@ -57,15 +77,12 @@ class Map():
         pygame.draw.ellipse(variables.screen, variables.WHITE, [xpos, ypos, width, width])
         pygame.draw.ellipse(variables.screen, variables.GRAY, [xpos+width/4, ypos+width/4, width/2, width/2])
 
-    def scale_by_offset(self):
-        self.finalimage = pygame.transform.scale(self.finalimage, [int(self.finalimage.get_width()*variables.scaleoffset),
-                                                 int(self.finalimage.get_height()*variables.scaleoffset)])
-        for x in range(0, len(self.exitareas)):
-            self.exitareas[x].scale_by_offset()
-        for x in range(0, len(self.conversations)):
-            self.conversations[x].scale_by_offset()
-
     def checkexit(self):
+        #check if scale stuff needs to be called
+        if not self.isscaled:
+            self.scale_stuff()
+            self.isscaled = True
+
         currentexit = False
         for x in range(0, len(self.exitareas)):
             e = self.exitareas[x]

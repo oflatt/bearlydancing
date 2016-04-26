@@ -63,7 +63,6 @@ class Player(Dancer):
         self.current_animation.reset()
 
     def keypress(self, k):
-        print(k)
         self.move()
         t = variables.current_time
         s = variables.playerspeed * variables.scaleoffset
@@ -76,7 +75,6 @@ class Player(Dancer):
             self.lastxupdate = t
             self.xspeed = s
         if k == pygame.K_UP or k == pygame.K_w:
-            print("up")
             self.uppresstime = variables.current_time
             self.yspeed = -s
             self.lastyupdate = t
