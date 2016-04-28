@@ -291,3 +291,5 @@ welcomeMat = simport('welcomematt.png')
 tall_Tree = simport('tallTree_0.png')
 #Tall Tree 2
 tall_Tree2 = simport('Bigtree.png')
+#Wii_U
+wiiu = simport('wiiu.png')
