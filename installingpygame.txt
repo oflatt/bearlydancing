@@ -11,3 +11,6 @@ Make sure when running pip install pygame that you are running cmd as administra
 
 set PATH=%PATH%;"C:\Program Files\Racket-6.3.90.900"
 That is an example of how to manually set the PATH environment variable for that cmd window only.
+
+link for cx_Freeze
+http://www.lfd.uci.edu/~gohlke/pythonlibs/#cx_freeze
