@@ -22,7 +22,7 @@ state = "world"
 
 #general
 scaleoffset = 1
-font = pygame.font.Font(None, 30)
+font = pygame.font.SysFont(pygame.font.get_default_font(), 30)
 
 #battle
 healthanimationspeed = 2000#time in milliseconds for the health bar animation to go
