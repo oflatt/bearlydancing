@@ -1,16 +1,13 @@
-﻿Make sure python installation is 32 bit
-https://www.webucator.com/blog/2015/03/installing-the-windows-64-bit-version-of-pygame/
+﻿Important! Make sure python installation is 32 bit and version 3.4
 
-
-Link for download for wheel file of Pygame
+Link for download for wheel file of Pygame, call pip install on the wheel file
 http://www.lfd.uci.edu/~gohlke/pythonlibs/#pygame
 
-
-Make sure when running pip install pygame that you are running cmd as administrator.
-
+Make sure when running pip install pygame that you are running cmd as administrator (on school computers)
 
 set PATH=%PATH%;"C:\Program Files\Racket-6.3.90.900"
 That is an example of how to manually set the PATH environment variable for that cmd window only.
 
 link for cx_Freeze
-http://www.lfd.uci.edu/~gohlke/pythonlibs/#cx_freeze
+https://pypi.python.org/pypi?:action=display&name=cx_Freeze&version=4.3.4
+get the 32 bit python 3.4 version of cx freeze
