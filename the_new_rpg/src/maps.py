@@ -38,11 +38,19 @@ outside1 = Map(graphics.scrub1, [houserock,
 outsidewidth = graphics.scrub1.get_width()
 outsideheight = graphics.scrub1.get_height()
 outside1.startpoint= [block*8,block*4]
-outside1.exitareas = [Exit([outsidewidth, 0, 100, outsideheight], False, 'outside2', 0, block*4),
+outside1.exitareas = [Exit([outsidewidth, 0, 100, outsideheight], False, 'outside2', 25, outsideheight/2),
                       Exit([housewidth*(1/5), housewidth*(3/5), housewidth*(1/5), housewidth*(3/32)], True, 'honeyhome', 0, 0)]
-outside1.enemies = [Enemy(graphics.sheep1, 0.9, "sheep"), Enemy(graphics.meanGreen0, 0.7, "greenie"), Enemy(graphics.purplePerp0, 0.5, "purpur")]
+outside1.enemies = [Enemy(graphics.sheep1, 0.5, "sheep"), Enemy(graphics.meanGreen0, 0.3, "greenie"), Enemy(graphics.purplePerp0, 0.2, "purpur")]
 outside1.lvrange = [1, 2]
-outside1.conversations = [conversations.testconversation]
+outside1c = conversations.secondscene
+outside1c.area = [3.1*block, 0, outsidewidth, outsideheight]
+outside1c.isbutton = False
+outside1c.part_of_story = 2
+greenie = Enemy(graphics.meanGreen0,0.3, "Greenie Meanie")
+greenie.lv = 1
+outside1.special_battle = Enemy(graphics.meanGreen0, 1, "Greenie Meanie")
+outside1.conversations = [outside1c]
+
 
 #honeyhome
 insidewidth = graphics.houseInside.get_width()
@@ -71,13 +79,20 @@ outside2 = Map(graphics.leftTurn, [Rock(graphics.tall_Tree, 4*block, 5*block, Tr
                                    Rock(graphics.tall_Tree, 2*block, 4.7*block, True),
                                    Rock(graphics.tall_Tree2, 6.7*block, 2*block, True),
                                    Rock(graphics.rock, 5*block, 4*block, False),
-                                   Rock(graphics.tall_Tree, 1.7*block, 0.3*block, True)])
+                                   Rock(graphics.tall_Tree, 1.7*block, 0.3*block, True),
+                                   Rock(graphics.rock, 6*block, 2*block, True),
+                                   Rock(graphics.bush, 1.3*block, 3*block, False),
+                                   Rock(graphics.bush, 5.6*block, 2.5*block, False),
+                                   Rock(graphics.bush, 1*block, 5*block, False )])
 
-outside2.exitareas = [Exit([outsidewidth, outsideheight, 0, 100], False, 'outside1', 4*block, 4*block)]
-outside2.enemies = [Enemy(graphics.sheep1, 0.9, "sheep"), Enemy(graphics.meanGreen0, 0.7, "greenie"), Enemy(graphics.purplePerp0, 0.5, "purpur")]
+outside2.exitareas = [Exit([0, 0, 5, outsideheight], False, 'outside1', outsidewidth-50, outsideheight/2),
+                      Exit([0, 0, outsidewidth, 5], False, 'outside3', outsidewidth/2, outsideheight-50)]
+outside2.enemies = [Enemy(graphics.sheep1, 0.5, "sheep"), Enemy(graphics.meanGreen0, 0.3, "greenie"), Enemy(graphics.purplePerp0, 0.2, "purpur")]
 outside2.lvrange = [1, 2]
 
-current_map = honeyhome
+outside3 = Map(graphics.rightTurn, [Rock(graphics.purplePerp0, 4*block, 4*block, False)])
+
+current_map = outside2
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
 
 def new_scale_offset():

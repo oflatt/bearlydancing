@@ -293,3 +293,7 @@ tall_Tree = simport('tallTree_0.png')
 tall_Tree2 = simport('Bigtree.png')
 #Wii_U
 wiiu = simport('wiiu.png')
+#bush
+bush = simport('bush.png')
+#tv
+tv = simport('tv0.png')

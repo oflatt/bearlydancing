@@ -18,11 +18,11 @@ ohhoney = ["Honey: Oh goody its lunch, I'm STARVING!",
            "I'll have to go get it."]
 ohtp = ["Trash Panda: But Honey, those forests are infested with monsters!",
         "You shouldn't fight all of them just for a quiche!",]
-ohhoney2 = ["Honey: It is no ordinary quiche,Trash Panda.",
+ohhoney2 = ["It is no ordinary quiche,Trash Panda.",
              "It is my glorious spinach-mushroom-provalone-bacon-broccoli quiche!",
             "Lunch is the most important meal of the day, I need to do this."]
-ohtp2 = ["TP: I thought breakfast was the-"]
-ohhoney3 = ["Honey: Shush, I'm leaving now. Time for adventure!"]
+ohtp2 = ["I thought breakfast was the-"]
+ohhoney3 = ["Shush, I'm leaving now. Time for adventure!"]
 
 firstscene = Conversation([Speak(graphics.honey_right0, ohhoney),
                            Speak(graphics.tpanda, ohtp),
@@ -30,17 +30,19 @@ firstscene = Conversation([Speak(graphics.honey_right0, ohhoney),
                            Speak(graphics.tpanda, ohtp2),
                            Speak(graphics.honey_right0, ohhoney3)])
 
+monster = ["Greenie Meanie: Who goes there!"]
+ohhoney4 = ["It's me, Honey! I'm just here to get my quiche."]
+monster2 = ["No one may pass!"]
+ohhoney5 = ["So what.......do you want me to fight you??"]
+monster3 = ["No! I want to have a DANCE-OFF with you!"]
+ohhoney6 = ["Well that's a relief. I'm way better at dancing than fighting..."]
 
-secondscene = Conversation(["Monster: Who goes there!",
-      "Honey: It's me, Honey! I'm just",
-      " here to get my quiche.",
-      "Monster: No one may pass!",
-      "Honey: So what, do you want",
-      " me to fight you?",
-      "Monster: No! I want to DANCE fight!",
-      " you",
-      "Honey: Well that's a relief. I'm way",
-      " better at dancing than fighting..."])
+secondscene = Conversation([Speak(graphics.meanGreen0, monster),
+                            Speak(graphics.left_honey1, ohhoney4),
+                            Speak(graphics.meanGreen0, monster2),
+                            Speak(graphics.left_honey1, ohhoney5),
+                            Speak(graphics.meanGreen0, monster3),
+                            Speak(graphics.left_honey1, ohhoney6)])
 
 penultimatefight = Conversation(["Honey: Oh wow, they must be",
                                   "the last boss!",
