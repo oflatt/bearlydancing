@@ -141,20 +141,35 @@ class Player(Dancer):
                    and (y+self.normal_height)>=arock.y*s and y<=(arock.y*s + arock.h*s)
 
         if not self.xspeed == 0:
-            #collision detection for the moved x pos with the unmoved y pos
-            for x in range(0, numofrocks):
-                r = t[x]
-                if collisioncheck(r, movedxpos, self.ypos):
-                    iscollisionx = True
-                    break
+            #first check for edges of map
+            if movedxpos < 0:
+                self.xpos = 0
+                iscollisionx = True
+            elif movedxpos+self.normal_width>m.finalimage.get_width():
+                self.xpos = m.finalimage.get_width()-self.normal_width
+                iscollisionx = True
+            else:
+                #collision detection for the moved x pos with the unmoved y pos
+                for x in range(0, numofrocks):
+                    r = t[x]
+                    if collisioncheck(r, movedxpos, self.ypos):
+                        iscollisionx = True
+                        break
 
         if not self.yspeed == 0:
-            #collision detection for the moved y pos with the unmoved x pos
-            for x in range(0, numofrocks):
-                r = t[x]
-                if collisioncheck(r, self.xpos, movedypos):
-                    iscollisiony = True
-                    break
+            if movedypos < 0:
+                self.ypos = 0
+                iscollisiony = True
+            elif movedypos+self.normal_height>m.finalimage.get_height():
+                self.ypos = m.finalimage.get_height()-self.normal_height
+                iscollisiony = True
+            else:
+                #collision detection for the moved y pos with the unmoved x pos
+                for x in range(0, numofrocks):
+                    r = t[x]
+                    if collisioncheck(r, self.xpos, movedypos):
+                        iscollisiony = True
+                        break
 
         if not iscollisionx:
             self.xpos = movedxpos
