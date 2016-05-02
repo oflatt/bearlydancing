@@ -14,3 +14,12 @@ class Rock():
 
     def draw(self):
         variables.screen.blit(self.base, [self.x, self.y])
+
+    def scale_by_offset(self, scale):
+        s = scale
+        self.x *= s
+        self.y *= s
+        #scale base pic to right size
+        self.base = pygame.transform.scale(self.base, [self.base.get_width()*s, self.base.get_height*s])
+        self.w = self.base.get_width()
+        self.h = self.base.get_height()
