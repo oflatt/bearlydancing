@@ -31,8 +31,8 @@ outside1 = Map(graphics.scrub1, [houserock,
                                  Rock(graphics.tall_Tree2, 0.5*block, 4.5*block, True),
                                  Rock(graphics.tall_Tree, 2.9*block, 0.1*block, True),
                                  Rock(graphics.tall_Tree2, 5.2*block, 8, True),
-                                 Rock(graphics.tall_Tree2, 7.5*block, 8, True),
-                                 Rock(graphics.tall_Tree, 8.2*block, 5.3*block, True),
+                                 Rock(graphics.tall_Tree2, 7.8*block, 8, True),
+                                 Rock(graphics.tall_Tree, 7.9*block, 5.3*block, True),
                                  Rock(graphics.rock, 2.5*block, 6.3*block, True)])
 
 outsidewidth = graphics.scrub1.get_width()
@@ -97,8 +97,8 @@ outside3.lvrange = [3, 4]
 outside3.startpoint=[0,0]
 outside3.exitareas = [Exit([0,outsideheight, outsidewidth, 5], False, 'outside2', outsidewidth/2, block*0.1)]
 
-current_map = outside1
-home_map = honeyhome
+current_map = honeyhome
+home_map = ('honeyhome')
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
 
 def new_scale_offset():
