@@ -92,7 +92,7 @@ outside2.lvrange = [1, 2]
 
 outside3 = Map(graphics.rightTurn, [Rock(graphics.purplePerp0, 4*block, 4*block, False)])
 
-current_map = outside2
+current_map = honeyhome
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
 
 def new_scale_offset():
