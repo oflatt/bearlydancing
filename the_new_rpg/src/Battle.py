@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #Oliver works on classes
-import variables, pygame, stathandeling, classvar, random, graphics
+import variables, pygame, stathandeling, classvar, random, graphics, maps
 from Button import Button
 
 class Battle():
@@ -207,9 +207,11 @@ class Battle():
         elif self.state == "dance" and key in variables.enterkeys:
             self.trade()
         elif self.state == "lose" and key in variables.enterkeys:
-            #reset game
+            #go home
             classvar.player.heal()
             variables.state = "world"
+            maps.change_map(maps.home_map)
+            classvar.player.teleport(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
         elif self.state == "win" and key in variables.enterkeys:
             self.state = "exp"
             self.newexp = classvar.player.exp + stathandeling.exp_gained(self.enemy.lv)
