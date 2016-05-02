@@ -56,9 +56,7 @@ houseInside = simport("BearHome.png")
 #Bed
 bed = simport("Bed JV.png")
 #Bed
-#Bush
-bush = simport("bushbkgrdSILR_0.png")
-#Bush
+
 #CowBoy
 cowBoy0 = simport('cowboySILR_0.png')
 
@@ -297,3 +295,8 @@ wiiu = simport('wiiu.png')
 bush = simport('bush.png')
 #tv
 tv = simport('tv0.png')
+#slime dog
+pink_fly = simport('pinkfly_1.png')
+slime_dog = simport('SlimeDog1.png')
+#pink fly
+

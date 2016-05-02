@@ -66,13 +66,14 @@ honeyhome = Map(graphics.houseInside, [Rock(graphics.welcomeMat,
 
 honeyhome.startpoint = [0,0]
 honeyhome.exitareas = [Exit([insidewidth/2-graphics.welcomeMat.get_width()/2, insideheight,
-                             graphics.welcomeMat.get_width(), insideb], False, 'outside1', insideb*0.85, insideb*6)]
+                             graphics.welcomeMat.get_width(), insideb], False, 'outside1', insideb*0.9, insideb*4)]
 racoonc = conversations.firstscene
 racoonc.area = [0, 7*insideb, insidewidth, 50]#50 because it does not matter how thick it is down
 racoonc.isbutton = False
 racoonc.part_of_story = 1 #makes it so you can only have the conversation once
 honeyhome.conversations = [racoonc]
 
+#outside2
 outside2 = Map(graphics.leftTurn, [Rock(graphics.tall_Tree, 4*block, 5*block, True),
                                    Rock(graphics.tall_Tree2, 5.5*block, 4.5*block, True),
                                    Rock(graphics.tall_Tree, 2*block, 4.7*block, True),
@@ -86,9 +87,18 @@ outside2.exitareas = [Exit([0, 0, 5, outsideheight], False, 'outside1', outsidew
 outside2.enemies = [Enemy(graphics.sheep1, 0.5, "sheep"), Enemy(graphics.meanGreen0, 0.3, "greenie"), Enemy(graphics.purplePerp0, 0.2, "purpur")]
 outside2.lvrange = [1, 2]
 
-outside3 = Map(graphics.rightTurn, [Rock(graphics.purplePerp0, 4*block, 4*block, False)])
+#outside3
+outside3 = Map(graphics.rightTurn, [Rock(graphics.tall_Tree, 1*block, 4*block, True),
+                                    Rock(graphics.rock, 5.7*block, 7*block, True)])
+outside3.foreground_terrain= [Rock(graphics.tall_Tree, 6*block, 4*block, False)]
 
-current_map = honeyhome
+outside3.enemies = [Enemy(graphics.ruderoo0, 0.5, "rudaroo"), Enemy(graphics.slime_dog, 0.3, "slime dog"), Enemy(graphics.pink_fly, 0.2, "pink_fly")]
+outside3.lvrange = [3, 4]
+outside3.startpoint=[0,0]
+outside3.exitareas = [Exit([0,outsideheight, outsidewidth, 5], False, 'outside2', outsidewidth/2, block*0.1)]
+
+current_map = outside1
+home_map = honeyhome
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
 
 def new_scale_offset():
