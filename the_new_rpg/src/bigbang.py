@@ -54,12 +54,13 @@ while not done:
 
     # --- Drawing Code
     variables.screen.fill(variables.WHITE)
-    maps.current_map.draw(classvar.player.xpos, classvar.player.ypos)
     if variables.state == "conversation":
         conversations.currentconversation.draw()
         classvar.player.draw()
     elif variables.state == "world":
+        maps.current_map.draw(classvar.player.xpos, classvar.player.ypos)
         classvar.player.draw()
+        maps.current_map.draw_foreground()
     elif variables.state == "battle":
         classvar.battle.draw()
 
