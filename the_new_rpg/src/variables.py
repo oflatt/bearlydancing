@@ -22,7 +22,11 @@ state = "world"
 
 #general
 scaleoffset = 1
-font = pygame.font.SysFont(pygame.font.get_default_font(), 30)
+fontlist = pygame.font.get_fonts()
+fontname = "use default"
+if "orangekidregular" in fontlist:
+    fontname = "orangekidregular"
+font = pygame.font.SysFont(fontname, 30)
 
 #battle
 healthanimationspeed = 2000#time in milliseconds for the health bar animation to go
