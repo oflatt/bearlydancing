@@ -2,6 +2,8 @@
 #Oliver works on classes
 import variables, pygame, stathandeling, classvar, random, graphics, maps
 from Button import Button
+from Beatmap import Beatmap
+from Note import Note
 
 class Battle():
     #for attacking animation
@@ -20,6 +22,8 @@ class Battle():
 
     #drawing buttons
     buttons = []
+
+    beatmap = Beatmap(1000, [Note(1, 30), Note(2, 50)], [])
 
     def __init__(self, enemy):
         self.enemy = enemy
@@ -140,6 +144,8 @@ class Battle():
                                                                 epich,
                                                                 epicw*percenthealthleft,
                                                                 enemyhealthh])
+
+        self.beatmap.draw()
 
     #for things like the attack animation
     def ontick(self):
