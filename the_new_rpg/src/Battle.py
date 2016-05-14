@@ -23,13 +23,12 @@ class Battle():
     #drawing buttons
     buttons = []
 
-    beatmap = Beatmap(1000, [Note(1, 30), Note(2, 50)], [])
-
     def __init__(self, enemy):
         self.enemy = enemy
         self.state = "choose"
         self.option = 1
         self.enemy.pic = graphics.scale_pure(self.enemy.pic, variables.width/5)
+        self.beatmap = Beatmap(1000, [Note(1, 1), Note(2, 2)], [])
 
     def draw(self):
         h = variables.height

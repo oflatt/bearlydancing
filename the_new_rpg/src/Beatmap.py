@@ -33,8 +33,8 @@ class Beatmap():
 
     def notepos(self, note):
         dt = variables.current_time-self.starttime
+        print(dt)
         #ypos finds the notes place relative to pads then offsets it
-        ypos = (dt-(note.time*self.tempo))*variables.dancespeed*0.1 + padypos
+        ypos = (dt-(note.time*self.tempo))*self.speed*variables.dancespeed - padypos
         xpos = note.value*padxspace
-        print(ypos)
         return [xpos, ypos]
