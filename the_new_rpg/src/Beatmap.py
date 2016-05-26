@@ -19,22 +19,22 @@ class Beatmap():
         #draw the notes that are on the screen
         n = self.notes_on_screen()
         for x in range(0, len(n)):
-            n[x].draw(self.notepos(n[x]))
+            n[x].draw(self.notepos(n[x]), self.tempo)
 
     def notes_on_screen(self):
         n = []
         for x in range(0, len(self.notes)):
             checkednote = self.notes[x]
-            if self.notepos(checkednote)[1] > 0:
+            if self.notepos(checkednote)[1] >= 0:
                 n.insert(0, checkednote)
             else:
                 break
         return n
 
     def notepos(self, note):
+        #returns the pos of the bottom of the note
         dt = variables.current_time-self.starttime
-        print(dt)
         #ypos finds the notes place relative to pads then offsets it
-        ypos = (dt-(note.time*self.tempo))*self.speed*variables.dancespeed - padypos
+        ypos = (dt-(note.time*self.tempo))*self.speed*variables.dancespeed
         xpos = note.value*padxspace
         return [xpos, ypos]

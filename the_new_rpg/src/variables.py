@@ -31,7 +31,7 @@ font = pygame.font.SysFont(fontname, 30)
 #battle
 healthanimationspeed = 2000#time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
-dancespeed = height/800#factor against time
+dancespeed = height/8 * 0.001#factor for displaying notes
 
 #conversation
 textbox_height = height*1/4
