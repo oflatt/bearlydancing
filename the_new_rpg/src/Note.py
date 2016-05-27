@@ -11,5 +11,7 @@ class Note():
     def draw(self, pos, tempo):
         width = variables.width/20
         height = self.duration*tempo*variables.dancespeed
-        #add height to y because the pos is the bottom of the rectangle
-        pygame.draw.rect(variables.screen, variables.WHITE, [pos[0]+width/2, pos[1]-height, width, height])
+        #subtract height to y because the pos is the bottom of the rectangle
+        pygame.draw.rect(variables.screen, variables.notes_colors[self.value-1], [pos[0], pos[1]-height, width, height])
+        pygame.draw.rect(variables.screen, variables.notes_colors[self.value-1], [pos[0]-width/8, pos[1]-height, width*1.25, variables.height/80])
+        pygame.draw.rect(variables.screen, variables.notes_colors[self.value-1], [pos[0]-width/8, pos[1]-variables.height/80, width*1.25, variables.height/80])

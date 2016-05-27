@@ -198,6 +198,7 @@ class Battle():
 
 
     def onkey(self, key):
+        self.beatmap.onkey(key)
         if self.state == "choose":
             if key in variables.enterkeys:
                 if self.option == 1:

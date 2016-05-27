@@ -1,12 +1,15 @@
-import variables
+import variables, pygame
 
 padypos = variables.height*(3/4)
-padxspace = variables.width/10
+padxspace = variables.width/13
 
 class Beatmap():
     scale = [50, 53, 55, 58, 60, 64, 68, 70] #list of eight pitches
     speed = 1
     starttime = 0
+    #scores is a running list of the values for how well each note so far has been played (values for perfect, good ect)
+    #it is cleared at every tradetime
+    scores = []
 
     def __init__(self, tempo, notes, tradetimes):
         self.starttime = variables.current_time
@@ -20,6 +23,16 @@ class Beatmap():
         n = self.notes_on_screen()
         for x in range(0, len(n)):
             n[x].draw(self.notepos(n[x]), self.tempo)
+        w = variables.width/20
+        h = variables.height/80
+        pygame.draw.rect(variables.screen, variables.notes_colors[0], [padxspace-w/8, padypos, w*1.25, h])
+        pygame.draw.rect(variables.screen, variables.notes_colors[1], [padxspace*2-w/8, padypos, w*1.25, h])
+        pygame.draw.rect(variables.screen, variables.notes_colors[2], [padxspace*3-w/8, padypos, w*1.25, h])
+        pygame.draw.rect(variables.screen, variables.notes_colors[3], [padxspace*4-w/8, padypos, w*1.25, h])
+        pygame.draw.rect(variables.screen, variables.notes_colors[4], [padxspace*5-w/8, padypos, w*1.25, h])
+        pygame.draw.rect(variables.screen, variables.notes_colors[5], [padxspace*6-w/8, padypos, w*1.25, h])
+        pygame.draw.rect(variables.screen, variables.notes_colors[6], [padxspace*7-w/8, padypos, w*1.25, h])
+        pygame.draw.rect(variables.screen, variables.notes_colors[7], [padxspace*8-w/8, padypos, w*1.25, h])
 
     def notes_on_screen(self):
         n = []
@@ -38,3 +51,7 @@ class Beatmap():
         ypos = (dt-(note.time*self.tempo))*self.speed*variables.dancespeed
         xpos = note.value*padxspace
         return [xpos, ypos]
+
+    def onkey(self, key):
+        if key in variables.note1keys:
+            print("ya")
