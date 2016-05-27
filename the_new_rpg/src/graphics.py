@@ -44,6 +44,15 @@ def simport(filename):
 testmapimage = importpic('testmap.jpg')
 testmapimage = sscale_customfactor(testmapimage, 2)#do not use custom factor on normal art, preserve pixil sizes
 
+Atext = scale_pure(variables.font.render("A", 0, variables.WHITE), (variables.width/40)*1.25)
+Stext = scale_pure(variables.font.render("S", 0, variables.WHITE), (variables.width/40)*1.25)
+Dtext = scale_pure(variables.font.render("D", 0, variables.WHITE), (variables.width/40)*1.25)
+Ftext = scale_pure(variables.font.render("F", 0, variables.WHITE), (variables.width/40)*1.25)
+Jtext = scale_pure(variables.font.render("J", 0, variables.WHITE), (variables.width/40)*1.25)
+Ktext = scale_pure(variables.font.render("K", 0, variables.WHITE), (variables.width/40)*1.25)
+Ltext = scale_pure(variables.font.render("L", 0, variables.WHITE), (variables.width/40)*1.25)
+SEMICOLONtext = scale_pure(variables.font.render(";", 0, variables.WHITE), (variables.width/50))
+
 #Art by Jacob and Spirit imported
 map_base = simport("a path.png")
 tree1 = simport("Tree1.png")

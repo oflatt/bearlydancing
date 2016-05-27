@@ -1,4 +1,4 @@
-import variables, pygame
+import variables, pygame, graphics
 
 padypos = variables.height*(3/4)
 padxspace = variables.width/13
@@ -37,6 +37,16 @@ class Beatmap():
         #draw bottom rectangles
         for x in range(1, 9):
             pygame.draw.rect(variables.screen, variables.notes_colors[x-1], [padxspace*(x)-w/8, padypos, w*1.25, h])
+
+        #draw the keys
+        variables.screen.blit(graphics.Atext, [padxspace-w/8, padypos+h*3])
+        variables.screen.blit(graphics.Stext, [padxspace*2-w/8, padypos+h*3])
+        variables.screen.blit(graphics.Dtext, [padxspace*3-w/8, padypos+h*3])
+        variables.screen.blit(graphics.Ftext, [padxspace*4-w/8, padypos+h*3])
+        variables.screen.blit(graphics.Jtext, [padxspace*5-w/8, padypos+h*3])
+        variables.screen.blit(graphics.Ktext, [padxspace*6-w/8, padypos+h*3])
+        variables.screen.blit(graphics.Ltext, [padxspace*7-w/8, padypos+h*3])
+        variables.screen.blit(graphics.SEMICOLONtext, [padxspace*8-w/8, padypos+h*3])
 
     def notes_on_screen(self):
         n = []
