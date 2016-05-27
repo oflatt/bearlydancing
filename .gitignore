@@ -65,3 +65,5 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+the_new_rpg/.idea/misc.xml
+the_new_rpg/.idea/theNewRpg.iml
