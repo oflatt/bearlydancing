@@ -42,6 +42,8 @@ while not done:
         elif event.type == pygame.KEYUP:
             if variables.state == "world":
                 classvar.player.keyrelease(event.key)
+            elif variables.state == "battle":
+                classvar.battle.onrelease(event.key)
 
     # --- Game Logic
     if variables.state == "world":

@@ -10,6 +10,8 @@ class Beatmap():
     #scores is a running list of the values for how well each note so far has been played (values for perfect, good ect)
     #it is cleared at every tradetime
     scores = []
+    #list of whether the eight keys are held down or not
+    held_keys = [False, False, False, False, False, False, False, False]
 
     def __init__(self, tempo, notes, tradetimes):
         self.starttime = variables.current_time
@@ -22,23 +24,27 @@ class Beatmap():
         #draw the notes that are on the screen
         n = self.notes_on_screen()
         for x in range(0, len(n)):
-            n[x].draw(self.notepos(n[x]), self.tempo)
+            n[x].draw(self.tempo)
         w = variables.width/20
         h = variables.height/80
-        pygame.draw.rect(variables.screen, variables.notes_colors[0], [padxspace-w/8, padypos, w*1.25, h])
-        pygame.draw.rect(variables.screen, variables.notes_colors[1], [padxspace*2-w/8, padypos, w*1.25, h])
-        pygame.draw.rect(variables.screen, variables.notes_colors[2], [padxspace*3-w/8, padypos, w*1.25, h])
-        pygame.draw.rect(variables.screen, variables.notes_colors[3], [padxspace*4-w/8, padypos, w*1.25, h])
-        pygame.draw.rect(variables.screen, variables.notes_colors[4], [padxspace*5-w/8, padypos, w*1.25, h])
-        pygame.draw.rect(variables.screen, variables.notes_colors[5], [padxspace*6-w/8, padypos, w*1.25, h])
-        pygame.draw.rect(variables.screen, variables.notes_colors[6], [padxspace*7-w/8, padypos, w*1.25, h])
-        pygame.draw.rect(variables.screen, variables.notes_colors[7], [padxspace*8-w/8, padypos, w*1.25, h])
+
+        #draw which ones are pressed
+        for x in range(0, 8):
+            if self.held_keys[x] == True:
+                ew = w*1.25
+                pygame.draw.ellipse(variables.screen, variables.WHITE, [padxspace*(x+1)-w/8, padypos+h/2-ew/4, ew, ew/2])
+
+        #draw bottom rectangles
+        for x in range(1, 9):
+            pygame.draw.rect(variables.screen, variables.notes_colors[x-1], [padxspace*(x)-w/8, padypos, w*1.25, h])
 
     def notes_on_screen(self):
         n = []
         for x in range(0, len(self.notes)):
             checkednote = self.notes[x]
-            if self.notepos(checkednote)[1] >= 0:
+            #update the pos of the note before putting it into the list
+            checkednote.pos = self.notepos(checkednote)
+            if checkednote.pos[1] >= 0:
                 n.insert(0, checkednote)
             else:
                 break
@@ -54,4 +60,36 @@ class Beatmap():
 
     def onkey(self, key):
         if key in variables.note1keys:
-            print("ya")
+            self.held_keys[0] = True
+        elif key in variables.note2keys:
+            self.held_keys[1] = True
+        elif key in variables.note3keys:
+            self.held_keys[2] = True
+        elif key in variables.note4keys:
+            self.held_keys[3] = True
+        elif key in variables.note5keys:
+            self.held_keys[4] = True
+        elif key in variables.note6keys:
+            self.held_keys[5] = True
+        elif key in variables.note7keys:
+            self.held_keys[6] = True
+        elif key in variables.note8keys:
+            self.held_keys[7] = True
+
+    def onrelease(self, key):
+        if key in variables.note1keys:
+            self.held_keys[0] = False
+        elif key in variables.note2keys:
+            self.held_keys[1] = False
+        elif key in variables.note3keys:
+            self.held_keys[2] = False
+        elif key in variables.note4keys:
+            self.held_keys[3] = False
+        elif key in variables.note5keys:
+            self.held_keys[4] = False
+        elif key in variables.note6keys:
+            self.held_keys[5] = False
+        elif key in variables.note7keys:
+            self.held_keys[6] = False
+        elif key in variables.note8keys:
+            self.held_keys[7] = False
