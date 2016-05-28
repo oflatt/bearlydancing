@@ -2,6 +2,7 @@ import variables, pygame, graphics
 from variables import padypos
 
 padxspace = variables.width/13
+padheight = variables.width/80
 
 class Beatmap():
     scale = [50, 53, 55, 58, 60, 64, 68, 70] #list of eight pitches
@@ -15,7 +16,9 @@ class Beatmap():
     #list of the notes on the screen currently
     nos = []
     #list of text pics to display for each note (perfect ect.)
-    feedback = [None, None, None, None, None, None, None, None]
+    feedback = [graphics.Atext, graphics.Stext, graphics.Dtext, graphics.Ftext,
+                graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
+    #when to stop displaying the text, in milliseconds
     feedback_timers = [0, 0, 0, 0, 0, 0, 0, 0]
 
     def __init__(self, tempo, notes, tradetimes):
@@ -24,6 +27,8 @@ class Beatmap():
         #notes is an ordered list of Note, notes with earlier times first
         self.notes = notes
         self.tradetimes = tradetimes
+        fsl = self.starttime+4000
+        self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
 
     def draw(self):
         #draw the notes that are on the screen
@@ -42,17 +47,12 @@ class Beatmap():
 
         #draw bottom rectangles
         for x in range(1, 9):
-            pygame.draw.rect(variables.screen, variables.notes_colors[x-1], [padxspace*(x)-w/8, padypos, w*1.25, h])
+            pygame.draw.rect(variables.screen, variables.notes_colors[x-1], [padxspace*(x)-w/8, padypos, w*1.25, padheight])
 
-        #draw the keys
-        variables.screen.blit(graphics.Atext, [padxspace-w/8, padypos+h*3])
-        variables.screen.blit(graphics.Stext, [padxspace*2-w/8, padypos+h*3])
-        variables.screen.blit(graphics.Dtext, [padxspace*3-w/8, padypos+h*3])
-        variables.screen.blit(graphics.Ftext, [padxspace*4-w/8, padypos+h*3])
-        variables.screen.blit(graphics.Jtext, [padxspace*5-w/8, padypos+h*3])
-        variables.screen.blit(graphics.Ktext, [padxspace*6-w/8, padypos+h*3])
-        variables.screen.blit(graphics.Ltext, [padxspace*7-w/8, padypos+h*3])
-        variables.screen.blit(graphics.SEMICOLONtext, [padxspace*8-w/8, padypos+h*3])
+        #draw the feedback (keys then scores, perfect ect)
+        for x in range(0, 8):
+            if variables.current_time < self.feedback_timers[x]:
+                variables.screen.blit(self.feedback[x], [padxspace*(x+1)-w/8, padypos+h*3])
 
     def notes_on_screen(self):
         n = []
@@ -73,16 +73,7 @@ class Beatmap():
         xpos = note.value*padxspace
         return [xpos, ypos]
 
-    def onkey(self, key):
-        def get_note_place_from_value(v):
-            np = False
-            for x in range(0, len(self.nos)):
-                if self.notes[x].value == v and self.notes[x].ison:
-                    np = x
-                    break
-            return np
-
-        def pos_to_score(ypos):
+    def pos_to_score(self, ypos):
             difference = abs(ypos-padypos)
             if difference <= variables.perfect_range:
                 return variables.perfect_value
@@ -93,70 +84,120 @@ class Beatmap():
             elif difference<= variables.miss_range:
                 return variables.miss_value
             else:
-                return False
+                return None
+
+    def get_note_place_from_value(self, v):
+            np = None
+            for x in range(0, len(self.notes)):
+                if self.notes[x].value == v and self.notes[x].ison:
+                    np = x
+                    break
+            return np
+
+    def onkey(self, key):
+        print("down")
+        print(self.notes[4].beginning_score)
+        print(self.notes[4].end_score)
 
         def check_note(np):
             if self.notes[np].beginning_score == None:
-                s = pos_to_score(self.notes[np].pos[1])
-                if s:
+                s = self.pos_to_score(self.notes[np].pos[1]-padheight)
+                if s != None:
                     self.notes[np].beginning_score = s
+                    if self.notes[np].beginning_score == variables.miss_value:
+                        self.notes[np].ison = False
 
+        def check_place(v):
+            np = self.get_note_place_from_value(v)
+            if not np == None:
+                check_note(np)
 
         if key in variables.note1keys:
-            np = get_note_place_from_value(1)
-            if np:
-                check_note(np)
+            check_place(1)
             self.held_keys[0] = True
         elif key in variables.note2keys:
-            np = get_note_place_from_value(2)
-            if np:
-                check_note(np)
+            check_place(2)
             self.held_keys[1] = True
         elif key in variables.note3keys:
-            np = get_note_place_from_value(3)
-            if np:
-                check_note(np)
+            check_place(3)
             self.held_keys[2] = True
         elif key in variables.note4keys:
-            np = get_note_place_from_value(4)
-            if np:
-                check_note(np)
+            check_place(4)
             self.held_keys[3] = True
         elif key in variables.note5keys:
-            np = get_note_place_from_value(5)
-            if np:
-                check_note(np)
+            check_place(5)
             self.held_keys[4] = True
         elif key in variables.note6keys:
-            np = get_note_place_from_value(6)
-            if np:
-                check_note(np)
+            check_place(6)
             self.held_keys[5] = True
         elif key in variables.note7keys:
-            np = get_note_place_from_value(7)
-            if np:
-                check_note(np)
+            check_place(7)
             self.held_keys[6] = True
         elif key in variables.note8keys:
-            np = get_note_place_from_value(8)
-            if np:
-                check_note(np)
+            check_place(8)
             self.held_keys[7] = True
 
     def onrelease(self, key):
+        print("up")
+        print(self.notes[4].beginning_score)
+        print(self.notes[4].end_score)
+
+        def check_note(np):
+            if self.notes[np].end_score == None and self.notes[np].beginning_score != None:
+                s = self.pos_to_score(self.notes[np].pos[1]-self.notes[np].height(self.tempo))
+
+                if s != None:
+                    if s < self.notes[np].beginning_score:
+                        end_score = s
+                    else:
+                        end_score = self.notes[np].beginning_score
+
+                    self.notes[np].end_score = s
+
+                    if s == variables.miss_value:
+                        self.notes[np].ison = False
+
+                    self.scores.append(end_score)
+
+                    if end_score == variables.miss_value:
+                        self.feedback[self.notes[np].value-1] = graphics.MISStext
+                        self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
+                    elif end_score == variables.good_value:
+                        self.feedback[self.notes[np].value-1] = graphics.GOODtext
+                        self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
+                    elif end_score == variables.ok_value:
+                        self.feedback[self.notes[np].value-1] = graphics.OKtext
+                        self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
+                    elif end_score == variables.perfect_value:
+                        self.feedback[self.notes[np].value-1] = graphics.PERFECTtext
+                        self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
+
+        def check_place(v):
+            np = self.get_note_place_from_value(v)
+            if not np == None:
+                check_note(np)
+
         if key in variables.note1keys:
+            check_place(1)
             self.held_keys[0] = False
         elif key in variables.note2keys:
+            check_place(2)
             self.held_keys[1] = False
         elif key in variables.note3keys:
+            check_place(3)
             self.held_keys[2] = False
         elif key in variables.note4keys:
+            check_place(4)
             self.held_keys[3] = False
         elif key in variables.note5keys:
+            check_place(5)
             self.held_keys[4] = False
         elif key in variables.note6keys:
+            check_place(6)
             self.held_keys[5] = False
         elif key in variables.note7keys:
+            check_place(7)
             self.held_keys[6] = False
         elif key in variables.note8keys:
+            check_place(8)
             self.held_keys[7] = False

@@ -32,10 +32,10 @@ class Note():
 
         p = self.pos
         #subtract height to y because the pos is the bottom of the rectangle
-        if self.ison and p[1]>variables.padypos and p[1]-height<variables.padypos:
+        if self.ison and p[1]>variables.padypos and p[1]-height<variables.padypos and self.beginning_score != None:
             pygame.draw.rect(variables.screen, color, [p[0]-width/8, p[1]-height, width*1.25, end_height])
             pygame.draw.rect(variables.screen, color, [p[0], p[1]-height, width, height-(p[1]-variables.padypos)])
-        else:
+        elif p[1]-height<variables.padypos:
             pygame.draw.rect(variables.screen, color, [p[0], p[1]-height, width, height])
             pygame.draw.rect(variables.screen, color, [p[0]-width/8, p[1]-height, width*1.25, end_height])
             pygame.draw.rect(variables.screen, color, [p[0]-width/8, p[1]-end_height+2, width*1.25, end_height])

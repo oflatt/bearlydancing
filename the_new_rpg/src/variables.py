@@ -47,10 +47,10 @@ perfect_value = 2
 good_value = 1
 ok_value = 0.5
 miss_value = 0
-perfect_range = height/25
-good_range = height/20
-ok_range = height/15
-miss_range = height/10
+perfect_range = height/150
+good_range = height/60
+ok_range = height/40
+miss_range = height/15
 
 notes_colors = [ORANGE, BLUE, RED, GREEN, GREEN, RED, BLUE, ORANGE]
 

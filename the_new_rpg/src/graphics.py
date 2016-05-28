@@ -52,6 +52,10 @@ Jtext = scale_pure(variables.font.render("J", 0, variables.WHITE), (variables.wi
 Ktext = scale_pure(variables.font.render("K", 0, variables.WHITE), (variables.width/40)*1.25)
 Ltext = scale_pure(variables.font.render("L", 0, variables.WHITE), (variables.width/40)*1.25)
 SEMICOLONtext = scale_pure(variables.font.render(";", 0, variables.WHITE), (variables.width/50))
+PERFECTtext = pygame.transform.rotate(scale_pure(variables.font.render("PERFECT", 0, variables.WHITE), variables.width/50), -45)
+OKtext = pygame.transform.rotate(scale_pure(variables.font.render("OK", 0, variables.WHITE), variables.width/50), -45)
+GOODtext = pygame.transform.rotate(scale_pure(variables.font.render("GOOD", 0, variables.WHITE), variables.width/50), -45)
+MISStext = pygame.transform.rotate(scale_pure(variables.font.render("MISS", 0, variables.WHITE), variables.width/50), -45)
 
 #Art by Jacob and Spirit imported
 map_base = simport("a path.png")

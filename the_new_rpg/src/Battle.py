@@ -28,7 +28,7 @@ class Battle():
         self.state = "choose"
         self.option = 1
         self.enemy.pic = graphics.scale_pure(self.enemy.pic, variables.width/5)
-        self.beatmap = Beatmap(1000, [Note(1, 1, 1), Note(2, 2, 1),Note(8, 2, 3), Note(6, 3, 0.5)], [])
+        self.beatmap = Beatmap(1000, [Note(1, 1, 1), Note(2, 2, 1),Note(8, 2, 3), Note(6, 3, 0.5), Note(1, 8, 1)], [])
 
     def draw(self):
         h = variables.height
