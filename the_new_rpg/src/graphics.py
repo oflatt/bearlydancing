@@ -13,6 +13,18 @@ def sscale(img):
         smaller = w
     return pygame.transform.scale(img, [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)])
 
+#like sscale but instead of returning a scaled pic, it returns what the dimensions of the new pic would have been
+def sscale_dimensions(img):
+    factor = 0.0025 #This basically determines how much of the map we can see
+    w = img.get_width()
+    h = img.get_height()
+    endsize = variables.height*factor
+    if w > h:
+        smaller = h
+    else:
+        smaller = w
+    return [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)]
+
 #sscale means smart scale, Oliver works on this
 #this one does not preserve the original pixel size
 def sscale_customfactor(img, factor):
@@ -38,11 +50,12 @@ def scale_pure(img, s):
 
 def importpic(filename):
     return pygame.image.load(os.path.join('pics', filename)).convert_alpha()
-def simport(filename):
-    return sscale(importpic(filename))
 
-testmapimage = importpic('testmap.jpg')
-testmapimage = sscale_customfactor(testmapimage, 2)#do not use custom factor on normal art, preserve pixil sizes
+#simport now returns a dictionary with an image and what its new dimensions would be if scaled
+def simport(filename):
+    p = importpic(filename)
+    dimensions = sscale_dimensions(p)
+    return {"img":p, "scale-width":dimensions[0], "scale-height":dimensions[1]}
 
 Atext = scale_pure(variables.font.render("A", 0, variables.WHITE), (variables.width/40)*1.25)
 Stext = scale_pure(variables.font.render("S", 0, variables.WHITE), (variables.width/40)*1.25)

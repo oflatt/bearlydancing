@@ -7,14 +7,10 @@ from Enemy import Enemy
 s = variables.scaleoffset
 
 block = variables.width/10
-testmap1 = Map(graphics.testmapimage, [Rock(graphics.bed, 2*block, 2*block, True),
-                                       Rock(graphics.bed, 3*block, 2*block, True),
-                                       Rock(graphics.front_honey, 6*block, 2*block, False)])
-testmap1.startpoint = [block * 10, block*10]
 
 houserock = Rock(graphics.house, 0, 0, True)
 houserock.h = houserock.h * (3/5)
-housewidth = graphics.house.get_width()
+housewidth = graphics.house["scale-width"]
 
 # outside 1
 outside1 = Map(graphics.scrub1, [houserock,
@@ -35,8 +31,8 @@ outside1 = Map(graphics.scrub1, [houserock,
                                  Rock(graphics.tall_Tree, 7.9*block, 5.3*block, True),
                                  Rock(graphics.rock, 2.5*block, 6.3*block, True)])
 
-outsidewidth = graphics.scrub1.get_width()
-outsideheight = graphics.scrub1.get_height()
+outsidewidth = graphics.scrub1["scale-width"]
+outsideheight = graphics.scrub1["scale-height"]
 outside1.startpoint= [block*8,block*4]
 outside1.exitareas = [Exit([outsidewidth, 0, 100, outsideheight], False, 'outside2', 25, outsideheight/2),
                       Exit([housewidth*(1/5), housewidth*(3/5), housewidth*(1/5), housewidth*(3/32)], True, 'honeyhome', block*4.3, block*8 )]
@@ -53,20 +49,20 @@ outside1.conversations = [outside1c]
 
 
 #honeyhome
-insidewidth = graphics.houseInside.get_width()
-insideheight = graphics.houseInside.get_height()
+insidewidth = graphics.houseInside["scale-width"]
+insideheight = graphics.houseInside["scale-height"]
 insideb = insidewidth/10
 honeyhome = Map(graphics.houseInside, [Rock(graphics.welcomeMat,
-                                            (insidewidth/2-graphics.welcomeMat.get_width()/2),
-                                            (insideheight-graphics.welcomeMat.get_height()),
+                                            (insidewidth/2-graphics.welcomeMat["scale-width"]/2),
+                                            (insideheight-graphics.welcomeMat["scale-height"]),
                                             False),
                                        Rock(graphics.bed, 0*insideb, 0*insideb, False),
                                        Rock(graphics.warddrobe2, 2*insideb, 0*insideb, False),
                                        Rock(graphics.tpanda, 8*insideb, 7*insideb, False)])
 
 honeyhome.startpoint = [0,0]
-honeyhome.exitareas = [Exit([insidewidth/2-graphics.welcomeMat.get_width()/2, insideheight,
-                             graphics.welcomeMat.get_width(), insideb], False, 'outside1', insideb*0.9, insideb*4)]
+honeyhome.exitareas = [Exit([insidewidth/2-graphics.welcomeMat["scale-width"]/2, insideheight,
+                             graphics.welcomeMat["scale-width"], insideb], False, 'outside1', insideb*0.9, insideb*4)]
 racoonc = conversations.firstscene
 racoonc.area = [0, 7*insideb, insidewidth, 50]#50 because it does not matter how thick it is down
 racoonc.isbutton = False

@@ -8,7 +8,7 @@ class Speak():
 
     def __init__(self, pic, dialogue):
         #dialogue is a list of strings, one per line. Writer has to make sure they fit
-        self.pic = graphics.scale_pure(pic, variables.photo_size)
+        self.pic = graphics.scale_pure(pic["img"], variables.photo_size)
         self.dialogue = dialogue
 
     def lines_in_sceen(self):

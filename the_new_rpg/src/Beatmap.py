@@ -13,8 +13,6 @@ class Beatmap():
     scores = []
     #list of whether the eight keys are held down or not
     held_keys = [False, False, False, False, False, False, False, False]
-    #list of the notes on the screen currently
-    nos = []
     #list of text pics to display for each note (perfect ect.)
     feedback = [graphics.Atext, graphics.Stext, graphics.Dtext, graphics.Ftext,
                 graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
@@ -31,10 +29,10 @@ class Beatmap():
         self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
 
     def draw(self):
+        #print(str(self.notes[0].pos[1]) + " " + str(self.notes[0].time) + " " + str(self.notes[0].end_score))
 
         #draw the notes that are on the screen
-        self.nos = self.notes_on_screen()
-        n = self.nos
+        n = self.notes_on_screen()
         for x in range(0, len(n)):
             n[x].draw(self.tempo)
         w = variables.width/20
@@ -58,6 +56,7 @@ class Beatmap():
     def notes_on_screen(self):
         n = []
         for x in range(0, len(self.notes)):
+            #update the pos of the note
             self.notes[x].pos = self.notepos(self.notes[x])
             checkednote = self.notes[x]
             if checkednote.pos[1] >= 0:
@@ -147,27 +146,27 @@ class Beatmap():
 
                 if s != None:
                     if s < self.notes[np].beginning_score:
-                        end_score = s
+                        final_note_score = s
                     else:
-                        end_score = self.notes[np].beginning_score
+                        final_note_score = self.notes[np].beginning_score
 
                     self.notes[np].end_score = s
 
                     if s == variables.miss_value:
                         self.notes[np].ison = False
 
-                    self.scores.append(end_score)
+                    self.scores.append(final_note_score)
 
-                    if end_score == variables.miss_value:
+                    if final_note_score == variables.miss_value:
                         self.feedback[self.notes[np].value-1] = graphics.MISStext
                         self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
-                    elif end_score == variables.good_value:
+                    elif final_note_score == variables.good_value:
                         self.feedback[self.notes[np].value-1] = graphics.GOODtext
                         self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
-                    elif end_score == variables.ok_value:
+                    elif final_note_score == variables.ok_value:
                         self.feedback[self.notes[np].value-1] = graphics.OKtext
                         self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
-                    elif end_score == variables.perfect_value:
+                    elif final_note_score == variables.perfect_value:
                         self.feedback[self.notes[np].value-1] = graphics.PERFECTtext
                         self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
 

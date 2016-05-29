@@ -185,9 +185,9 @@ class Player(Dancer):
             c = self.current_animation.pics[0]
         else:
             c = self.current_animation.current_frame()
-        c = pygame.transform.scale(c,
-                                    [int(c.get_width()*variables.scaleoffset),
-                                     int(c.get_height()*variables.scaleoffset)])
+        c = pygame.transform.scale(c["img"],
+                                    [int(c["scale-width"]*variables.scaleoffset),
+                                     int(c["scale-height"]*variables.scaleoffset)])
         return c
 
     def scale_by_offset(self):

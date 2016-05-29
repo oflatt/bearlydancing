@@ -1,14 +1,7 @@
 #!/usr/bin/python
 #Oliver Flatt works on Classes
-import variables, pygame, classvar, random, stathandeling
+import variables, pygame, classvar, random, stathandeling, graphics
 from Battle import Battle
-
-def draw_map(b, t):
-    i = b
-    for x in range(0, len(t)):
-        r = t[x]
-        i.blit(r.base, [r.x, r.y])
-    return i
 
 class Map():
     startpoint = [10, 10] #xy coordinates of spawn point
@@ -21,13 +14,13 @@ class Map():
     foreground_terrain = []
 
     def __init__(self, base, terrain):
-        #base is a png
         self.base = base
         #terrain is a list of Rock
         self.terrain= terrain
-        self.finalimage = draw_map(base, terrain)
-        mapw = self.finalimage.get_width()
-        maph = self.finalimage.get_height()
+        #final image is an actual image, not a dict
+        self.finalimage = graphics.sheep1["img"]
+        mapw = base["scale-width"]
+        maph = base["scale-height"]
         if mapw<maph:
             smaller = mapw
         else:
@@ -37,10 +30,19 @@ class Map():
         else:
             self.map_scale_offset = 1
 
+    def draw_map(self, b, t):
+        i = b
+        for x in range(0, len(t)):
+            r = t[x]
+            i.blit(r.base["img"], [r.x, r.y])
+        return i
+
     def scale_stuff(self):
-        self.finalimage = pygame.transform.scale(self.finalimage,
-                                                 [int(self.finalimage.get_width()*self.map_scale_offset),
-                                                 int(self.finalimage.get_height()*self.map_scale_offset)])
+        for x in range(len(self.terrain)):
+            self.terrain[x].scale_by_offset(self.map_scale_offset)
+        scaled_base = pygame.transform.scale(self.base["img"], [int(self.base["scale-width"]*self.map_scale_offset),
+                                                                int(self.base["scale-height"]*self.map_scale_offset)])
+        self.finalimage = self.draw_map(scaled_base, self.terrain)
         for x in range(0, len(self.exitareas)):
             self.exitareas[x].scale_by_offset(self.map_scale_offset)
         for x in range(0, len(self.conversations)):

@@ -26,6 +26,7 @@ class Note:
     def draw(self, tempo):
         width = variables.width / 20
         height = self.height(tempo)
+
         # subtract height to y because the pos is the bottom of the rectangle
         if self.ison:
             color = variables.notes_colors[self.value - 1]
@@ -36,7 +37,10 @@ class Note:
 
         p = self.pos
         # subtract height to y because the pos is the bottom of the rectangle
-        if self.ison and p[1] > variables.padypos > height - p[1] and self.beginning_score != None:
+        #the first case is if the note is currently being played
+        #second case is if the note was interrupted in the middle and counted as a miss
+        #this is if it has either been missed or has not been played yet (normal draw)
+        if self.ison and p[1] > variables.padypos > p[1]- height and self.beginning_score != None:
             pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height, width * 1.25, end_height])
             pygame.draw.rect(variables.screen, color, [p[0], p[1] - height, width, height - (p[1] - variables.padypos)])
         elif not self.height_offset == 0:
