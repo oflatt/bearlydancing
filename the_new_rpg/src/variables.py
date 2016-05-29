@@ -74,3 +74,10 @@ note5keys = [pygame.K_j]
 note6keys = [pygame.K_k]
 note7keys = [pygame.K_l]
 note8keys = [pygame.K_SEMICOLON]
+
+#helpful functions
+def smaller(a, b):
+    if a<b:
+        return a
+    else:
+        return b

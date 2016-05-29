@@ -31,6 +31,7 @@ class Beatmap():
         self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
 
     def draw(self):
+
         #draw the notes that are on the screen
         self.nos = self.notes_on_screen()
         n = self.nos
@@ -95,10 +96,6 @@ class Beatmap():
             return np
 
     def onkey(self, key):
-        print("down")
-        print(self.notes[4].beginning_score)
-        print(self.notes[4].end_score)
-
         def check_note(np):
             if self.notes[np].beginning_score == None:
                 s = self.pos_to_score(self.notes[np].pos[1]-padheight)
@@ -138,13 +135,15 @@ class Beatmap():
             self.held_keys[7] = True
 
     def onrelease(self, key):
-        print("up")
-        print(self.notes[4].beginning_score)
-        print(self.notes[4].end_score)
 
         def check_note(np):
             if self.notes[np].end_score == None and self.notes[np].beginning_score != None:
-                s = self.pos_to_score(self.notes[np].pos[1]-self.notes[np].height(self.tempo))
+                top_of_note = self.notes[np].pos[1]-self.notes[np].height(self.tempo)
+                s = self.pos_to_score(top_of_note)
+
+                if s == None and self.notes[np].beginning_score != None:
+                    s = variables.miss_value
+                    self.notes[np].height_offset = self.notes[np].pos[1]-padypos
 
                 if s != None:
                     if s < self.notes[np].beginning_score:
@@ -201,3 +200,29 @@ class Beatmap():
         elif key in variables.note8keys:
             check_place(8)
             self.held_keys[7] = False
+
+    def ontick(self):
+        #remove notes that are off the screen
+        np = 0
+        while np < len(self.notes):
+            if self.notes[np].pos[1]-self.notes[np].height(self.tempo) > variables.height:
+                del self.notes[0]
+            else:
+                break
+
+        #make the notes not played a miss
+        for x in range(len(self.notes)):
+            #find whether the miss range or the distance to middle of note is smaller
+            h = self.notes[x].height(self.tempo)
+            smaller = variables.smaller(h/2, variables.miss_range)
+
+            if self.notes[x].pos[1]-smaller>padypos and self.notes[x].beginning_score == None:
+                if self.notes[x].ison:
+                    self.feedback[self.notes[x].value-1] = graphics.MISStext
+                    self.feedback_timers[self.notes[x].value-1] = variables.current_time+self.tempo
+                    self.notes[x].ison = False
+                    self.scores.append(variables.miss_value)
+                elif self.notes[x].pos[1]<0:
+                    #if you are in a part of the list before the screen, don't keep checking
+                    #(assuming the list of notes must be ordered by time, of course)
+                    break
