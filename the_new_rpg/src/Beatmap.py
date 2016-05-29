@@ -43,19 +43,17 @@ class Beatmap():
         for x in range(0, len(n)):
             n[x].draw(self.tempo)
         w = variables.width/20
-        h = variables.height/80
 
         #draw which ones are pressed
         for x in range(0, 8):
             if self.held_keys[x] == True:
                 ew = w*1.25
-                pygame.draw.ellipse(variables.screen, variables.WHITE, [padxspace*(x+1)-w/8, padypos+h/2-ew/4, ew, ew/2])
+                pygame.draw.ellipse(variables.screen, variables.WHITE, [padxspace*(x+1)-w/8, padypos+padheight/2-ew/4, ew, ew/2])
 
         self.draw_pads()
 
     def draw_pads(self):
         w = variables.width/20
-        h = variables.height/80
         #draw bottom rectangles
         for x in range(1, 9):
             pygame.draw.rect(variables.screen, variables.notes_colors[x-1], [padxspace*(x)-w/8, padypos, w*1.25, padheight])

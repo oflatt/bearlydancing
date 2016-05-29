@@ -24,7 +24,7 @@ class Battle():
     beatmaps = []
     #-1 so that when it first changes it it becomes 0
     current_beatmap = -1
-
+    damage_multiplier = 1
     def __init__(self, enemy):
         self.enemy = enemy
         #state can be choose, dance, or attacking, win, lose, exp, got exp
@@ -214,6 +214,8 @@ class Battle():
         #check for end of beatmap
         elif self.state == "dance":
             if len(self.beatmaps[self.current_beatmap].notes) == 0:
+                scores = self.beatmaps[self.current_beatmap].scores
+                self.damage_multiplier = sum(scores)/len(scores)
                 self.trade()
 
 
@@ -262,17 +264,15 @@ class Battle():
             if self.newplayerhealth <= 0:
                 self.newplayerhealth = 0
         def damageenemy():
-            self.newenemyhealth = self.enemy.health - stathandeling.damage(playerlv)
+            self.newenemyhealth = self.enemy.health - stathandeling.damage(playerlv)*self.damage_multiplier
             if self.newenemyhealth <= 0:
                 self.newenemyhealth = 0
         if playerlv > enemylv or (playerlv == enemylv and random.choice([True, False])):
             self.isplayernext = False
-            damageenemy()
-            damageplayer()
         else:
             self.isplayernext = True
-            damageplayer()
-            damageenemy()
+        damageenemy()
+        damageplayer()
 
     def draw_buttons(self):
         for x in range(0, len(self.buttons)):
