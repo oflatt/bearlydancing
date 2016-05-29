@@ -2,6 +2,11 @@
 import pygame, variables
 
 class Rock():
+    collidex = None
+    collidey = None
+    collidew = None
+    collideh = None
+
     def __init__(self, base, x, y, c):
         #base is a png picture
         self.base = base
@@ -24,3 +29,22 @@ class Rock():
                                                               int(self.base["scale-height"]*s)])
         self.w = self.base["img"].get_width()
         self.h = self.base["img"].get_height()
+        if self.collidex == None:
+            self.collidex = self.x
+        else:
+            self.collidex *= s
+
+        if self.collidey == None:
+            self.collidey = self.y
+        else:
+            self.collidey *= s
+
+        if self.collidew == None:
+            self.collidew = self.w
+        else:
+            self.collidew *= s
+
+        if self.collideh == None:
+            self.collideh = self.h
+        else:
+            self.collideh *= s

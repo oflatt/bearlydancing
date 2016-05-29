@@ -10,7 +10,7 @@ class Note:
     # pos is the coordinates of the bottom of the note
     pos = [0, 0]
 
-    #drawing
+    # drawing
     height_offset = 0
 
     def __init__(self, value, time, duration):
@@ -37,16 +37,17 @@ class Note:
 
         p = self.pos
         # subtract height to y because the pos is the bottom of the rectangle
-        #the first case is if the note is currently being played
-        #second case is if the note was interrupted in the middle and counted as a miss
-        #this is if it has either been missed or has not been played yet (normal draw)
-        if self.ison and p[1] > variables.padypos > p[1]- height and self.beginning_score != None:
+        # the first case is if the note is currently being played
+        # second case is if the note was interrupted in the middle and counted as a miss
+        # this is if it has either been missed or has not been played yet (normal draw)
+        if self.ison and p[1] > variables.padypos > p[
+            1] - height and self.beginning_score != None and self.end_score == None:
             pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height, width * 1.25, end_height])
             pygame.draw.rect(variables.screen, color, [p[0], p[1] - height, width, height - (p[1] - variables.padypos)])
         elif not self.height_offset == 0:
             pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height, width * 1.25, end_height])
             pygame.draw.rect(variables.screen, color, [p[0], p[1] - height, width, height - self.height_offset])
-        elif self.end_score == None or self.end_score == variables.miss_value:
+        elif self.beginning_score == None or self.beginning_score == variables.miss_value or self.end_score == variables.miss_value:
             pygame.draw.rect(variables.screen, color, [p[0], p[1] - height, width, height])
             pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height, width * 1.25, end_height])
             pygame.draw.rect(variables.screen, color,

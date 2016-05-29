@@ -57,18 +57,19 @@ def simport(filename):
     dimensions = sscale_dimensions(p)
     return {"img":p, "scale-width":dimensions[0], "scale-height":dimensions[1]}
 
-Atext = scale_pure(variables.font.render("A", 0, variables.WHITE), (variables.width/40)*1.25)
-Stext = scale_pure(variables.font.render("S", 0, variables.WHITE), (variables.width/40)*1.25)
-Dtext = scale_pure(variables.font.render("D", 0, variables.WHITE), (variables.width/40)*1.25)
-Ftext = scale_pure(variables.font.render("F", 0, variables.WHITE), (variables.width/40)*1.25)
-Jtext = scale_pure(variables.font.render("J", 0, variables.WHITE), (variables.width/40)*1.25)
-Ktext = scale_pure(variables.font.render("K", 0, variables.WHITE), (variables.width/40)*1.25)
-Ltext = scale_pure(variables.font.render("L", 0, variables.WHITE), (variables.width/40)*1.25)
-SEMICOLONtext = scale_pure(variables.font.render(";", 0, variables.WHITE), (variables.width/50))
-PERFECTtext = pygame.transform.rotate(scale_pure(variables.font.render("PERFECT", 0, variables.WHITE), variables.width/50), -45)
-OKtext = pygame.transform.rotate(scale_pure(variables.font.render("OK", 0, variables.WHITE), variables.width/50), -45)
-GOODtext = pygame.transform.rotate(scale_pure(variables.font.render("GOOD", 0, variables.WHITE), variables.width/50), -45)
-MISStext = pygame.transform.rotate(scale_pure(variables.font.render("MISS", 0, variables.WHITE), variables.width/50), -45)
+feedback_factor = 0.75
+Atext = sscale_customfactor(variables.font.render("A", 0, variables.WHITE), feedback_factor)
+Stext = sscale_customfactor(variables.font.render("S", 0, variables.WHITE), feedback_factor)
+Dtext = sscale_customfactor(variables.font.render("D", 0, variables.WHITE), feedback_factor)
+Ftext = sscale_customfactor(variables.font.render("F", 0, variables.WHITE), feedback_factor)
+Jtext = sscale_customfactor(variables.font.render("J", 0, variables.WHITE), feedback_factor)
+Ktext = sscale_customfactor(variables.font.render("K", 0, variables.WHITE), feedback_factor)
+Ltext = sscale_customfactor(variables.font.render("L", 0, variables.WHITE), feedback_factor)
+SEMICOLONtext = sscale_customfactor(variables.font.render(";", 0, variables.WHITE), feedback_factor)
+PERFECTtext = pygame.transform.rotate(sscale_customfactor(variables.font.render("PERFECT", 0, variables.WHITE), feedback_factor), -45)
+OKtext = pygame.transform.rotate(sscale_customfactor(variables.font.render("OK", 0, variables.WHITE), feedback_factor), -45)
+GOODtext = pygame.transform.rotate(sscale_customfactor(variables.font.render("GOOD", 0, variables.WHITE), feedback_factor), -45)
+MISStext = pygame.transform.rotate(sscale_customfactor(variables.font.render("MISS", 0, variables.WHITE), feedback_factor), -45)
 
 #Art by Jacob and Spirit imported
 map_base = simport("a path.png")

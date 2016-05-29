@@ -1,9 +1,7 @@
 #!/usr/bin/python
 #Oliver works on classes
-import variables, pygame, stathandeling, classvar, random, graphics, maps
+import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap
 from Button import Button
-from Beatmap import Beatmap
-from Note import Note
 
 class Battle():
     #for attacking animation
@@ -23,12 +21,28 @@ class Battle():
     #drawing buttons
     buttons = []
 
+    beatmaps = []
+    #-1 so that when it first changes it it becomes 0
+    current_beatmap = -1
+
     def __init__(self, enemy):
         self.enemy = enemy
+        #state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
         self.option = 1
         self.enemy.pic = graphics.scale_pure(self.enemy.pic, variables.width/5)
-        self.beatmap = Beatmap(1000, [Note(1, 1, 1), Note(2, 2, 1), Note(8, 2, 3), Note(6, 3, 0.5)], [])
+        self.new_beatmaps()
+
+    def new_beatmaps(self):
+        self.beatmaps = randombeatmap.random_beatmaps()
+
+    def next_beatmap(self):
+        if self.current_beatmap+1 == len(self.beatmaps):
+            self.new_beatmaps()
+            self.current_beatmap = 0
+        else:
+            self.current_beatmap += 1
+        self.beatmaps[self.current_beatmap].reset()
 
     def draw(self):
         h = variables.height
@@ -53,12 +67,6 @@ class Battle():
             else:
                 fleebutton.ison = True
             self.buttons = [dancebutton, fleebutton]
-            self.draw_buttons()
-
-        elif self.state == "dance":
-            dancebutton = Button(w/2, b, "DANCE!", 1.5)
-            dancebutton.ison = True
-            self.buttons = [dancebutton]
             self.draw_buttons()
 
         elif self.state == "lose" or self.state == "win":
@@ -143,12 +151,14 @@ class Battle():
                                                                 epich,
                                                                 epicw*percenthealthleft,
                                                                 enemyhealthh])
-
-        self.beatmap.draw()
+        if self.state == "dance":
+            self.beatmaps[self.current_beatmap].draw()
+        elif self.state == "attacking":
+            self.beatmaps[self.current_beatmap].draw_pads()
 
     #for things like the attack animation
     def ontick(self):
-        self.beatmap.ontick()
+        self.beatmaps[self.current_beatmap].ontick()
 
         if self.state == "attacking":
             if self.isplayernext == True:
@@ -165,6 +175,7 @@ class Battle():
                         self.state = "lose"
                     elif self.newenemyhealth == self.enemy.health: #if done with the animation
                         self.state = "dance" #exit
+                        self.next_beatmap()
                     else:
                         self.isplayernext = False
                         self.animationtime = variables.current_time
@@ -182,9 +193,11 @@ class Battle():
                         self.state = "win"
                     if classvar.player.health == self.newplayerhealth: #if done with the animation
                         self.state = "dance" #exit
+                        self.next_beatmap()
                     else:
                         self.isplayernext = True
                         self.animationtime = variables.current_time
+
         elif self.state == "exp":
             differenceintime = variables.current_time-self.animationtime
             es = variables.expanimationspeed
@@ -198,13 +211,20 @@ class Battle():
                 self.state = "got exp"
             classvar.player.lv = stathandeling.explv(classvar.player.exp)
 
+        #check for end of beatmap
+        elif self.state == "dance":
+            if len(self.beatmaps[self.current_beatmap].notes) == 0:
+                self.trade()
+
 
     def onkey(self, key):
-        self.beatmap.onkey(key)
+        if self.state == 'dance':
+            self.beatmaps[self.current_beatmap].onkey(key)
         if self.state == "choose":
             if key in variables.enterkeys:
                 if self.option == 1:
                     self.state = "dance"
+                    self.next_beatmap()
                 else:
                     variables.state = "world"
             else:
@@ -212,8 +232,6 @@ class Battle():
                     self.option = 2
                 else:
                     self.option = 1
-        elif self.state == "dance" and key in variables.enterkeys:
-            self.trade()
         elif self.state == "lose" and key in variables.enterkeys:
             #go home
             classvar.player.heal()
@@ -229,7 +247,8 @@ class Battle():
             variables.state = "world" #finally exit Battle
 
     def onrelease(self, key):
-        self.beatmap.onrelease(key)
+        if self.state == "dance":
+            self.beatmaps[self.current_beatmap].onrelease(key)
 
     def trade(self):
         playerlv = classvar.player.lv

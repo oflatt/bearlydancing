@@ -1,7 +1,7 @@
 import variables, pygame, graphics
 from variables import padypos
 
-padxspace = variables.width/13
+padxspace = variables.width/12
 padheight = variables.width/80
 
 class Beatmap():
@@ -19,14 +19,21 @@ class Beatmap():
     #when to stop displaying the text, in milliseconds
     feedback_timers = [0, 0, 0, 0, 0, 0, 0, 0]
 
-    def __init__(self, tempo, notes, tradetimes):
+    def __init__(self, tempo, notes):
         self.starttime = variables.current_time
         self.tempo = tempo
         #notes is an ordered list of Note, notes with earlier times first
         self.notes = notes
-        self.tradetimes = tradetimes
         fsl = self.starttime+4000
         self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
+
+    def reset(self):
+        self.starttime = variables.current_time
+        fsl = self.starttime+4000
+        self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
+        self.feedback = [graphics.Atext, graphics.Stext, graphics.Dtext, graphics.Ftext,
+                         graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
+
 
     def draw(self):
         #print(str(self.notes[0].pos[1]) + " " + str(self.notes[0].time) + " " + str(self.notes[0].end_score))
@@ -44,6 +51,11 @@ class Beatmap():
                 ew = w*1.25
                 pygame.draw.ellipse(variables.screen, variables.WHITE, [padxspace*(x+1)-w/8, padypos+h/2-ew/4, ew, ew/2])
 
+        self.draw_pads()
+
+    def draw_pads(self):
+        w = variables.width/20
+        h = variables.height/80
         #draw bottom rectangles
         for x in range(1, 9):
             pygame.draw.rect(variables.screen, variables.notes_colors[x-1], [padxspace*(x)-w/8, padypos, w*1.25, padheight])
@@ -51,7 +63,7 @@ class Beatmap():
         #draw the feedback (keys then scores, perfect ect)
         for x in range(0, 8):
             if variables.current_time < self.feedback_timers[x]:
-                variables.screen.blit(self.feedback[x], [padxspace*(x+1)-w/8, padypos+h*3])
+                variables.screen.blit(self.feedback[x], [padxspace*(x+1)-w/8, padypos])
 
     def notes_on_screen(self):
         n = []
@@ -102,6 +114,8 @@ class Beatmap():
                     self.notes[np].beginning_score = s
                     if self.notes[np].beginning_score == variables.miss_value:
                         self.notes[np].ison = False
+                        self.feedback[self.notes[np].value-1] = graphics.MISStext
+                        self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
 
         def check_place(v):
             np = self.get_note_place_from_value(v)

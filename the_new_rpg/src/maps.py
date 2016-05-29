@@ -9,7 +9,8 @@ s = variables.scaleoffset
 block = variables.width/10
 
 houserock = Rock(graphics.house, 0, 0, True)
-houserock.h = houserock.h * (3/5)
+houserock.collideh = graphics.house["scale-height"] * (3/5)
+#this is not actually accurate because it does not take into account the map scale offset
 housewidth = graphics.house["scale-width"]
 
 # outside 1

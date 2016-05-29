@@ -133,12 +133,11 @@ class Player(Dancer):
         m = maps.current_map
         t = m.terrain
         numofrocks = len(t)
-        s = variables.scaleoffset #used because actual rocks are not really scaled
 
         #checks if the player's right side collides with a rock
         def collisioncheck(arock, x, y):
-            return arock.iscollideable and (x+self.normal_width)>=arock.x*s and x<=(arock.x*s + arock.w*s) \
-                   and (y+self.normal_height)>=arock.y*s and y<=(arock.y*s + arock.h*s)
+            return arock.iscollideable and (x+self.normal_width)>=arock.collidex and x<=(arock.collidex + arock.collidew) \
+                   and (y+self.normal_height)>=arock.collidey and y<=(arock.collidey + arock.collideh)
 
         if not self.xspeed == 0:
             #first check for edges of map
