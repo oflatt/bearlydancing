@@ -3,9 +3,8 @@ Final project from my programming 1 class
 
 ##Setting up the environment
 **Important! Make sure python installation is 32 bit and version 3.4**
-If running on a school computer, run cmd in administrator mode for installing wheels
-Pick wheel files that say cp 34 and win32 when downloading
-To install wheel files call pip install on them, and make sure that pip is up to date
+
+Pick wheel files that say cp 34 and win32 when downloading. To install wheel files call pip install on them, and make sure that pip is up to date.
 
 Link for Pygame:
 <http://www.lfd.uci.edu/~gohlke/pythonlibs/#pygame>
