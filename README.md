@@ -3,14 +3,17 @@ Final project from my programming 1 class
 
 ##Setting up the environment
 **Important! Make sure python installation is 32 bit and version 3.4**
-If running on a school computer, run cmd in administrator mode for installing wheels
-Pick wheel files that say cp 34 and win32 when downloading
 
-Link for download for wheel file of Pygame, call pip install on the wheel file:
+Pick wheel files that say cp 34 and win32 when downloading. To install wheel files call pip install on them, and make sure that pip is up to date.
+
+Link for Pygame:
 <http://www.lfd.uci.edu/~gohlke/pythonlibs/#pygame>
 
-Link for cx_Freeze
+Link for cx_Freeze:
 https://pypi.python.org/pypi?:action=display&name=cx_Freeze&version=4.3.4
+
+Link for numpy:
+http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy
 
 Example of how to change local path variables so you can call pip
 set PATH=%PATH%;"C:\Python34"
