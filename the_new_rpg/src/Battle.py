@@ -32,6 +32,7 @@ class Battle():
         self.option = 1
         self.enemy.pic = graphics.scale_pure(self.enemy.pic, variables.width/5)
         self.new_beatmaps()
+        classvar.player.heal()
 
     def new_beatmaps(self):
         self.beatmaps = randombeatmap.random_beatmaps()
@@ -216,6 +217,7 @@ class Battle():
             if len(self.beatmaps[self.current_beatmap].notes) == 0:
                 scores = self.beatmaps[self.current_beatmap].scores
                 self.damage_multiplier = sum(scores)/len(scores)
+                self.beatmaps[self.current_beatmap].reset_buttons()
                 self.trade()
 
 

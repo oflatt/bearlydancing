@@ -1,6 +1,7 @@
 import pygame, ctypes
 
 # Setup
+pygame.mixer.pre_init(44100, -16, 2);
 pygame.init()
 
 #master clock

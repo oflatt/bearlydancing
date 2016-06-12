@@ -105,14 +105,11 @@ def new_scale_offset():
 
 def change_map(name):
     global current_map
-    if name == "honeyhome":
-        current_map = honeyhome
-    if name == 'outside1':
-        current_map = outside1
-    if name == "outside2":
-        current_map = outside2
-    if name == "outside3":
-        current_map = outside3
+    possibles = globals()
+    map_picked = possibles.get(name)
+    if not map_picked:
+         raise NotImplementedError("Method %s not implemented" % name)
+    current_map = map_picked
     new_scale_offset()
 
 def engage_conversation(c):

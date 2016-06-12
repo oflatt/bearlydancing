@@ -1,11 +1,12 @@
 import variables, pygame, graphics
 from variables import padypos
+from play_sound import play_sound, stop_sound
 
 padxspace = variables.width/12
 padheight = variables.width/80
 
 class Beatmap():
-    scale = [50, 53, 55, 58, 60, 64, 68, 70] #list of eight pitches
+    scale = ['C', 'D', 'E', 'F','G', 'A', 'B', 'Chigh'] #list of eight notes
     speed = 1
     starttime = 0
     #scores is a running list of the values for how well each note so far has been played (values for perfect, good ect)
@@ -123,27 +124,35 @@ class Beatmap():
         if key in variables.note1keys:
             check_place(1)
             self.held_keys[0] = True
+            play_sound(self.scale[0])
         elif key in variables.note2keys:
             check_place(2)
             self.held_keys[1] = True
+            play_sound(self.scale[1])
         elif key in variables.note3keys:
             check_place(3)
             self.held_keys[2] = True
+            play_sound(self.scale[2])
         elif key in variables.note4keys:
             check_place(4)
             self.held_keys[3] = True
+            play_sound(self.scale[3])
         elif key in variables.note5keys:
             check_place(5)
             self.held_keys[4] = True
+            play_sound(self.scale[4])
         elif key in variables.note6keys:
             check_place(6)
             self.held_keys[5] = True
+            play_sound(self.scale[5])
         elif key in variables.note7keys:
             check_place(7)
             self.held_keys[6] = True
+            play_sound(self.scale[6])
         elif key in variables.note8keys:
             check_place(8)
             self.held_keys[7] = True
+            play_sound(self.scale[7])
 
     def onrelease(self, key):
 
@@ -190,27 +199,35 @@ class Beatmap():
         if key in variables.note1keys:
             check_place(1)
             self.held_keys[0] = False
+            stop_sound(self.scale[0])
         elif key in variables.note2keys:
             check_place(2)
             self.held_keys[1] = False
+            stop_sound(self.scale[1])
         elif key in variables.note3keys:
             check_place(3)
             self.held_keys[2] = False
+            stop_sound(self.scale[2])
         elif key in variables.note4keys:
             check_place(4)
             self.held_keys[3] = False
+            stop_sound(self.scale[3])
         elif key in variables.note5keys:
             check_place(5)
             self.held_keys[4] = False
+            stop_sound(self.scale[4])
         elif key in variables.note6keys:
             check_place(6)
             self.held_keys[5] = False
+            stop_sound(self.scale[5])
         elif key in variables.note7keys:
             check_place(7)
             self.held_keys[6] = False
+            stop_sound(self.scale[6])
         elif key in variables.note8keys:
             check_place(8)
             self.held_keys[7] = False
+            stop_sound(self.scale[7])
 
     def ontick(self):
         #remove notes that are off the screen
@@ -237,3 +254,10 @@ class Beatmap():
                     #if you are in a part of the list before the screen, don't keep checking
                     #(assuming the list of notes must be ordered by time, of course)
                     break
+
+    def reset_buttons(self):
+        for x in range(8):
+            self.held_keys[x] = False
+        #turn off sound
+        for x in range(8):
+            stop_sound(self.scale[x])
