@@ -263,11 +263,11 @@ class Battle():
         self.animationtime = variables.current_time
         def damageplayer():
             self.newplayerhealth = classvar.player.health - stathandeling.damage(enemylv)
-            if self.newplayerhealth <= 0:
+            if self.newplayerhealth <= 0.25:
                 self.newplayerhealth = 0
         def damageenemy():
             self.newenemyhealth = self.enemy.health - stathandeling.damage(playerlv)*self.damage_multiplier
-            if self.newenemyhealth <= 0:
+            if self.newenemyhealth <= 0.25:
                 self.newenemyhealth = 0
         if playerlv > enemylv or (playerlv == enemylv and random.choice([True, False])):
             self.isplayernext = False

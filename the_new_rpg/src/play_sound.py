@@ -1,6 +1,7 @@
 import pygame
 import math
 import numpy
+import variables
 
 def make_sound(frequency):
     duration = 1.0          # in seconds
@@ -29,6 +30,14 @@ G = make_sound(783.99)
 A = make_sound(880)
 B = make_sound(987.77)
 Chigh = make_sound(1046.5)
+C.set_volume(variables.battle_volume)
+D.set_volume(variables.battle_volume)
+E.set_volume(variables.battle_volume)
+F.set_volume(variables.battle_volume)
+G.set_volume(variables.battle_volume)
+A.set_volume(variables.battle_volume)
+B.set_volume(variables.battle_volume)
+Chigh.set_volume(variables.battle_volume)
 
 def play_sound(s):
     if s == "C":

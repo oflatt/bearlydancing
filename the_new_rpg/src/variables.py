@@ -53,6 +53,8 @@ good_range = height/60
 ok_range = height/40
 miss_range = height/15
 
+battle_volume = 0.4
+
 notes_colors = [ORANGE, BLUE, RED, GREEN, GREEN, RED, BLUE, ORANGE]
 
 #conversation
