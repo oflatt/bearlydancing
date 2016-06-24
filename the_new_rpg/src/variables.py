@@ -42,7 +42,7 @@ font = pygame.font.SysFont(fontname, 30)
 healthanimationspeed = 2000#time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
 dancespeed = height/8 * 0.001#factor for displaying notes
-padypos = height*(3/4)
+padypos = height*(13/16)
 
 perfect_value = 2
 good_value = 1

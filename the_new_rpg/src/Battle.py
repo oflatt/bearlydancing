@@ -35,7 +35,7 @@ class Battle():
         classvar.player.heal()
 
     def new_beatmaps(self):
-        self.beatmaps = randombeatmap.random_beatmaps()
+        self.beatmaps = randombeatmap.very_random(self.enemy.lv)
 
     def next_beatmap(self):
         if self.current_beatmap+1 == len(self.beatmaps):
@@ -52,6 +52,12 @@ class Battle():
         p = classvar.player
         #background
         pygame.draw.rect(variables.screen, variables.BLACK, [0, 0, w, h])
+
+        #draw beatmap
+        if self.state == "dance":
+            self.beatmaps[self.current_beatmap].draw()
+        elif self.state == "attacking":
+            self.beatmaps[self.current_beatmap].draw_pads()
 
         if self.state == "choose":
             #enemy name
@@ -152,10 +158,6 @@ class Battle():
                                                                 epich,
                                                                 epicw*percenthealthleft,
                                                                 enemyhealthh])
-        if self.state == "dance":
-            self.beatmaps[self.current_beatmap].draw()
-        elif self.state == "attacking":
-            self.beatmaps[self.current_beatmap].draw_pads()
 
     #for things like the attack animation
     def ontick(self):

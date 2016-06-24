@@ -4,6 +4,7 @@ from play_sound import play_sound, stop_sound
 
 padxspace = variables.width/12
 padheight = variables.width/80
+middleoffset = padxspace/2
 
 class Beatmap():
     scale = ['C', 'D', 'E', 'F','G', 'A', 'B', 'Chigh'] #list of eight notes
@@ -48,8 +49,12 @@ class Beatmap():
         #draw which ones are pressed
         for x in range(0, 8):
             if self.held_keys[x] == True:
+                xoffset = 0
+                if(x+1 > 4):
+                    xoffset = middleoffset
                 ew = w*1.25
-                pygame.draw.ellipse(variables.screen, variables.WHITE, [padxspace*(x+1)-w/8, padypos+padheight/2-ew/4, ew, ew/2])
+                pygame.draw.ellipse(variables.screen, variables.WHITE, [padxspace*(x+1)-w/8+xoffset,
+                                                                        padypos+padheight/2-ew/4, ew, ew/2])
 
         self.draw_pads()
 
@@ -57,12 +62,18 @@ class Beatmap():
         w = variables.width/20
         #draw bottom rectangles
         for x in range(1, 9):
-            pygame.draw.rect(variables.screen, variables.notes_colors[x-1], [padxspace*(x)-w/8, padypos, w*1.25, padheight])
+            xoffset = 0
+            if (x>4):
+                xoffset = middleoffset
+            pygame.draw.rect(variables.screen, variables.notes_colors[x-1], [padxspace*(x)-w/8+xoffset, padypos, w*1.25, padheight])
 
         #draw the feedback (keys then scores, perfect ect)
         for x in range(0, 8):
+            xoffset = 0
+            if (x>3):
+                xoffset = middleoffset
             if variables.current_time < self.feedback_timers[x]:
-                variables.screen.blit(self.feedback[x], [padxspace*(x+1)-w/8, padypos])
+                variables.screen.blit(self.feedback[x], [padxspace*(x+1)-w/8+xoffset, padypos])
 
     def notes_on_screen(self):
         n = []
@@ -81,7 +92,10 @@ class Beatmap():
         dt = variables.current_time-self.starttime
         #ypos finds the notes place relative to pads then offsets it
         ypos = (dt-(note.time*self.tempo))*self.speed*variables.dancespeed
-        xpos = note.value*padxspace
+        if(note.value>4):
+            xpos = note.value*padxspace + middleoffset
+        else:
+            xpos = note.value*padxspace
         return [xpos, ypos]
 
     def pos_to_score(self, ypos):
@@ -174,6 +188,7 @@ class Beatmap():
                     self.notes[np].end_score = s
 
                     if s == variables.miss_value:
+                        self.notes[np].height_offset = self.notes[np].pos[1]-padypos
                         self.notes[np].ison = False
 
                     self.scores.append(final_note_score)
