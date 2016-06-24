@@ -11,7 +11,6 @@ class Beatmap():
     speed = 1
     starttime = 0
     #scores is a running list of the values for how well each note so far has been played (values for perfect, good ect)
-    #it is cleared at every tradetime
     scores = []
     #list of whether the eight keys are held down or not
     held_keys = [False, False, False, False, False, False, False, False]
@@ -111,7 +110,15 @@ class Beatmap():
             else:
                 return None
 
-    def get_note_place_from_value(self, v):
+    def get_note_place_from_value_begin(self, v):
+            np = None
+            for x in range(0, len(self.notes)):
+                if self.notes[x].value == v and self.notes[x].ison and self.notes[x].beginning_score == None:
+                    np = x
+                    break
+            return np
+
+    def get_note_place_from_value_end(self, v):
             np = None
             for x in range(0, len(self.notes)):
                 if self.notes[x].value == v and self.notes[x].ison:
@@ -131,7 +138,7 @@ class Beatmap():
                         self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
 
         def check_place(v):
-            np = self.get_note_place_from_value(v)
+            np = self.get_note_place_from_value_begin(v)
             if not np == None:
                 check_note(np)
 
@@ -207,7 +214,7 @@ class Beatmap():
                         self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
 
         def check_place(v):
-            np = self.get_note_place_from_value(v)
+            np = self.get_note_place_from_value_end(v)
             if not np == None:
                 check_note(np)
 
