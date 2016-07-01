@@ -47,7 +47,7 @@ padypos = height*(13/16)
 
 perfect_value = 2
 good_value = 1
-ok_value = 0.5
+ok_value = 0.6
 miss_value = 0
 perfect_range = height/160
 good_range = height/60
