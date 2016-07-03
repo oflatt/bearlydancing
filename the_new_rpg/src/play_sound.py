@@ -30,6 +30,7 @@ G = make_sound(783.99)
 A = make_sound(880)
 B = make_sound(987.77)
 Chigh = make_sound(1046.5)
+Drum_kick_heavy = pygame.mixer.Sound("drum_heavy_kick.wav")
 C.set_volume(variables.battle_volume)
 D.set_volume(variables.battle_volume)
 E.set_volume(variables.battle_volume)
@@ -56,6 +57,8 @@ def play_sound(s):
         B.play(loops = -1)
     elif s == "Chigh":
         Chigh.play(loops = -1)
+    elif s == "drum kick heavy":
+        Drum_kick_heavy.play()
 
 def stop_sound(s):
     if s == "C":

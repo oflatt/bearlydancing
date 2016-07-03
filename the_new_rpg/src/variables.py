@@ -4,6 +4,7 @@ import pygame, ctypes
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.mixer.init()
 pygame.init()
+pygame.mixer.set_num_channels(16)
 
 #master clock
 current_time = 0
@@ -49,7 +50,7 @@ perfect_value = 2
 good_value = 1
 ok_value = 0.6
 miss_value = 0
-perfect_range = height/160
+perfect_range = height/120
 good_range = height/60
 ok_range = height/25
 miss_range = height/15

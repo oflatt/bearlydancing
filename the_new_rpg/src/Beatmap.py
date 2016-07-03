@@ -19,6 +19,7 @@ class Beatmap():
                 graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
     #when to stop displaying the text, in milliseconds
     feedback_timers = [0, 0, 0, 0, 0, 0, 0, 0]
+    drumcounter = 0
 
     def __init__(self, tempo, notes):
         self.starttime = variables.current_time
@@ -29,6 +30,7 @@ class Beatmap():
         self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
 
     def reset(self):
+        self.drumcounter = 0
         self.starttime = variables.current_time
         fsl = self.starttime+4000
         self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
@@ -276,6 +278,14 @@ class Beatmap():
                     #if you are in a part of the list before the screen, don't keep checking
                     #(assuming the list of notes must be ordered by time, of course)
                     break
+
+        dt = variables.current_time-self.starttime
+        ypos = (dt-(self.drumcounter*self.tempo))*self.speed*variables.dancespeed
+        #play a drum sound if it is on the beat
+        if(ypos >= padypos):
+            self.drumcounter += 1
+            play_sound("drum kick heavy")
+
 
     def reset_buttons(self):
         for x in range(8):
