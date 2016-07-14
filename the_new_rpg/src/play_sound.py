@@ -39,6 +39,7 @@ G.set_volume(variables.battle_volume)
 A.set_volume(variables.battle_volume)
 B.set_volume(variables.battle_volume)
 Chigh.set_volume(variables.battle_volume)
+Drum_kick_heavy.set_volume(variables.battle_volume*6)
 
 def play_sound(s):
     if s == "C":

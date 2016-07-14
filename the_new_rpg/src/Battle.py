@@ -35,7 +35,7 @@ class Battle():
         classvar.player.heal()
 
     def new_beatmaps(self):
-        self.beatmaps = randombeatmap.very_random(self.enemy.lv)
+        self.beatmaps = randombeatmap.very_random_v(self.enemy.lv)
 
     def next_beatmap(self):
         if self.current_beatmap+1 == len(self.beatmaps):
