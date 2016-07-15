@@ -111,10 +111,10 @@ class Battle():
             variables.screen.blit(textscaled, [0, h/3 - textscaled.get_height()])
 
             #exp bar
-            percentofneeded = (p.exp - stathandeling.lvexp(p.lv))/stathandeling.exp_needed(p.lv)
+            percentofbar = (p.exp - stathandeling.lvexp(p.lv))/stathandeling.exp_needed(p.lv)
             pygame.draw.rect(variables.screen, variables.BLUE, [0,
                                                             h/2,
-                                                            w*percentofneeded,
+                                                            w*percentofbar,
                                                             h/18])
 
             #level up text
@@ -127,37 +127,29 @@ class Battle():
         epic = self.enemy.pic
         variables.screen.blit(epic, [w-epic.get_width(), 0])
 
-        #confidece bar
-        healthh = h*(1/18)
+        #player health bar
         playermaxh = stathandeling.max_health(p.lv)
-        percenthealthleft = p.health/playermaxh
-        if percenthealthleft<=0.2:
-            healthbarcolor = variables.RED
-        else:
-            healthbarcolor = variables.GREEN
-        pygame.draw.rect(variables.screen, healthbarcolor, [0,
-                                                            h-healthh,
-                                                            w*percenthealthleft,
-                                                            healthh])
-        barlabelunscaled = variables.font.render("Health "+str(p.health)+" / "+str(playermaxh), 0, variables.WHITE)
-        barlabel = graphics.sscale_customfactor(barlabelunscaled, 0.75)
-        variables.screen.blit(barlabel, [0,h-healthh-barlabel.get_height()])
-
-        #enemy bar
+        healthh = h*(1/18)
         enemyhealthh = h*(1/50)
         e = self.enemy
         epicw = epic.get_width()
         epich = epic.get_height()
-        percenthealthleft = e.health/stathandeling.max_health(e.lv)
-        if percenthealthleft<=0.2:
-            healthbarcolor = variables.RED
-        else:
-            healthbarcolor = variables.GREEN
-        if not e.health == 0:
+        percenthealthlefte = e.health/stathandeling.max_health(e.lv)
+        healthbarcolor = variables.GREEN
+        if p.health != playermaxh:
+            percenthealthleft = p.health/playermaxh
             pygame.draw.rect(variables.screen, healthbarcolor, [w-epicw,
                                                                 epich,
-                                                                epicw*percenthealthleft,
+                                                                epicw*(1-percenthealthleft),
                                                                 enemyhealthh])
+        #barlabelunscaled = variables.font.render("Health "+str(p.health)+" / "+str(playermaxh), 0, variables.WHITE)
+        #barlabel = graphics.sscale_customfactor(barlabelunscaled, 0.75)
+        #variables.screen.blit(barlabel, [0,h-healthh-barlabel.get_height()])
+        if not percenthealthlefte == 1:
+            pygame.draw.rect(variables.screen, healthbarcolor, [0,
+                                                                h-healthh,
+                                                                w*(1-percenthealthlefte),
+                                                                healthh])
 
     #for things like the attack animation
     def ontick(self):
@@ -194,7 +186,7 @@ class Battle():
                     self.enemy.health = self.newenemyhealth
                     if self.newenemyhealth <= 0:
                         self.state = "win"
-                    if classvar.player.health == self.newplayerhealth: #if done with the animation
+                    elif classvar.player.health == self.newplayerhealth: #if done with the animation
                         self.state = "dance" #exit
                         self.next_beatmap()
                     else:
@@ -277,6 +269,7 @@ class Battle():
             self.isplayernext = True
         damageenemy()
         damageplayer()
+        print(self.newenemyhealth)
 
     def draw_buttons(self):
         for x in range(0, len(self.buttons)):

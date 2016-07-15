@@ -123,7 +123,7 @@ class Beatmap():
     def get_note_place_from_value_end(self, v):
             np = None
             for x in range(0, len(self.notes)):
-                if self.notes[x].value == v and self.notes[x].ison:
+                if self.notes[x].value == v and self.notes[x].ison and self.notes[x].end_score == None:
                     np = x
                     break
             return np

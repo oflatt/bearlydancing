@@ -16,7 +16,7 @@ def exp_needed(lv):
 
 #lv is the lv of the enemy
 def exp_gained(lv):
-    return int(exp_needed(lv)/(lv/2 + 7))
+    return exp_needed(lv)/(1+lv)
 
 #amount of damage done to enemy
 def damage(lv):
