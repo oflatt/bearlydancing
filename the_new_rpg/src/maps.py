@@ -8,7 +8,7 @@ s = variables.scaleoffset
 
 block = variables.width/10
 
-houserock = Rock(graphics.house, 0, 0, True)
+houserock = Rock(graphics.house, 0, 0, False)
 houserock.collideh = graphics.house["scale-height"] * (3/5)
 #this is not actually accurate because it does not take into account the map scale offset
 housewidth = graphics.house["scale-width"]
@@ -59,7 +59,7 @@ honeyhome = Map(graphics.houseInside, [Rock(graphics.welcomeMat,
                                             False),
                                        Rock(graphics.bed, 0*insideb, 0*insideb, False),
                                        Rock(graphics.warddrobe2, 2*insideb, 0*insideb, False),
-                                       Rock(graphics.tpanda, 8*insideb, 7*insideb, False)])
+                                       Rock(graphics.tpanda, 8*insideb, 7*insideb, True)])
 
 honeyhome.startpoint = [0,0]
 honeyhome.exitareas = [Exit([insidewidth/2-graphics.welcomeMat["scale-width"]/2, insideheight,

@@ -48,7 +48,8 @@ class Player(Dancer):
             drawy = self.ypos - (mh - variables.height) #mh - variables.height is the height of the scrolling area
         else:
             drawy = self.ypos
-        variables.screen.blit(self.current_pic_scaled(), [drawx, drawy])
+        self.current_pic_scaled()
+        variables.screen.blit(self.current_display, [drawx, drawy])
 
     def change_animation(self):
         if self.xspeed == 0:
@@ -118,7 +119,7 @@ class Player(Dancer):
                 self.yspeed = -s
         self.change_animation()
 
-    #moves with collision detections
+    #moves with collision detection
     def move(self):
         t = variables.current_time
         #calculate moved positions
@@ -134,10 +135,17 @@ class Player(Dancer):
         t = m.terrain
         numofrocks = len(t)
 
-        #checks if the player's right side collides with a rock
+        #checks if the player collides with a rock
         def collisioncheck(arock, x, y):
-            return arock.iscollideable and (x+self.normal_width)>=arock.collidex and x<=(arock.collidex + arock.collidew) \
-                   and (y+self.normal_height)>=arock.collidey and y<=(arock.collidey + arock.collideh)
+            if(arock.iscollideable):
+                if(arock.mask.overlap(self.mask, [int(x-arock.collidex), int(y-arock.collidey)]) == None):
+                    return False
+                else:
+                    return True
+            else:
+                return False
+            #return arock.iscollideable and (x+self.normal_width)>=arock.collidex and x<=(arock.collidex + arock.collidew) \
+             #      and (y+self.normal_height)>=arock.collidey and y<=(arock.collidey + arock.collideh)
 
         if not self.xspeed == 0:
             #first check for edges of map
@@ -175,6 +183,7 @@ class Player(Dancer):
 
         if not iscollisiony:
             self.ypos = movedypos
+
         self.lastxupdate = variables.current_time
         self.lastyupdate = variables.current_time
 
@@ -187,11 +196,13 @@ class Player(Dancer):
         c = pygame.transform.scale(c["img"],
                                     [int(c["scale-width"]*variables.scaleoffset),
                                      int(c["scale-height"]*variables.scaleoffset)])
-        return c
+        self.current_display = c
 
     def scale_by_offset(self):
-        self.normal_width = self.current_pic_scaled().get_width()
-        self.normal_height = self.current_pic_scaled().get_height()
+        self.current_pic_scaled()
+        self.mask = pygame.mask.from_surface(self.current_display)
+        self.normal_width = self.current_display.get_width()
+        self.normal_height = self.current_display.get_height()
 
     def ismoving(self):
         return not (self.xspeed==0 and self.yspeed==0)

@@ -16,6 +16,7 @@ class Rock():
         self.iscollideable = c
         self.w = 2
         self.h = 2
+        self.mask = pygame.mask.from_surface(self.base["img"])
 
     def draw(self):
         variables.screen.blit(self.base["img"], [self.x, self.y])
@@ -48,3 +49,4 @@ class Rock():
             self.collideh = self.h
         else:
             self.collideh *= s
+        self.mask = pygame.mask.from_surface(self.base["img"])
