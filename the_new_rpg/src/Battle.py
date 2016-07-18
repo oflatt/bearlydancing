@@ -269,7 +269,6 @@ class Battle():
             self.isplayernext = True
         damageenemy()
         damageplayer()
-        print(self.newenemyhealth)
 
     def draw_buttons(self):
         for x in range(0, len(self.buttons)):

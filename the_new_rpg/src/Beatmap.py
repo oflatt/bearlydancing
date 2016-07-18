@@ -19,7 +19,7 @@ class Beatmap():
                 graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
     #when to stop displaying the text, in milliseconds
     feedback_timers = [0, 0, 0, 0, 0, 0, 0, 0]
-    drumcounter = 0
+    drumcounter = -2
 
     def __init__(self, tempo, notes):
         self.starttime = variables.current_time
@@ -30,7 +30,7 @@ class Beatmap():
         self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
 
     def reset(self):
-        self.drumcounter = 0
+        self.drumcounter = -2
         self.starttime = variables.current_time
         fsl = self.starttime+4000
         self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
@@ -214,11 +214,21 @@ class Beatmap():
                     elif final_note_score == variables.perfect_value:
                         self.feedback[self.notes[np].value-1] = graphics.PERFECTtext
                         self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
+            #released before a note, penalty for randomly playing notes not written
+            else:
+                self.scores.append(variables.miss_value)
+                self.feedback[self.notes[np].value-1] = graphics.MISStext
+                self.feedback_timers[self.notes[np].value-1] = variables.current_time+self.tempo
 
         def check_place(v):
             np = self.get_note_place_from_value_end(v)
             if not np == None:
                 check_note(np)
+            else:
+                self.scores.append(variables.miss_value)
+                self.feedback[v-1] = graphics.MISStext
+                self.feedback_timers[v-1] = variables.current_time+self.tempo
+
 
         if key in variables.note1keys:
             check_place(1)

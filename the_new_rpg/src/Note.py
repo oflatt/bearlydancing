@@ -45,8 +45,9 @@ class Note:
             pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height, width * 1.25, end_height])
             pygame.draw.rect(variables.screen, color, [p[0], p[1] - height, width, height - (p[1] - variables.padypos)])
         elif not self.height_offset == 0:
-            pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height, width * 1.25, end_height])
-            pygame.draw.rect(variables.screen, color, [p[0], p[1] - height, width, height - self.height_offset])
+            if(height-self.height_offset > 1):
+                pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height, width * 1.25, end_height])
+                pygame.draw.rect(variables.screen, color, [p[0], p[1] - height, width, height - self.height_offset])
         elif self.beginning_score == None or self.beginning_score == variables.miss_value or self.end_score == variables.miss_value:
             pygame.draw.rect(variables.screen, color, [p[0], p[1] - height, width, height])
             pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height, width * 1.25, end_height])

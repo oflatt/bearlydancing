@@ -29,8 +29,21 @@ def very_random(lv):
     return beatmaps
 
 def very_random_beatmap(lv, maxtime):
-    def random_value():
-        return randint(1, 8)
+    l = []
+    #makes sure the new value does not overlap another note
+    def random_value(t):
+        rv = randint(1, 8)
+        iscopy = False
+        x = 0
+        while(x<len(l)):
+            if(l[x].time + l[x].duration >= t and l[x].value == rv):
+                iscopy = True
+                break
+            x+= 1
+        if(iscopy):
+            return random_value(t)
+        else:
+            return rv
 
     def rand_duration(t):
         d = 1
@@ -58,7 +71,6 @@ def very_random_beatmap(lv, maxtime):
                 d = 1-(time%1)
         return d
 
-    l = []
     def addnote(time, ischord):
         #last note
         if time>(maxtime-2):
@@ -80,22 +92,20 @@ def very_random_beatmap(lv, maxtime):
             duration = rand_duration(time)
             #if it is not a rest
             if(randint(1, 9) != 1):
-                if len(l) > 0:
-                    l.append(Note(random_value(), time, duration))
-                else:
-                    l.append(Note(randint(1, 8), time, duration))
+                l.append(Note(random_value(time), time, duration))
         return duration
 
     time = 1
     while time < maxtime:
-        time += addnote(time, False)
-        if(randint(0,50)<(lv+2)**2):
+        oldt = time
+        time += addnote(oldt, False)
+        if(randint(0,100)<(lv+2)**2):
             if(randint(1, 2) == 1):
-                addnote(time, True)
-            if(randint(0,500)<(lv+2)**2):
-                addnote(time, True)
+                addnote(oldt, True)
+            if(randint(0,1000)<(lv+2)**2):
+                addnote(oldt, True)
 
-    tempo = (1200*3)/(lv+3)
+    tempo = (1200*3)/((lv/3)+3.5)
     return Beatmap(tempo, shorten_doubles(l))
 
 #like very random but beatmaps after the first one are based off of the first one

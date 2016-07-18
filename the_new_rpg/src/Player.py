@@ -187,6 +187,7 @@ class Player(Dancer):
         self.lastxupdate = variables.current_time
         self.lastyupdate = variables.current_time
 
+
     def current_pic_scaled(self): #returns the current pic to display
         if self.leftpresstime == 0 and self.rightpresstime == 0 and \
             self.uppresstime == 0 and self.downpresstime == 0:
@@ -203,6 +204,15 @@ class Player(Dancer):
         self.mask = pygame.mask.from_surface(self.current_display)
         self.normal_width = self.current_display.get_width()
         self.normal_height = self.current_display.get_height()
+        s = variables.playerspeed * variables.scaleoffset
+        if(self.xspeed>0):
+            self.xspeed = s
+        if(self.xspeed<0):
+            self.xspeed = -s
+        if(self.yspeed<0):
+            self.yspeed = -s
+        if(self.yspeed>0):
+            self.yspeed = s
 
     def ismoving(self):
         return not (self.xspeed==0 and self.yspeed==0)
