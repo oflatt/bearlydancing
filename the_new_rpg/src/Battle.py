@@ -142,14 +142,18 @@ class Battle():
                                                                 epich,
                                                                 epicw*(1-percenthealthleft),
                                                                 enemyhealthh])
-        #barlabelunscaled = variables.font.render("Health "+str(p.health)+" / "+str(playermaxh), 0, variables.WHITE)
-        #barlabel = graphics.sscale_customfactor(barlabelunscaled, 0.75)
-        #variables.screen.blit(barlabel, [0,h-healthh-barlabel.get_height()])
         if not percenthealthlefte == 1:
             pygame.draw.rect(variables.screen, healthbarcolor, [0,
                                                                 h-healthh,
                                                                 w*(1-percenthealthlefte),
                                                                 healthh])
+        #if they did not miss any in the last beatmap
+        if(self.damage_multiplier>variables.perfect_value and self.state == "attacking"):
+            punscaled = variables.font.render("PERFECT!", 0, variables.WHITE)
+            ptext = graphics.sscale_customfactor(punscaled, 2)
+            variables.screen.blit(ptext, [(variables.width/2)-(ptext.get_width()/2)-epicw,
+                                          variables.padypos-ptext.get_height()-10])
+
 
     #for things like the attack animation
     def ontick(self):
@@ -211,6 +215,9 @@ class Battle():
             if len(self.beatmaps[self.current_beatmap].notes) == 0:
                 scores = self.beatmaps[self.current_beatmap].scores
                 self.damage_multiplier = sum(scores)/len(scores)
+                #if they did not miss any
+                if(not (variables.miss_value in scores)):
+                    self.damage_multiplier += variables.perfect_value
                 self.beatmaps[self.current_beatmap].reset_buttons()
                 self.trade()
 
@@ -263,7 +270,8 @@ class Battle():
             self.newenemyhealth = self.enemy.health - stathandeling.damage(playerlv)*self.damage_multiplier
             if self.newenemyhealth <= 0.25:
                 self.newenemyhealth = 0
-        if playerlv > enemylv or (playerlv == enemylv and random.choice([True, False])):
+        if playerlv > enemylv or (playerlv == enemylv and random.choice([True, False])) or \
+                self.damage_multiplier>variables.perfect_value:
             self.isplayernext = False
         else:
             self.isplayernext = True
