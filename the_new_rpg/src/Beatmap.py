@@ -30,6 +30,7 @@ class Beatmap():
         self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
 
     def reset(self):
+        self.scores = []
         self.drumcounter = -2
         self.starttime = variables.current_time
         fsl = self.starttime+4000

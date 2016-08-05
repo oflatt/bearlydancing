@@ -1,6 +1,7 @@
 from Beatmap import Beatmap
 from Note import  Note
 from random import randint
+import variables, random
 
 testmap = [Beatmap((1200*3)/4, [Note(2, 1, 0.9), Note(2, 2, 1)])]
 #takes a list of notes and shortens ones that have that same note after it
@@ -10,7 +11,7 @@ def shorten_doubles(l):
     while (x < len(l)):
         y = 1
         while x+y<len(l)-1:
-            if l[x+y].time == l[x].time+l[x].duration:
+            if l[x+y].time <= l[x].time+l[x].duration:
                 if l[x].value == l[x+y].value:
                     newl[x].duration -= 0.1
                     break
@@ -30,18 +31,44 @@ def very_random(lv):
 
 def very_random_beatmap(lv, maxtime):
     l = []
-    #makes sure the new value does not overlap another note
-    def random_value(t):
-        rv = randint(1, 8)
+    def random_value(t, ischord):
+        if(variables.beatmaptype == "melodic" and (not ischord)):
+            if(len(l)>1):
+                lastv = l[-1].value
+                #if we continue in the same direction
+                if((lastv-1 == l[-2].value or lastv+1 == l[-2].value) and random.choice([True, False])):
+                    rv = lastv + (lastv - l[-2].value)
+                else:
+                    if(random.choice([True, False, False])):
+                        rv = lastv + random.choice([-1, 1])
+                    elif(random.choice([True, False, False])):
+                        rv = lastv + random.choice([-2, 2])
+                    else:
+                        rv = randint(1, 8)
+            else:
+                rv = randint(1, 8)
+        else:
+            rv = randint(1, 8)
+
+        if(rv<1):
+            rv = rv+8
+        elif(rv>8):
+            rv = rv - 8
+
         iscopy = False
         x = 0
         while(x<len(l)):
-            if(l[x].time + l[x].duration >= t and l[x].value == rv):
-                iscopy = True
-                break
+            if(variables.beatmaptype == "melodic" and ischord):
+                if(l[x].time + l[x].duration >= t and (l[x].value == rv or l[x].value+1 == rv or l[x].value-1 == rv)):
+                    iscopy = True
+                    break
+            else:
+                if(l[x].time + l[x].duration >= t and l[x].value == rv):
+                    iscopy = True
+                    break
             x+= 1
         if(iscopy):
-            return random_value(t)
+            return random_value(t, ischord)
         else:
             return rv
 
@@ -92,13 +119,17 @@ def very_random_beatmap(lv, maxtime):
             duration = rand_duration(time)
             #if it is not a rest
             if(randint(1, 9) != 1):
-                l.append(Note(random_value(time), time, duration))
+                if(ischord):
+                    l.insert(len(l)-1, Note(random_value(time, ischord), time, duration))
+                else:
+                    l.append(Note(random_value(time, ischord), time, duration))
         return duration
 
     time = 1
     while time < maxtime:
         oldt = time
         time += addnote(oldt, False)
+        #chance to add more notes at the same time
         if(randint(0,100)<(lv+2)**2):
             if(randint(1, 2) == 1):
                 addnote(oldt, True)
@@ -106,12 +137,16 @@ def very_random_beatmap(lv, maxtime):
                 addnote(oldt, True)
 
     tempo = (1200*3)/((lv/3)+3.5)
-    return Beatmap(tempo, shorten_doubles(l))
+    l = shorten_doubles(l)
+    return Beatmap(tempo, l)
 
 #like very random but beatmaps after the first one are based off of the first one
 def very_random_v(lv):
     beatmaps = []
-    maxtime = 15+lv
+    if(variables.beatmaptype == "melodic"):
+        maxtime = 25+lv
+    else:
+        maxtime = 15+lv
     beatmaps.append(very_random_beatmap(lv, randint(maxtime, maxtime+lv)))
     for x in range(4):
         beatmaps.append(very_random_variation(beatmaps[-1]))
@@ -134,4 +169,5 @@ def very_random_variation(last_beatmap):
         else:
             l.append(Note(oldnote.value, oldnote.time, oldnote.duration))
         x+=1
-    return Beatmap(last_beatmap.tempo, shorten_doubles(l))
+    l = shorten_doubles(l)
+    return Beatmap(last_beatmap.tempo, l)

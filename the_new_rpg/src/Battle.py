@@ -27,6 +27,7 @@ class Battle():
     damage_multiplier = 1
     def __init__(self, enemy):
         self.enemy = enemy
+        variables.beatmaptype = "melodic"
         #state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
         self.option = 1
@@ -150,7 +151,7 @@ class Battle():
         #if they did not miss any in the last beatmap
         if(self.damage_multiplier>variables.perfect_value and self.state == "attacking"):
             punscaled = variables.font.render("PERFECT!", 0, variables.WHITE)
-            ptext = graphics.sscale_customfactor(punscaled, 2)
+            ptext = graphics.sscale_customfactor(punscaled, 1.5)
             variables.screen.blit(ptext, [(variables.width/2)-(ptext.get_width()/2)-epicw,
                                           variables.padypos-ptext.get_height()-10])
 

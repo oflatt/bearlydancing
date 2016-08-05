@@ -45,6 +45,7 @@ healthanimationspeed = 2000#time in milliseconds for the health bar animation to
 expanimationspeed = 3000
 dancespeed = height/8 * 0.001#factor for displaying notes
 padypos = height*(13/16)
+beatmaptype = "random"
 
 perfect_value = 2
 good_value = 1
