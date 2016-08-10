@@ -102,7 +102,7 @@ def change_map(name):
     possibles = globals()
     map_picked = possibles.get(name)
     if not map_picked:
-         raise NotImplementedError("Method %s not implemented" % name)
+         raise NotImplementedError("Map %s not implemented" % name)
     current_map = map_picked
     new_scale_offset()
 
