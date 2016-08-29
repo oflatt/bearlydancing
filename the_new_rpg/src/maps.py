@@ -1,9 +1,10 @@
 #!/usr/bin/python
-import pygame, variables, graphics, classvar, conversations
+import variables, graphics, classvar, conversations
 from Map import Map
 from Rock import Rock
 from Exit import Exit
 from Enemy import Enemy
+from pygame import Rect
 s = variables.scaleoffset
 
 block = variables.width/10
@@ -31,6 +32,7 @@ outside1.startpoint= [block*8,block*4]
 outside1.exitareas = [Exit([outsidewidth, 0, 100, outsideheight], False, 'outside2', 25, outsideheight/2),
                       Exit([housewidth*(1/5), househeight*(3/5), housewidth*(1.5/10), househeight*(2/5)], True, 'honeyhome', block*5-(hw/2), block*10-(hh))]
 outside1.enemies = [Enemy(graphics.sheep1, 0.5, "sheep"), Enemy(graphics.meanGreen0, 0.3, "greenie"), Enemy(graphics.purplePerp0, 0.2, "purpur")]
+outside1.colliderects = [Rect(block*1, block*4, block*5, block*5)]
 outside1.lvrange = [1,1]
 outside1c = conversations.secondscene
 outside1c.area = [3.1*block, 0, outsidewidth, outsideheight]

@@ -6,6 +6,7 @@ from Battle import Battle
 class Map():
     startpoint = [10, 10] #xy coordinates of spawn point
     exitareas = []#list of exit
+    colliderects = []#list of invisible Rect for collision
     enemies = []#list of possible enemy encounters
     lvrange = [1]
     last_encounter_check = 0

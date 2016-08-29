@@ -2,6 +2,7 @@
 import pygame, variables, maps, graphics, stathandeling
 from Dancer import Dancer
 from Animation import Animation
+from pygame import Rect
 
 class Player(Dancer):
     xspeed = 0
@@ -133,6 +134,7 @@ class Player(Dancer):
         iscollisiony= False
         m = maps.current_map
         t = m.terrain
+        colliderects = m.colliderects
         numofrocks = len(t)
 
         #checks if the player collides with a rock
@@ -157,6 +159,11 @@ class Player(Dancer):
                 iscollisionx = True
             else:
                 #collision detection for the moved x pos with the unmoved y pos
+                for x in range(0, len(colliderects)):
+                    playerR = Rect(movedxpos, self.ypos, self.normal_width, self.normal_height)
+                    if(playerR.colliderect(colliderects[x]) == 1):
+                        iscollisionx = True
+                        break
                 for x in range(0, numofrocks):
                     r = t[x]
                     if collisioncheck(r, movedxpos, self.ypos):
@@ -172,6 +179,11 @@ class Player(Dancer):
                 iscollisiony = True
             else:
                 #collision detection for the moved y pos with the unmoved x pos
+                for x in range(0, len(colliderects)):
+                    playerR = Rect(self.xpos, movedypos, self.normal_width, self.normal_height)
+                    if(playerR.colliderect(colliderects[x]) == 1):
+                        iscollisiony = True
+                        break
                 for x in range(0, numofrocks):
                     r = t[x]
                     if collisioncheck(r, self.xpos, movedypos):
