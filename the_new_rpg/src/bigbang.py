@@ -1,8 +1,11 @@
 #!/usr/bin/python
-import pygame, variables, maps
+import pygame, variables
 
-from Player import Player
-from Battle import Battle
+LOADINGTEXT =  pygame.transform.scale2x(variables.font.render("LOADING...", 0, variables.WHITE))
+variables.wide_screen.blit(LOADINGTEXT, [0, 0])
+pygame.display.flip()
+
+import maps
 import conversations, classvar
 
 pygame.display.set_caption("theNewRpg")
@@ -13,11 +16,7 @@ done = False
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
-# Hide the mouse cursor
-#pygame.mouse.set_visible(0)
-
 maps.new_scale_offset()
-
 # -------- Main Program Loop -----------
 while not done:
     # --- Event Processing- this is like keyPressed
