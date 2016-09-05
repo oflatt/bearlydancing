@@ -21,13 +21,13 @@ class Player(Dancer):
     storyprogress = 1
 
     #animation
-    left_animation = Animation([GR["honeyside0"], GR["honeyside0"], GR["honeyside0"]], 100)
-    right_animation = Animation([GR["honeyside0"], GR["honeyside0"],
-                                 GR["honeyside0"], GR["honeyside0"]], 100)
-    up_animation = Animation([GR["honeyside0"], GR["honeyside0"],
-                              GR["honeyside0"], GR["honeyside0"]], 100)
-    down_animation = Animation([GR["honeyside0"], GR["honeyside0"],
-                                GR["honeyside0"], GR["honeyside0"]], 100)
+    left_animation = Animation([GR["honeyside3"], GR["honeyside4"], GR["honeyside3"], GR["honeyside4"]], 200)
+    right_animation = Animation([GR["honeyside0"], GR["honeyside1"],
+                                 GR["honeyside0"], GR["honeyside2"]], 200)
+    down_animation = Animation([GR["honeyback3"], GR["honeyback4"],
+                                GR["honeyback3"], GR["honeyback5"]], 200)
+    up_animation = Animation([GR["honeyback0"], GR["honeyback1"],
+                              GR["honeyback0"], GR["honeyback2"]], 200)
     current_animation = left_animation
 
     def teleport(self, x, y):

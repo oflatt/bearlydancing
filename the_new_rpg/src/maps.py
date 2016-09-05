@@ -6,34 +6,30 @@ from Rock import Rock
 from Exit import Exit
 from Enemy import Enemy
 from pygame import Rect
-s = variables.scaleoffset
 
 block = variables.width/10
 
 houserock = Rock(GR["house"], 0, 0, False)
 houserock.collideh = GR["house"]["scale-height"] * (3/5)
-housewidth = GR["house"]["scale-width"]
-househeight = GR["house"]["scale-height"]
-hw = GR["honeyside0"]["scale-width"]
-hh = GR["honeyside0"]["scale-height"]
+honeyw = GR["honeyside0"]["scale-width"]
+honeyh = GR["honeyside0"]["scale-height"]
 
 # outside 1
 outside1 = Map(GR["horizontal"], [houserock,
-                                 Rock(GR["talltree"], 1.4*block, 1.9*block, True),
                                  Rock(GR["meangreen0"], 3.2*block, 0.1*block+GR["talltree"]["scale-height"]-GR["meangreen0"]["scale-height"], True),
                                  Rock(GR["rock"], 6.5*block, 7*block, True),
                                  Rock(GR["rock"], 4.5*block, 3.5*block, True),
-                                 Rock(GR["talltree"], 1.9*block, 1.9*block, True),
-                                 Rock(GR["talltree"], 2.4*block, 1.9*block, True),
                                  Rock(GR["rock"], 2.5*block, 6.3*block, True)])
-
+outside1scale = outside1.map_scale_offset
+housewidth = int(GR["house"]["scale-width"]*outside1scale)
+househeight = int(GR["house"]["scale-height"]*outside1scale)
 outsidewidth = GR["horizontal"]["scale-width"]
 outsideheight = GR["horizontal"]["scale-height"]
 outside1.startpoint= [block*8,block*4]
 outside1.exitareas = [Exit([outsidewidth, 0, 100, outsideheight], False, 'outside2', 25, outsideheight/2),
-                      Exit([housewidth*(1/5), househeight*(3/5), housewidth*(1.5/10), househeight*(2/5)], True, 'honeyhome', block*5-(hw/2), block*10-(hh))]
+                      Exit([housewidth*(1/5), househeight*(3/5), housewidth*(1.5/10), househeight*(2/5)], True, 'honeyhome', block*5-(honeyw/2), block*10-(honeyh))]
 outside1.enemies = [Enemy(GR["sheep0"], 0.5, "sheep"), Enemy(GR["meangreen0"], 0.3, "greenie"), Enemy(GR["purpleperp0"], 0.2, "purpur")]
-outside1.colliderects = [Rect(block*1, block*4, block*5, block*5)]
+outside1.colliderects = [Rect(0, 0, housewidth, househeight-int(honeyh*outside1scale))]
 outside1.lvrange = [1,1]
 outside1c = conversations.secondscene
 outside1c.area = [3.1*block, 0, outsidewidth, outsideheight]
@@ -60,7 +56,7 @@ honeyhome = Map(GR["bearhome"], [Rock(GR["welcomematt"],
 
 honeyhome.startpoint = [0,0]
 honeyhome.exitareas = [Exit([insidewidth/2-GR["welcomematt"]["scale-width"]/2, insideheight,
-                             GR["welcomematt"]["scale-width"], insideb], False, 'outside1', insideb*0.9, insideb*4)]
+                             GR["welcomematt"]["scale-width"], insideb], False, 'outside1', househeight, househeight)]
 racoonc = conversations.firstscene
 racoonc.area = [0, 7*insideb+GR["tp"]["scale-height"], insidewidth, 50]#50 because it does not matter how thick it is down
 racoonc.isbutton = False
