@@ -19,7 +19,7 @@ class Map():
         #terrain is a list of Rock
         self.terrain= terrain
         #final image is an actual image, not a dict
-        self.finalimage = graphics.sheep1["img"]
+        self.finalimage = pygame.Surface([10, 10])
         mapw = base["scale-width"]
         maph = base["scale-height"]
         if mapw<maph:

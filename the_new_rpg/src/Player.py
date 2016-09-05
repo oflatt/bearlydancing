@@ -1,5 +1,6 @@
 #!/usr/bin/python
-import pygame, variables, maps, graphics, stathandeling
+import pygame, variables, maps, stathandeling
+from graphics import GR
 from Dancer import Dancer
 from Animation import Animation
 from pygame import Rect
@@ -20,13 +21,13 @@ class Player(Dancer):
     storyprogress = 1
 
     #animation
-    left_animation = Animation([graphics.left_honey1, graphics.left_honey2, graphics.left_honey3], 100)
-    right_animation = Animation([graphics.honey_right0, graphics.honey_right1,
-                                 graphics.honey_right2, graphics.honey_right3], 100)
-    up_animation = Animation([graphics.back_honey0, graphics.back_honey1,
-                              graphics.back_honey2, graphics.back_honey3], 100)
-    down_animation = Animation([graphics.front_honey0, graphics.front_honey1,
-                                graphics.front_honey2, graphics.front_honey3], 100)
+    left_animation = Animation([GR["honeyside0"], GR["honeyside0"], GR["honeyside0"]], 100)
+    right_animation = Animation([GR["honeyside0"], GR["honeyside0"],
+                                 GR["honeyside0"], GR["honeyside0"]], 100)
+    up_animation = Animation([GR["honeyside0"], GR["honeyside0"],
+                              GR["honeyside0"], GR["honeyside0"]], 100)
+    down_animation = Animation([GR["honeyside0"], GR["honeyside0"],
+                                GR["honeyside0"], GR["honeyside0"]], 100)
     current_animation = left_animation
 
     def teleport(self, x, y):

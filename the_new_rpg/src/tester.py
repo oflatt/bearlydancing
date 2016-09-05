@@ -1,4 +1,4 @@
-import pygame
+import pygame, os
 
 # Setup
 pygame.mixer.pre_init(44100, -16, 2, 512)
@@ -22,6 +22,14 @@ screen = pygame.Surface([height, width])
 running = True
 
 print("starup time: " + str(pygame.time.get_ticks()) + " millis")
+GR = {}
+picnames = os.listdir(os.path.dirname(os.path.abspath("__file__")) + "/pics")
+
+for x in picnames:
+    p = 3
+    nicename = x.replace(".png", "").lower()
+    GR[nicename] = 3
+print(GR)
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
