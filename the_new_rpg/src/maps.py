@@ -16,17 +16,17 @@ honeyh = GR["honeyside0"]["scale-height"]
 
 # outside 1
 outside1 = Map(GR["horizontal"], [houserock,
-                                 Rock(GR["meangreen0"], 3.2*block, 0.1*block+GR["talltree"]["scale-height"]-GR["meangreen0"]["scale-height"], True),
-                                 Rock(GR["rock"], 6.5*block, 7*block, True),
-                                 Rock(GR["rock"], 4.5*block, 3.5*block, True),
-                                 Rock(GR["rock"], 2.5*block, 6.3*block, True)])
+                                  Rock(GR["meangreen0"], 3.2*block, 0.1*block+GR["talltree"]["scale-height"]-GR["meangreen0"]["scale-height"], True),
+                                  Rock(GR["rock"], 6.5*block, 7*block, True),
+                                  Rock(GR["rock"], 4.5*block, 3.5*block, True),
+                                  Rock(GR["rock"], 2.5*block, 6.3*block, True)])
 outside1scale = outside1.map_scale_offset
 housewidth = int(GR["house"]["scale-width"]*outside1scale)
 househeight = int(GR["house"]["scale-height"]*outside1scale)
 outsidewidth = GR["horizontal"]["scale-width"]
 outsideheight = GR["horizontal"]["scale-height"]
 outside1.startpoint= [block*8,block*4]
-outside1.exitareas = [Exit([outsidewidth, 0, 100, outsideheight], False, 'outside2', 25, outsideheight/2),
+outside1.exitareas = [Exit([outsidewidth, 0, 100, outsideheight], False, 'outside2', 0, block*5),
                       Exit([housewidth*(1/5), househeight*(3/5), housewidth*(1.5/10), househeight*(2/5)], True, 'honeyhome', block*5-(honeyw/2), block*10-(honeyh))]
 outside1.enemies = [Enemy(GR["sheep0"], 0.5, "sheep"), Enemy(GR["meangreen0"], 0.3, "greenie"), Enemy(GR["purpleperp0"], 0.2, "purpur")]
 outside1.colliderects = [Rect(0, 0, housewidth, househeight-int(honeyh*outside1scale))]
@@ -96,13 +96,14 @@ def new_scale_offset():
     variables.scaleoffset = current_map.map_scale_offset
     classvar.player.scale_by_offset()
 
-def change_map(name):
+def change_map(name, newx, newy):
     global current_map
     possibles = globals()
     map_picked = possibles.get(name)
     if not map_picked:
          raise NotImplementedError("Map %s not implemented" % name)
     current_map = map_picked
+    classvar.player.teleport(newx*current_map.map_scale_offset, newy*current_map.map_scale_offset)
     new_scale_offset()
 
 def engage_conversation(c):
@@ -120,8 +121,7 @@ def on_key(key):
         e = current_map.checkexit()
         c = current_map.checkconversation()
         if not e == False:
-            classvar.player.teleport(e.newx, e.newy)
-            change_map(e.name)
+            change_map(e.name, e.newx, e.newy)
         elif not c == False:
             engage_conversation(c)
 
@@ -129,8 +129,7 @@ def checkexit():
     e = current_map.checkexit()
     if not e == False:
         if e.isbutton == False:
-            classvar.player.teleport(e.newx, e.newy)
-            change_map(e.name)
+            change_map(e.name, e.newx, e.newy)
 
 def checkconversation():
     c = current_map.checkconversation()

@@ -27,7 +27,7 @@ class Rock():
         self.y *= s
         #scale base pic to right size
         self.base["img"] = pygame.transform.scale(self.base["img"], [int(self.base["scale-width"]*s),
-                                                              int(self.base["scale-height"]*s)])
+                                                                     int(self.base["scale-height"]*s)])
         self.w = self.base["img"].get_width()
         self.h = self.base["img"].get_height()
         if self.collidex == None:
@@ -39,7 +39,6 @@ class Rock():
             self.collidey = self.y
         else:
             self.collidey *= s
-
         if self.collidew == None:
             self.collidew = self.w
         else:
