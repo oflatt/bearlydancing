@@ -27,7 +27,8 @@ outsidewidth = GR["horizontal"]["scale-width"]
 outsideheight = GR["horizontal"]["scale-height"]
 outside1.startpoint= [block*8,block*4]
 outside1.exitareas = [Exit([outsidewidth, 0, 100, outsideheight], False, 'outside2', 0, block*5),
-                      Exit([housewidth*(1/5), househeight*(3/5), housewidth*(1.5/10), househeight*(2/5)], True, 'honeyhome', block*5-(honeyw/2), block*10-(honeyh))]
+                      Exit([housewidth*(1/5), househeight*(3/5), housewidth*(1.5/10), househeight*(2/5)], True, 'honeyhome',
+                           (GR["bearhome"]["scale-width"]/5)-(honeyw/2), GR["bearhome"]["scale-height"]-(honeyh))]
 outside1.enemies = [Enemy(GR["sheep0"], 0.5, "sheep"), Enemy(GR["meangreen0"], 0.3, "greenie"), Enemy(GR["purpleperp0"], 0.2, "purpur")]
 outside1.colliderects = [Rect(0, 0, housewidth, househeight-int(honeyh*outside1scale))]
 outside1.lvrange = [1,1]
@@ -56,7 +57,8 @@ honeyhome = Map(GR["bearhome"], [Rock(GR["welcomematt"],
 
 honeyhome.startpoint = [0,0]
 honeyhome.exitareas = [Exit([insidewidth/2-GR["welcomematt"]["scale-width"]/2, insideheight,
-                             GR["welcomematt"]["scale-width"], insideb], False, 'outside1', househeight, househeight)]
+                             GR["welcomematt"]["scale-width"], insideb], False, 'outside1',
+                             GR["house"]["scale-width"]*(1/5), GR["house"]["scale-height"]-honeyh)]
 racoonc = conversations.firstscene
 racoonc.area = [0, 7*insideb+GR["tp"]["scale-height"], insidewidth, 50]#50 because it does not matter how thick it is down
 racoonc.isbutton = False

@@ -74,10 +74,10 @@ class Map():
         e = self.checkexit()
         pw = classvar.player.normal_width/2
         if not e == False:
-            self.draw_interation_button(e.area[0] + e.area[2]/2 - pw/2, e.area[1] - pw, pw)
+            self.draw_interation_button(classvar.player.xpos + classvar.player.current_display.get_width()/2 - pw/2, classvar.player.ypos - pw, pw)
         c = self.checkconversation()
         if not c == False and c.isbutton:
-            self.draw_interation_button(c.area[0] + c.area[2]/2 - pw/2, c.area[1] - pw/2, pw)
+            self.draw_interation_button(classvar.player.xpos + classvar.player.current_display.get_width()/2 - pw/2, classvar.player.ypos - pw, pw)
 
     def draw_foreground(self):
         for x in range(0, len(self.foreground_terrain)):
