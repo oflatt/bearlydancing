@@ -55,7 +55,7 @@ def importpic(filename):
 def simport(filename):
     p = importpic(filename)
     dimensions = sscale_dimensions(p)
-    return {"img":p, "scale-width":dimensions[0], "scale-height":dimensions[1]}
+    return {"img":p, "w":dimensions[0], "h":dimensions[1]}
 
 feedback_factor = 0.75
 Atext = sscale_customfactor(variables.font.render("A", 0, variables.WHITE), feedback_factor)
