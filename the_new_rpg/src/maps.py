@@ -10,6 +10,16 @@ from pygame import Rect
 # Coordinates for maps are based on the base of each map respectively
 honeyw = GR["honeyside0"]["w"]
 honeyh = GR["honeyside0"]["h"]
+extraarea = 50
+print(variables.width)
+
+# jeremyhome#############################################################################################################
+b = GR["halfpath"]["w"] / 10
+
+jeremyhome = Map(GR["horizontal"],
+                 [Rock(GR["rabbithole"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], True),
+                  Rock(GR["jeremy0"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], True)])
+jeremyhome.exitareas = [Exit([b * 10, 0, extraarea, GR["halfpath"]["h"]], False, 'outside1', 0, "same")]
 
 # outside1##############################################################################################################
 b = GR["horizontal"]["w"] / 10
@@ -26,12 +36,14 @@ househeight = int(GR["house"]["h"])
 outsidewidth = GR["horizontal"]["w"]
 outsideheight = GR["horizontal"]["h"]
 outside1.startpoint = [b * 8, b * 4]
-outside1.exitareas = [Exit([outsidewidth, 0, 100, outsideheight], False, 'outside2', 0, b * 5),
+outside1.exitareas = [Exit([outsidewidth, 0, extraarea, outsideheight], False, 'outside2', 0, "same"),
+                      Exit([-extraarea, 0, extraarea, outsideheight], False, 'jeremyhome', GR["halfpath"]["w"] - honeyw,
+                           "same"),
                       Exit(
-                          [housewidth * (1 / 5), househeight * (3 / 5), housewidth * (1.5 / 10), househeight * (2 / 5)],
+                          [housewidth * (1 / 5), househeight * (3 / 5), housewidth * (1.5 / 10), househeight * (1 / 5)],
                           True, 'honeyhome',
-                          (GR["bearhome"]["w"] / 5) - (honeyw / 2), GR["bearhome"]["h"] - (honeyh))]
-outside1.colliderects = [Rect(0, 0, housewidth, househeight - honeyh)]
+                          (GR["bearhome"]["w"] / 2) - (honeyw / 2), GR["bearhome"]["h"] - (honeyh)-b/20)]
+# outside1.colliderects = [Rect(0, 0, housewidth, househeight - honeyh)]
 outside1.lvrange = [1, 1]
 outside1c = conversations.secondscene
 outside1c.area = [3.1 * b, 0, outsidewidth, outsideheight]
@@ -57,12 +69,12 @@ honeyhome = Map(GR["bearhome"], [Rock(GR["welcomematt"],
                                  Rock(GR["tp"], 8 * b, 7 * b, True)])
 honeyhome.startpoint = [0, 0]
 honeyhome.exitareas = [
-    Exit([insidewidth / 2 - GR["welcomematt"]["w"] / 2, insideheight, GR["welcomematt"]["w"] / 2, 50],
+    Exit([insidewidth / 2 - GR["welcomematt"]["w"] / 2, insideheight, GR["welcomematt"]["w"] / 2, extraarea],
          False, 'outside1',
          GR["house"]["w"] * (1 / 5), GR["house"]["h"] - honeyh)]
 racoonc = conversations.firstscene
 racoonc.area = [0, 7 * b + GR["tp"]["h"], insidewidth,
-                50]  # 50 because it does not matter how thick it is down
+                extraarea]  # extraarea because it does not matter how thick it is down
 racoonc.isbutton = False
 racoonc.part_of_story = 1  # makes it so you can only have the conversation once
 honeyhome.conversations = [racoonc]
@@ -117,7 +129,7 @@ honeyhome.conversations = [racoonc]
 #                              GR["welcomematt"]["w"], insideb], False, 'outside1',
 #                              GR["house"]["w"]*(1/5), GR["house"]["h"]-honeyh)]
 # racoonc = conversations.firstscene
-# racoonc.area = [0, 7*insideb+GR["tp"]["h"], insidewidth, 50]#50 because it does not matter how thick it is down
+# racoonc.area = [0, 7*insideb+GR["tp"]["h"], insidewidth, extraarea]#extraarea because it does not matter how thick it is down
 # racoonc.isbutton = False
 # racoonc.part_of_story = 1 #makes it so you can only have the conversation once
 # honeyhome.conversations = [racoonc]
@@ -131,8 +143,8 @@ honeyhome.conversations = [racoonc]
 #                                 Rock(GR["talltree"], 1.7*block, 0.3*block, True),
 #                                 Rock(GR["rock"], 6*block, 2*block, True)])
 #
-# outside2.exitareas = [Exit([0, 0, 5, outsideheight], False, 'outside1', outsidewidth-50, outsideheight/2),
-#                       Exit([0, 0, outsidewidth, 5], False, 'outside3', outsidewidth/2, outsideheight-50)]
+# outside2.exitareas = [Exit([0, 0, 5, outsideheight], False, 'outside1', outsidewidth-extraarea, outsideheight/2),
+#                       Exit([0, 0, outsidewidth, 5], False, 'outside3', outsidewidth/2, outsideheight-extraarea)]
 # outside2.enemies = [Enemy(GR["sheep0"], 0.5, "sheep"), Enemy(GR["meangreen0"], 0.3, "greenie"), Enemy(GR["purpleperp0"], 0.2, "purpur")]
 # outside2.lvrange = [1, 2]
 #
@@ -164,7 +176,24 @@ def change_map(name, newx, newy):
     if not map_picked:
         raise NotImplementedError("Map %s not implemented" % name)
     current_map = map_picked
-    classvar.player.teleport(newx * current_map.map_scale_offset, newy * current_map.map_scale_offset)
+    if (isinstance(newx, str)):
+        newx = classvar.player.xpos
+        if (newx < 0):
+            newx = 0
+        if (newx > (current_map.base["w"]*current_map.map_scale_offset - (honeyw * current_map.map_scale_offset))):
+            newx = current_map.base["w"]*current_map.map_scale_offset - (honeyw * current_map.map_scale_offset)
+    else:
+        newx *= current_map.map_scale_offset
+    if (isinstance(newy, str)):
+        newy = classvar.player.ypos
+        if (newy < 0):
+            newy = 0
+        if (newy > (current_map.base["h"]*current_map.map_scale_offset - (honeyh * current_map.map_scale_offset))):
+            newy = current_map.base["h"]*current_map.map_scale_offset - (honeyh * current_map.map_scale_offset)
+            print("tried newy :" + str(newy))
+    else:
+        newy *= current_map.map_scale_offset
+    classvar.player.teleport(newx, newy)
     new_scale_offset()
 
 
