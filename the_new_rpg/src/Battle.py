@@ -242,7 +242,7 @@ class Battle():
             #go home
             classvar.player.heal()
             variables.state = "world"
-            maps.change_map(maps.home_map)
+            maps.change_map(maps.home_map, 0, 0)
             classvar.player.teleport(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
         elif self.state == "win" and key in variables.enterkeys:
             self.state = "exp"

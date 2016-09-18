@@ -13,13 +13,31 @@ honeyh = GR["honeyside0"]["h"]
 extraarea = 50
 print(variables.width)
 
-# jeremyhome#############################################################################################################
+# outside2##############################################################################################################
+b = GR["leftturn"]["w"]
+outsideheight = GR["leftturn"]["h"]
+outside2 = Map(GR["leftturn"], [Rock(GR["talltree"], 4*b, 5*b, True),
+                                Rock(GR["talltree"], 5.5*b, 4.5*b, True),
+                                Rock(GR["talltree"], 2*b, 4.7*b, True),
+                                Rock(GR["talltree"], 6.7*b, 2*b, True),
+                                Rock(GR["rock"], 5*b, 4*b, False),
+                                Rock(GR["talltree"], 1.7*b, 0.3*b, True),
+                                Rock(GR["rock"], 6*b, 2*b, True)])
+
+outside2.exitareas = [Exit([-extraarea, 0, extraarea, outsideheight], False, 'outside1', GR["horizontal"]["w"] - honeyw, "same")]
+outside2.enemies = [Enemy(GR["sheep0"], 0.5, "sheep"), Enemy(GR["meangreen0"], 0.3, "greenie"), Enemy(GR["purpleperp0"], 0.2, "purpur")]
+outside2.lvrange = [1]
+
+# jeremyhome############################################################################################################
 b = GR["halfpath"]["w"] / 10
 
 jeremyhome = Map(GR["horizontal"],
                  [Rock(GR["rabbithole"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], True),
                   Rock(GR["jeremy0"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], True)])
 jeremyhome.exitareas = [Exit([b * 10, 0, extraarea, GR["halfpath"]["h"]], False, 'outside1', 0, "same")]
+conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"]-(honeyw/2), b * 5 - GR["rabbithole"]["h"],
+                             GR["rabbithole"]["w"]-(honeyw/2), GR["rabbithole"]["h"]]
+jeremyhome.conversations = [conversations.jeremy]
 
 # outside1##############################################################################################################
 b = GR["horizontal"]["w"] / 10
@@ -43,8 +61,8 @@ outside1.exitareas = [Exit([outsidewidth, 0, extraarea, outsideheight], False, '
                           [housewidth * (1 / 5), househeight * (3 / 5), housewidth * (1.5 / 10), househeight * (1 / 5)],
                           True, 'honeyhome',
                           (GR["bearhome"]["w"] / 2) - (honeyw / 2), GR["bearhome"]["h"] - (honeyh)-b/20)]
-# outside1.colliderects = [Rect(0, 0, housewidth, househeight - honeyh)]
-outside1.lvrange = [1, 1]
+outside1.colliderects = [Rect(0, 0, housewidth, househeight - honeyh)]
+outside1.lvrange = [1, 2]
 outside1c = conversations.secondscene
 outside1c.area = [3.1 * b, 0, outsidewidth, outsideheight]
 outside1c.isbutton = False
