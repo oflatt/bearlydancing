@@ -1,4 +1,5 @@
-import variables, pygame
+import pygame
+import variables
 
 
 class Note:
@@ -14,11 +15,17 @@ class Note:
     height_offset = 0
 
     def __init__(self, value, time, duration):
-        # value is the placement in the current scale (instrument) that the note is
+        # value is the placement in the current scale (instrument) that the note is, 0 is the first note, can go neg
         # time is time in the whole song it is
         self.value = value
         self.time = time
         self.duration = duration
+        #from 0-7 even if it is out of those bounds so it can be played on the screen
+        self.screenvalue = self.value%7
+        if (self.screenvalue == 0 and self.value > 7):
+            self.screenvalue = 7
+        elif (self.screenvalue < 0):
+            self.screenvalue += 7
 
     def height(self, tempo):
         return self.duration * tempo * variables.dancespeed
@@ -29,7 +36,7 @@ class Note:
 
         # subtract height to y because the pos is the bottom of the rectangle
         if self.ison:
-            color = variables.notes_colors[self.value - 1]
+            color = variables.notes_colors[self.screenvalue]
         else:
             color = variables.GRAY
 

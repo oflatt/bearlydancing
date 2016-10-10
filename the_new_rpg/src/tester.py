@@ -6,6 +6,8 @@ pygame.mixer.init()
 pygame.init()
 pygame.mixer.set_num_channels(16)
 
+for x in range(48):
+    print(x)
 
 #master clock
 clock = pygame.time.Clock()

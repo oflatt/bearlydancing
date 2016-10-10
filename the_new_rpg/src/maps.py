@@ -11,7 +11,6 @@ from pygame import Rect
 honeyw = GR["honeyside0"]["w"]
 honeyh = GR["honeyside0"]["h"]
 extraarea = 50
-print(variables.width)
 
 # outside2##############################################################################################################
 b = GR["leftturn"]["w"]
@@ -208,7 +207,6 @@ def change_map(name, newx, newy):
             newy = 0
         if (newy > (current_map.base["h"]*current_map.map_scale_offset - (honeyh * current_map.map_scale_offset))):
             newy = current_map.base["h"]*current_map.map_scale_offset - (honeyh * current_map.map_scale_offset)
-            print("tried newy :" + str(newy))
     else:
         newy *= current_map.map_scale_offset
     classvar.player.teleport(newx, newy)

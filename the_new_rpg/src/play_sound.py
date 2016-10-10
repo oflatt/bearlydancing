@@ -1,10 +1,13 @@
-import pygame
 import math
+
 import numpy
+import pygame
+
 import variables
 
+
 def make_sound(frequency):
-    duration = 8.0          # in seconds
+    duration = 0.5          # in seconds
     sample_rate = 44100
 
     n_samples = int(round(duration*sample_rate))
@@ -22,59 +25,23 @@ def make_sound(frequency):
 
     return pygame.sndarray.make_sound(buf)
 
-C = make_sound(523.25)
-D = make_sound(587.33)
-E = make_sound(659.26)
-F = make_sound(698.76)
-G = make_sound(783.99)
-A = make_sound(880)
-B = make_sound(987.77)
-Chigh = make_sound(1046.5)
+#a list of sounds from A2 to A6
+all_tones = []
+for x in range(48):
+    s = make_sound((440*((2**(1/12))**(x-24))))
+    s.set_volume(variables.battle_volume)
+    all_tones.append(s)
+
 Drum_kick_heavy = pygame.mixer.Sound("drum_heavy_kick.wav")
-C.set_volume(variables.battle_volume)
-D.set_volume(variables.battle_volume)
-E.set_volume(variables.battle_volume)
-F.set_volume(variables.battle_volume)
-G.set_volume(variables.battle_volume)
-A.set_volume(variables.battle_volume)
-B.set_volume(variables.battle_volume)
-Chigh.set_volume(variables.battle_volume)
 Drum_kick_heavy.set_volume(variables.battle_volume*6)
 
+def play_tone(t):
+    #add 24 because values are centered on 0 and list is 48 long
+    all_tones[t+24].play(loops = -1)
+
 def play_sound(s):
-    if s == "C":
-        C.play(loops = -1)
-    elif s == "D":
-        D.play(loops = -1)
-    elif s == "E":
-        E.play(loops = -1)
-    elif s == "F":
-        F.play(loops = -1)
-    elif s == "G":
-        G.play(loops = -1)
-    elif s == "A":
-        A.play(loops = -1)
-    elif s == "B":
-        B.play(loops = -1)
-    elif s == "Chigh":
-        Chigh.play(loops = -1)
-    elif s == "drum kick heavy":
+    if s == "drum kick heavy":
         Drum_kick_heavy.play()
 
-def stop_sound(s):
-    if s == "C":
-        C.stop()
-    elif s == "D":
-        D.stop()
-    elif s == "E":
-        E.stop()
-    elif s == "F":
-        F.stop()
-    elif s == "G":
-        G.stop()
-    elif s == "A":
-        A.stop()
-    elif s == "B":
-        B.stop()
-    elif s == "Chigh":
-        Chigh.stop()
+def stop_tone(t):
+    all_tones[t+24].stop()
