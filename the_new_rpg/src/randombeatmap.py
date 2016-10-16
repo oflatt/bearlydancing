@@ -3,8 +3,8 @@ from Note import  Note
 from random import randint
 import variables, random
 
-testmap = [Beatmap((1200*3)/4, [Note(0, 1, 1), Note(0, 4, 4), Note(0, 5, 5), Note(0, 6, 6)])]
-#[Beatmap((1200*3)/4, [Note(0, 1, 0.9), Note(-1, 2, 1), Note(8, 3, 1), Note(14, 5, 1), Note(-7, 6, 1)])]
+testmapb = [Beatmap((1200*3)/4, [Note(0, 1, 1), Note(0, 4, 1), Note(0, 5, 1), Note(1, 6, 1)])]
+testmap = [Beatmap((1200*3)/4, [Note(0, 1, 0.9), Note(-1, 2, 1), Note(8, 3, 1), Note(14, 5, 1), Note(-7, 6, 1)])]
 #takes a list of notes and shortens ones that have that same note after it
 def shorten_doubles(l):
     newl = l
