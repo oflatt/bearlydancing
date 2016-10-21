@@ -42,8 +42,6 @@ class Beatmap():
 
 
     def draw(self):
-        #print(str(self.notes[0].pos[1]) + " " + str(self.notes[0].time) + " " + str(self.notes[0].end_score))
-
         #draw the notes that are on the screen
         n = self.notes_on_screen()
         for x in range(0, len(n)):

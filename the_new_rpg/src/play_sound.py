@@ -27,7 +27,7 @@ def make_sound(frequency):
 
 #a list of sounds from A2 to A6
 all_tones = []
-for x in range(48):
+for x in range(49):
     s = make_sound((440*((2**(1/12))**(x-24))))
     s.set_volume(variables.battle_volume)
     all_tones.append(s)
