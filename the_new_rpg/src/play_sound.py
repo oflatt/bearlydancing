@@ -7,7 +7,7 @@ import variables
 
 
 def make_sound(frequency):
-    duration = 0.5          # in seconds
+    duration = (1/frequency)*50          # in seconds
     sample_rate = 44100
 
     n_samples = int(round(duration*sample_rate))
