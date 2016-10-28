@@ -98,7 +98,7 @@ def random_value(t, ischord, l, specs):
     x = 0
     while (x < len(l)):
         if (ischord):
-            if (l[x].time + l[x].duration > t): #and (l[x].value == rv or l[x].value + 1 == rv or l[x].value - 1 == rv)): this is to avoid ugly chords
+            if (l[x].time + l[x].duration > t and l[x].value == rv): #and (l[x].value == rv or l[x].value + 1 == rv or l[x].value - 1 == rv)): this is to avoid ugly chords
                 iscopy = True
                 break
         else:

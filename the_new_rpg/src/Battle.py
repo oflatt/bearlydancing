@@ -36,7 +36,8 @@ class Battle():
         classvar.player.heal()
 
     def new_beatmaps(self):
-        self.beatmaps = randombeatmap.very_random_v(self.enemy.lv)
+        variables.melodic_specs["lv"] = self.enemy.lv
+        self.beatmaps = [randombeatmap.random_beatmap(variables.melodic_specs)]
 
     def next_beatmap(self):
         if self.current_beatmap+1 == len(self.beatmaps):
