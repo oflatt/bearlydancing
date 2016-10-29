@@ -13,7 +13,6 @@ class Map():
     last_encounter_check = 0
     conversations = []  # list of conversation on the map
     isscaled = False  # if scale stuff has been called
-    foreground_terrain = []
 
     def __init__(self, base, terrain):
         self.base = base
@@ -49,8 +48,6 @@ class Map():
             self.exitareas[x].scale_by_offset(self.map_scale_offset)
         for x in range(0, len(self.conversations)):
             self.conversations[x].scale_by_offset(self.map_scale_offset)
-        for x in range(0, len(self.foreground_terrain)):
-            self.foreground_terrain[x].scale_by_offset(self.map_scale_offset)
         for x in self.colliderects:
             x.x *= self.map_scale_offset
             x.y *= self.map_scale_offset
@@ -88,8 +85,11 @@ class Map():
                                         classvar.player.ypos - pw, pw)
 
     def draw_foreground(self):
-        for x in range(0, len(self.foreground_terrain)):
-            self.foreground_terrain[x].draw()
+        #detect if within the foreground range
+        playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width, classvar.player.normal_height)
+        for r in self.terrain:
+            if(r.foreground_range.colliderect(playerrect)):
+                r.draw()
 
     def draw_interation_button(self, xpos, ypos, width):
         pygame.draw.ellipse(variables.screen, variables.WHITE, [xpos, ypos, width, width])

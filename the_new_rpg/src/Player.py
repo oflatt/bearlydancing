@@ -214,7 +214,10 @@ class Player(Dancer):
 
     def scale_by_offset(self):
         self.current_pic_scaled()
-        self.mask = pygame.mask.from_surface(self.current_display)
+        maskpic = self.current_display.copy()
+        #this is to chop off the collision box for only the bottom of honey
+        maskpic.fill(pygame.Color(0,0,0,0), [0, 0, maskpic.get_width(), maskpic.get_height()*(5/6)])
+        self.mask = pygame.mask.from_surface(maskpic)
         self.normal_width = self.current_display.get_width()
         self.normal_height = self.current_display.get_height()
         s = variables.playerspeed * variables.scaleoffset

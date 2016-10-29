@@ -6,6 +6,8 @@ class Rock():
     collidey = None
     collidew = None
     collideh = None
+    #foreground range is the range of the player's location that it is drawn in the foreground
+    foreground_range = pygame.Rect(0,0,0,0)
 
     def __init__(self, base, x, y, c):
         #base is a png picture
@@ -48,4 +50,8 @@ class Rock():
             self.collideh = self.h
         else:
             self.collideh *= s
+        self.foreground_range.x *= s
+        self.foreground_range.y *= s
+        self.foreground_range.width *= s
+        self.foreground_range.height *= s
         self.mask = pygame.mask.from_surface(self.base["img"])
