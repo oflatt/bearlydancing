@@ -56,6 +56,11 @@ class Map():
 
     # x and y are the player's x and y pos
     def draw(self, x, y):
+        # check if scale stuff needs to be called
+        if not self.isscaled:
+            self.scale_stuff()
+            self.isscaled = True
+
         w = self.finalimage.get_width()
         h = self.finalimage.get_height()
         if x < variables.hh:  # if it is in the left side of the map
@@ -97,11 +102,6 @@ class Map():
                             [xpos + width / 4, ypos + width / 4, width / 2, width / 2])
 
     def checkexit(self):
-        # check if scale stuff needs to be called
-        if not self.isscaled:
-            self.scale_stuff()
-            self.isscaled = True
-
         currentexit = False
         for x in range(0, len(self.exitareas)):
             e = self.exitareas[x]

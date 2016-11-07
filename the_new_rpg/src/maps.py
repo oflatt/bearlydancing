@@ -98,6 +98,8 @@ racoonc.area = [0, 7 * b + GR["tp"]["h"], insidewidth,
 racoonc.isbutton = False
 racoonc.part_of_story = 1  # makes it so you can only have the conversation once
 honeyhome.conversations = [racoonc]
+#collide with two walls
+honeyhome.colliderects = [Rect(0, b*2.7, b*2.1, b*1.5), Rect(b*(10-2.3), b*2.7, b*2.3, b*1.5)]
 
 
 # teleportation and stuff###############################################################################################
