@@ -1,19 +1,28 @@
 from Beatmap import Beatmap
 from Note import  Note
+from Note import value_to_screenvalue
+import random
 from random import randint
-import variables, random
+import variables
 
+testmapa = Beatmap((1200*3)/4, [Note(-7, 2, 2), Note(-6, 1, 1)])
 testmapb = [Beatmap((1200*3)/4, [Note(0, 1, 1), Note(0, 4, 1), Note(0, 5, 1), Note(1, 6, 1)])]
 testmap = [Beatmap((1200*3)/4, [Note(0, 1, 0.9), Note(-1, 2, 1), Note(8, 3, 1), Note(14, 5, 1), Note(-7, 6, 1)])]
+
+def myrand(n):
+    if(randint(0, n) > (n-1)):
+        return False
+    else:
+        return True
 
 def shorten_doubles(l):
     newl = l
     x = 0
     while (x < len(l)):
         y = 1
-        while x+y<len(l)-1:
+        while x+y<len(l):
             if l[x+y].time <= l[x].time+l[x].duration:
-                if l[x].value == l[x+y].value:
+                if l[x].screenvalue == l[x+y].screenvalue:
                     newl[x].duration -= 0.1
                     break
             else:
@@ -28,30 +37,14 @@ def random_beatmap(specs):
     maxtime = specs["maxtime"]
 
     def addnote(time, ischord):
-        # last note
-        if time > (maxtime - 2):
-            duration = maxtime - time
-            # if it is the third or fifth in the chord
+        duration = rand_duration(time, lv)
+        rv = random_value(time, ischord, l, specs)
+        # if it is not a rest
+        if (not rv == "rest"):
             if (ischord):
-                if (randint(1, 2) == 1):
-                    l.append(Note(3, time, duration))
-                else:
-                    l.append(Note(5, time, duration))
+                l.insert(len(l) - 1, Note(rv, time, duration))
             else:
-                # make the last note the tonic
-                if (l[-1].value == 1):
-                    l.append(Note(8, time, duration))
-                else:
-                    l.append(Note(1, time, duration))
-        # normal notes
-        else:
-            duration = rand_duration(time, lv)
-            # if it is not a rest
-            if (randint(1, 9) != 1):
-                if (ischord):
-                    l.insert(len(l) - 1, Note(random_value(time, ischord, l, specs), time, duration))
-                else:
-                    l.append(Note(random_value(time, ischord, l, specs), time, duration))
+                l.append(Note(rv, time, duration))
         return duration
 
     time = 1
@@ -71,41 +64,89 @@ def random_beatmap(specs):
 
 
 def random_value(t, ischord, l, specs):
-    #choose a random value
-    rv = randint(-variables.maxvalue, variables.maxvalue)
+    #choose a random value, with rules
+    rv = randint(variables.minvalue, variables.maxvalue)
 
-    #old code for continuing same direciton
-    # if ((not ischord)):
-    #     if (len(l) > 1):
-    #         lastv = l[-1].value
-    #         # if we continue in the same direction
-    #         if ((lastv - 1 == l[-2].value or lastv + 1 == l[-2].value) and random.choice([True, False])):
-    #             rv = lastv + (lastv - l[-2].value)
-    #         else:
-    #             if (random.choice([True, False, False])):
-    #                 rv = lastv + random.choice([-1, 1])
-    #             elif (random.choice([True, False, False])):
-    #                 rv = lastv + random.choice([-2, 2])
-    #             else:
-    #                 rv = randint(1, 8)
-    #     else:
-    #         rv = randint(0, 48)
-    # else:
-    #     rv = randint(0, 48)
+    #handeling rests, 8/9 times it will be a note
+    if("melodic" in specs):
+        if(not(myrand(8))):
+            rv = "rest"
 
-    #make sure the value does not overlap another one
-    iscopy = False
-    x = 0
-    while (x < len(l)):
-        if (ischord):
-            if (l[x].time + l[x].duration > t and l[x].value == rv): #and (l[x].value == rv or l[x].value + 1 == rv or l[x].value - 1 == rv)): this is to avoid ugly chords
-                iscopy = True
-                break
+    def melodicchord(rv):
+        value = rv
+        lastv = l[-1].value
+
+        #3/4 are within 6
+        if(myrand(3)):
+            rd = randint(1, 6)
+            if (myrand(1)):
+                rd = -rd
+            value = lastv + rd
+
+        # if it is outside the range
+        if (value < variables.minvalue or value > variables.maxvalue):
+            return melodicchord(rv)
         else:
-            if (l[x].time + l[x].duration > t and l[x].value == rv):
+            return value
+
+    def melodic(rv):
+        value = rv
+        lastv = l[-1].value
+
+        #2/3 chance of being 1 or 2 away from previous note
+        if (myrand(2)):
+            # half chance of continuing same direction
+            if (len(l) > 1):
+                if ((lastv - 1 == l[-2].value or lastv + 1 == l[-2].value) and myrand(1)):
+                    value = lastv + (lastv - l[-2].value)
+            else:
+                #near previous note
+                rd = randint(1, 2)
+                if(myrand(1)):
+                    rd = -rd
+                value = lastv + rd
+        #within 6
+        elif(myrand(1)):
+            rd = randint(1, 6)
+            if (myrand(1)):
+                rd = -rd
+            value = lastv + rd
+        #otherwise use the random value
+        else:
+            value = rv
+
+        if (len(l) > 1):
+            # if there was a jump previously
+            if (lastv > l[-2].value + 2):
+                # 2/3 chance to go back one note
+                if (myrand(2)):
+                    value = lastv-1
+            elif(lastv < l[-2].value-2):
+                if(myrand(2)):
+                    value = lastv+1
+
+        #if it is outside the range
+        if(value < variables.minvalue or value>variables.maxvalue):
+            return melodic(rv)
+        else:
+            return value
+
+
+    if(('melodic' in specs['rules']) and not(ischord) and len(l)>0 and not rv == "rest"):
+        rv = melodic(rv)
+    elif(('melodic' in specs['rules']) and ischord and not rv == "rest"):
+        rv = melodicchord(rv)
+
+
+    iscopy = False
+    if(not rv == "rest"):
+        #make sure the value does not overlap another one
+        x = 0
+        while (x < len(l)):
+            if (l[x].time + l[x].duration > t and l[x].screenvalue == value_to_screenvalue(rv)):
                 iscopy = True
                 break
-        x += 1
+            x += 1
 
     if (iscopy):
         #try again if it is a copy
@@ -125,9 +166,14 @@ def rand_duration(time, lv):
                     d = 3
                 else:
                     d = 4
+
     # so that usually it is the inverse, short notes
     if (randint(1, 3) > 1):
         d = 1 / d
+
+    #additional chance at lower levels to be slow
+    if(randint(0, 5)>lv):
+        d = 2
 
     # if it is on an offbeat
     if (time % 1 == 0.5):

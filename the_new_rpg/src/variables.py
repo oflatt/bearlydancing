@@ -47,8 +47,9 @@ dancespeed = height/8 * 0.001#factor for displaying notes
 padypos = height*(13/16)
 beatmaptype = "random"
 
-melodic_specs = {'maxtime' : 20, 'lv' : 0, 'type' : 'melodic'}
+melodic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : ['melodic']}
 maxvalue = 14
+minvalue = -7
 
 perfect_value = 2
 good_value = 1

@@ -151,11 +151,14 @@ class Beatmap():
             return placeandvalue[1]
         
         def simple_value_in_key(v):
-            sound_value = abs(v)
-            for x in range(sound_value):
-                sound_value += self.scale[x%7]-1
+            av = abs(v)
+            sound_value = 0
             if(v<0):
-                sound_value = -sound_value
+                for x in range(av):
+                    sound_value -= self.scale[6-(x%7)]
+            else:
+                for x in range(av):
+                    sound_value += self.scale[x%7]
             return sound_value
 
         if key in variables.note1keys:

@@ -25,10 +25,12 @@ def make_sound(frequency):
 
     return pygame.sndarray.make_sound(buf)
 
-#a list of sounds from A2 to A6
+#a list of sounds from A3 to A6
+#value of 0 corresponds to A4
+#-12 is A3, then
 all_tones = []
-for x in range(49):
-    s = make_sound((440*((2**(1/12))**(x-24))))
+for x in range(36+1):
+    s = make_sound((440*((2**(1/12))**(x-12))))
     s.set_volume(variables.battle_volume)
     all_tones.append(s)
 
@@ -36,12 +38,12 @@ Drum_kick_heavy = pygame.mixer.Sound("drum_heavy_kick.wav")
 Drum_kick_heavy.set_volume(variables.battle_volume*6)
 
 def play_tone(t):
-    #add 24 because values are centered on 0 and list is 48 long
-    all_tones[t+24].play(loops = -1)
+    #add because values are centered on 0
+    all_tones[t+12].play(loops = -1)
 
 def play_sound(s):
     if s == "drum kick heavy":
         Drum_kick_heavy.play()
 
 def stop_tone(t):
-    all_tones[t+24].stop()
+    all_tones[t+12].stop()

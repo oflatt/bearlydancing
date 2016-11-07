@@ -1,6 +1,13 @@
 import pygame
 import variables
 
+def value_to_screenvalue(v):
+    sv = v % 7
+    if (sv == 0 and v >= 7):
+        sv = 7
+    elif (sv < 0):
+        sv += 7
+    return sv
 
 class Note:
     # if they miss the note or stop playing it halfway ison will turn false and they will miss the note
@@ -21,11 +28,7 @@ class Note:
         self.time = time
         self.duration = duration
         #from 0-7 even if it is out of those bounds so it can be played on the screen
-        self.screenvalue = self.value%7
-        if (self.screenvalue == 0 and self.value > 7):
-            self.screenvalue = 7
-        elif (self.screenvalue < 0):
-            self.screenvalue += 7
+        self.screenvalue = value_to_screenvalue(self.value)
 
     def height(self, tempo):
         return self.duration * tempo * variables.dancespeed
