@@ -33,7 +33,7 @@ b = GR["halfpath"]["w"] / 10
 jeremyhome = Map(GR["horizontal"],
                  [Rock(GR["rabbithole"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], True),
                   Rock(GR["jeremy0"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], True)])
-jeremyhome.exitareas = [Exit([b * 10, 0, extraarea, GR["halfpath"]["h"]], False, 'outside1', 0, "same")]
+jeremyhome.exitareas = [Exit([b * 10, int(GR["house"]["h"]), extraarea, GR["halfpath"]["h"]], False, 'outside1', 0, "same")]
 conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"]-(honeyw/2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"]-(honeyw/2), GR["rabbithole"]["h"]]
 jeremyhome.conversations = [conversations.jeremy]
@@ -61,7 +61,7 @@ outside1.exitareas = [Exit([outsidewidth, 0, extraarea, outsideheight], False, '
                       Exit([-extraarea, 0, extraarea, outsideheight], False, 'jeremyhome', GR["halfpath"]["w"] - honeyw,
                            "same"),
                       Exit(
-                          [housewidth * (1 / 5), househeight * (3 / 5), housewidth * (1.5 / 10), househeight * (1 / 5)],
+                          [housewidth * (1.5 / 5), househeight * (3 / 5), housewidth * (1 / 10), househeight * (1 / 5)],
                           True, 'honeyhome',
                           (GR["bearhome"]["w"] / 2) - (honeyw / 2), GR["bearhome"]["h"] - (honeyh)-b/20)]
 outside1.colliderects = [Rect(0, 0, housewidth, househeight - honeyh)]
