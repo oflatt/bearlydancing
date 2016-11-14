@@ -10,10 +10,10 @@ testmapb = [Beatmap((1200*3)/4, [Note(0, 1, 1), Note(0, 4, 1), Note(0, 5, 1), No
 testmap = [Beatmap((1200*3)/4, [Note(0, 1, 0.9), Note(-1, 2, 1), Note(8, 3, 1), Note(14, 5, 1), Note(-7, 6, 1)])]
 
 def myrand(n):
-    if(randint(0, n) > (n-1)):
-        return False
-    else:
+    if(randint(0, n) < n):
         return True
+    else:
+        return False
 
 def shorten_doubles(l):
     newl = l
@@ -37,7 +37,7 @@ def random_beatmap(specs):
     maxtime = specs["maxtime"]
 
     def addnote(time, ischord):
-        duration = rand_duration(time, lv)
+        duration = rand_duration(time, l, specs)
         rv = random_value(time, ischord, l, specs)
         # if it is not a rest
         if (not rv == "rest"):
@@ -89,19 +89,29 @@ def random_last(depth, l):
             x+=1
     return random.choice(possibles)
 
+# testl = [Note(5, 1, 2), Note(6, 2, 1), Note(6, 4, 1), Note(2, 5, 2), Note(3, 6, 4)]
+# print(random_last(0, testl).value)
+# print(random_last(1, testl).value)
+
 #returns how "deep" a list is, how many layers of time it has
 def notedepth(l):
     d = 0
     x = 0
-    lasttime = l[0].time
-    while(x<len(l)):
-        if(l[x].time != lasttime):
-            d += 1
-            lasttime = l[x].time
-        x += 1
-    return d
+    if(len(l) == 0):
+        return 0
+    else:
+        lasttime = l[0].time
+        while(x<len(l)):
+            if(l[x].time != lasttime):
+                d += 1
+                lasttime = l[x].time
+            x += 1
+        return d
 
-def random_value(t, ischord, l, specs):
+def random_value(t, ischord, list, specs):
+    #flip l because it's easier to look at it that way
+    l = list[::-1]
+
     rv = randint(variables.minvalue, variables.maxvalue)
     depth = notedepth(l)
 
@@ -112,7 +122,7 @@ def random_value(t, ischord, l, specs):
 
     def melodicchord(rv):
         value = rv
-        lastv = l[-1].value
+        lastv = l[0].value
 
         #3/4 are within 6
         if(myrand(3)):
@@ -129,16 +139,18 @@ def random_value(t, ischord, l, specs):
 
     def melodic(rv):
         value = rv
-        #get a random note on the most recent depth
-        lastv = random_last(0, l).value
+        lastv = "none"
+        if(depth > 0):
+            #get a random note on the most recent depth
+            lastv = random_last(0, l).value
 
         #2/3 chance of being 1 or 2 away from previous note
         if (myrand(2)):
             # 2/3 chance of continuing same direction
             if (depth > 1):
-                secondv = random_last(1, l)#need to compare all of that last one
-                if ((lastv - 1 == secondv.value or lastv + 1 == secondv.value) and myrand(2)):
-                    value = lastv + (lastv - secondv.value)
+                secondv = random_last(1, l).value#need to compare all of that last one
+                if ((lastv - 1 == secondv or lastv + 1 == secondv) and myrand(2)):
+                    value = lastv + (lastv - secondv)
             else:
                 #near previous note
                 rd = randint(1, 2)
@@ -156,15 +168,14 @@ def random_value(t, ischord, l, specs):
             value = rv
 
         if (depth > 1):
+            secondv = random_last(1, l).value
             # if there was a jump previously
-            if (lastv > l[-2].value + 2):
+            if (lastv > secondv + 2):
                 # 2/3 chance to go back one note
                 if (myrand(2)):
-                    print("back1")
                     value = lastv-1
-            elif(lastv < l[-2].value-2):
+            elif(lastv < secondv-2):
                 if(myrand(2)):
-                    print("back1")
                     value = lastv+1
 
         #if it is outside the range
@@ -197,7 +208,11 @@ def random_value(t, ischord, l, specs):
         return rv
 
 
-def rand_duration(time, lv):
+def rand_duration(time, list, specs):
+    lv = specs["lv"]
+    #flip it so we can look at it more easily
+    l = list[::-1]
+
     d = 1
     if (randint(0, 50) < (lv + 2) ** 2):
         if (randint(1, 2) == 1):
