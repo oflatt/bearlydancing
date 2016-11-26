@@ -28,7 +28,7 @@ class Player(Dancer):
                                 GR["honeyback3"], GR["honeyback5"]], 200)
     up_animation = Animation([GR["honeyback0"], GR["honeyback1"],
                               GR["honeyback0"], GR["honeyback2"]], 200)
-    current_animation = left_animation
+    current_animation = right_animation
 
     def teleport(self, x, y):
         self.xpos = x
@@ -54,6 +54,7 @@ class Player(Dancer):
         variables.screen.blit(self.current_display, [drawx, drawy])
 
     def change_animation(self):
+        oldanimation = self.current_animation
         if self.xspeed == 0:
             if self.yspeed < 0:
                 self.current_animation = self.up_animation
@@ -63,7 +64,8 @@ class Player(Dancer):
             self.current_animation = self.left_animation
         elif self.xspeed > 0:
             self.current_animation = self.right_animation
-        self.current_animation.reset()
+        if oldanimation != self.current_animation:
+            self.current_animation.reset()
 
     def keypress(self, k):
         self.move()
