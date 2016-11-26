@@ -93,7 +93,7 @@ class Map():
         #detect if within the foreground range
         playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width, classvar.player.normal_height)
         for r in self.terrain:
-            if(r.foreground_range.colliderect(playerrect)):
+            if(not r.background_range.colliderect(playerrect)):
                 r.draw()
 
     def draw_interation_button(self, xpos, ypos, width):

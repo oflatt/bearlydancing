@@ -108,6 +108,79 @@ def notedepth(l):
             x += 1
         return d
 
+
+def melodic_value(rv, depth, specs, l):
+    value = rv
+    lastv = "none"
+    if (depth > 0):
+        # get a random note on the most recent depth
+        lastv = random_last(0, l).value
+
+    # first have a big chance of 2 away if "skippy" rule is on
+    if ('skippy' in specs["rules"]) and myrand(3):
+        if depth > 1:
+            secondv = random_last(1, l).value
+            # chance to continue same direction
+            if (abs(lastv - secondv) == 1 or abs(lastv - secondv) == 2) and myrand(2):
+                if (lastv > secondv):
+                    value = lastv + 2
+                else:
+                    value = lastv - 2
+            else:
+                if myrand(1):
+                    value = lastv + 2
+                else:
+                    value = lastv - 2
+        elif depth > 0:
+            if myrand(1):
+                value = lastv + 2
+            else:
+                value = lastv - 2
+        else:
+            value = rv
+    # 2/3 chance of being 1 or 2 away from previous note
+    elif (myrand(2)):
+        # 2/3 chance of continuing same direction
+        if (depth > 1):
+            secondv = random_last(1, l).value
+            if ((lastv - 1 == secondv or lastv + 1 == secondv) and myrand(2)):
+                value = lastv + (lastv - secondv)
+        else:
+            # near previous note
+            rd = randint(1, 2)
+            if (myrand(1)):
+                rd = -rd
+            value = lastv + rd
+    # within 6
+    elif (myrand(1)):
+        rd = randint(1, 6)
+        if (myrand(1)):
+            rd = -rd
+        value = lastv + rd
+    # otherwise use the random value
+    else:
+        value = rv
+
+    if (depth > 1):
+        secondv = random_last(1, l).value
+        # if there was a jump previously
+        if (lastv > secondv + 2):
+            print("back1")
+            # 2/3 chance to go back one note
+            if (myrand(2)):
+                value = lastv - 1
+        elif (lastv < secondv - 2):
+            print("back1")
+            if (myrand(2)):
+                value = lastv + 1
+
+    # if it is outside the range
+    if (value < variables.minvalue or value > variables.maxvalue):
+        return melodic_value(rv, depth, specs, l)
+    else:
+        return value
+
+
 def random_value(t, ischord, list, specs):
     #flip l because it's easier to look at it that way
     l = list[::-1]
@@ -116,7 +189,7 @@ def random_value(t, ischord, list, specs):
     depth = notedepth(l)
 
     #handeling rests, 8/9 times it will be a note
-    if("melodic" in specs):
+    if("melodic" in specs["rules"]):
         if(not(myrand(8))):
             rv = "rest"
 
@@ -137,56 +210,8 @@ def random_value(t, ischord, list, specs):
         else:
             return value
 
-    def melodic(rv):
-        value = rv
-        lastv = "none"
-        if(depth > 0):
-            #get a random note on the most recent depth
-            lastv = random_last(0, l).value
-
-        #2/3 chance of being 1 or 2 away from previous note
-        if (myrand(2)):
-            # 2/3 chance of continuing same direction
-            if (depth > 1):
-                secondv = random_last(1, l).value#need to compare all of that last one
-                if ((lastv - 1 == secondv or lastv + 1 == secondv) and myrand(2)):
-                    value = lastv + (lastv - secondv)
-            else:
-                #near previous note
-                rd = randint(1, 2)
-                if(myrand(1)):
-                    rd = -rd
-                value = lastv + rd
-        #within 6
-        elif(myrand(1)):
-            rd = randint(1, 6)
-            if (myrand(1)):
-                rd = -rd
-            value = lastv + rd
-        #otherwise use the random value
-        else:
-            value = rv
-
-        if (depth > 1):
-            secondv = random_last(1, l).value
-            # if there was a jump previously
-            if (lastv > secondv + 2):
-                # 2/3 chance to go back one note
-                if (myrand(2)):
-                    value = lastv-1
-            elif(lastv < secondv-2):
-                if(myrand(2)):
-                    value = lastv+1
-
-        #if it is outside the range
-        if(value < variables.minvalue or value>variables.maxvalue):
-            return melodic(rv)
-        else:
-            return value
-
-
     if(('melodic' in specs['rules']) and not(ischord) and depth>0 and not rv == "rest"):
-        rv = melodic(rv)
+        rv = melodic_value(rv, depth, specs, l)
     elif(('melodic' in specs['rules']) and ischord and not rv == "rest"):
         rv = melodicchord(rv)
 

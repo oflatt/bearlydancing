@@ -6,22 +6,42 @@ class Rock():
     collidey = None
     collidew = None
     collideh = None
-    #foreground range is the range of the player's location that it is drawn in the foreground
-    foreground_range = pygame.Rect(0,0,0,0)
+    #background range is the range of the player's location that it is drawn behind the player
+    background_range = pygame.Rect(0,0,variables.width*100,variables.height*100)
 
-    def __init__(self, base, x, y, c):
+    #collidesection is a list x y width height all of the arguments are relative to the rock's pos and dimensions
+    def __init__(self, base, x, y, collidesection):
+        self.collidesection = collidesection
+        if self.collidesection == None:
+            self.collidesection = [0, 0, 0, 0]
+        cs = self.collidesection
         #base is a png picture
         self.base = base
         self.x = x
         self.y = y
-        #iscollideable is a bool
-        self.iscollideable = c
         self.w = 2
         self.h = 2
-        self.mask = pygame.mask.from_surface(self.base["img"])
+        self.make_mask()
 
     def draw(self):
         variables.screen.blit(self.base["img"], [self.x, self.y])
+
+    def make_mask(self):
+        cs = self.collidesection
+        maskpic = self.base["img"].copy()
+        w = self.base["img"].get_width()
+        h = self.base["img"].get_height()
+        #fill all but the collide section
+        maskpic.fill(pygame.Color(0, 0, 0, 0), [0, 0, w, cs[1]*h])
+        maskpic.fill(pygame.Color(0, 0, 0, 0), [0, 0, cs[0]*w, h])
+        maskpic.fill(pygame.Color(0, 0, 0, 0), [cs[0]*w + cs[2]*w, 0, w-(cs[0]*w + cs[2]*w), h])
+        maskpic.fill(pygame.Color(0, 0, 0, 0), [0, cs[1]*h+cs[3]*h, w, h-(cs[1]*h+cs[3]*h)])
+        self.mask = pygame.mask.from_surface(maskpic)
+        # by default background range is by the top of the mask, the collision box
+        if(not cs == [0,0,1,1]):
+            self.background_range = pygame.Rect(0, self.y + cs[1] * h + cs[3]*(1/3)*h,
+                                                variables.width * 100,
+                                                variables.height * 100)
 
     def scale_by_offset(self, scale):
         s = scale
@@ -50,8 +70,8 @@ class Rock():
             self.collideh = self.h
         else:
             self.collideh *= s
-        self.foreground_range.x *= s
-        self.foreground_range.y *= s
-        self.foreground_range.width *= s
-        self.foreground_range.height *= s
-        self.mask = pygame.mask.from_surface(self.base["img"])
+        self.background_range.x *= s
+        self.background_range.y *= s
+        self.background_range.width *= s
+        self.background_range.height *= s
+        self.make_mask()

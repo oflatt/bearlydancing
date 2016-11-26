@@ -137,18 +137,15 @@ class Player(Dancer):
         t = m.terrain
         colliderects = m.colliderects
         numofrocks = len(t)
+        playerrect = pygame.Rect(self.xpos, self.ypos, self.normal_width, self.normal_height)
 
         #checks if the player collides with a rock
         def collisioncheck(arock, x, y):
-            if(arock.iscollideable):
-                if(arock.mask.overlap(self.mask, [int(x-arock.collidex), int(y-arock.collidey)]) == None):
-                    return False
-                else:
-                    return True
-            else:
+            if(arock.mask.overlap(self.mask, [int(x-arock.collidex), int(y-arock.collidey)]) == None):
                 return False
-            #return arock.iscollideable and (x+self.normal_width)>=arock.collidex and x<=(arock.collidex + arock.collidew) \
-             #      and (y+self.normal_height)>=arock.collidey and y<=(arock.collidey + arock.collideh)
+            else:
+                return True
+
 
         if not self.xspeed == 0:
             #first check for edges of map
@@ -213,13 +210,15 @@ class Player(Dancer):
         self.current_display = c
 
     def scale_by_offset(self):
-        self.current_pic_scaled()
-        maskpic = self.current_display.copy()
+        c = self.current_animation.pics[1]
+        maskpic = pygame.transform.scale(c["img"],
+                                    [int(c["w"]*variables.scaleoffset),
+                                     int(c["h"]*variables.scaleoffset)])
         #this is to chop off the collision box for only the bottom of honey
         maskpic.fill(pygame.Color(0,0,0,0), [0, 0, maskpic.get_width(), maskpic.get_height()*(5/6)])
         self.mask = pygame.mask.from_surface(maskpic)
-        self.normal_width = self.current_display.get_width()
-        self.normal_height = self.current_display.get_height()
+        self.normal_width = maskpic.get_width()
+        self.normal_height = maskpic.get_height()
         s = variables.playerspeed * variables.scaleoffset
         if(self.xspeed>0):
             self.xspeed = s
