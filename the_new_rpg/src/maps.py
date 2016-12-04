@@ -31,16 +31,19 @@ outside2 = Map(GR["leftturn"], [Rock(GR["talltree"], 4*b, 5*b, [0,0,1,1]),
 
 outside2.exitareas = [Exit([-extraarea, 0, extraarea, outsideheight], False, 'outside1', GR["horizontal"]["w"] - honeyw, "same")]
 outside2.enemies = [Enemy(GR["sheep0"], 0.5, "sheep", []),
-                    Enemy(GR["meangreen0"], 0.3, "greenie", ["skippy"]),
-                    Enemy(GR["purpleperp0"], 0.2, "purpur", [])]
+                    Enemy(GR["meangreen0"], 0.3, "greenie", ["melodic","skippy"]),
+                    Enemy(GR["purpleperp0"], 0.2, "purpur", ["alternating"])]
 outside2.lvrange = [2,3]
 
 # jeremyhome############################################################################################################
 b = GR["halfpath"]["w"] / 10
+hole = Rock(GR["rabbithole"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0,1/2,1,1/2])
+jmyman = Rock(GR["jeremy0"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0,3/4,1,1/4])
+jmyman.background_range = hole.background_range
 
 jeremyhome = Map(GR["horizontal"],
-                 [Rock(GR["rabbithole"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0,0,1,1]),
-                  Rock(GR["jeremy0"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0,0,1,1])])
+                 [hole,
+                  jmyman])
 jeremyhome.exitareas = [Exit([b * 10, int(GR["house"]["h"]), extraarea, GR["halfpath"]["h"]], False, 'outside1', 0, "same")]
 conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"]-(honeyw/2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"]-(honeyw/2), GR["rabbithole"]["h"]]
@@ -77,7 +80,7 @@ outside1c = conversations.secondscene
 outside1c.area = [3.1 * b, 0, outsidewidth, outsideheight]
 outside1c.isbutton = False
 outside1c.part_of_story = 2
-outside1c.special_battle = Enemy(GR["meangreen0"], 1, "Greenie Meanie", ["skippy"])
+outside1c.special_battle = Enemy(GR["meangreen0"], 8, "Greenie Meanie", ["alternating"])
 outside1.conversations = [outside1c]
 
 # honeyhome#############################################################################################################
@@ -118,7 +121,6 @@ def new_scale_offset():
     global current_map
     variables.scaleoffset = current_map.map_scale_offset
     classvar.player.scale_by_offset()
-
 
 def change_map(name, newx, newy):
     global current_map

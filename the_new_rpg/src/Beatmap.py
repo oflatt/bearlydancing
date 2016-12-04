@@ -21,7 +21,7 @@ class Beatmap():
                 graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
     #when to stop displaying the text, in milliseconds
     feedback_timers = [0, 0, 0, 0, 0, 0, 0, 0]
-    drumcounter = -2
+    drumcounter = 0
 
     def __init__(self, tempo, notes):
         self.starttime = variables.current_time

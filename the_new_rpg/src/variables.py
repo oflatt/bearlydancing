@@ -47,6 +47,7 @@ dancespeed = height/8 * 0.001#factor for displaying notes
 padypos = height*(13/16)
 beatmaptype = "random"
 
+generic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : []}
 melodic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : ['melodic']}
 maxvalue = 14
 minvalue = -7
@@ -60,7 +61,7 @@ good_range = height/60
 ok_range = height/25
 miss_range = height/15
 
-battle_volume = 0.4
+battle_volume = 1
 
 notes_colors = [ORANGE, BLUE, RED, GREEN, GREEN, RED, BLUE, ORANGE]
 

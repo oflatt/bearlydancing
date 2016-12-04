@@ -21,12 +21,12 @@ class Rock():
         self.y = y
         self.w = 2
         self.h = 2
-        self.make_mask()
+        self.make_mask(True)
 
     def draw(self):
         variables.screen.blit(self.base["img"], [self.x, self.y])
 
-    def make_mask(self):
+    def make_mask(self, isresetbackgroundrange):
         cs = self.collidesection
         maskpic = self.base["img"].copy()
         w = self.base["img"].get_width()
@@ -38,7 +38,7 @@ class Rock():
         maskpic.fill(pygame.Color(0, 0, 0, 0), [0, cs[1]*h+cs[3]*h, w, h-(cs[1]*h+cs[3]*h)])
         self.mask = pygame.mask.from_surface(maskpic)
         # by default background range is by the top of the mask, the collision box
-        if(not cs == [0,0,1,1]):
+        if(not cs == [0,0,1,1] and isresetbackgroundrange):
             self.background_range = pygame.Rect(0, self.y + cs[1] * h + cs[3]*(1/3)*h,
                                                 variables.width * 100,
                                                 variables.height * 100)
@@ -74,4 +74,4 @@ class Rock():
         self.background_range.y *= s
         self.background_range.width *= s
         self.background_range.height *= s
-        self.make_mask()
+        self.make_mask(False)

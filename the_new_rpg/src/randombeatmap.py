@@ -5,7 +5,11 @@ import random
 from random import randint
 import variables
 
-testmapa = Beatmap((1200*3)/4, [Note(-7, 2, 2), Note(-6, 1, 1)])
+'''rule types for beatmaps
+skippy- high chance of note being 2 away, with continuing direction chance, only with melodic
+alternating- high chance to go back to a note or be near the previous note, and if not further away, uses melodic chords
+'''
+testmapa = [Beatmap((1200*3)/4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
 testmapb = [Beatmap((1200*3)/4, [Note(0, 1, 1), Note(0, 4, 1), Note(0, 5, 1), Note(1, 6, 1)])]
 testmap = [Beatmap((1200*3)/4, [Note(0, 1, 0.9), Note(-1, 2, 1), Note(8, 3, 1), Note(14, 5, 1), Note(-7, 6, 1)])]
 
@@ -14,6 +18,10 @@ def myrand(n):
         return True
     else:
         return False
+
+#q stands for question mark
+def outsiderangeq(value):
+    return value < variables.minvalue or value > variables.maxvalue
 
 def shorten_doubles(l):
     newl = l
@@ -63,10 +71,11 @@ def random_beatmap(specs):
     return Beatmap(tempo, l)
 
 # random last is to get a random not of the ones last added, so that we don't compare parts of a chord
+# depth is how many layers of times for notes we remove
 def random_last(depth, l):
     # removed is how far in the list to go to get the note
     removed = 0
-    # first remove layers to satify depth, depth is how many layers of times for notes we remove
+    # first remove layers to satify depth
     for namethatdoesnotmatter in range(depth):
         timeoflast = l[removed].time
         while (l[removed].time == timeoflast):
@@ -108,15 +117,12 @@ def notedepth(l):
             x += 1
         return d
 
-
+#assume depth>0
 def melodic_value(rv, depth, specs, l):
     value = rv
-    lastv = "none"
-    if (depth > 0):
-        # get a random note on the most recent depth
-        lastv = random_last(0, l).value
+    lastv = random_last(0, l).value
 
-    # first have a big chance of 2 away if "skippy" rule is on
+    # have a big chance of 2 away if "skippy" rule is on
     if ('skippy' in specs["rules"]) and myrand(3):
         if depth > 1:
             secondv = random_last(1, l).value
@@ -131,13 +137,12 @@ def melodic_value(rv, depth, specs, l):
                     value = lastv + 2
                 else:
                     value = lastv - 2
-        elif depth > 0:
+        else:
             if myrand(1):
                 value = lastv + 2
             else:
                 value = lastv - 2
-        else:
-            value = rv
+
     # 2/3 chance of being 1 or 2 away from previous note
     elif (myrand(2)):
         # 2/3 chance of continuing same direction
@@ -151,6 +156,7 @@ def melodic_value(rv, depth, specs, l):
             if (myrand(1)):
                 rd = -rd
             value = lastv + rd
+
     # within 6
     elif (myrand(1)):
         rd = randint(1, 6)
@@ -175,11 +181,65 @@ def melodic_value(rv, depth, specs, l):
                 value = lastv + 1
 
     # if it is outside the range
-    if (value < variables.minvalue or value > variables.maxvalue):
+    if (outsiderangeq(value)):
         return melodic_value(rv, depth, specs, l)
     else:
         return value
 
+def alternating_value(rv, depth, specs, l):
+    value = rv
+    lastv = random_last(0, l).value
+
+    def not_alternating():
+        print("non")
+        distance_away = 0
+        if myrand(1):
+            distance_away = randint(3, 5)
+        elif myrand(1):
+            distance_away = randint(4, 6)
+        elif myrand(1):
+            print('far')
+            distance_away = randint(1, 7)
+
+        if myrand(1):
+            distance_away = -distance_away
+
+        if(distance_away != 0):
+            if outsiderangeq(rv+distance_away):
+                return not_alternating()
+            else:
+                return rv+distance_away
+        else:
+            print('lerandom')
+            return rv
+
+    if depth>1:
+        secondv = random_last(1, l).value
+        # if we actually do a alternation
+        if myrand(4) and lastv != secondv:
+            # half chance to pick same secondv note
+            if myrand(1):
+                print('same')
+                value = secondv
+            #otherwise pick a note close to it
+            else:
+                #within one
+                if myrand(3):
+                    print("within 1")
+                    value = secondv+random.choice([1, -1])
+                #otherwise within 2
+                else:
+                    print('within 2')
+                    value = secondv+random.choice([1, 2, -1, -2])
+        else:
+            value = not_alternating()
+    else:
+        value = not_alternating()
+
+    if outsiderangeq(value):
+        return alternating_value(rv, depth, specs, l)
+    else:
+        return value
 
 def random_value(t, ischord, list, specs):
     #flip l because it's easier to look at it that way
@@ -205,15 +265,20 @@ def random_value(t, ischord, list, specs):
             value = lastv + rd
 
         # if it is outside the range
-        if (value < variables.minvalue or value > variables.maxvalue):
+        if (outsiderangeq(value)):
             return melodicchord(rv)
         else:
             return value
 
-    if(('melodic' in specs['rules']) and not(ischord) and depth>0 and not rv == "rest"):
-        rv = melodic_value(rv, depth, specs, l)
-    elif(('melodic' in specs['rules']) and ischord and not rv == "rest"):
-        rv = melodicchord(rv)
+    if not rv == "rest":
+        if('melodic' in specs['rules']) and not(ischord) and depth>0:
+            rv = melodic_value(rv, depth, specs, l)
+        elif('melodic' in specs['rules']) and ischord and not rv == "rest":
+            rv = melodicchord(rv)
+        elif ('alternating' in specs['rules']) and not(ischord) and depth>0:
+            rv = alternating_value(rv, depth, specs, l)
+        elif ('alternating' in specs['rules']) and ischord:
+            rv = melodicchord(rv)
 
 
     iscopy = False
@@ -267,3 +332,20 @@ def rand_duration(time, list, specs):
         if (randint(0, 1000) > lv ** 2):
             d = 1 - (time % 1)
     return d
+
+def variation_of(old_notes, tempo):
+    def random_value():
+        return randint(variables.minvalue, variables.maxvalue)
+
+    l = []
+    x = 0
+    while x < len(old_notes):
+        oldnote = old_notes[x]
+        #sometimes change the value of the note
+        if(not myrand(4) and x != len(old_notes)-1):
+            l.append(Note(random_value(), oldnote.time, oldnote.duration))
+        else:
+            l.append(Note(oldnote.value, oldnote.time, oldnote.duration))
+        x+=1
+    l = shorten_doubles(l)
+    return Beatmap(tempo, l)

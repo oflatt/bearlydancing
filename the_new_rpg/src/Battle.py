@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #Oliver works on classes
-import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap
+import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap, copy
 from Button import Button
 
 class Battle():
@@ -32,14 +32,16 @@ class Battle():
         self.state = "choose"
         self.option = 1
         self.enemy.pic = graphics.scale_pure(self.enemy.pic, variables.width/5)
-        self.new_beatmaps()
+        specs = variables.generic_specs.copy()
+        specs["lv"] = self.enemy.lv
+        specs["rules"].extend(self.enemy.beatmaprules)
+        newbeatmap = randombeatmap.random_beatmap(specs)
+        self.beatmaps = [newbeatmap]
+        self.originalnotes = copy.deepcopy(newbeatmap.notes)
         classvar.player.heal()
 
     def new_beatmaps(self):
-        specs = variables.melodic_specs.copy()
-        specs["lv"] = self.enemy.lv
-        specs["rules"].extend(self.enemy.beatmaprules)
-        self.beatmaps = [randombeatmap.random_beatmap(specs)]
+        self.beatmaps = [randombeatmap.variation_of(self.originalnotes, self.beatmaps[0].tempo)]
 
     def next_beatmap(self):
         if self.current_beatmap+1 == len(self.beatmaps):

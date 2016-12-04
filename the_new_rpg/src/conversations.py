@@ -13,8 +13,8 @@ testconversation = Conversation([Speak(GR["honeyside0"], longtestdialogue),
                                  Speak(GR["honeyside0"], shorttestdialoge)])
 
 ohhoney = ["Honey: Oh goody its lunch, I'm STARVING!",
-           "But no, I left my glorious spinach-mushroom-provalone-",
-          "bacon-broccoli quiche in the forest!",
+           "Oh no, I left my glorious spinach-mushroom-provalone-",
+           "bacon-broccoli quiche in the forest!",
            "I'll have to go get it."]
 ohtp = ["Trash Panda: But Honey, those forests are infested with monsters!",
         "You shouldn't fight all of them just for a quiche!",]
