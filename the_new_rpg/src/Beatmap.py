@@ -1,7 +1,7 @@
 import graphics
 import pygame
-import variables
-from play_sound import play_sound, stop_tone, play_tone
+import variables, copy
+from play_sound import stop_tone, play_tone
 from variables import padypos
 
 padxspace = variables.width/12
@@ -21,24 +21,26 @@ class Beatmap():
                 graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
     #when to stop displaying the text, in milliseconds
     feedback_timers = [0, 0, 0, 0, 0, 0, 0, 0]
-    drumcounter = 0
 
     def __init__(self, tempo, notes):
         self.starttime = variables.current_time
+        #tempo in how many milliseconds per beat.
         self.tempo = tempo
+        self.originalnotes = notes
         #notes is an ordered list of Note, notes with earlier times first
         self.notes = notes
         fsl = self.starttime+4000
         self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
 
-    def reset(self):
+    def reset(self, battlestarttime):
         self.scores = []
-        self.drumcounter = -2
-        self.starttime = variables.current_time
+        synctime = (variables.current_time-battlestarttime) % self.tempo
+        self.starttime = variables.current_time - synctime
         fsl = self.starttime+4000
         self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
         self.feedback = [graphics.Atext, graphics.Stext, graphics.Dtext, graphics.Ftext,
                          graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
+        self.notes = copy.deepcopy(self.originalnotes)
 
 
     def draw(self):
@@ -92,7 +94,6 @@ class Beatmap():
     def notepos(self, note):
         #returns the pos of the bottom of the note
         dt = variables.current_time-self.starttime
-        #ypos finds the notes place relative to pads then offsets it
         ypos = (dt-(note.time*self.tempo))*self.speed*variables.dancespeed
         if(note.screenvalue>3):
             xpos = note.screenvalue*padxspace + middleoffset + padxspace
@@ -313,13 +314,6 @@ class Beatmap():
                     #if you are in a part of the list before the screen, don't keep checking
                     #(assuming the list of notes must be ordered by time, of course)
                     break
-
-        dt = variables.current_time-self.starttime
-        ypos = (dt-(self.drumcounter*self.tempo))*self.speed*variables.dancespeed
-        #play a drum sound if it is on the beat
-        if(ypos >= padypos):
-            self.drumcounter += 1
-            play_sound("drum kick heavy")
 
 
     def reset_buttons(self):

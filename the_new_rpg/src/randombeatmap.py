@@ -8,6 +8,7 @@ import variables
 '''rule types for beatmaps
 skippy- high chance of note being 2 away, with continuing direction chance, only with melodic
 alternating- high chance to go back to a note or be near the previous note, and if not further away, uses melodic chords
+repeat- repeats a melody with variations
 '''
 testmapa = [Beatmap((1200*3)/4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
 testmapb = [Beatmap((1200*3)/4, [Note(0, 1, 1), Note(0, 4, 1), Note(0, 5, 1), Note(1, 6, 1)])]
@@ -43,6 +44,7 @@ def random_beatmap(specs):
     l = []
     lv = specs["lv"]
     maxtime = specs["maxtime"]
+    maxtime = maxtime + lv*2
 
     def addnote(time, ischord):
         duration = rand_duration(time, l, specs)
@@ -56,15 +58,40 @@ def random_beatmap(specs):
         return duration
 
     time = 1
-    while time < maxtime:
+    #repeatlength used in repeat rule for how many notes back to copy
+    repeatlength = randint(3, 7+lv)
+
+    def repitition():
+        # add on the last repeatlength notes again, varied
+        notestoadd = variation_of_notes(l[-repeatlength:len(l)])
+        timedifference = notestoadd[-1].time - notestoadd[0].time
+        for n in notestoadd:
+            n.time += timedifference
+        l.extend(notestoadd)
+        return timedifference + notestoadd[-1].duration
+
+    def normalloop():
         oldt = time
-        time += addnote(oldt, False)
+        notedurations = []
+        notedurations.append(addnote(oldt, False))
         # chance to add more notes at the same time
         if (randint(0, 100) < (lv + 2) ** 2):
-            if (randint(1, 2) == 1):
-                addnote(oldt, True)
-            if (randint(0, 1000) < (lv + 2) ** 2):
-                addnote(oldt, True)
+            if randint(1, 2) == 1:
+                notedurations.append(addnote(oldt, True))
+            if randint(0, 1000) < (lv + 2) ** 2:
+                notedurations.append(addnote(oldt, True))
+        return max(notedurations)
+
+    while time < maxtime:
+        if("repeat" in specs["rules"]):
+            #if we do a repitition
+            if(randint(-1, len(l)%repeatlength) == 0 and len(l)>=repeatlength):
+                #add on the last repeatlength notes again, varied
+                time += repitition()
+            else:
+                time += normalloop()
+        else:
+            time += normalloop()
 
     tempo = (1200 * 3) / ((lv / 3) + 3.5)
     l = shorten_doubles(l)
@@ -72,6 +99,7 @@ def random_beatmap(specs):
 
 # random last is to get a random not of the ones last added, so that we don't compare parts of a chord
 # depth is how many layers of times for notes we remove
+# l is a list of notes where the earlier ones have later times
 def random_last(depth, l):
     # removed is how far in the list to go to get the note
     removed = 0
@@ -250,7 +278,7 @@ def random_value(t, ischord, list, specs):
 
     #handeling rests, 8/9 times it will be a note
     if("melodic" in specs["rules"]):
-        if(not(myrand(8))):
+        if not myrand(8):
             rv = "rest"
 
     def melodicchord(rv):
@@ -334,6 +362,9 @@ def rand_duration(time, list, specs):
     return d
 
 def variation_of(old_notes, tempo):
+    return Beatmap(tempo, variation_of_notes(old_notes))
+
+def variation_of_notes(old_notes):
     def random_value():
         return randint(variables.minvalue, variables.maxvalue)
 
@@ -341,11 +372,15 @@ def variation_of(old_notes, tempo):
     x = 0
     while x < len(old_notes):
         oldnote = old_notes[x]
-        #sometimes change the value of the note
+        #sometimes change the value of the note, if the new value does not cause it to overlap any existing notes
         if(not myrand(4) and x != len(old_notes)-1):
+            rv = random_value()
+            for x in l:
+                if
             l.append(Note(random_value(), oldnote.time, oldnote.duration))
         else:
             l.append(Note(oldnote.value, oldnote.time, oldnote.duration))
         x+=1
+
     l = shorten_doubles(l)
-    return Beatmap(tempo, l)
+    return(l)

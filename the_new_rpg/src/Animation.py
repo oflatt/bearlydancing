@@ -6,6 +6,7 @@ class Animation():
 
     def __init__(self, pics, framerate):
         self.pics = pics
+        #milliseconds per frame
         self.framerate = framerate
 
     def current_frame(self):
