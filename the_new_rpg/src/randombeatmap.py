@@ -1,5 +1,5 @@
 from Beatmap import Beatmap
-from Note import  Note
+from Note import Note
 from Note import value_to_screenvalue
 import random
 from random import randint
@@ -9,29 +9,33 @@ import variables
 skippy- high chance of note being 2 away, with continuing direction chance, only with melodic
 alternating- high chance to go back to a note or be near the previous note, and if not further away, uses melodic chords
 repeat- repeats a melody with variations
+cheapending- pick a random tonic and throw it on the end
 '''
-testmapa = [Beatmap((1200*3)/4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
-testmapb = [Beatmap((1200*3)/4, [Note(0, 1, 1), Note(0, 4, 1), Note(0, 5, 1), Note(1, 6, 1)])]
-testmap = [Beatmap((1200*3)/4, [Note(0, 1, 0.9), Note(-1, 2, 1), Note(8, 3, 1), Note(14, 5, 1), Note(-7, 6, 1)])]
+testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
+testmapb = [Beatmap((1200 * 3) / 4, [Note(0, 1, 1), Note(0, 4, 1), Note(0, 5, 1), Note(1, 6, 1)])]
+testmap = [Beatmap((1200 * 3) / 4, [Note(0, 1, 0.9), Note(-1, 2, 1), Note(8, 3, 1), Note(14, 5, 1), Note(-7, 6, 1)])]
+
 
 def myrand(n):
-    if(randint(0, n) < n):
+    if (randint(0, n) < n):
         return True
     else:
         return False
 
-#q stands for question mark
+
+# q stands for question mark
 def outsiderangeq(value):
     return value < variables.minvalue or value > variables.maxvalue
+
 
 def shorten_doubles(l):
     newl = l
     x = 0
     while (x < len(l)):
         y = 1
-        while x+y<len(l):
-            if l[x+y].time <= l[x].time+l[x].duration:
-                if l[x].screenvalue == l[x+y].screenvalue:
+        while x + y < len(l):
+            if l[x + y].time <= l[x].time + l[x].duration:
+                if l[x].screenvalue == l[x + y].screenvalue:
                     newl[x].duration -= 0.1
                     break
             else:
@@ -40,11 +44,12 @@ def shorten_doubles(l):
         x += 1
     return newl
 
+
 def random_beatmap(specs):
     l = []
     lv = specs["lv"]
     maxtime = specs["maxtime"]
-    maxtime = maxtime + lv*2
+    maxtime = maxtime + lv * 2
 
     def addnote(time, ischord):
         duration = rand_duration(time, l, specs)
@@ -58,8 +63,8 @@ def random_beatmap(specs):
         return duration
 
     time = 1
-    #repeatlength used in repeat rule for how many notes back to copy
-    repeatlength = randint(3, 7+lv)
+    # repeatlength used in repeat rule for how many notes back to copy
+    repeatlength = randint(3, 7 + lv)
 
     def repitition():
         # add on the last repeatlength notes again, varied
@@ -83,19 +88,25 @@ def random_beatmap(specs):
         return max(notedurations)
 
     while time < maxtime:
-        if("repeat" in specs["rules"]):
-            #if we do a repitition
-            if(randint(-1, len(l)%repeatlength) == 0 and len(l)>=repeatlength):
-                #add on the last repeatlength notes again, varied
+        if ("repeat" in specs["rules"]):
+            # if we do a repitition
+            if (randint(-1, len(l) % repeatlength) == 0 and len(l) >= repeatlength):
+                # add on the last repeatlength notes again, varied
                 time += repitition()
             else:
                 time += normalloop()
         else:
             time += normalloop()
 
+    if("cheapending" in specs["rules"]):
+        lastvalue = random.choice([variables.minvalue, variables.maxvalue, 0])
+        startt = l[-1].time+l[-1].duration
+        l.append(Note(lastvalue, startt, 1+(1-startt%1)))
+
     tempo = (1200 * 3) / ((lv / 3) + 3.5)
     l = shorten_doubles(l)
     return Beatmap(tempo, l)
+
 
 # random last is to get a random not of the ones last added, so that we don't compare parts of a chord
 # depth is how many layers of times for notes we remove
@@ -107,45 +118,47 @@ def random_last(depth, l):
     for namethatdoesnotmatter in range(depth):
         timeoflast = l[removed].time
         while (l[removed].time == timeoflast):
-            if(removed>=len(l)):
+            if (removed >= len(l)):
                 break
             else:
-                removed+=1
+                removed += 1
 
-    if (removed>=len(l)):
+    if (removed >= len(l)):
         raise NotImplementedError("List does not have enough layers of depth")
 
     possibles = []
     x = 0
     timeoflast = l[removed].time
-    while (l[removed+x].time == timeoflast):
-        possibles.append(l[removed+x])
-        if(removed+x>=len(l)-1):
+    while (l[removed + x].time == timeoflast):
+        possibles.append(l[removed + x])
+        if (removed + x >= len(l) - 1):
             break
         else:
-            x+=1
+            x += 1
     return random.choice(possibles)
+
 
 # testl = [Note(5, 1, 2), Note(6, 2, 1), Note(6, 4, 1), Note(2, 5, 2), Note(3, 6, 4)]
 # print(random_last(0, testl).value)
 # print(random_last(1, testl).value)
 
-#returns how "deep" a list is, how many layers of time it has
+# returns how "deep" a list is, how many layers of time it has
 def notedepth(l):
     d = 0
     x = 0
-    if(len(l) == 0):
+    if (len(l) == 0):
         return 0
     else:
         lasttime = l[0].time
-        while(x<len(l)):
-            if(l[x].time != lasttime):
+        while (x < len(l)):
+            if (l[x].time != lasttime):
                 d += 1
                 lasttime = l[x].time
             x += 1
         return d
 
-#assume depth>0
+
+# assume depth>0
 def melodic_value(rv, depth, specs, l):
     value = rv
     lastv = random_last(0, l).value
@@ -214,6 +227,7 @@ def melodic_value(rv, depth, specs, l):
     else:
         return value
 
+
 def alternating_value(rv, depth, specs, l):
     value = rv
     lastv = random_last(0, l).value
@@ -232,16 +246,16 @@ def alternating_value(rv, depth, specs, l):
         if myrand(1):
             distance_away = -distance_away
 
-        if(distance_away != 0):
-            if outsiderangeq(rv+distance_away):
+        if (distance_away != 0):
+            if outsiderangeq(rv + distance_away):
                 return not_alternating()
             else:
-                return rv+distance_away
+                return rv + distance_away
         else:
             print('lerandom')
             return rv
 
-    if depth>1:
+    if depth > 1:
         secondv = random_last(1, l).value
         # if we actually do a alternation
         if myrand(4) and lastv != secondv:
@@ -249,16 +263,16 @@ def alternating_value(rv, depth, specs, l):
             if myrand(1):
                 print('same')
                 value = secondv
-            #otherwise pick a note close to it
+            # otherwise pick a note close to it
             else:
-                #within one
+                # within one
                 if myrand(3):
                     print("within 1")
-                    value = secondv+random.choice([1, -1])
-                #otherwise within 2
+                    value = secondv + random.choice([1, -1])
+                # otherwise within 2
                 else:
                     print('within 2')
-                    value = secondv+random.choice([1, 2, -1, -2])
+                    value = secondv + random.choice([1, 2, -1, -2])
         else:
             value = not_alternating()
     else:
@@ -269,15 +283,16 @@ def alternating_value(rv, depth, specs, l):
     else:
         return value
 
+
 def random_value(t, ischord, list, specs):
-    #flip l because it's easier to look at it that way
+    # flip l because it's easier to look at it that way
     l = list[::-1]
 
     rv = randint(variables.minvalue, variables.maxvalue)
     depth = notedepth(l)
 
-    #handeling rests, 8/9 times it will be a note
-    if("melodic" in specs["rules"]):
+    # handeling rests, 8/9 times it will be a note
+    if ("melodic" in specs["rules"]):
         if not myrand(8):
             rv = "rest"
 
@@ -285,8 +300,8 @@ def random_value(t, ischord, list, specs):
         value = rv
         lastv = l[0].value
 
-        #3/4 are within 6
-        if(myrand(3)):
+        # 3/4 are within 6
+        if (myrand(3)):
             rd = randint(1, 6)
             if (myrand(1)):
                 rd = -rd
@@ -299,19 +314,18 @@ def random_value(t, ischord, list, specs):
             return value
 
     if not rv == "rest":
-        if('melodic' in specs['rules']) and not(ischord) and depth>0:
+        if ('melodic' in specs['rules']) and not (ischord) and depth > 0:
             rv = melodic_value(rv, depth, specs, l)
-        elif('melodic' in specs['rules']) and ischord and not rv == "rest":
+        elif ('melodic' in specs['rules']) and ischord and not rv == "rest":
             rv = melodicchord(rv)
-        elif ('alternating' in specs['rules']) and not(ischord) and depth>0:
+        elif ('alternating' in specs['rules']) and not (ischord) and depth > 0:
             rv = alternating_value(rv, depth, specs, l)
         elif ('alternating' in specs['rules']) and ischord:
             rv = melodicchord(rv)
 
-
     iscopy = False
-    if(not rv == "rest"):
-        #make sure the value does not overlap another one
+    if (not rv == "rest"):
+        # make sure the value does not overlap another one
         x = 0
         while (x < len(l)):
             if (l[x].time + l[x].duration > t and l[x].screenvalue == value_to_screenvalue(rv)):
@@ -320,7 +334,7 @@ def random_value(t, ischord, list, specs):
             x += 1
 
     if (iscopy):
-        #try again if it is a copy
+        # try again if it is a copy
         return random_value(t, ischord, l, specs)
     else:
         return rv
@@ -328,7 +342,7 @@ def random_value(t, ischord, list, specs):
 
 def rand_duration(time, list, specs):
     lv = specs["lv"]
-    #flip it so we can look at it more easily
+    # flip it so we can look at it more easily
     l = list[::-1]
 
     d = 1
@@ -346,8 +360,8 @@ def rand_duration(time, list, specs):
     if (randint(1, 3) > 1):
         d = 1 / d
 
-    #additional chance at lower levels to be slow
-    if(randint(0, 5)>lv):
+    # additional chance at lower levels to be slow
+    if (randint(0, 5) > lv):
         d = 2
 
     # if it is on an offbeat
@@ -361,26 +375,38 @@ def rand_duration(time, list, specs):
             d = 1 - (time % 1)
     return d
 
+
 def variation_of(old_notes, tempo):
     return Beatmap(tempo, variation_of_notes(old_notes))
 
+
 def variation_of_notes(old_notes):
-    def random_value():
+    def random_inrange():
         return randint(variables.minvalue, variables.maxvalue)
 
     l = []
     x = 0
     while x < len(old_notes):
         oldnote = old_notes[x]
-        #sometimes change the value of the note, if the new value does not cause it to overlap any existing notes
-        if(not myrand(4) and x != len(old_notes)-1):
-            rv = random_value()
-            for x in l:
-                if
-            l.append(Note(random_value(), oldnote.time, oldnote.duration))
+        # sometimes change the value of the note, if the new value does not cause it to overlap any existing notes
+        if (not myrand(4) and x != len(old_notes) - 1):
+            # check to see if it overlaps here, if it does just use the old value
+            iscopy = False
+            rv = random_inrange()
+            x = 0
+            while (x < len(l)):
+                if (l[x].time + l[x].duration > oldnote.time and l[x].time < oldnote.time + oldnote.duration and l[
+                    x].screenvalue == value_to_screenvalue(rv)):
+                    iscopy = True
+                    break
+                x += 1
+            if iscopy:
+                l.append(Note(oldnote.value, oldnote.time, oldnote.duration))
+            else:
+                l.append(Note(rv, oldnote.time, oldnote.duration))
         else:
             l.append(Note(oldnote.value, oldnote.time, oldnote.duration))
-        x+=1
+        x += 1
 
     l = shorten_doubles(l)
-    return(l)
+    return (l)
