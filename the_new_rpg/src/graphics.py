@@ -25,8 +25,6 @@ def sscale_dimensions(img):
         smaller = w
     return [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)]
 
-#sscale means smart scale, Oliver works on this
-#this one does not preserve the original pixel size
 def sscale_customfactor(img, factor):
     factor = factor * 0.0025 #This basically determines how much of the map we can see
     w = img.get_width()

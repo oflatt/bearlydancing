@@ -1,13 +1,7 @@
-import pygame, os
+import pygame, variables
 
 # Setup
-pygame.mixer.pre_init(44100, -16, 2, 512)
-pygame.mixer.init()
 pygame.init()
-pygame.mixer.set_num_channels(16)
-
-for x in range(48):
-    print(x)
 
 #master clock
 clock = pygame.time.Clock()
@@ -20,18 +14,16 @@ width = height #for not it is a square window
 hh = height/2
 flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
 wide_screen = pygame.display.set_mode(mode, pygame.FULLSCREEN)
-screen = pygame.Surface([height, width])
 running = True
 
-print("starup time: " + str(pygame.time.get_ticks()) + " millis")
-GR = {}
-picnames = os.listdir(os.path.dirname(os.path.abspath("__file__")) + "/pics")
+fontlist = pygame.font.get_fonts()
+fontname = "use default"
+if "orangekidregular" in fontlist:
+    fontname = "orangekidregular"
+font = pygame.font.SysFont(fontname, 30)
 
-for x in picnames:
-    p = 3
-    nicename = x.replace(".png", "").lower()
-    GR[nicename] = 3
-print(GR)
+print("starup time: " + str(pygame.time.get_ticks()) + " millis")
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -39,8 +31,10 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
+    wide_screen.fill(0)
+    w = font.render("ABCDEFGHIJKLMNOPQRSSSSS", 0, variables.BLUE)
+    wide_screen.blit(w, [100,100])
+    pygame.draw.rect(wide_screen, variables.WHITE, [100, 100, 20, 20])
 
-    screen.fill(0)
-    pygame.draw.rect(wide_screen, (200,200,200), [0,0,50,50])
     pygame.display.flip()
     clock.tick(60)

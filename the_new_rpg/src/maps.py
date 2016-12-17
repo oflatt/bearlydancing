@@ -1,24 +1,15 @@
 #!/usr/bin/python
-import variables, classvar, conversations
-from Animation import Animation
+import variables, classvar, conversations, enemies
 from graphics import GR
 from Map import Map
 from Rock import Rock
 from Exit import Exit
-from Enemy import Enemy
 from pygame import Rect
 
 # Coordinates for maps are based on the base of each map respectively
 honeyw = GR["honeyside0"]["w"]
 honeyh = GR["honeyside0"]["h"]
 extraarea = 50
-
-# dictionary of all the enemies, refer to randombeatmap for the definitions for beatmap rules
-enemies = {'sheep': Enemy(Animation([GR["sheep0"], GR["sheep1"]], 1), 0.5, "sheep", []),
-           'greenie': Enemy(Animation([GR["meangreen0"], GR["meangreen1"]], 1), 0.3, "mean greenie",
-                            ["melodic", "skippy", "repeat", "cheapending"]),
-           'perp': Enemy(Animation([GR["purpleperp0"], GR["purpleperp1"], GR["purpleperp2"], GR["purpleperp3"]], 1),
-                         0.2, "perp", ["alternating"])}
 
 # outside3##############################################################################################################
 b = GR["rightturn"]["w"] / 10
@@ -39,7 +30,7 @@ outside2 = Map(GR["leftturn"], [Rock(GR["talltree"], 4 * b, 5 * b, [0, 0, 1, 1])
 
 outside2.exitareas = [
     Exit([-extraarea, 0, extraarea, outsideheight], False, 'outside1', GR["horizontal"]["w"] - honeyw, "same")]
-outside2.enemies = [enemies["sheep"], enemies['greenie'], enemies['perp']]
+outside2.enemies = [enemies.sheep, enemies.greenie, enemies.perp]
 outside2.lvrange = [2, 3]
 
 # jeremyhome############################################################################################################
@@ -88,7 +79,7 @@ outside1c = conversations.secondscene
 outside1c.area = [3.1 * b, 0, outsidewidth, outsideheight]
 outside1c.isbutton = False
 outside1c.part_of_story = 2
-outside1c.special_battle = enemies["greenie"]
+outside1c.special_battle = enemies.greenie
 outside1.conversations = [outside1c]
 
 # honeyhome#############################################################################################################

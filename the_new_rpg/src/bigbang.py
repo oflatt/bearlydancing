@@ -17,6 +17,7 @@ done = False
 clock = pygame.time.Clock()
 
 maps.new_scale_offset()
+
 # -------- Main Program Loop -----------
 while not done:
     # --- Event Processing- this is like keyPressed
@@ -27,31 +28,37 @@ while not done:
         # User pressed down on a key
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                done = True
-            if variables.state == "conversation":
-                conversations.currentconversation.keypress(event.key)
-            elif variables.state == "world":
-                classvar.player.keypress(event.key)
-                maps.on_key(event.key)
-            elif variables.state == "battle":
-                classvar.battle.onkey(event.key)
+                variables.menuonq = not variables.menuonq
+                classvar.player.change_of_state()
+            if(not variables.menuonq):
+                if variables.state == "conversation":
+                    conversations.currentconversation.keypress(event.key)
+                elif variables.state == "world":
+                    classvar.player.keypress(event.key)
+                    maps.on_key(event.key)
+                elif variables.state == "battle":
+                    classvar.battle.onkey(event.key)
+            else:
+                classvar.menu.onkey(event.key)
 
 
         # User let up on a key
         elif event.type == pygame.KEYUP:
-            if variables.state == "world":
-                classvar.player.keyrelease(event.key)
-            elif variables.state == "battle":
-                classvar.battle.onrelease(event.key)
+            if(not variables.menuonq):
+                if variables.state == "world":
+                    classvar.player.keyrelease(event.key)
+                elif variables.state == "battle":
+                    classvar.battle.onrelease(event.key)
 
     # --- Game Logic
-    if variables.state == "world":
-        classvar.player.move()
-        maps.checkexit()
-        maps.current_map.on_tick()
-        maps.checkconversation()
-    elif variables.state == "battle":
-        classvar.battle.ontick()
+    if(not variables.menuonq):
+        if variables.state == "world":
+            classvar.player.move()
+            maps.checkexit()
+            maps.current_map.on_tick()
+            maps.checkconversation()
+        elif variables.state == "battle":
+            classvar.battle.ontick()
 
     # --- Drawing Code
     variables.screen.fill(variables.WHITE)
@@ -66,6 +73,9 @@ while not done:
         maps.current_map.draw_foreground()
     elif variables.state == "battle":
         classvar.battle.draw()
+
+    if(variables.menuonq):
+        classvar.menu.draw()
 
     #put the screen on the widescreen
     pygame.draw.rect(variables.wide_screen, variables.BLACK, [0,0, variables.mode[0], variables.mode[1]])

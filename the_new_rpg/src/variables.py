@@ -31,6 +31,7 @@ ORANGE = (255, 255, 0)
 
 #state can be world, battle, or conversation
 state = "world"
+menuonq = True
 
 #general
 scaleoffset = 1
