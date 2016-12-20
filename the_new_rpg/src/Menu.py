@@ -1,5 +1,5 @@
-import graphics, variables, pygame, enemies
-
+import graphics, variables, pygame, enemies, pickle
+from variables import settings
 
 class Menu():
     option = 0
@@ -26,9 +26,15 @@ class Menu():
             variables.screen.blit(self.optionpics[x],
                                   [self.textxoffset, (x + 1) * self.textyspace - self.optionpics[x].get_height() / 2])
 
-        pygame.draw.rect(variables.screen, variables.BLACK,
+        pygame.draw.rect(variables.screen, variables.WHITE,
                          [self.textxoffset / 4, (self.option + 1) * self.textyspace, self.textxoffset * (3 / 4),
                           self.textxoffset * (3 / 4)])
 
     def onkey(self, key):
-        self.option = (self.option + 1) % len(self.options)
+        if key in settings.upkeys:
+            self.option = (self.option - 1) % len(self.options)
+        elif key in settings.downkeys:
+            self.option = (self.option + 1) % len(self.options)
+        elif key in settings.enterkeys:
+            if self.options[self.option] == "resume":
+                settings.menuonq = False

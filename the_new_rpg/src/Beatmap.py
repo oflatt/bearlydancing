@@ -3,6 +3,7 @@ import pygame
 import variables, copy
 from play_sound import stop_tone, play_tone
 from variables import padypos
+from variables import settings
 
 padxspace = variables.width/12
 padheight = variables.width/80
@@ -23,7 +24,7 @@ class Beatmap():
     feedback_timers = [0, 0, 0, 0, 0, 0, 0, 0]
 
     def __init__(self, tempo, notes):
-        self.starttime = variables.current_time
+        self.starttime = settings.current_time
         #tempo in how many milliseconds per beat.
         self.tempo = tempo
         self.originalnotes = notes
@@ -34,8 +35,8 @@ class Beatmap():
 
     def reset(self, battlestarttime):
         self.scores = []
-        synctime = (variables.current_time-battlestarttime) % self.tempo
-        self.starttime = variables.current_time - synctime
+        synctime = (settings.current_time-battlestarttime) % self.tempo
+        self.starttime = settings.current_time - synctime
         fsl = self.starttime+4000
         self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
         self.feedback = [graphics.Atext, graphics.Stext, graphics.Dtext, graphics.Ftext,
@@ -57,7 +58,7 @@ class Beatmap():
                 if(x+1 > 4):
                     xoffset = middleoffset
                 ew = w*1.25
-                pygame.draw.ellipse(variables.screen, variables.WHITE, [padxspace*(x+1)-w/8+xoffset,
+                pygame.draw.ellipse(settings.screen, variables.WHITE, [padxspace*(x+1)-w/8+xoffset,
                                                                         padypos+padheight/2-ew/4, ew, ew/2])
 
         self.draw_pads()
@@ -76,7 +77,7 @@ class Beatmap():
             xoffset = 0
             if (x>3):
                 xoffset = middleoffset
-            if variables.current_time < self.feedback_timers[x]:
+            if settings.current_time < self.feedback_timers[x]:
                 variables.screen.blit(self.feedback[x], [padxspace*(x+1)-w/8+xoffset, padypos])
 
     def notes_on_screen(self):
@@ -93,7 +94,7 @@ class Beatmap():
 
     def notepos(self, note):
         #returns the pos of the bottom of the note
-        dt = variables.current_time-self.starttime
+        dt = settings.current_time-self.starttime
         ypos = (dt-(note.time*self.tempo))*self.speed*variables.dancespeed
         if(note.screenvalue>3):
             xpos = note.screenvalue*padxspace + middleoffset + padxspace
@@ -141,7 +142,7 @@ class Beatmap():
                     if self.notes[np].beginning_score == variables.miss_value:
                         self.notes[np].ison = False
                         self.feedback[self.notes[np].screenvalue] = graphics.MISStext
-                        self.feedback_timers[self.notes[np].screenvalue] = variables.current_time+self.tempo
+                        self.feedback_timers[self.notes[np].screenvalue] = settings.current_time+self.tempo
         
         #returns the value for the sound produced
         def check_place(v):
@@ -162,42 +163,42 @@ class Beatmap():
                     sound_value += self.scale[x%7]
             return sound_value
 
-        if key in variables.note1keys:
+        if key in settings.note1keys:
             v = check_place(0)
             v = simple_value_in_key(v)
             self.held_keys[0] = v
             play_tone(v)
-        elif key in variables.note2keys:
+        elif key in settings.note2keys:
             v = check_place(1)
             v = simple_value_in_key(v)
             self.held_keys[1] = v
             play_tone(v)
-        elif key in variables.note3keys:
+        elif key in settings.note3keys:
             v = check_place(2)
             v = simple_value_in_key(v)
             self.held_keys[2] = v
             play_tone(v)
-        elif key in variables.note4keys:
+        elif key in settings.note4keys:
             v = check_place(3)
             v = simple_value_in_key(v)
             self.held_keys[3] = v
             play_tone(v)
-        elif key in variables.note5keys:
+        elif key in settings.note5keys:
             v = check_place(4)
             v = simple_value_in_key(v)
             self.held_keys[4] = v
             play_tone(v)
-        elif key in variables.note6keys:
+        elif key in settings.note6keys:
             v = check_place(5)
             v = simple_value_in_key(v)
             self.held_keys[5] = v
             play_tone(v)
-        elif key in variables.note7keys:
+        elif key in settings.note7keys:
             v = check_place(6)
             v = simple_value_in_key(v)
             self.held_keys[6] = v
             play_tone(v)
-        elif key in variables.note8keys:
+        elif key in settings.note8keys:
             v = check_place(7)
             v = simple_value_in_key(v)
             self.held_keys[7] = v
@@ -230,21 +231,21 @@ class Beatmap():
 
                     if final_note_score == variables.miss_value:
                         self.feedback[self.notes[np].screenvalue] = graphics.MISStext
-                        self.feedback_timers[self.notes[np].screenvalue] = variables.current_time+self.tempo
+                        self.feedback_timers[self.notes[np].screenvalue] = settings.current_time+self.tempo
                     elif final_note_score == variables.good_value:
                         self.feedback[self.notes[np].screenvalue] = graphics.GOODtext
-                        self.feedback_timers[self.notes[np].screenvalue] = variables.current_time+self.tempo
+                        self.feedback_timers[self.notes[np].screenvalue] = settings.current_time+self.tempo
                     elif final_note_score == variables.ok_value:
                         self.feedback[self.notes[np].screenvalue] = graphics.OKtext
-                        self.feedback_timers[self.notes[np].screenvalue] = variables.current_time+self.tempo
+                        self.feedback_timers[self.notes[np].screenvalue] = settings.current_time+self.tempo
                     elif final_note_score == variables.perfect_value:
                         self.feedback[self.notes[np].screenvalue] = graphics.PERFECTtext
-                        self.feedback_timers[self.notes[np].screenvalue] = variables.current_time+self.tempo
+                        self.feedback_timers[self.notes[np].screenvalue] = settings.current_time+self.tempo
             #released before a note, penalty for randomly playing notes not written
             else:
                 self.scores.append(variables.miss_value)
                 self.feedback[self.notes[np].screenvalue] = graphics.MISStext
-                self.feedback_timers[self.notes[np].screenvalue] = variables.current_time+self.tempo
+                self.feedback_timers[self.notes[np].screenvalue] = settings.current_time+self.tempo
 
         def check_place(v):
             np = self.get_note_place_from_value_end(v)
@@ -253,38 +254,38 @@ class Beatmap():
             else:
                 self.scores.append(variables.miss_value)
                 self.feedback[v] = graphics.MISStext
-                self.feedback_timers[v] = variables.current_time+self.tempo
+                self.feedback_timers[v] = settings.current_time+self.tempo
 
 
-        if key in variables.note1keys:
+        if key in settings.note1keys:
             check_place(0)
             stop_tone(self.held_keys[0])
             self.held_keys[0] = False
-        elif key in variables.note2keys:
+        elif key in settings.note2keys:
             check_place(1)
             stop_tone(self.held_keys[1])
             self.held_keys[1] = False
-        elif key in variables.note3keys:
+        elif key in settings.note3keys:
             check_place(2)
             stop_tone(self.held_keys[2])
             self.held_keys[2] = False
-        elif key in variables.note4keys:
+        elif key in settings.note4keys:
             check_place(3)
             stop_tone(self.held_keys[3])
             self.held_keys[3] = False
-        elif key in variables.note5keys:
+        elif key in settings.note5keys:
             check_place(4)
             stop_tone(self.held_keys[4])
             self.held_keys[4] = False
-        elif key in variables.note6keys:
+        elif key in settings.note6keys:
             check_place(5)
             stop_tone(self.held_keys[5])
             self.held_keys[5] = False
-        elif key in variables.note7keys:
+        elif key in settings.note7keys:
             check_place(6)
             stop_tone(self.held_keys[6])
             self.held_keys[6] = False
-        elif key in variables.note8keys:
+        elif key in settings.note8keys:
             check_place(7)
             stop_tone(self.held_keys[7])
             self.held_keys[7] = False
@@ -307,7 +308,7 @@ class Beatmap():
             if self.notes[x].pos[1]-smaller>padypos and self.notes[x].beginning_score == None:
                 if self.notes[x].ison:
                     self.feedback[self.notes[x].screenvalue] = graphics.MISStext
-                    self.feedback_timers[self.notes[x].screenvalue] = variables.current_time+self.tempo
+                    self.feedback_timers[self.notes[x].screenvalue] = settings.current_time+self.tempo
                     self.notes[x].ison = False
                     self.scores.append(variables.miss_value)
                 elif self.notes[x].pos[1]<0:

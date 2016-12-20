@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #Oliver Flatt works on Classes
 import variables, pygame, graphics
+from variables import settings
 
 class Speak():
     line = 0
@@ -35,6 +36,6 @@ class Speak():
         if self.line < len(self.dialogue) - self.lines_in_sceen():
             self.line += 1
             return "talking"
-        elif key in variables.enterkeys:
+        elif key in settings.enterkeys:
             self.line = 0
             return "done"

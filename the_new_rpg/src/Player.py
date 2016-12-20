@@ -4,6 +4,7 @@ from graphics import GR
 from Dancer import Dancer
 from Animation import Animation
 from pygame import Rect
+from variables import settings
 
 class Player(Dancer):
     xspeed = 0
@@ -69,22 +70,22 @@ class Player(Dancer):
 
     def keypress(self, k):
         self.move()
-        t = variables.current_time
+        t = settings.current_time
         s = variables.playerspeed * variables.scaleoffset
-        if k == pygame.K_LEFT or k == pygame.K_a:
-            self.leftpresstime = variables.current_time
+        if k in settings.leftkeys:
+            self.leftpresstime = settings.current_time
             self.xspeed = -s
             self.lastxupdate = t
-        if k == pygame.K_RIGHT or k == pygame.K_d:
-            self.rightpresstime = variables.current_time
+        if k in settings.rightkeys:
+            self.rightpresstime = settings.current_time
             self.lastxupdate = t
             self.xspeed = s
-        if k == pygame.K_UP or k == pygame.K_w:
-            self.uppresstime = variables.current_time
+        if k in settings.upkeys:
+            self.uppresstime = settings.current_time
             self.yspeed = -s
             self.lastyupdate = t
-        if k == pygame.K_DOWN or k == pygame.K_s:
-            self.downpresstime = variables.current_time
+        if k in settings.downkeys:
+            self.downpresstime = settings.current_time
             self.yspeed = s
             self.lastyupdate = t
         self.change_animation()
@@ -92,7 +93,7 @@ class Player(Dancer):
     def keyrelease(self, k):
         self.move()
         s = variables.playerspeed * variables.scaleoffset
-        t = variables.current_time
+        t = settings.current_time
         if k == pygame.K_LEFT or k == pygame.K_a:
             self.leftpresstime = 0
             self.lastxupdate = t
@@ -125,7 +126,7 @@ class Player(Dancer):
 
     #moves with collision detection
     def move(self):
-        t = variables.current_time
+        t = settings.current_time
         #calculate moved positions
         xtime_factor = t-self.lastxupdate
         ytime_factor = t-self.lastyupdate
@@ -196,8 +197,8 @@ class Player(Dancer):
         if not iscollisiony:
             self.ypos = movedypos
 
-        self.lastxupdate = variables.current_time
-        self.lastyupdate = variables.current_time
+        self.lastxupdate = settings.current_time
+        self.lastyupdate = settings.current_time
 
 
     def current_pic_scaled(self): #returns the current pic to display

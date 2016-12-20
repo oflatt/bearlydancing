@@ -1,13 +1,11 @@
 import pygame, ctypes
+from Settings import Settings
 
 # Setup
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.mixer.init()
 pygame.init()
 pygame.mixer.set_num_channels(16)
-
-#master clock
-current_time = 0
 
 # Set the width and height of the screen [width,height]
 modes = pygame.display.list_modes()
@@ -29,10 +27,6 @@ RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 ORANGE = (255, 255, 0)
 
-#state can be world, battle, or conversation
-state = "world"
-menuonq = True
-
 #general
 scaleoffset = 1
 fontlist = pygame.font.get_fonts()
@@ -46,7 +40,6 @@ healthanimationspeed = 2000#time in milliseconds for the health bar animation to
 expanimationspeed = 3000
 dancespeed = height/8 * 0.001#factor for displaying notes
 padypos = height*(13/16)
-beatmaptype = "random"
 
 generic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : []}
 melodic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : ['melodic']}
@@ -76,16 +69,7 @@ playerspeed = height/800 * 0.1 #factor against time
 encounter_check_rate = 100 #rate of check in milliseconds
 encounter_chance = 0.0025#chance per check
 
-#keybindings
-enterkeys = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_KP_ENTER]
-note1keys = [pygame.K_a]
-note2keys = [pygame.K_s]
-note3keys = [pygame.K_d]
-note4keys = [pygame.K_f]
-note5keys = [pygame.K_j]
-note6keys = [pygame.K_k]
-note7keys = [pygame.K_l]
-note8keys = [pygame.K_SEMICOLON]
+settings = Settings()
 
 #helpful functions
 def smaller(a, b):

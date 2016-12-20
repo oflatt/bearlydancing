@@ -1,5 +1,5 @@
 #Oliver Flatt
-import variables
+from variables import settings
 
 class Animation():
     beginning_time = 0
@@ -10,9 +10,9 @@ class Animation():
         self.framerate = framerate
 
     def current_frame(self):
-        at = variables.current_time-self.beginning_time
+        at = settings.current_time-self.beginning_time
         framenum = int(at/self.framerate) % len(self.pics) - 1
         return self.pics[framenum]
 
     def reset(self):
-        self.beginning_time = variables.current_time
+        self.beginning_time = settings.current_time

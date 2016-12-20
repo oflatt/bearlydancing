@@ -5,6 +5,7 @@ from Map import Map
 from Rock import Rock
 from Exit import Exit
 from pygame import Rect
+from variables import settings
 
 # Coordinates for maps are based on the base of each map respectively
 honeyw = GR["honeyside0"]["w"]
@@ -151,16 +152,16 @@ def change_map(name, newx, newy):
 def engage_conversation(c):
     classvar.player.change_of_state()
     if c.part_of_story == "none":
-        variables.state = "conversation"
+        settings.state = "conversation"
         conversations.currentconversation = c
     elif c.part_of_story == classvar.player.storyprogress:
-        variables.state = "conversation"
+        settings.state = "conversation"
         classvar.player.storyprogress += 1
         conversations.currentconversation = c
 
 
 def on_key(key):
-    if key in variables.enterkeys:
+    if key in settings.enterkeys:
         e = current_map.checkexit()
         c = current_map.checkconversation()
         if not e == False:
