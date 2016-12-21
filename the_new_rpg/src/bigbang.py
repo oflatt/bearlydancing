@@ -7,7 +7,9 @@ variables.wide_screen.blit(LOADINGTEXT, [0, 0])
 pygame.display.flip()
 
 import maps
-import conversations, classvar
+import conversations, classvar, Menu
+
+Menu.load()
 
 pygame.display.set_caption("Bearly Dancing")
 
@@ -19,6 +21,8 @@ clock = pygame.time.Clock()
 
 maps.new_scale_offset()
 
+menu = Menu.Menu()
+
 # -------- Main Program Loop -----------
 while not done:
     # --- Event Processing- this is like keyPressed
@@ -26,7 +30,7 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
         elif event.type == pygame.KEYDOWN and event.key in settings.enterkeys and settings.menuonq and \
-                        classvar.menu.options[classvar.menu.option] == "exit":
+                        menu.options[menu.option] == "exit":
             done = True
 
         # User pressed down on a key
@@ -43,7 +47,7 @@ while not done:
                 elif settings.state == "battle":
                     classvar.battle.onkey(event.key)
             else:
-                classvar.menu.onkey(event.key)
+                menu.onkey(event.key)
 
 
         # User let up on a key
@@ -79,7 +83,7 @@ while not done:
         classvar.battle.draw()
 
     if (settings.menuonq):
-        classvar.menu.draw()
+        menu.draw()
 
     # put the screen on the widescreen
     pygame.draw.rect(variables.wide_screen, variables.BLACK, [0, 0, variables.mode[0], variables.mode[1]])

@@ -1,5 +1,19 @@
-import graphics, variables, pygame, enemies, pickle
+import graphics, variables, pygame, enemies, pickle, classvar, maps, os
 from variables import settings
+
+#can't pickle pygame masks, and problems pickeling pygame surfaces
+def save():
+    classvar.player.mask = 0
+    savelist = [settings, classvar.player.xpos, classvar.player.ypos, classvar.battle, maps.current_map_name]
+    with open("bdsave0.txt", "wb") as f:
+        pickle.dump(savelist, f)
+
+def load():
+    if(os.path.isfile(os.path.abspath("bdsave0.txt"))):
+        if os.path.getsize(os.path.abspath("bdsave0.txt")) > 0:
+            with open("bdsave0.txt", "rb") as f:
+                settings, classvar.player.xpos, classvar.player.ypos, classvar.battle, maps.current_map_name = pickle.load(f)
+                maps.change_map(maps.current_map_name, classvar.player.xpos, classvar.player.ypos)
 
 class Menu():
     option = 0
@@ -38,3 +52,5 @@ class Menu():
         elif key in settings.enterkeys:
             if self.options[self.option] == "resume":
                 settings.menuonq = False
+            elif self.options[self.option] == "save":
+                save()

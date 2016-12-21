@@ -84,17 +84,11 @@ outside1c.special_battle = enemies.greenie
 outside1.conversations = [outside1c]
 
 # honeyhome#############################################################################################################
-insidewidth = GR["bearhome"]["w"]
-insideheight = GR["bearhome"]["h"]
+insidewidth = GR["honeyhouseinside"]["w"]
+insideheight = GR["honeyhouseinside"]["h"]
 b = insidewidth / 10
 
-honeyhome = Map(GR["bearhome"], [Rock(GR["welcomematt"],
-                                      (insidewidth / 2 - GR["welcomematt"]["w"] / 2),
-                                      (insideheight - GR["welcomematt"]["h"]),
-                                      None),
-                                 Rock(GR["bed"], 0, 0, None),
-                                 Rock(GR["wardrobe1"], 2 * b, 0 * b, None),
-                                 Rock(GR["tp"], 8 * b, 7 * b, [0, 3 / 4, 1, 1 / 4])])
+honeyhome = Map(GR["honeyhouseinside"], [])
 honeyhome.startpoint = [0, 0]
 honeyhome.exitareas = [
     Exit([insidewidth / 2 - GR["welcomematt"]["w"] / 2, insideheight, GR["welcomematt"]["w"] / 2, extraarea],
@@ -112,9 +106,8 @@ honeyhome.colliderects = [Rect(0, b * 2.7, b * 2.1, b * 1.5), Rect(b * (10 - 2.3
 
 # teleportation and stuff###############################################################################################
 current_map = honeyhome
-home_map = ('honeyhome')
+current_map_name = 'honeyhome'
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
-
 
 def new_scale_offset():
     global current_map
@@ -123,7 +116,9 @@ def new_scale_offset():
 
 
 def change_map(name, newx, newy):
+    global current_map_name
     global current_map
+    current_map_name = name
     possibles = globals()
     map_picked = possibles.get(name)
     if not map_picked:
