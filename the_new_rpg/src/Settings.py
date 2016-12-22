@@ -18,7 +18,7 @@ class Settings():
 
     # state can be world, battle, or conversation
     state = "world"
-    menuonq = True
+    menuonq = False
 
     # master clock
     current_time = 0

@@ -86,14 +86,16 @@ outside1.conversations = [outside1c]
 # honeyhome#############################################################################################################
 insidewidth = GR["honeyhouseinside"]["w"]
 insideheight = GR["honeyhouseinside"]["h"]
+# p is the width of a pixel relative to the background
+p = insidewidth / 176
 b = insidewidth / 10
 
 honeyhome = Map(GR["honeyhouseinside"], [])
 honeyhome.startpoint = [0, 0]
-honeyhome.exitareas = [
-    Exit([insidewidth / 2 - GR["welcomematt"]["w"] / 2, insideheight, GR["welcomematt"]["w"] / 2, extraarea],
-         False, 'outside1',
-         GR["house"]["w"] * (1 / 5), GR["house"]["h"] - honeyh)]
+honeyhome.exitareas = [Exit([35 * p + honeyw / 2, 165 * p, 37 - honeyw, extraarea],
+                            True, 'outside1',
+                            GR["house"]["w"] * (1 / 5), GR["house"]["h"] - honeyh)]
+
 racoonc = conversations.firstscene
 racoonc.area = [0, 7 * b + GR["tp"]["h"], insidewidth,
                 extraarea]  # extraarea because it does not matter how thick it is down
@@ -101,13 +103,13 @@ racoonc.isbutton = False
 racoonc.part_of_story = 1  # makes it so you can only have the conversation once
 honeyhome.conversations = [racoonc]
 # collide with two walls
-honeyhome.colliderects = [Rect(0, b * 2.7, b * 2.1, b * 1.5), Rect(b * (10 - 2.3), b * 2.7, b * 2.3, b * 1.5),
-                          Rect(2 * b + (b / 2), 0, GR["wardrobe1"]["w"] - b, GR["wardrobe1"]["h"] / 10)]
+honeyhome.colliderects = []
 
 # teleportation and stuff###############################################################################################
 current_map = honeyhome
 current_map_name = 'honeyhome'
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
+
 
 def new_scale_offset():
     global current_map
@@ -115,7 +117,7 @@ def new_scale_offset():
     classvar.player.scale_by_offset()
 
 
-def change_map(name, newx, newy):
+def change_map_nonteleporting(name):
     global current_map_name
     global current_map
     current_map_name = name
@@ -124,6 +126,10 @@ def change_map(name, newx, newy):
     if not map_picked:
         raise NotImplementedError("Map %s not implemented" % name)
     current_map = map_picked
+
+
+def change_map(name, newx, newy):
+    change_map_nonteleporting(name)
     if (isinstance(newx, str)):
         newx = classvar.player.xpos
         if (newx < 0):
