@@ -92,7 +92,7 @@ b = insidewidth / 10
 
 honeyhome = Map(GR["honeyhouseinside"], [])
 honeyhome.startpoint = [0, 0]
-honeyhome.exitareas = [Exit([35 * p + honeyw / 2, 165 * p, 37 - honeyw, extraarea],
+honeyhome.exitareas = [Exit([35 * p + honeyw / 2, 165 * p, 37*p - honeyw, extraarea],
                             True, 'outside1',
                             GR["house"]["w"] * (1 / 5), GR["house"]["h"] - honeyh)]
 

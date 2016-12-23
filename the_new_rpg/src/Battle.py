@@ -39,7 +39,6 @@ class Battle():
         # state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
         self.option = 1
-        self.enemy.scalepure()
         specs = variables.generic_specs.copy()
         specs["lv"] = self.enemy.lv
         specs["rules"].extend(self.enemy.beatmaprules)
@@ -53,7 +52,7 @@ class Battle():
         self.beatmaps[self.current_beatmap].pause()
 
     def unpause(self):
-        self.starttime += self.pausetime
+        self.starttime = self.pausetime
         self.pausetime = 0
         self.beatmaps[self.current_beatmap].unpause()
 

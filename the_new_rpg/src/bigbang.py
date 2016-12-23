@@ -1,8 +1,8 @@
 #!/usr/bin/python
 import pygame, variables
-from variables import settings
 
 LOADINGTEXT = pygame.transform.scale2x(variables.font.render("LOADING...", 0, variables.WHITE))
+variables.screen.blit(LOADINGTEXT, [0,0])
 variables.wide_screen.blit(LOADINGTEXT, [0, 0])
 pygame.display.flip()
 
@@ -29,7 +29,7 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-        elif event.type == pygame.KEYDOWN and event.key in settings.enterkeys and settings.menuonq and \
+        elif event.type == pygame.KEYDOWN and event.key in variables.settings.enterkeys and variables.settings.menuonq and \
                         menu.options[menu.option] == "exit":
             done = True
 
@@ -37,19 +37,21 @@ while not done:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 #if we are turning on the menu pause the beatmaps
-                if(not settings.menuonq):
-                    classvar.battle.pause()
+                if(not variables.settings.menuonq):
+                    if(not isinstance(classvar.battle, str)):
+                        classvar.battle.pause()
                 else:
-                    classvar.battle.unpause()
-                settings.menuonq = not settings.menuonq
+                    if (not isinstance(classvar.battle, str)):
+                        classvar.battle.unpause()
+                variables.settings.menuonq = not variables.settings.menuonq
                 classvar.player.change_of_state()
-            if (not settings.menuonq):
-                if settings.state == "conversation":
+            if (not variables.settings.menuonq):
+                if variables.settings.state == "conversation":
                     conversations.currentconversation.keypress(event.key)
-                elif settings.state == "world":
+                elif variables.settings.state == "world":
                     classvar.player.keypress(event.key)
                     maps.on_key(event.key)
-                elif settings.state == "battle":
+                elif variables.settings.state == "battle":
                     classvar.battle.onkey(event.key)
             else:
                 menu.onkey(event.key)
@@ -57,37 +59,37 @@ while not done:
 
         # User let up on a key
         elif event.type == pygame.KEYUP:
-            if (not settings.menuonq):
-                if settings.state == "world":
+            if (not variables.settings.menuonq):
+                if variables.settings.state == "world":
                     classvar.player.keyrelease(event.key)
-                elif settings.state == "battle":
+                elif variables.settings.state == "battle":
                     classvar.battle.onrelease(event.key)
 
     # --- Game Logic
-    if (not settings.menuonq):
-        if settings.state == "world":
+    if (not variables.settings.menuonq):
+        if variables.settings.state == "world":
             classvar.player.move()
             maps.checkexit()
             maps.current_map.on_tick()
             maps.checkconversation()
-        elif settings.state == "battle":
+        elif variables.settings.state == "battle":
             classvar.battle.ontick()
 
     # --- Drawing Code
     variables.screen.fill(variables.WHITE)
-    if settings.state == "conversation":
+    if variables.settings.state == "conversation":
         maps.current_map.draw(classvar.player.xpos, classvar.player.ypos)
         classvar.player.draw()
         maps.current_map.draw_foreground()
         conversations.currentconversation.draw()
-    elif settings.state == "world":
+    elif variables.settings.state == "world":
         maps.current_map.draw(classvar.player.xpos, classvar.player.ypos)
         classvar.player.draw()
         maps.current_map.draw_foreground()
-    elif settings.state == "battle":
+    elif variables.settings.state == "battle":
         classvar.battle.draw()
 
-    if (settings.menuonq):
+    if (variables.settings.menuonq):
         menu.draw()
 
     # put the screen on the widescreen
@@ -101,7 +103,7 @@ while not done:
     clock.tick(60)
 
     # add the past tick to the current time
-    settings.current_time += clock.get_time()
+    variables.settings.current_time += clock.get_time()
 
 # Close the window and quit, this is after the main loop has finished
 pygame.quit()

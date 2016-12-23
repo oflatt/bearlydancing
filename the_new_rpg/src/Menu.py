@@ -12,9 +12,13 @@ def save():
 def load():
     if(os.path.isfile(os.path.abspath("bdsave0.txt"))):
         if os.path.getsize(os.path.abspath("bdsave0.txt")) > 0:
-            with open("bdsave0.txt", "rb") as f:
-                settings, player.xpos, player.ypos, player.lv, player.exp, classvar.battle, maps.current_map_name = pickle.load(f)
-                maps.change_map_nonteleporting(maps.current_map_name)
+            f = open("bdsave0.txt", "rb")
+            loadedlist = pickle.load(f)
+            variables.settings, player.xpos, player.ypos, player.lv, player.exp, classvar.battle, maps.current_map_name = loadedlist
+            maps.change_map_nonteleporting(maps.current_map_name)
+
+    if(not isinstance(classvar.battle, str)):
+        classvar.battle.enemy.reset()
 
 class Menu():
     option = 0

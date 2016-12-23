@@ -55,7 +55,7 @@ good_range = height/60
 ok_range = height/25
 miss_range = height/15
 
-battle_volume = 1
+battle_volume = 0.5
 
 notes_colors = [ORANGE, BLUE, RED, GREEN, GREEN, RED, BLUE, ORANGE]
 
