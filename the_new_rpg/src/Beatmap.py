@@ -13,6 +13,7 @@ class Beatmap():
     scale = [2, 2, 1, 2, 2, 2, 1] #list of offsets for the scale
     speed = 1
     starttime = 0
+    pausetime = 0
     #scores is a running list of the values for how well each note so far has been played (values for perfect, good ect)
     scores = []
     #held keys is false if the key is not held, and the tone if it is held
@@ -32,6 +33,13 @@ class Beatmap():
         self.notes = notes
         fsl = self.starttime+4000
         self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
+
+    def pause(self):
+        self.pausetime = settings.current_time
+
+    def unpause(self):
+        self.starttime += self.pausetime
+        self.pausetime = 0
 
     def reset(self, battlestarttime):
         self.scores = []
@@ -94,7 +102,7 @@ class Beatmap():
 
     def notepos(self, note):
         #returns the pos of the bottom of the note
-        dt = settings.current_time-self.starttime
+        dt = settings.current_time-self.pausetime-self.starttime
         ypos = (dt-(note.time*self.tempo))*self.speed*variables.dancespeed
         if(note.screenvalue>3):
             xpos = note.screenvalue*padxspace + middleoffset + padxspace

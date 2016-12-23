@@ -30,6 +30,9 @@ class Battle():
     damage_multiplier = 1
     drumcounter = 0
 
+    #if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
+    pausetime = 0
+
     def __init__(self, enemy):
         self.starttime = settings.current_time
         self.enemy = enemy
@@ -44,6 +47,15 @@ class Battle():
         self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
         self.enemy.animation.reset()
         classvar.player.heal()
+
+    def pause(self):
+        self.pausetime = settings.current_time
+        self.beatmaps[self.current_beatmap].pause()
+
+    def unpause(self):
+        self.starttime += self.pausetime
+        self.pausetime = 0
+        self.beatmaps[self.current_beatmap].unpause()
 
     def new_beatmaps(self):
         self.beatmaps = [randombeatmap.variation_of(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo)]

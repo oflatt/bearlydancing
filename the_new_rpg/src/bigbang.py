@@ -36,6 +36,11 @@ while not done:
         # User pressed down on a key
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
+                #if we are turning on the menu pause the beatmaps
+                if(not settings.menuonq):
+                    classvar.battle.pause()
+                else:
+                    classvar.battle.unpause()
                 settings.menuonq = not settings.menuonq
                 classvar.player.change_of_state()
             if (not settings.menuonq):

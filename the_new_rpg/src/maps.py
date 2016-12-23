@@ -106,7 +106,8 @@ honeyhome.conversations = [racoonc]
 honeyhome.colliderects = []
 
 # teleportation and stuff###############################################################################################
-current_map = honeyhome
+home_map = honeyhome
+current_map = home_map
 current_map_name = 'honeyhome'
 classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
 

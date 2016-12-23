@@ -53,5 +53,7 @@ class Menu():
         elif key in settings.enterkeys:
             if self.options[self.option] == "resume":
                 settings.menuonq = False
+                classvar.player.change_of_state()
+                classvar.battle.unpause()
             elif self.options[self.option] == "save":
                 save()
