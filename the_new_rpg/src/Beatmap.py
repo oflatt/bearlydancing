@@ -40,7 +40,7 @@ class Beatmap():
         self.pausetime = settings.current_time
 
     def unpause(self):
-        self.starttime = self.pausetime
+        self.starttime += settings.current_time-self.pausetime
         self.pausetime = 0
 
     def reset(self, battlestarttime):

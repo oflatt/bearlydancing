@@ -9,8 +9,9 @@ class Rock():
     #background range is the range of the player's location that it is drawn behind the player
     background_range = pygame.Rect(0,0,variables.width*100,variables.height*100)
 
-    #collidesection is a list x y width height all of the arguments are relative to the rock's pos and dimensions
     def __init__(self, base, x, y, collidesection):
+        #collidesection is a list x y width height all of the arguments are relative to the rock's pos and dimensions
+        #width and height of collidesection are multiplied by the width and height of the base
         self.collidesection = collidesection
         if self.collidesection == None:
             self.collidesection = [0, 0, 0, 0]
@@ -37,6 +38,9 @@ class Rock():
         maskpic.fill(pygame.Color(0, 0, 0, 0), [cs[0]*w + cs[2]*w, 0, w-(cs[0]*w + cs[2]*w), h])
         maskpic.fill(pygame.Color(0, 0, 0, 0), [0, cs[1]*h+cs[3]*h, w, h-(cs[1]*h+cs[3]*h)])
         self.mask = pygame.mask.from_surface(maskpic)
+
+        w = self.base["w"]
+        h = self.base["h"]
         # by default background range is by the top of the mask, the collision box
         if(not cs == [0,0,1,1] and isresetbackgroundrange):
             self.background_range = pygame.Rect(0, self.y + cs[1] * h + cs[3]*(1/3)*h,

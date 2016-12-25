@@ -13,7 +13,7 @@ counter = 0
 sheep = Enemy(counter, 0.5, "sheep", [])
 counter += 1
 greenie = Enemy(counter, 0.3, "mean greenie",
-                ["melodic", "skippy", "repeat", "cheapending"])
+                ["melodic", "skippy", "cheapending", "repeat"])
 counter += 1
 perp = Enemy(counter,
              0.2, "perp", ["alternating"])

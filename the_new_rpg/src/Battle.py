@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # Oliver works on classes
-import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap, copy
+import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap
 from Button import Button
 from play_sound import play_sound
 from variables import settings
@@ -52,7 +52,7 @@ class Battle():
         self.beatmaps[self.current_beatmap].pause()
 
     def unpause(self):
-        self.starttime = self.pausetime
+        self.starttime += settings.current_time-self.pausetime
         self.pausetime = 0
         self.beatmaps[self.current_beatmap].unpause()
 
@@ -262,7 +262,7 @@ class Battle():
                     self.state = "dance"
                     self.beatmaps[self.current_beatmap].reset(self.starttime)
                 else:
-                    variables.state = "world"
+                    settings.state = "world"
             else:
                 if self.option == 1:
                     self.option = 2
@@ -271,7 +271,7 @@ class Battle():
         elif self.state == "lose" and key in settings.enterkeys:
             # go home
             classvar.player.heal()
-            variables.state = "world"
+            settings.state = "world"
             maps.change_map(maps.home_map, 0, 0)
             classvar.player.teleport(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
         elif self.state == "win" and key in settings.enterkeys:
@@ -280,7 +280,7 @@ class Battle():
             self.animationtime = settings.current_time
             self.oldexp = classvar.player.exp
         elif self.state == "got exp" and key in settings.enterkeys:
-            variables.state = "world"  # finally exit Battle
+            settings.state = "world"  # finally exit Battle
 
     def onrelease(self, key):
         if self.state == "dance":

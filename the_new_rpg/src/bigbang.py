@@ -23,6 +23,9 @@ maps.new_scale_offset()
 
 menu = Menu.Menu()
 
+#clear all the events so it does not mess up the game when it loads
+pygame.event.get()
+
 # -------- Main Program Loop -----------
 while not done:
     # --- Event Processing- this is like keyPressed

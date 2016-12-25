@@ -71,9 +71,10 @@ outside1.exitareas = [Exit([outsidewidth, 0, extraarea, outsideheight], False, '
                       Exit([-extraarea, 0, extraarea, outsideheight], False, 'jeremyhome', GR["halfpath"]["w"] - honeyw,
                            "same"),
                       Exit(
-                          [housewidth * (1.5 / 5), househeight * (3 / 5), housewidth * (1 / 10), househeight * (1 / 5)],
-                          True, 'honeyhome',
-                          (GR["bearhome"]["w"] / 2) - (honeyw / 2), GR["bearhome"]["h"] - (honeyh) - b / 20)]
+                              [housewidth * (1.5 / 5), househeight * (3 / 5), housewidth * (1 / 10),
+                               househeight * (1 / 5)],
+                              True, 'honeyhome',
+                              (GR["bearhome"]["w"] / 2) - (honeyw / 2), GR["bearhome"]["h"] - (honeyh) - b / 20)]
 outside1.colliderects = [Rect(0, 0, housewidth, househeight - honeyh)]
 outside1.lvrange = [1, 2]
 outside1c = conversations.secondscene
@@ -90,9 +91,11 @@ insideheight = GR["honeyhouseinside"]["h"]
 p = insidewidth / 176
 b = insidewidth / 10
 
-honeyhome = Map(GR["honeyhouseinside"], [])
-honeyhome.startpoint = [0, 0]
-honeyhome.exitareas = [Exit([35 * p + honeyw / 2, 165 * p, 37*p - honeyw, extraarea],
+honeyhome = Map(GR["honeyhouseinside"],
+                [Rock(GR["table"], p * 75, p * 110, [0, 0.5, 1, 0.5]),
+                 Rock(GR['stash'], p*130, p*60, [0, 0.9, 1, 0.1])])
+honeyhome.startpoint = [86 * p, 56 * p]
+honeyhome.exitareas = [Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                             True, 'outside1',
                             GR["house"]["w"] * (1 / 5), GR["house"]["h"] - honeyh)]
 
@@ -103,13 +106,16 @@ racoonc.isbutton = False
 racoonc.part_of_story = 1  # makes it so you can only have the conversation once
 honeyhome.conversations = [racoonc]
 # collide with two walls
-honeyhome.colliderects = []
+honeyhome.colliderects = [Rect(0, 0, p * 31, p * 74),  # bed
+                          Rect(0, 0, insidewidth, p * 44),  # wall
+                          Rect(44 * p, 0, 26 * p, 56 * p)]  # wardrobe
 
 # teleportation and stuff###############################################################################################
 home_map = honeyhome
 current_map = home_map
 current_map_name = 'honeyhome'
-classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
+classvar.player.teleport(current_map.startpoint[0] * current_map.map_scale_offset,
+                         current_map.startpoint[1] * current_map.map_scale_offset)
 
 
 def new_scale_offset():

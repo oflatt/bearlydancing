@@ -381,6 +381,7 @@ def variation_of(old_notes, tempo):
 
 
 def variation_of_notes(old_notes):
+    print("called variation of notes")
     def random_inrange():
         return randint(variables.minvalue, variables.maxvalue)
 
