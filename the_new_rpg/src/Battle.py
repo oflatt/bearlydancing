@@ -3,7 +3,6 @@
 import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap
 from Button import Button
 from play_sound import play_sound
-from variables import settings
 
 
 class Battle():
@@ -34,7 +33,7 @@ class Battle():
     pausetime = 0
 
     def __init__(self, enemy):
-        self.starttime = settings.current_time
+        self.starttime = variables.settings.current_time
         self.enemy = enemy
         # state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
@@ -48,11 +47,12 @@ class Battle():
         classvar.player.heal()
 
     def pause(self):
-        self.pausetime = settings.current_time
+        self.pausetime = variables.settings.current_time
         self.beatmaps[self.current_beatmap].pause()
+        self.beatmaps[self.current_beatmap].reset_buttons()
 
     def unpause(self):
-        self.starttime += settings.current_time-self.pausetime
+        self.starttime += variables.settings.current_time-self.pausetime
         self.pausetime = 0
         self.beatmaps[self.current_beatmap].unpause()
 
@@ -66,7 +66,7 @@ class Battle():
         else:
             print("should only have one beatmap in the list!")
             self.current_beatmap += 1
-        self.beatmaps[self.current_beatmap].reset(self.starttime)
+        self.beatmaps[self.current_beatmap].reset(self.starttime, False)
         self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
 
     def draw(self):
@@ -185,7 +185,7 @@ class Battle():
         if self.state == "attacking":
             if self.isplayernext == True:
                 damage = self.oldplayerhealth - self.newplayerhealth
-                differenceintime = settings.current_time - self.animationtime
+                differenceintime = variables.settings.current_time - self.animationtime
                 hs = variables.healthanimationspeed
                 damagefactor = (hs - differenceintime) / hs
                 # set player's health to somewhere between the old and new depending on time (damagefactor)
@@ -200,10 +200,10 @@ class Battle():
                         self.next_beatmap()
                     else:
                         self.isplayernext = False
-                        self.animationtime = settings.current_time
+                        self.animationtime = variables.settings.current_time
             elif self.isplayernext == False:
                 damage = self.oldenemyhealth - self.newenemyhealth
-                differenceintime = settings.current_time - self.animationtime
+                differenceintime = variables.settings.current_time - self.animationtime
                 hs = variables.healthanimationspeed
                 damagefactor = (hs - differenceintime) / hs
                 # set enemy's health to somewhere between the old and new depending on time (damagefactor)
@@ -218,10 +218,10 @@ class Battle():
                         self.next_beatmap()
                     else:
                         self.isplayernext = True
-                        self.animationtime = settings.current_time
+                        self.animationtime = variables.settings.current_time
 
         elif self.state == "exp":
-            differenceintime = settings.current_time - self.animationtime
+            differenceintime = variables.settings.current_time - self.animationtime
             es = variables.expanimationspeed
             timefactor = differenceintime / es
             expgained = self.newexp - self.oldexp
@@ -245,7 +245,7 @@ class Battle():
                 self.trade()
 
         # drum sounds
-        dt = settings.current_time - self.starttime
+        dt = variables.settings.current_time - self.starttime
         ypos = (dt - (self.drumcounter * self.beatmaps[self.current_beatmap].tempo)) * \
                self.beatmaps[self.current_beatmap].speed * variables.dancespeed
         # play a drum sound if it is on the beat
@@ -257,30 +257,30 @@ class Battle():
         if self.state == 'dance':
             self.beatmaps[self.current_beatmap].onkey(key)
         if self.state == "choose":
-            if key in settings.enterkeys:
+            if key in variables.settings.enterkeys:
                 if self.option == 1:
                     self.state = "dance"
-                    self.beatmaps[self.current_beatmap].reset(self.starttime)
+                    self.beatmaps[self.current_beatmap].reset(self.starttime, True)
                 else:
-                    settings.state = "world"
+                    variables.settings.state = "world"
             else:
                 if self.option == 1:
                     self.option = 2
                 else:
                     self.option = 1
-        elif self.state == "lose" and key in settings.enterkeys:
+        elif self.state == "lose" and key in variables.settings.enterkeys:
             # go home
             classvar.player.heal()
-            settings.state = "world"
+            variables.settings.state = "world"
             maps.change_map(maps.home_map, 0, 0)
             classvar.player.teleport(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
-        elif self.state == "win" and key in settings.enterkeys:
+        elif self.state == "win" and key in variables.settings.enterkeys:
             self.state = "exp"
             self.newexp = classvar.player.exp + stathandeling.exp_gained(self.enemy.lv)
-            self.animationtime = settings.current_time
+            self.animationtime = variables.settings.current_time
             self.oldexp = classvar.player.exp
-        elif self.state == "got exp" and key in settings.enterkeys:
-            settings.state = "world"  # finally exit Battle
+        elif self.state == "got exp" and key in variables.settings.enterkeys:
+            variables.settings.state = "world"  # finally exit Battle
 
     def onrelease(self, key):
         if self.state == "dance":
@@ -292,7 +292,8 @@ class Battle():
         self.state = "attacking"
         self.oldenemyhealth = self.enemy.health
         self.oldplayerhealth = classvar.player.health
-        self.animationtime = settings.current_time
+        self.animationtime = variables.settings\
+            .current_time
 
         def damageplayer():
             self.newplayerhealth = classvar.player.health - stathandeling.damage(enemylv)

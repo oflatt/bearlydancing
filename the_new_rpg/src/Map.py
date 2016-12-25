@@ -2,8 +2,6 @@
 # Oliver Flatt works on Classes
 import variables, pygame, classvar, random, stathandeling
 from Battle import Battle
-from variables import settings
-
 
 class Map():
     startpoint = [10, 10]  # xy coordinates of spawn point
@@ -152,7 +150,7 @@ class Map():
                     break
             if currentenemy == False:
                 currentenemy = self.enemies[len(self.enemies) - 1]
-            settings.state = "battle"
+            variables.settings.state = "battle"
             classvar.player.change_of_state()
             if(len(self.lvrange)>1):
                 currentenemy.lv = random.randint(self.lvrange[0], self.lvrange[1])

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import pygame, variables
+import pygame, variables, copy
 
 LOADINGTEXT = pygame.transform.scale2x(variables.font.render("LOADING...", 0, variables.WHITE))
 variables.screen.blit(LOADINGTEXT, [0,0])
@@ -8,8 +8,6 @@ pygame.display.flip()
 
 import maps
 import conversations, classvar, Menu
-
-Menu.load()
 
 pygame.display.set_caption("Bearly Dancing")
 
@@ -21,23 +19,29 @@ clock = pygame.time.Clock()
 
 maps.new_scale_offset()
 
-menu = Menu.Menu()
-
 #clear all the events so it does not mess up the game when it loads
 pygame.event.get()
+
+menu = Menu.load()
+
+#draw to make sure it's pic is available
+classvar.player.draw()
 
 # -------- Main Program Loop -----------
 while not done:
     # --- Event Processing- this is like keyPressed
     for event in pygame.event.get():
+        #first check for saving and exiting
         if event.type == pygame.QUIT:
             done = True
-        elif event.type == pygame.KEYDOWN and event.key in variables.settings.enterkeys and variables.settings.menuonq and \
-                        menu.options[menu.option] == "exit":
-            done = True
+        elif event.type == pygame.KEYDOWN and event.key in variables.settings.enterkeys and variables.settings.menuonq:
+            if menu.options[menu.option] == "exit":
+                done = True
+            elif menu.options[menu.option] == "save":
+                Menu.save(menu)
 
         # User pressed down on a key
-        elif event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 #if we are turning on the menu pause the beatmaps
                 if(not variables.settings.menuonq):

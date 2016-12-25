@@ -2,7 +2,6 @@
 #Oliver Flatt works on Classes
 import variables, classvar, stathandeling
 from Battle import Battle
-from variables import settings
 
 class Conversation():
     area = [0, 0, 0, 0] #x, y, width, height in a list (a Rect)
@@ -42,9 +41,9 @@ class Conversation():
     def exit_conversation(self):
         if self.special_battle == "none":
             self.progress = 0
-            settings.state = "world"
+            variables.settings.state = "world"
         else:
-            settings.state = "battle"
+            variables.settings.state = "battle"
             classvar.player.change_of_state()
             self.special_battle.health = stathandeling.max_health(self.special_battle.lv)
             classvar.battle = Battle(self.special_battle)

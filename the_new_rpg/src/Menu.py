@@ -1,24 +1,27 @@
 import graphics, variables, pygame, enemies, pickle, classvar, maps, os
-from variables import settings
 from classvar import player
 
 #can't pickle pygame masks, and problems pickeling pygame surfaces
-def save():
+def save(me):
     player.mask = 0
-    savelist = [settings, player.xpos, player.ypos, player.lv, player.exp, classvar.battle, maps.current_map_name]
+    savelist = [me, variables.settings, player.xpos, player.ypos, player.lv, player.exp, player.storyprogress, classvar.battle, maps.current_map_name]
     with open("bdsave0.txt", "wb") as f:
         pickle.dump(savelist, f)
+    player.scale_by_offset()
 
 def load():
+    m = Menu()
     if(os.path.isfile(os.path.abspath("bdsave0.txt"))):
         if os.path.getsize(os.path.abspath("bdsave0.txt")) > 0:
             f = open("bdsave0.txt", "rb")
             loadedlist = pickle.load(f)
-            variables.settings, player.xpos, player.ypos, player.lv, player.exp, classvar.battle, maps.current_map_name = loadedlist
-            maps.change_map_nonteleporting(maps.current_map_name)
+            m, variables.settings, player.xpos, player.ypos, player.lv, player.exp, player.storyprogress, classvar.battle, maps.current_map_name = loadedlist
+            maps.change_map(maps.current_map_name, player.xpos, player.ypos)
 
     if(not isinstance(classvar.battle, str)):
         classvar.battle.enemy.reset()
+
+    return m
 
 class Menu():
     option = 0
@@ -50,15 +53,13 @@ class Menu():
                           self.textxoffset * (3 / 4)])
 
     def onkey(self, key):
-        if key in settings.upkeys:
+        if key in variables.settings.upkeys:
             self.option = (self.option - 1) % len(self.options)
-        elif key in settings.downkeys:
+        elif key in variables.settings.downkeys:
             self.option = (self.option + 1) % len(self.options)
-        elif key in settings.enterkeys:
+        elif key in variables.settings.enterkeys:
             if self.options[self.option] == "resume":
-                settings.menuonq = False
+                variables.settings.menuonq = False
                 classvar.player.change_of_state()
                 if(not isinstance(classvar.battle, str)):
                     classvar.battle.unpause()
-            elif self.options[self.option] == "save":
-                save()

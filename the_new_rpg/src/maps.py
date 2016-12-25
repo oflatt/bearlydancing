@@ -5,12 +5,15 @@ from Map import Map
 from Rock import Rock
 from Exit import Exit
 from pygame import Rect
-from variables import settings
 
 # Coordinates for maps are based on the base of each map respectively
 honeyw = GR["honeyside0"]["w"]
 honeyh = GR["honeyside0"]["h"]
 extraarea = 50
+insidewidth = GR["honeyhouseinside"]["w"]
+insideheight = GR["honeyhouseinside"]["h"]
+# p is the width of a pixel relative to the background
+p = insidewidth / 176
 
 # outside3##############################################################################################################
 b = GR["rightturn"]["w"] / 10
@@ -70,11 +73,10 @@ outside1.startpoint = [b * 8, b * 4]
 outside1.exitareas = [Exit([outsidewidth, 0, extraarea, outsideheight], False, 'outside2', 0, "same"),
                       Exit([-extraarea, 0, extraarea, outsideheight], False, 'jeremyhome', GR["halfpath"]["w"] - honeyw,
                            "same"),
-                      Exit(
-                              [housewidth * (1.5 / 5), househeight * (3 / 5), housewidth * (1 / 10),
-                               househeight * (1 / 5)],
-                              True, 'honeyhome',
-                              (GR["bearhome"]["w"] / 2) - (honeyw / 2), GR["bearhome"]["h"] - (honeyh) - b / 20)]
+                      Exit([housewidth * (1.5 / 5), househeight * (3 / 5), housewidth * (1 / 10),
+                            househeight * (1 / 5)],
+                           True, 'honeyhome',
+                           p*41, insideheight-honeyh)]
 outside1.colliderects = [Rect(0, 0, housewidth, househeight - honeyh)]
 outside1.lvrange = [1, 2]
 outside1c = conversations.secondscene
@@ -85,15 +87,10 @@ outside1c.special_battle = enemies.greenie
 outside1.conversations = [outside1c]
 
 # honeyhome#############################################################################################################
-insidewidth = GR["honeyhouseinside"]["w"]
-insideheight = GR["honeyhouseinside"]["h"]
-# p is the width of a pixel relative to the background
-p = insidewidth / 176
 b = insidewidth / 10
-
 honeyhome = Map(GR["honeyhouseinside"],
                 [Rock(GR["table"], p * 75, p * 110, [0, 0.5, 1, 0.5]),
-                 Rock(GR['stash'], p*130, p*60, [0, 0.9, 1, 0.1])])
+                 Rock(GR['stash'], p * 130, p * 60, [0, 0.9, 1, 0.1])])
 honeyhome.startpoint = [86 * p, 56 * p]
 honeyhome.exitareas = [Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                             True, 'outside1',
@@ -105,10 +102,10 @@ racoonc.area = [0, 7 * b + GR["tp"]["h"], insidewidth,
 racoonc.isbutton = False
 racoonc.part_of_story = 1  # makes it so you can only have the conversation once
 honeyhome.conversations = [racoonc]
-# collide with two walls
 honeyhome.colliderects = [Rect(0, 0, p * 31, p * 74),  # bed
                           Rect(0, 0, insidewidth, p * 44),  # wall
-                          Rect(44 * p, 0, 26 * p, 56 * p)]  # wardrobe
+                          Rect(44 * p, 0, 26 * p, 56 * p),  # wardrobe
+                          Rect(p * 75, p * 110 + p * 11, p * 44, p * 13)]  # table
 
 # teleportation and stuff###############################################################################################
 home_map = honeyhome
@@ -160,16 +157,16 @@ def change_map(name, newx, newy):
 def engage_conversation(c):
     classvar.player.change_of_state()
     if c.part_of_story == "none":
-        settings.state = "conversation"
+        variables.settings.state = "conversation"
         conversations.currentconversation = c
     elif c.part_of_story == classvar.player.storyprogress:
-        settings.state = "conversation"
+        variables.settings.state = "conversation"
         classvar.player.storyprogress += 1
         conversations.currentconversation = c
 
 
 def on_key(key):
-    if key in settings.enterkeys:
+    if key in variables.settings.enterkeys:
         e = current_map.checkexit()
         c = current_map.checkconversation()
         if not e == False:
