@@ -42,8 +42,7 @@ class Battle():
         specs["lv"] = self.enemy.lv
         specs["rules"].extend(self.enemy.beatmaprules)
         self.beatmaps = [randombeatmap.random_beatmap(specs)]
-        self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
-        self.enemy.animation.reset()
+        self.reset_enemy()
         classvar.player.heal()
 
     def pause(self):
@@ -67,6 +66,10 @@ class Battle():
             print("should only have one beatmap in the list!")
             self.current_beatmap += 1
         self.beatmaps[self.current_beatmap].reset(self.starttime, False)
+        self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
+
+    def reset_enemy(self):
+        self.enemy.reset()
         self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
 
     def draw(self):

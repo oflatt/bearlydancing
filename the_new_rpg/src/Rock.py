@@ -39,7 +39,6 @@ class Rock():
         maskpic.fill(pygame.Color(0, 0, 0, 0), [0, cs[1]*h+cs[3]*h, w, h-(cs[1]*h+cs[3]*h)])
         self.mask = pygame.mask.from_surface(maskpic)
 
-        w = self.base["w"]
         h = self.base["h"]
         # by default background range is by the top of the mask, the collision box
         if(not cs == [0,0,1,1] and isresetbackgroundrange):

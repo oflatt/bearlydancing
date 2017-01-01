@@ -73,7 +73,14 @@ def random_beatmap(specs):
         for n in notestoadd:
             n.time += timedifference
         l.extend(notestoadd)
-        return timedifference + notestoadd[-1].duration
+
+        maxduration = notestoadd[-1].duration
+
+        for g in notestoadd:
+            if(g.time>= notestoadd[-1].time and g.duration > maxduration):
+                maxduration = g.duration
+
+        return timedifference + maxduration
 
     def normalloop():
         oldt = time
@@ -382,11 +389,14 @@ def variation_of(old_notes, tempo):
 
 def variation_of_notes(old_notes):
     print("called variation of notes")
+    for a in old_notes:
+        print("value: "+  str(a.value) + "time: "+  str(a.time))
     def random_inrange():
         return randint(variables.minvalue, variables.maxvalue)
 
     l = []
     x = 0
+
     while x < len(old_notes):
         oldnote = old_notes[x]
         # sometimes change the value of the note, if the new value does not cause it to overlap any existing notes
@@ -394,14 +404,15 @@ def variation_of_notes(old_notes):
             # check to see if it overlaps here, if it does just use the old value
             iscopy = False
             rv = random_inrange()
-            x = 0
-            while (x < len(l)):
-                if (l[x].time + l[x].duration > oldnote.time and l[x].time < oldnote.time + oldnote.duration and l[
-                    x].screenvalue == value_to_screenvalue(rv)):
+            c = 0
+            while (c < len(l)):
+                if (l[c].time + l[c].duration > oldnote.time and l[c].time < oldnote.time + oldnote.duration and l[
+                    c].screenvalue == value_to_screenvalue(rv)):
                     iscopy = True
                     break
-                x += 1
+                c += 1
             if iscopy:
+                print("copy")
                 l.append(Note(oldnote.value, oldnote.time, oldnote.duration))
             else:
                 l.append(Note(rv, oldnote.time, oldnote.duration))

@@ -102,12 +102,13 @@ while not done:
     # put the screen on the widescreen
     pygame.draw.rect(variables.wide_screen, variables.BLACK, [0, 0, variables.mode[0], variables.mode[1]])
     variables.wide_screen.blit(variables.screen, [int(variables.mode[0] / 2 - variables.width / 2), 0])
+    variables.wide_screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [20, 20])
 
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
 
     # Limit frames per second
-    clock.tick(60)
+    clock.tick(240)
 
     # add the past tick to the current time
     variables.settings.current_time += clock.get_time()

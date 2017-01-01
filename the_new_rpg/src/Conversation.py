@@ -29,7 +29,6 @@ class Conversation():
             xpos = variables.width-w
         variables.screen.blit(currentpic, [xpos, b - h])
 
-
     def keypress(self, key):
         r = self.speaks[self.progress].keypress(key)
         if r == "done":

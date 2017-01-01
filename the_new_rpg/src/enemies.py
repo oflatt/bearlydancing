@@ -10,13 +10,13 @@ animations = [Animation([GR["sheep0"], GR["sheep1"]], 1),
 # refer to randombeatmap for the definitions for beatmap rules
 #we use a animation number because the actual animation cannot be saved
 counter = 0
-sheep = Enemy(counter, 0.5, "sheep", [])
+sheep = Enemy(counter, 0.5, "sheep", ["cheapending"])
 counter += 1
 greenie = Enemy(counter, 0.3, "mean greenie",
                 ["melodic", "skippy", "cheapending", "repeat"])
 counter += 1
 perp = Enemy(counter,
-             0.2, "perp", ["alternating"])
+             0.2, "perp", ["alternating", "cheapending"])
 
 def random_enemy():
     possibles = globals()

@@ -159,7 +159,7 @@ class Player(Dancer):
             else:
                 #collision detection for the moved x pos with the unmoved y pos
                 for x in range(0, len(colliderects)):
-                    p = self.normal_width/21
+                    p = self.normal_height/29
                     #make playerR only the feet
                     playerR = Rect(movedxpos+p*2, self.ypos+26*p, p*17, p*3)
                     if(playerR.colliderect(colliderects[x]) == 1):
@@ -181,7 +181,7 @@ class Player(Dancer):
             else:
                 #collision detection for the moved y pos with the unmoved x pos
                 for x in range(0, len(colliderects)):
-                    p = self.normal_width/21
+                    p = self.normal_height/29
                     #make playerR only the feet
                     playerR = Rect(self.xpos+p*2, movedypos+26*p, p*17, p*3)
                     if(playerR.colliderect(colliderects[x]) == 1):
@@ -220,7 +220,7 @@ class Player(Dancer):
                                     [int(c["w"]*variables.scaleoffset),
                                      int(c["h"]*variables.scaleoffset)])
         #this is to chop off the collision box for only the bottom of honey
-        maskpic.fill(pygame.Color(0,0,0,0), [0, 0, maskpic.get_width(), maskpic.get_height()*(5/6)])
+        maskpic.fill(pygame.Color(0,0,0,0), [0, 0, maskpic.get_width(), maskpic.get_height()*(26/29)])
         self.mask = pygame.mask.from_surface(maskpic)
         self.normal_width = maskpic.get_width()
         self.normal_height = maskpic.get_height()

@@ -52,14 +52,14 @@ class Note:
         # this is if it has either been missed or has not been played yet (normal draw)
         if self.ison and p[1] > variables.padypos > p[
             1] - height and self.beginning_score != None and self.end_score == None:
-            pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height, width * 1.25, end_height])
-            pygame.draw.rect(variables.screen, color, [p[0], p[1] - height, width, height - (p[1] - variables.padypos)])
+            pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height-end_height, width * 1.25, end_height])
+            pygame.draw.rect(variables.screen, color, [p[0], p[1] - height-end_height, width, height+end_height - (p[1] - variables.padypos)])
         elif not self.height_offset == 0:
             if(height-self.height_offset > 1):
-                pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height, width * 1.25, end_height])
-                pygame.draw.rect(variables.screen, color, [p[0], p[1] - height, width, height - self.height_offset])
+                pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height-end_height, width * 1.25, end_height])
+                pygame.draw.rect(variables.screen, color, [p[0], p[1] - height-end_height, width, height+end_height - self.height_offset])
         elif self.beginning_score == None or self.beginning_score == variables.miss_value or self.end_score == variables.miss_value:
-            pygame.draw.rect(variables.screen, color, [p[0], p[1] - height, width, height])
-            pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height, width * 1.25, end_height])
+            pygame.draw.rect(variables.screen, color, [p[0], p[1] - height-end_height, width, height+end_height])
+            pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height-end_height, width * 1.25, end_height])
             pygame.draw.rect(variables.screen, color,
                              [p[0] - width / 8, p[1] - end_height + 2, width * 1.25, end_height])

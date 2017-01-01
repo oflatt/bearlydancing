@@ -58,13 +58,14 @@ class Beatmap():
 
         # draw which ones are pressed
         for x in range(0, 8):
-            if self.held_keys[x] == True:
+            if self.held_keys[x]:
                 xoffset = 0
                 if (x + 1 > 4):
                     xoffset = middleoffset
                 ew = w * 1.25
                 pygame.draw.ellipse(variables.screen, variables.WHITE, [padxspace * (x + 1) - w / 8 + xoffset,
-                                                                        padypos + padheight / 2 - ew / 4, ew, ew / 2])
+                                                                        padypos - padheight + padheight / 2 - ew / 4,
+                                                                        ew, ew / 2])
 
         self.draw_pads()
 
@@ -76,7 +77,7 @@ class Beatmap():
             if (x > 4):
                 xoffset = middleoffset
             pygame.draw.rect(variables.screen, variables.notes_colors[x - 1],
-                             [padxspace * (x) - w / 8 + xoffset, padypos, w * 1.25, padheight])
+                             [padxspace * (x) - w / 8 + xoffset, padypos - padheight, w * 1.25, padheight])
 
         # draw the feedback (keys then scores, perfect ect)
         for x in range(0, 8):
@@ -84,7 +85,7 @@ class Beatmap():
             if (x > 3):
                 xoffset = middleoffset
             if variables.settings.current_time < self.feedback_timers[x]:
-                variables.screen.blit(feedback[x], [padxspace * (x + 1) - w / 8 + xoffset, padypos])
+                variables.screen.blit(feedback[x], [padxspace * (x + 1) - w / 8 + xoffset, padypos - padheight])
 
     def notes_on_screen(self):
         n = []

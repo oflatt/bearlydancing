@@ -19,7 +19,7 @@ def load():
             maps.change_map(maps.current_map_name, player.xpos, player.ypos)
 
     if(not isinstance(classvar.battle, str)):
-        classvar.battle.enemy.reset()
+        classvar.battle.reset_enemy()
 
     return m
 
