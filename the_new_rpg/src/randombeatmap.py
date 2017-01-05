@@ -1,7 +1,7 @@
 from Beatmap import Beatmap
 from Note import Note
 from Note import value_to_screenvalue
-import random
+import random, copy
 from random import randint
 import variables
 
@@ -10,12 +10,14 @@ skippy- high chance of note being 2 away, with continuing direction chance, only
 alternating- high chance to go back to a note or be near the previous note, and if not further away, uses melodic chords
 repeat- repeats a melody with variations
 cheapending- pick a random tonic and throw it on the end
+rests- high chance of shorter notes and rests in between notes
 '''
 testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
 testmapb = [Beatmap((1200 * 3) / 4, [Note(0, 1, 1), Note(0, 4, 1), Note(0, 5, 1), Note(1, 6, 1)])]
 testmap = [Beatmap((1200 * 3) / 4, [Note(0, 1, 0.9), Note(-1, 2, 1), Note(8, 3, 1), Note(14, 5, 1), Note(-7, 6, 1)])]
 
 
+# if n is 2, then there is a 2/3 chance of true
 def myrand(n):
     if (randint(0, n) < n):
         return True
@@ -46,6 +48,7 @@ def shorten_doubles(l):
 
 
 def random_beatmap(specs):
+    print(specs["rules"])
     l = []
     lv = specs["lv"]
     maxtime = specs["maxtime"]
@@ -77,7 +80,7 @@ def random_beatmap(specs):
         maxduration = notestoadd[-1].duration
 
         for g in notestoadd:
-            if(g.time>= notestoadd[-1].time and g.duration > maxduration):
+            if (g.time >= notestoadd[-1].time and g.duration > maxduration):
                 maxduration = g.duration
 
         return timedifference + maxduration
@@ -99,16 +102,17 @@ def random_beatmap(specs):
             # if we do a repitition
             if (randint(-1, len(l) % repeatlength) == 0 and len(l) >= repeatlength):
                 # add on the last repeatlength notes again, varied
+                print('do repitition')
                 time += repitition()
             else:
                 time += normalloop()
         else:
             time += normalloop()
 
-    if("cheapending" in specs["rules"]):
+    if ("cheapending" in specs["rules"]):
         lastvalue = random.choice([variables.minvalue, variables.maxvalue, 0])
-        startt = l[-1].time+l[-1].duration
-        l.append(Note(lastvalue, startt, 1+(1-startt%1)))
+        startt = l[-1].time + l[-1].duration
+        l.append(Note(lastvalue, startt, 1 + (1 - startt % 1)))
 
     tempo = (1200 * 3) / ((lv / 3) + 3.5)
     l = shorten_doubles(l)
@@ -390,35 +394,38 @@ def variation_of(old_notes, tempo):
 def variation_of_notes(old_notes):
     print("called variation of notes")
     for a in old_notes:
-        print("value: "+  str(a.value) + "time: "+  str(a.time))
+        print("value: " + str(a.value) + "time: " + str(a.time))
+
     def random_inrange():
         return randint(variables.minvalue, variables.maxvalue)
 
-    l = []
-    x = 0
+    l = copy.deepcopy(old_notes)
 
-    while x < len(old_notes):
-        oldnote = old_notes[x]
+    for p in range(len(l)):
         # sometimes change the value of the note, if the new value does not cause it to overlap any existing notes
-        if (not myrand(4) and x != len(old_notes) - 1):
-            # check to see if it overlaps here, if it does just use the old value
+        if (not myrand(4)):
+            oldnote = l[p]
+            newvalue = random_inrange()
+
             iscopy = False
-            rv = random_inrange()
             c = 0
+
+            # check if the new value would cause it to overlap another note
             while (c < len(l)):
-                if (l[c].time + l[c].duration > oldnote.time and l[c].time < oldnote.time + oldnote.duration and l[
-                    c].screenvalue == value_to_screenvalue(rv)):
+                # exit when beyond the place we are looking at
+                if (l[c].time > l[c].time + l[p].duration):
+                    break
+                # don't check for overlapping if the note is the same as the one being varied
+                elif (c == p):
+                    pass
+                elif (l[c].time + l[c].duration > oldnote.time and l[c].time < oldnote.time + oldnote.duration and l[
+                    c].screenvalue == value_to_screenvalue(newvalue)):
                     iscopy = True
                     break
                 c += 1
-            if iscopy:
-                print("copy")
-                l.append(Note(oldnote.value, oldnote.time, oldnote.duration))
-            else:
-                l.append(Note(rv, oldnote.time, oldnote.duration))
-        else:
-            l.append(Note(oldnote.value, oldnote.time, oldnote.duration))
-        x += 1
+
+            if not iscopy:
+                l[p] = Note(newvalue, oldnote.time, oldnote.duration)
 
     l = shorten_doubles(l)
     return (l)

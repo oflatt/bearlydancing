@@ -49,9 +49,7 @@ hole = Rock(GR["rabbithole"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbith
 jmyman = Rock(GR["jeremy0"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 3 / 4, 1, 1 / 4])
 jmyman.background_range = hole.background_range.copy()
 
-jeremyhome = Map(GR["horizontal"],
-                 [hole,
-                  jmyman])
+jeremyhome = Map(GR["horizontal"], [hole, jmyman])
 jeremyhome.exitareas = [
     Exit([b * 10, int(GR["house"]["h"]), extraarea, GR["halfpath"]["h"]], False, 'outside1', 0, "same")]
 conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
@@ -61,14 +59,14 @@ jeremyhome.conversations = [conversations.jeremy]
 # outside1##############################################################################################################
 b = GR["horizontal"]["w"] / 10
 
-treerock = Rock(GR["pinetree0"], 2.9 * b, 3 * b, treecollidesection)
+treerock = Rock(GR["pinetree0"], 3.5 * b, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + GR["pinetree0"]["h"] - GR["meangreen0"]["h"]
-meangreenrock = Rock(GR["meangreen0"].copy(), 3.2 * b, meangreeny, [0, 0.75, 1, 0.75])
+meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
 meangreenrock.background_range = treerock.background_range.copy()
 outside1 = Map(GR["horizontal"], [Rock(GR["house"], 0, 0, None),
                                   meangreenrock,
                                   Rock(GR["rock"], 6.5 * b, 7 * b, [0, 0, 1, 1]),
-                                  Rock(GR["rock"], 4.5 * b, 3.5 * b, [0, 0, 1, 1]),
+                                  Rock(GR["rock"], 5.5 * b, 3.5 * b, [0, 0, 1, 1]),
                                   Rock(GR["rock"], 2.5 * b, 6.3 * b, [0, 0, 1, 1]),
                                   treerock])
 housewidth = GR["house"]["w"]
@@ -86,7 +84,7 @@ outside1.exitareas = [Exit([outsidewidth, 0, extraarea, outsideheight], False, '
 outside1.colliderects = [Rect(0, 0, housewidth, househeight)]
 outside1.lvrange = [1, 2]
 outside1c = conversations.secondscene
-outside1c.area = [3.1 * b, 0, outsidewidth, outsideheight]
+outside1c.area = [treerock.x, 0, outsidewidth, outsideheight]
 outside1c.isbutton = False
 outside1c.part_of_story = 2
 outside1c.special_battle = enemies.greenie

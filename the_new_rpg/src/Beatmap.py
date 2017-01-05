@@ -104,6 +104,7 @@ class Beatmap():
         dt = variables.settings.current_time - self.starttime
         if (self.pausetime):
             dt -= variables.settings.current_time - self.pausetime
+
         ypos = (dt - (note.time * self.tempo)) * self.speed * variables.dancespeed
         if (note.screenvalue > 3):
             xpos = note.screenvalue * padxspace + middleoffset + padxspace

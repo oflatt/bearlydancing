@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # Oliver works on classes
-import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap
+import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap, copy
 from Button import Button
 from play_sound import play_sound
 
@@ -38,7 +38,7 @@ class Battle():
         # state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
         self.option = 1
-        specs = variables.generic_specs.copy()
+        specs = copy.deepcopy(variables.generic_specs)
         specs["lv"] = self.enemy.lv
         specs["rules"].extend(self.enemy.beatmaprules)
         self.beatmaps = [randombeatmap.random_beatmap(specs)]
@@ -67,10 +67,12 @@ class Battle():
             self.current_beatmap += 1
         self.beatmaps[self.current_beatmap].reset(self.starttime, False)
         self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
+        self.enemy.animation.beginning_time = self.starttime
 
     def reset_enemy(self):
         self.enemy.reset()
         self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
+        self.enemy.animation.beginning_time = self.starttime
 
     def draw(self):
         h = variables.height
@@ -251,8 +253,10 @@ class Battle():
         dt = variables.settings.current_time - self.starttime
         ypos = (dt - (self.drumcounter * self.beatmaps[self.current_beatmap].tempo)) * \
                self.beatmaps[self.current_beatmap].speed * variables.dancespeed
+        #offset it so in the beginning drum beats
+        ypos += 7*self.beatmaps[self.current_beatmap].tempo*self.beatmaps[self.current_beatmap].speed * variables.dancespeed
         # play a drum sound if it is on the beat
-        if (ypos >= 0):
+        if (ypos >= variables.padypos):
             self.drumcounter += 1
             play_sound("drum kick heavy")
 
