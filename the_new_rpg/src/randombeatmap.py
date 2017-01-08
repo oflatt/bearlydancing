@@ -12,6 +12,7 @@ repeat- repeats a melody with variations
 cheapending- pick a random tonic and throw it on the end
 rests- high chance of shorter notes and rests in between notes
 '''
+
 testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
 testmapb = [Beatmap((1200 * 3) / 4, [Note(0, 1, 1), Note(0, 4, 1), Note(0, 5, 1), Note(1, 6, 1)])]
 testmap = [Beatmap((1200 * 3) / 4, [Note(0, 1, 0.9), Note(-1, 2, 1), Note(8, 3, 1), Note(14, 5, 1), Note(-7, 6, 1)])]
@@ -223,12 +224,10 @@ def melodic_value(rv, depth, specs, l):
         secondv = random_last(1, l).value
         # if there was a jump previously
         if (lastv > secondv + 2):
-            print("back1")
             # 2/3 chance to go back one note
             if (myrand(2)):
                 value = lastv - 1
         elif (lastv < secondv - 2):
-            print("back1")
             if (myrand(2)):
                 value = lastv + 1
 
@@ -302,10 +301,15 @@ def random_value(t, ischord, list, specs):
     rv = randint(variables.minvalue, variables.maxvalue)
     depth = notedepth(l)
 
-    # handeling rests, 8/9 times it will be a note
-    if ("melodic" in specs["rules"]):
-        if not myrand(8):
-            rv = "rest"
+    # handeling rests
+    if(len(l)>0):
+        if("rests" in specs["rules"] and l[0].time+l[0].duration >= t):
+            #high chance of a rest if the last note was not a rest
+            if(myrand(4)):
+                rv = "rest"
+    # 8/9 a rest if not rests rule
+    elif not myrand(8):
+        rv = "rest"
 
     def melodicchord(rv):
         value = rv
@@ -353,8 +357,6 @@ def random_value(t, ischord, list, specs):
 
 def rand_duration(time, list, specs):
     lv = specs["lv"]
-    # flip it so we can look at it more easily
-    l = list[::-1]
 
     d = 1
     if (randint(0, 50) < (lv + 2) ** 2):
@@ -384,6 +386,12 @@ def rand_duration(time, list, specs):
         # want to fix offbeats less that 0.5 quickly
         if (randint(0, 1000) > lv ** 2):
             d = 1 - (time % 1)
+
+    # good chance of making it half as long for the rests rule
+    if("rests" in specs["rules"]):
+        if(myrand(4)):
+            d = d/2
+
     return d
 
 

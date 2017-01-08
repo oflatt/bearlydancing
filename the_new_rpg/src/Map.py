@@ -131,7 +131,7 @@ class Map():
         # goes through the list of enemies, adding up all the encounter chances up until that list number
         def collect_encounter_chances(list_placement):
             chance = 0
-            for x in range(0, list_placement + 1):
+            for x in range(list_placement + 1):
                 chance += self.enemies[x].rarity
             return chance
 
@@ -141,20 +141,25 @@ class Map():
                         random.random() < variables.encounter_chance and \
                         len(self.enemies) > 0:
             currentenemy = False
-            random_factor = random.random()
-            for x in range(0, len(self.enemies)):
-                e = self.enemies[x]
-                # if the random factor is below all of the chances previously to now added up
-                if random_factor < collect_encounter_chances(x):
-                    currentenemy = e
-                    break
-            if currentenemy == False:
-                currentenemy = self.enemies[len(self.enemies) - 1]
-            variables.settings.state = "battle"
-            classvar.player.change_of_state()
-            if(len(self.lvrange)>1):
-                currentenemy.lv = random.randint(self.lvrange[0], self.lvrange[1])
+
+            # if all the chances are 1, just select a random enemy by default
+            if (collect_encounter_chances(len(self.enemies)-1) == len(self.enemies)):
+                currentenemy = random.choice(self.enemies)
             else:
-                currentenemy.lv = self.lvrange[0]
-            currentenemy.health = stathandeling.max_health(currentenemy.lv)
-            classvar.battle = Battle(currentenemy)
+                random_factor = random.random()
+                for x in range(0, len(self.enemies)):
+                    e = self.enemies[x]
+                    # if the random factor is below all of the chances previously to now added up
+                    if random_factor < collect_encounter_chances(x):
+                        currentenemy = e
+                        break
+
+            if currentenemy:
+                variables.settings.state = "battle"
+                classvar.player.change_of_state()
+                if(len(self.lvrange)>1):
+                    currentenemy.lv = random.randint(self.lvrange[0], self.lvrange[1])
+                else:
+                    currentenemy.lv = self.lvrange[0]
+                currentenemy.health = stathandeling.max_health(currentenemy.lv)
+                classvar.battle = Battle(currentenemy)

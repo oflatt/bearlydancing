@@ -23,8 +23,8 @@ b = GR["rightturn"]["w"] / 10
 outsideheight = GR["rightturn"]["h"]
 outside3 = Map(GR["rightturn"], [])
 outside3.exitareas = [Exit([0, outsideheight, b * 10, extraarea], False, "outside2", "same", 0)]
-outside3.enemies = [enemies.sheep, enemies.greenie, enemies.perp]
-outside3.lvrange = [5, 6]  # [1,2]
+outside3.enemies = [enemies.spoe]
+outside3.lvrange = [1,2]
 
 # outside2##############################################################################################################
 b = GR["leftturn"]["w"] / 10
