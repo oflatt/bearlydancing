@@ -41,7 +41,7 @@ class Menu():
 
     def reset(self):
         self.option = 0
-        self.enemyanimation = enemies.random_enemy()
+        self.enemyanimation = enemies.random_enemy("woods")
 
     def draw(self):
         for x in range(len(self.optionpics)):

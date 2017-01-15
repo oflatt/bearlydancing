@@ -1,10 +1,8 @@
 import math
-
 import numpy
-import pygame
+import pygame, variables
 
-import variables
-
+nessoundfont = "The_Nes_Soundfont.sf2"
 
 def make_sound(frequency):
     duration = (1/frequency)*50          # in seconds

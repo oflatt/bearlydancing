@@ -82,6 +82,10 @@ class Battle():
         # background
         pygame.draw.rect(variables.screen, variables.BLACK, [0, 0, w, h])
 
+        #draw enemy first
+        epic = self.enemy.animation.current_frame()["img"]
+        variables.screen.blit(epic, [w - epic.get_width(), 0])
+
         # draw beatmap
         if self.state == "dance":
             self.beatmaps[self.current_beatmap].draw()
@@ -152,9 +156,6 @@ class Battle():
                 textscaled = graphics.sscale(text)
                 variables.screen.blit(textscaled,
                                       [w / 2 - (textscaled.get_width() / 2), h / 3 - textscaled.get_height()])
-
-        epic = self.enemy.animation.current_frame()["img"]
-        variables.screen.blit(epic, [w - epic.get_width(), 0])
 
         # player health bar
         playermaxh = stathandeling.max_health(p.lv)

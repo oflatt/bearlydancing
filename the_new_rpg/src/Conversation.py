@@ -9,10 +9,13 @@ class Conversation():
     progress = 0
     part_of_story = "none"
     special_battle = "none" #none or an enemy to encounter after the conversation
+    timestalkedto = 0
+    exitteleport = ["same", "same"]
 
-    def __init__(self, speaks):
+    def __init__(self, speaks, speaksafter=None):
         #a list of Speak
         self.speaks = speaks
+        self.speaksafter = speaksafter
 
     def draw(self):
         #draws text
@@ -46,6 +49,12 @@ class Conversation():
             classvar.player.change_of_state()
             self.special_battle.health = stathandeling.max_health(self.special_battle.lv)
             classvar.battle = Battle(self.special_battle)
+
+        self.timestalkedto += 1
+        if self.speaksafter!=None:
+            self.speaks = self.speaksafter
+        if self.exitteleport != ["same", "same"]:
+            classvar.player.teleport(self.exitteleport[0], self.exitteleport[1])
 
     def scale_by_offset(self, scale):
         s = scale

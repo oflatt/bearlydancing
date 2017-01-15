@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#Spirit and Jacob work on script
+# Spirit and Jacob work on script
 from graphics import GR
 from Conversation import Conversation
 from Speak import Speak
@@ -12,14 +12,16 @@ testconversation = Conversation([Speak(GR["honeyside0"], longtestdialogue),
                                  Speak(GR["honeyside0"], longtestdialogue),
                                  Speak(GR["honeyside0"], shorttestdialoge)])
 
+honeydotspeak = Speak(GR["honeyside3"], ["..."])
+
 ohhoney = ["Honey: Oh goody its lunch, I'm STARVING!",
            "Oh no, I left my glorious spinach-mushroom-provalone-",
            "bacon-broccoli quiche in the forest!",
            "I'll have to go get it."]
 ohtp = ["Trash Panda: But Honey, those forests are infested with monsters!",
-        "You shouldn't fight all of them just for a quiche!",]
+        "You shouldn't fight all of them just for a quiche!", ]
 ohhoney2 = ["It is no ordinary quiche, Trash Panda.",
-             "It is my glorious spinach-mushroom-provalone-bacon-broccoli quiche!",
+            "It is my glorious spinach-mushroom-provalone-bacon-broccoli quiche!",
             "Lunch is the most important meal of the day, I need to do this."]
 ohtp2 = ["I thought breakfast was the-"]
 ohhoney3 = ["Shush, I'm leaving now. Time for adventure!"]
@@ -40,9 +42,10 @@ ohhoney6 = ["Well that's a relief. I'm way better at dancing than fighting..."]
 jeremy = Conversation([Speak(GR["jeremy0"], ["Howdey, Honey",
                                              "Have a random piece of advice.",
                                              "Better dancers live further away from your home for whatever reason.",
-                                             "If you don't feel ready to continue, just stick around in one area for a while."])])
+                                             "If you don't feel ready to continue, just stick around in one area for a while."])],
+                      [Speak(GR["jeremy0"], ["Honey, your bard is bad and you might have to have them train a while.",
+                                             "Now bug off."])])
 
-#old
 secondscene = Conversation([Speak(GR["meangreen0"], monster),
                             Speak(GR["honeyside3"], ohhoney4),
                             Speak(GR["meangreen0"], monster2),
@@ -50,16 +53,13 @@ secondscene = Conversation([Speak(GR["meangreen0"], monster),
                             Speak(GR["meangreen0"], monster3),
                             Speak(GR["honeyside3"], ohhoney6)])
 
-penultimatefight = Conversation(["Honey: Oh wow, they must be",
-                                  "the last boss!",
-                                  "Monster: ARGHGHGHGH!",
-                                  "Honey: *gulp* Alright, let's go!"])
-
-lastfight = Conversation(["Honey: What, I thought I was done!",
-                          "Well, this should be easy.",
-                          "Monster: Hehehehehe..."])
-
-finalscene = Conversation(["Honey: *sniff sniff* Finally",
-                           "... lunch time."])
+dancelionpass = Conversation([Speak(GR["dancelion0"],
+                                    ["Hey, I'll only let you through if you beat me in a dance battle.",
+                                     "...Yes I do wait around all day stopping travelers like this, thank you."]),
+                              honeydotspeak,
+                              Speak(GR["dancelion0"], ["Wait, you telling me your bard can't play in the key of C minor?",
+                                                       "Come back when they can."])],
+                             [Speak(GR["dancelion0"], ["Come back when your bard can play in the key of C minor.",
+                                                       "I only dance to music in that key."])])
 
 currentconversation = testconversation

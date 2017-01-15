@@ -31,8 +31,10 @@ class Player(Dancer):
     current_animation = right_animation
 
     def teleport(self, x, y):
-        self.xpos = x
-        self.ypos = y
+        if not x == "same":
+            self.xpos = x
+        if not y == "same":
+            self.ypos = y
 
     def draw(self): #movement is combination of top down scrolling and free range
         m = maps.current_map

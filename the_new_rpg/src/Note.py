@@ -24,11 +24,15 @@ class Note:
     def __init__(self, value, time, duration):
         # value is the placement in the current scale (instrument) that the note is, 0 is the first note, can go neg
         # time is time in the whole song it is
-        self.value = value
+        self.newvalue(value)
         self.time = time
         self.duration = duration
+
+    def newvalue(self, v):
+        self.value = v
         #from 0-7 even if it is out of those bounds so it can be played on the screen
         self.screenvalue = value_to_screenvalue(self.value)
+
 
     def height(self, tempo):
         return self.duration * tempo * variables.dancespeed

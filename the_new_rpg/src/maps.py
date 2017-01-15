@@ -23,7 +23,7 @@ b = GR["rightturn"]["w"] / 10
 outsideheight = GR["rightturn"]["h"]
 outside3 = Map(GR["rightturn"], [])
 outside3.exitareas = [Exit([0, outsideheight, b * 10, extraarea], False, "outside2", "same", 0)]
-outside3.enemies = [enemies.spoe]
+outside3.enemies = enemies.woodsenemies
 outside3.lvrange = [1,2]
 
 # outside2##############################################################################################################
@@ -40,7 +40,7 @@ outside2 = Map(GR["leftturn"], [Rock(GR["rock"], 5 * b, 4 * b, [0, 0, 1, 1]),
 outside2.exitareas = [
     Exit([-extraarea, 0, extraarea, outsideheight], False, 'outside1', GR["horizontal"]["w"] - honeyw, "same"),
     Exit([0, -extraarea, b * 10, extraarea], False, 'outside3', "same", GR["rightturn"]["h"] - honeyh)]
-outside2.enemies = [enemies.sheep, enemies.greenie, enemies.perp]
+outside2.enemies = enemies.woodsenemies
 outside2.lvrange = [1]
 
 # jeremyhome############################################################################################################
@@ -49,12 +49,17 @@ hole = Rock(GR["rabbithole"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbith
 jmyman = Rock(GR["jeremy0"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 3 / 4, 1, 1 / 4])
 jmyman.background_range = hole.background_range.copy()
 
-jeremyhome = Map(GR["horizontal"], [hole, jmyman])
+jeremyhome = Map(GR["horizontal"], [hole,
+                                    jmyman,
+                                    Rock(GR["dancelion0"], 0, b*4, [0,3/4,1,1/4])])
 jeremyhome.exitareas = [
     Exit([b * 10, int(GR["house"]["h"]), extraarea, GR["halfpath"]["h"]], False, 'outside1', 0, "same")]
 conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"] - (honeyw / 2), GR["rabbithole"]["h"]]
-jeremyhome.conversations = [conversations.jeremy]
+conversations.dancelionpass.area = [0, 0, b, b*10]
+conversations.dancelionpass.isbutton = False
+conversations.dancelionpass.exitteleport = [b+honeyw/4, "same"]
+jeremyhome.conversations = [conversations.jeremy, conversations.dancelionpass]
 
 # outside1##############################################################################################################
 b = GR["horizontal"]["w"] / 10

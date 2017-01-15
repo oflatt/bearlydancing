@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # Oliver Flatt works on Classes
-import variables, pygame, classvar, random, stathandeling
+import variables, pygame, classvar, random, stathandeling, math
 from Battle import Battle
+
 
 class Map():
     startpoint = [10, 10]  # xy coordinates of spawn point
@@ -10,6 +11,7 @@ class Map():
     enemies = []  # list of possible enemy encounters
     lvrange = [1]
     last_encounter_check = 0
+    encounterchecksnotactivated = 0
     conversations = []  # list of conversation on the map
     isscaled = False  # if scale stuff has been called
 
@@ -89,10 +91,11 @@ class Map():
                                         classvar.player.ypos - pw, pw)
 
     def draw_foreground(self):
-        #detect if within the foreground range
-        playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width, classvar.player.normal_height)
+        # detect if within the foreground range
+        playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
+                                 classvar.player.normal_height)
         for r in self.terrain:
-            if(not r.background_range.colliderect(playerrect)):
+            if (not r.background_range.colliderect(playerrect)):
                 r.draw()
 
     def draw_interation_button(self, xpos, ypos, width):
@@ -112,7 +115,10 @@ class Map():
         return currentexit
 
     def on_tick(self):
-        self.checkenemy()
+        if len(self.enemies) > 0:
+            if variables.settings.current_time - self.last_encounter_check >= variables.encounter_check_rate and classvar.player.ismoving():
+                self.checkenemy()
+                self.last_encounter_check = variables.settings.current_time
 
     def checkconversation(self):
         currentconversation = False
@@ -135,15 +141,13 @@ class Map():
                 chance += self.enemies[x].rarity
             return chance
 
-        # if it is time to check, the player is moving, we do encounter an enemy, and there are enemies available
-        if (pygame.time.get_ticks() - self.last_encounter_check) >= variables.encounter_check_rate and \
-                classvar.player.ismoving() and \
-                        random.random() < variables.encounter_chance and \
-                        len(self.enemies) > 0:
+        # if the random chance activates
+        if random.random() / (math.sqrt(self.encounterchecksnotactivated) + 0.2) < variables.encounter_chance:
+            self.encounterchecksnotactivated = 0
             currentenemy = False
 
             # if all the chances are 1, just select a random enemy by default
-            if (collect_encounter_chances(len(self.enemies)-1) == len(self.enemies)):
+            if (collect_encounter_chances(len(self.enemies) - 1) == len(self.enemies)):
                 currentenemy = random.choice(self.enemies)
             else:
                 random_factor = random.random()
@@ -157,9 +161,11 @@ class Map():
             if currentenemy:
                 variables.settings.state = "battle"
                 classvar.player.change_of_state()
-                if(len(self.lvrange)>1):
+                if (len(self.lvrange) > 1):
                     currentenemy.lv = random.randint(self.lvrange[0], self.lvrange[1])
                 else:
                     currentenemy.lv = self.lvrange[0]
                 currentenemy.health = stathandeling.max_health(currentenemy.lv)
                 classvar.battle = Battle(currentenemy)
+        else:
+            self.encounterchecksnotactivated += 1
