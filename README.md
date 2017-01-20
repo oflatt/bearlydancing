@@ -18,7 +18,7 @@ Example of how to change local path variables so you can call pip
 set PATH=%PATH%;"C:\Python34"
 set PATH=%PATH%;"C:\Python34\scripts"
 
-##setting up pyFluidSynth
+##Setting up pyFluidSynth
 Get visual studio for a c compiler, located for example:
 "c:\Program Files (x86)\Microsoft Visual Studio 14.0\vc\vcvarsall.bat"
 
