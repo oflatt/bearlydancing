@@ -30,10 +30,10 @@ def make_sound(frequency):
 #value of 0 corresponds to A4
 #-12 is A3, then
 all_tones = []
-# for x in range(36+1):
-#     s = make_sound((440*((2**(1/12))**(x-12))))
-#     s.set_volume(variables.battle_volume)
-#     all_tones.append(s)
+for x in range(36+1):
+    s = make_sound((440*((2**(1/12))**(x-12))))
+    s.set_volume(variables.battle_volume)
+    all_tones.append(s)
 
 def speedx(snd_array, factor):
     """ Speeds up / slows down a sound, by some factor. """
@@ -108,9 +108,6 @@ def makesounds(soundfont, instumentnum):
         fps, array = wavfile.read(newpath)
         transposed = pitchshift(array, x-12)
         all_tones.append(pygame.mixer.Sound(transposed))
-
-
-makesounds(nessoundfont, 26)
 
 Drum_kick_heavy = pygame.mixer.Sound("drum_heavy_kick.wav")
 Drum_kick_heavy.set_volume(variables.battle_volume*6)

@@ -3,6 +3,7 @@
 import variables, pygame, graphics
 
 class Speak():
+    side = None
     line = 0
     textsize = 0.5
 

@@ -15,8 +15,6 @@ class Rock():
         self.collidesection = collidesection
         if self.collidesection == None:
             self.collidesection = [0, 0, 0, 0]
-        cs = self.collidesection
-        #base is a png picture
         self.base = base
         self.x = x
         self.y = y
@@ -73,6 +71,8 @@ class Rock():
             self.collideh = self.h
         else:
             self.collideh *= s
+        if self.background_range == None:
+            self.background_range = pygame.Rect(-1000, -1000, 0,0)
         self.background_range.x *= s
         self.background_range.y *= s
         self.background_range.width *= s

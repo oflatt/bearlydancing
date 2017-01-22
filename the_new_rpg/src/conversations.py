@@ -12,6 +12,14 @@ testconversation = Conversation([Speak(GR["honeyside0"], longtestdialogue),
                                  Speak(GR["honeyside0"], longtestdialogue),
                                  Speak(GR["honeyside0"], shorttestdialoge)])
 
+everyyears = Speak(GR['honeyside0'], ["Every year the same thing. I'm going into hibernation,",
+                                      "and TP makes things difficult."])
+everyyears.side = 'l'
+
+thatracoon = Conversation([Speak(GR["honeyside0"], ["That raccoon...", "I knew he was up to no good yesterday.",
+                                                    "Now I have to track him down."]),
+                           everyyears])
+
 honeydotspeak = Speak(GR["honeyside3"], ["..."])
 
 ohhoney = ["Honey: Oh goody its lunch, I'm STARVING!",
@@ -57,8 +65,9 @@ dancelionpass = Conversation([Speak(GR["dancelion0"],
                                     ["Hey, I'll only let you through if you beat me in a dance battle.",
                                      "...Yes I do wait around all day stopping travelers like this, thank you."]),
                               honeydotspeak,
-                              Speak(GR["dancelion0"], ["Wait, you telling me your bard can't play in the key of C minor?",
-                                                       "Come back when they can."])],
+                              Speak(GR["dancelion0"],
+                                    ["Wait, you telling me your bard can't play in the key of C minor?",
+                                     "Come back when they can."])],
                              [Speak(GR["dancelion0"], ["Come back when your bard can play in the key of C minor.",
                                                        "I only dance to music in that key."])])
 

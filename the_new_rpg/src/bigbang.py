@@ -76,9 +76,9 @@ while not done:
     if (not variables.settings.menuonq):
         if variables.settings.state == "world":
             classvar.player.move()
+            maps.checkconversation()
             maps.checkexit()
             maps.current_map.on_tick()
-            maps.checkconversation()
         elif variables.settings.state == "battle":
             classvar.battle.ontick()
 
