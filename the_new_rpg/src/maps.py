@@ -6,6 +6,7 @@ from Map import Map
 from Rock import Rock
 from Exit import Exit
 from pygame import Rect
+from Conversation import Conversation
 
 # Coordinates for maps are based on the base of each map respectively
 honeyw = GR["honeyside0"]["w"]
@@ -92,7 +93,7 @@ outside1.lvrange = [1, 2]
 outside1c = conversations.secondscene
 outside1c.area = [treerock.x, 0, outsidewidth, outsideheight]
 outside1c.isbutton = False
-outside1c.part_of_story = 3
+outside1c.part_of_story = 2
 outside1c.special_battle = enemies.greenie
 outside1.conversations = [outside1c]
 
@@ -103,19 +104,19 @@ bigpaper.background_range = None  # always in front
 s1 = variables.font.render("I stole your lunch.", 0, variables.BLACK)
 s2 = variables.font.render("-Trash Panda", 0, variables.BLACK)
 s1 = scale_pure(s1, 0.5 * s1.get_height())
-s2 = scale_pure(s2, 0.5*s2.get_height())
-w1 = Rock({"img": s1, "w": s1.get_width(), "h": s1.get_height()}, b * 5 - s1.get_width()/2, b * 3, None)
+s2 = scale_pure(s2, 0.5 * s2.get_height())
+w1 = Rock({"img": s1, "w": s1.get_width(), "h": s1.get_height()}, b * 5 - s1.get_width() / 2, b * 3, None)
 w1.background_range = None
-w2 = Rock({"img": s2, "w": s2.get_width(), "h": s2.get_height()}, b * 5 - s2.get_width()/2, b * 4, None)
+w2 = Rock({"img": s2, "w": s2.get_width(), "h": s2.get_height()}, b * 5 - s2.get_width() / 2, b * 4, None)
 w2.background_range = None
 
 letter = Map(GR["backgroundforpaper"], [bigpaper,
                                         w1,
                                         w2])
-conversations.thatracoon.area = [0, 0, b*10, b*10]
+conversations.thatracoon.area = [0, 0, b * 10, b * 10]
 conversations.thatracoon.part_of_story = 1
 letter.conversations = [conversations.thatracoon]
-letter.exitareas = [Exit([0,0,b*10,b*10], True, 'honeyhome', 'same', 'same')]
+letter.exitareas = [Exit([0, 0, b * 10, b * 10], True, 'honeyhome', 'same', 'same')]
 
 # honeyhome#############################################################################################################
 b = insidewidth / 10
@@ -127,23 +128,20 @@ honeyhome = Map(GR["honeyhouseinside"],
                  littleletter,
                  Rock(GR['stash'], p * 130, p * 60, [0, 0.9, 1, 0.1])])
 honeyhome.startpoint = [86 * p, 56 * p]
-honeyhome.exitareas = [Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
-                            True, 'outside1',
-                            GR["house"]["w"] * (1 / 5), GR["house"]["h"] - honeyh + honeyfeetheight),
+doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
+                True, 'outside1',
+                GR["house"]["w"] * (1 / 5), GR["house"]["h"] - honeyh + honeyfeetheight)
+doorexit.conversation = conversations.hungry
+doorexit.conversation.storyrequirement = [1]
+honeyhome.exitareas = [doorexit,
                        Exit([p * 65, p * 100, 60, 30],
                             True, 'letter',
-                            "same", "same")]
-
-racoonc = conversations.firstscene
-racoonc.area = [0, 7 * b + GR["tp"]["h"], insidewidth,
-                extraarea]  # extraarea because it does not matter how thick it is down
-racoonc.isbutton = False
-racoonc.part_of_story = 2  # makes it so you can only have the conversation once
-honeyhome.conversations = [racoonc]
+                            GR["paper"]['w']*(3/10), 0)]
 honeyhome.colliderects = [Rect(0, 0, p * 31, p * 74),  # bed
                           Rect(0, 0, insidewidth, p * 44),  # wall
                           Rect(44 * p, 0, 26 * p, 56 * p),  # wardrobe
                           Rect(p * 75, p * 110 + p * 11, p * 44, p * 13)]  # table
+honeyhome.uselastposq = True
 
 # teleportation and stuff###############################################################################################
 home_map = honeyhome
@@ -171,24 +169,44 @@ def change_map_nonteleporting(name):
 
 
 def change_map(name, newx, newy):
+    current_map.lastx = classvar.player.xpos
+    current_map.lasty = classvar.player.ypos
+
+    xpos = newx
+    ypos = newy
+
+    oldscaleoffset = current_map.map_scale_offset
     change_map_nonteleporting(name)
-    if (isinstance(newx, str)):
-        newx = classvar.player.xpos
-        if (newx < 0):
-            newx = 0
-        if (newx > (current_map.base["w"] * current_map.map_scale_offset - (honeyw * current_map.map_scale_offset))):
-            newx = current_map.base["w"] * current_map.map_scale_offset - (honeyw * current_map.map_scale_offset)
+    #if the new pos is the same
+    if (isinstance(xpos, str)):
+        xpos = classvar.player.xpos
+        xpos /= oldscaleoffset
+        xpos *= current_map.map_scale_offset
+        if (xpos < 0):
+            xpos = 0
+        if (xpos > (current_map.base["w"] * current_map.map_scale_offset - (honeyw * current_map.map_scale_offset))):
+            xpos = current_map.base["w"] * current_map.map_scale_offset - (honeyw * current_map.map_scale_offset)
     else:
-        newx *= current_map.map_scale_offset
+        xpos *= current_map.map_scale_offset
+
     if (isinstance(newy, str)):
-        newy = classvar.player.ypos
-        if (newy < 0):
-            newy = 0
-        if (newy > (current_map.base["h"] * current_map.map_scale_offset - (honeyh * current_map.map_scale_offset))):
-            newy = current_map.base["h"] * current_map.map_scale_offset - (honeyh * current_map.map_scale_offset)
+        ypos = classvar.player.ypos
+        ypos /= oldscaleoffset
+        ypos *= current_map.map_scale_offset
+        if (ypos < 0):
+            ypos = 0
+        if (ypos > (current_map.base["h"] * current_map.map_scale_offset - (honeyh * current_map.map_scale_offset))):
+            print("changey")
+            ypos = current_map.base["h"] * current_map.map_scale_offset - (honeyh * current_map.map_scale_offset)
     else:
-        newy *= current_map.map_scale_offset
-    classvar.player.teleport(newx, newy)
+        ypos *= current_map.map_scale_offset
+
+    #for uselastposq
+    if current_map.uselastposq and current_map.lastx != None:
+        xpos = current_map.lastx
+        ypos = current_map.lasty
+
+    classvar.player.teleport(xpos, ypos)
     new_scale_offset()
 
 
@@ -207,11 +225,14 @@ def on_key(key):
     if key in variables.settings.enterkeys:
         e = current_map.checkexit()
         c = current_map.checkconversation()
-        #check for conversations first
+        # check for conversations first
         if not c == False:
             engage_conversation(c)
         elif not e == False:
-            change_map(e.name, e.newx, e.newy)
+            if type(e) == Conversation:
+                engage_conversation(e)
+            else:
+                change_map(e.name, e.newx, e.newy)
 
 
 def checkexit():

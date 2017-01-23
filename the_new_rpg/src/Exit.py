@@ -2,6 +2,8 @@
 import variables
 
 class Exit():
+    conversation = None
+
     def __init__(self, area, isbutton, name, newx, newy):
         self.area = area #x, y, width, height in a list (a Rect)
         self.isbutton = isbutton #true if you have to hit a button to enter

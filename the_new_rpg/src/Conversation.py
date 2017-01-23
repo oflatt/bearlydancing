@@ -8,7 +8,11 @@ class Conversation():
     area = [0, 0, 0, 0]  # x, y, width, height in a list (a Rect)
     isbutton = True  # true if you have to hit a button to enter
     progress = 0
+    #the number of the story that it is
     part_of_story = "none"
+    #list of all the story numbers that it would appear in
+    #empty means none
+    storyrequirement = []
     special_battle = "none"  # none or an enemy to encounter after the conversation
     timestalkedto = 0
     exitteleport = ["same", "same"]

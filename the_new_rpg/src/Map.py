@@ -11,6 +11,11 @@ class Map():
     enemies = []  # list of possible enemy encounters
     lvrange = [1]
     last_encounter_check = 0
+    #use last pos takes priority over teleportation (with newx and newy in exits)
+    #It means when re-entering a map it teleports the player to the last pos they were when they were last in the map
+    uselastposq = False
+    lastx = None #none until you exit the map for the first time
+    lasty = None
     encounterchecksnotactivated = 0
     conversations = []  # list of conversation on the map
     isscaled = False  # if scale stuff has been called
@@ -112,6 +117,14 @@ class Map():
                     and (p.ypos + p.normal_height) >= e.area[1] and p.ypos <= (e.area[1] + e.area[3]):
                 currentexit = e
                 break
+        #if there is a conversation, do that instead
+        if currentexit:
+            if currentexit.conversation != None:
+                e = currentexit.conversation
+                if e.part_of_story == "none" or e.part_of_story == classvar.player.storyprogress:
+                    if classvar.player.storyprogress in e.storyrequirement or len(e.storyrequirement) == 0:
+                        currentexit = e
+
         return currentexit
 
     def on_tick(self):
@@ -129,8 +142,9 @@ class Map():
                     and (p.ypos + p.normal_height) >= e.area[1] and p.ypos <= (e.area[1] + e.area[3]):
                 # then check if it is part of main storyline
                 if e.part_of_story == "none" or e.part_of_story == classvar.player.storyprogress:
-                    currentconversation = e
-                    break
+                    if classvar.player.storyprogress in e.storyrequirement or len(e.storyrequirement) == 0:
+                        currentconversation = e
+                        break
         return currentconversation
 
     def checkenemy(self):

@@ -16,6 +16,11 @@ everyyears = Speak(GR['honeyside0'], ["Every year the same thing. I'm going into
                                       "and TP makes things difficult."])
 everyyears.side = 'l'
 
+hungry = Conversation([Speak(GR["honeyside0"], ["I'm hungry...",
+                                                "And I have no reason to go outside.",
+                                                "Quick lunch, and back to sleep.",
+                                                "I'll eat the quiche I made yesterday."])])
+
 thatracoon = Conversation([Speak(GR["honeyside0"], ["That raccoon...", "I knew he was up to no good yesterday.",
                                                     "Now I have to track him down."]),
                            everyyears])
@@ -51,7 +56,7 @@ jeremy = Conversation([Speak(GR["jeremy0"], ["Howdey, Honey",
                                              "Have a random piece of advice.",
                                              "Better dancers live further away from your home for whatever reason.",
                                              "If you don't feel ready to continue, just stick around in one area for a while."])],
-                      [Speak(GR["jeremy0"], ["Honey, your bard is bad and you might have to have them train a while.",
+                      [Speak(GR["jeremy0"], ["Your bard is bad and you might have to have them train a while.",
                                              "Now bug off."])])
 
 secondscene = Conversation([Speak(GR["meangreen0"], monster),
