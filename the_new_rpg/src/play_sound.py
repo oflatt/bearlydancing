@@ -24,8 +24,8 @@ def make_sine(frequency):
 
     return pygame.sndarray.make_sound(buf)
 
-
-def make_square(frequency):
+#min refinement of 1 which means sine wave, and bigger numbers will take longer unless it is above 25 or so
+def make_square(frequency, squareness):
     duration = (1 / frequency) * 50  # in seconds
     sample_rate = 44100
 
@@ -37,10 +37,16 @@ def make_square(frequency):
 
     for s in range(n_samples):
         t = float(s) / sample_rate  # time in seconds
+        sval = 0
+        if squareness < 25:
+            for x in range(squareness):
+                sval += (1/(x*2 -1))*math.sin(math.pi * 2 * (2*x - 1) * frequency * t)
+        else:
+            sval = (frequency*t)%2
 
         # grab the x-coordinate of the sine wave at a given time, while constraining the sample to what our mixer is set to with "bits"
-        buf[s][0] = int(round(max_sample * ((frequency * t) % 2)))  # left
-        buf[s][1] = int(round(max_sample * ((frequency * t) % 2) * 0.5))  # right
+        buf[s][0] = int(round(max_sample * sval))  # left
+        buf[s][1] = int(round(max_sample * sval * 0.5))  # right
 
     return pygame.sndarray.make_sound(buf)
 
@@ -50,7 +56,7 @@ def make_square(frequency):
 # -12 is A3, then
 all_tones = []
 for x in range(36 + 1):
-    s = make_square((440 * ((2 ** (1 / 12)) ** (x - 12))))
+    s = make_square((440 * ((2 ** (1 / 12)) ** (x - 12))), 24)
     s.set_volume(variables.battle_volume)
     all_tones.append(s)
 
