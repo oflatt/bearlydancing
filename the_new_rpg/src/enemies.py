@@ -17,8 +17,7 @@ counter += 1
 greenie = Enemy(counter, 1, "mean greenie",
                 ["melodic", "skippy", "cheapending", "repeat"])
 counter += 1
-perp = Enemy(counter,
-             1, "perp", ["alternating", "cheapending"])
+perp = Enemy(counter, 1, "perp", ["alternating", "cheapending"])
 counter += 1
 spoe = Enemy(counter, 1, "spoe", ["rests", "melodic", "cheapending", "repeat"])
 counter += 1

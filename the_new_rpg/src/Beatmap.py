@@ -10,7 +10,6 @@ middleoffset = padxspace / 2
 feedback = [graphics.Atext, graphics.Stext, graphics.Dtext, graphics.Ftext,
             graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
 
-
 class Beatmap():
     scale = [2, 2, 1, 2, 2, 2, 1]  # list of offsets for the scale
     speed = 1

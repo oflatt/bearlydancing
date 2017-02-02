@@ -24,6 +24,8 @@ def load():
     if (not isinstance(classvar.battle, str)):
         classvar.battle.reset_enemy()
 
+    # make the menu not on
+    variables.settings.menuonq = False
     return m
 
 
@@ -66,6 +68,7 @@ class Menu():
             self.option = (self.option + 1) % len(self.options)
         elif key in variables.settings.enterkeys:
             if self.options[self.option] == "resume":
+                self.reset()
                 variables.settings.menuonq = False
                 classvar.player.change_of_state()
                 if (not isinstance(classvar.battle, str)):

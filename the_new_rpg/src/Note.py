@@ -1,6 +1,7 @@
 import pygame
 import variables
 
+
 def value_to_screenvalue(v):
     sv = v % 7
     if (sv == 0 and v >= 7):
@@ -8,6 +9,7 @@ def value_to_screenvalue(v):
     elif (sv < 0):
         sv += 7
     return sv
+
 
 class Note:
     # if they miss the note or stop playing it halfway ison will turn false and they will miss the note
@@ -30,9 +32,8 @@ class Note:
 
     def newvalue(self, v):
         self.value = v
-        #from 0-7 even if it is out of those bounds so it can be played on the screen
+        # from 0-7 even if it is out of those bounds so it can be played on the screen
         self.screenvalue = value_to_screenvalue(self.value)
-
 
     def height(self, tempo):
         return self.duration * tempo * variables.dancespeed
@@ -50,20 +51,29 @@ class Note:
         end_height = variables.height / 80
 
         p = self.pos
-        # subtract height to y because the pos is the bottom of the rectangle
+
+        # subtract height from y because the pos is the bottom of the rectangle
         # the first case is if the note is currently being played
+        if self.ison and variables.padypos > p[1] - height and self.beginning_score != None and self.end_score == None:
+            pygame.draw.rect(variables.screen, color,
+                             [p[0] - width / 8, p[1] - height - end_height, width * 1.25, end_height])
+            pygame.draw.rect(variables.screen, color, [p[0], p[1] - height - end_height, width,
+                                                       height + end_height - (p[1] - variables.padypos)])
+
         # second case is if the note was interrupted in the middle and counted as a miss
-        # third case is if it has either been missed or has not been played yet (normal draw)
-        if self.ison and p[1] > variables.padypos > p[
-            1] - height and self.beginning_score != None and self.end_score == None:
-            pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height-end_height, width * 1.25, end_height])
-            pygame.draw.rect(variables.screen, color, [p[0], p[1] - height-end_height, width, height+end_height - (p[1] - variables.padypos)])
         elif not self.height_offset == 0:
-            if(height-self.height_offset > 1):
-                pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height-end_height, width * 1.25, end_height])
-                pygame.draw.rect(variables.screen, color, [p[0], p[1] - height-end_height, width, height+end_height - self.height_offset])
+            if (height - self.height_offset > 1):
+                pygame.draw.rect(variables.screen, color,
+                                 [p[0] - width / 8, p[1] - height - end_height, width * 1.25, end_height])
+                pygame.draw.rect(variables.screen, color,
+                                 [p[0], p[1] - height - end_height, width, height + end_height - self.height_offset])
+
+        # third case is if it has either been missed or has not been played yet (normal draw)
         elif self.beginning_score == None or self.beginning_score == variables.miss_value or self.end_score == variables.miss_value:
-            pygame.draw.rect(variables.screen, color, [p[0], p[1] - height-end_height/2, width, height])
-            pygame.draw.rect(variables.screen, color, [p[0] - width / 8, p[1] - height-end_height, width * 1.25, end_height])
+            pygame.draw.rect(variables.screen, color, [p[0], p[1] - height - end_height / 2, width, height])
+            pygame.draw.rect(variables.screen, color,
+                             [p[0] - width / 8, p[1] - height - end_height, width * 1.25, end_height])
             pygame.draw.rect(variables.screen, color,
                              [p[0] - width / 8, p[1] - end_height, width * 1.25, end_height])
+
+        #don't draw it if it has been played

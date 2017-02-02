@@ -51,6 +51,7 @@ while not done:
                     if (not isinstance(classvar.battle, str)):
                         classvar.battle.unpause()
                 variables.settings.menuonq = not variables.settings.menuonq
+                menu.reset()
                 classvar.player.change_of_state()
             if (not variables.settings.menuonq):
                 if variables.settings.state == "conversation":
