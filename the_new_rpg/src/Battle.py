@@ -3,6 +3,7 @@
 import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap, copy
 from Button import Button
 from play_sound import play_sound
+from play_sound import soundpackkeys
 
 
 class Battle():
@@ -29,7 +30,7 @@ class Battle():
     damage_multiplier = 1
     drumcounter = 0
 
-    #if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
+    # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
     pausetime = 0
 
     def __init__(self, enemy):
@@ -37,7 +38,7 @@ class Battle():
         self.enemy = enemy
         # state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
-        self.option = 1
+        self.option = 0
         specs = copy.deepcopy(variables.generic_specs)
         specs["lv"] = self.enemy.lv
         specs["rules"].extend(self.enemy.beatmaprules)
@@ -51,7 +52,7 @@ class Battle():
         self.beatmaps[self.current_beatmap].reset_buttons()
 
     def unpause(self):
-        self.starttime += variables.settings.current_time-self.pausetime
+        self.starttime += variables.settings.current_time - self.pausetime
         self.pausetime = 0
         self.beatmaps[self.current_beatmap].unpause()
 
@@ -82,7 +83,7 @@ class Battle():
         # background
         pygame.draw.rect(variables.screen, variables.BLACK, [0, 0, w, h])
 
-        #draw enemy first
+        # draw enemy first
         epic = self.enemy.animation.current_frame()["img"]
         variables.screen.blit(epic, [w - epic.get_width(), 0])
 
@@ -99,14 +100,21 @@ class Battle():
             enemynamescaled = graphics.sscale(enemyname)
             variables.screen.blit(enemynamescaled, [w / 2 - (enemynamescaled.get_width() / 2), h / 2])
 
-            # two buttons
-            dancebutton = Button(w / 4, b, "DANCE!", 1.5)
-            fleebutton = Button(w * 3 / 4, b, "Flee..", 1.5)
-            if self.option == 1:
+            # buttons
+            buttontextsize = 1.25
+            dancebutton = Button(0, b, "DANCE!", buttontextsize)
+            fleebutton = Button(w, b, "Flee..", buttontextsize)
+            soundbutton = Button(w, b, variables.settings.soundpack, buttontextsize)
+            fleebutton.x = w/2 - (fleebutton.tw / 2)
+            soundbutton.x = w - soundbutton.tw
+
+            if self.option == 0:
                 dancebutton.ison = True
-            else:
+            elif self.option == 1:
                 fleebutton.ison = True
-            self.buttons = [dancebutton, fleebutton]
+            else:
+                soundbutton.ison = True
+            self.buttons = [dancebutton, fleebutton, soundbutton]
             self.draw_buttons()
 
         elif self.state == "lose" or self.state == "win":
@@ -254,8 +262,9 @@ class Battle():
         dt = variables.settings.current_time - self.starttime
         ypos = (dt - (self.drumcounter * self.beatmaps[self.current_beatmap].tempo)) * \
                self.beatmaps[self.current_beatmap].speed * variables.dancespeed
-        #offset it so in the beginning drum beats
-        ypos += 7*self.beatmaps[self.current_beatmap].tempo*self.beatmaps[self.current_beatmap].speed * variables.dancespeed
+        # offset it so in the beginning drum beats
+        ypos += 7 * self.beatmaps[self.current_beatmap].tempo * self.beatmaps[
+            self.current_beatmap].speed * variables.dancespeed
         # play a drum sound if it is on the beat
         if (ypos >= variables.padypos):
             self.drumcounter += 1
@@ -266,16 +275,26 @@ class Battle():
             self.beatmaps[self.current_beatmap].onkey(key)
         if self.state == "choose":
             if key in variables.settings.enterkeys:
-                if self.option == 1:
+                if self.option == 0:
                     self.state = "dance"
                     self.beatmaps[self.current_beatmap].reset(self.starttime, True)
-                else:
+                elif self.option == 1:
                     variables.settings.state = "world"
+                elif self.option == 2:
+                    i = soundpackkeys.index(variables.settings.soundpack)
+                    variables.settings.soundpack = soundpackkeys[(i+1) % len(soundpackkeys)]
             else:
-                if self.option == 1:
-                    self.option = 2
-                else:
-                    self.option = 1
+                if key in variables.settings.leftkeys:
+                    self.option = (self.option - 1) % 3
+                elif key in variables.settings.rightkeys:
+                    self.option = (self.option +1) %3
+                elif key in variables.settings.upkeys and self.option == 2:
+                    i = soundpackkeys.index(variables.settings.soundpack)
+                    variables.settings.soundpack = soundpackkeys[(i - 1) % len(soundpackkeys)]
+                elif key in variables.settings.downkeys and self.option == 2:
+                    i = soundpackkeys.index(variables.settings.soundpack)
+                    variables.settings.soundpack = soundpackkeys[(i + 1) % len(soundpackkeys)]
+
         elif self.state == "lose" and key in variables.settings.enterkeys:
             # go home
             classvar.player.heal()
@@ -300,7 +319,7 @@ class Battle():
         self.state = "attacking"
         self.oldenemyhealth = self.enemy.health
         self.oldplayerhealth = classvar.player.health
-        self.animationtime = variables.settings\
+        self.animationtime = variables.settings \
             .current_time
 
         def damageplayer():

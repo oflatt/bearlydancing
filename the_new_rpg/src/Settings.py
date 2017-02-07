@@ -20,6 +20,8 @@ class Settings():
     state = "world"
     menuonq = False
     easymodeq = False
+    #possible soundpacks can be seen by listing the keys in all_sounds in play_sound
+    soundpack = "sine"
 
     # master clock
     current_time = 0
