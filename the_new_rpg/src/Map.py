@@ -59,13 +59,14 @@ class Map():
             x.y *= self.map_scale_offset
             x.width *= self.map_scale_offset
             x.height *= self.map_scale_offset
+        self.isscaled = True
 
     # x and y are the player's x and y pos
     def draw(self, x, y):
         # check if scale stuff needs to be called
         if not self.isscaled:
+            print("map was not scaled when switched")
             self.scale_stuff()
-            self.isscaled = True
 
         w = self.finalimage.get_width()
         h = self.finalimage.get_height()

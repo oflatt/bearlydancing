@@ -18,7 +18,7 @@ def squaresval(t, frequency, squareness):
             sval += (1 / (x * 2 - 1)) * math.sin(math.pi * 2 * (2 * x - 1) * frequency * t)
     # max of 25 for "true" square wave
     elif squareness == 25:
-        if (frequency * t) % 2 < 0.50000001:
+        if (frequency * t) % 2 < 0.5:
             sval = 1
         else:
             sval = -1
@@ -113,9 +113,9 @@ def make_soundpack(wavetype, shapefactor):
 
 # each soundpack is a list of sounds from A3 to A6
 # value of 0 corresponds to A4, -12 is A3
-all_tones = {"sine": make_soundpack("sine", 1), "square": make_soundpack("square", 7),
-             "squareh": make_soundpack("square", 25), "triangle": make_soundpack("triangle", 4),
-             "triangleh": make_soundpack("triangle", 30), "sawtooth": make_soundpack("sawtooth", 4),
+all_tones = {"sine": make_soundpack("sine", 1), "square": make_soundpack("square", 3),
+             "squareh": make_soundpack("square", 25), "triangle": make_soundpack("triangle", 2),
+             "triangleh": make_soundpack("triangle", 30), "sawtooth": make_soundpack("sawtooth", 2),
              "sawtoothh": make_soundpack("sawtooth", 30)}
 
 # all possible soundpacks

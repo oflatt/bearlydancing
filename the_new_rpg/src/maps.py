@@ -166,6 +166,8 @@ def change_map_nonteleporting(name):
     if not map_picked:
         raise NotImplementedError("Map %s not implemented" % name)
     current_map = map_picked
+    if not current_map.isscaled:
+        current_map.scale_stuff()
 
 
 def change_map(name, newx, newy):
@@ -176,7 +178,10 @@ def change_map(name, newx, newy):
     ypos = newy
 
     oldscaleoffset = current_map.map_scale_offset
+
+    #now current map is the new one
     change_map_nonteleporting(name)
+
     #if the new pos is the same
     if (isinstance(xpos, str)):
         xpos = classvar.player.xpos
@@ -207,6 +212,7 @@ def change_map(name, newx, newy):
         ypos = current_map.lasty
 
     classvar.player.teleport(xpos, ypos)
+    classvar.player.soft_change_of_state()
     new_scale_offset()
 
 

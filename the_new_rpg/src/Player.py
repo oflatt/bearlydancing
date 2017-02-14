@@ -178,6 +178,7 @@ class Player(Dancer):
                 self.ypos = 0
                 iscollisiony = True
             elif movedypos+self.normal_height>m.finalimage.get_height():
+                print('further down')
                 self.ypos = m.finalimage.get_height()-self.normal_height
                 iscollisiony = True
             else:
@@ -249,3 +250,7 @@ class Player(Dancer):
         self.rightpresstime = 0
         self.xspeed = 0
         self.yspeed = 0
+
+    def soft_change_of_state(self):
+        self.lastxupdate = variables.settings.current_time
+        self.lastyupdate = variables.settings.current_time
