@@ -1,18 +1,11 @@
 #Bearly Dancing
 
 ##Setting up the environment
-**Important! Make sure python installation is 32 bit and version 3.4.4**
 
-Pick wheel files that say cp 34 and win32 when downloading. To install wheel files call pip install on them, and make sure that pip is up to date.
+Download a version of python 3, and add it to PATH.
 
-Link for Pygame:
-<http://www.lfd.uci.edu/~gohlke/pythonlibs/#pygame>
+Call pip install on necessary libraries: numpy, pygame, cx_Freeze
 
-Link for cx_Freeze:
-https://pypi.python.org/pypi?:action=display&name=cx_Freeze&version=4.3.4
-
-Link for numpy:
-http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy
 
 Example of how to change local path variables so you can call pip
 set PATH=%PATH%;"C:\Python34"
