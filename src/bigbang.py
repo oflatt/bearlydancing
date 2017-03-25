@@ -23,6 +23,7 @@ maps.new_scale_offset()
 pygame.event.get()
 
 menu = Menu.load()
+menu.resume()
 
 #draw to make sure it's pic is available
 classvar.player.draw()

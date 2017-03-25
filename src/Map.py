@@ -63,9 +63,8 @@ class Map():
 
     # x and y are the player's x and y pos
     def draw(self, x, y):
-        # check if scale stuff needs to be called
+        # check if scale stuff needs to be called- only called for the first map
         if not self.isscaled:
-            print("map was not scaled when switched")
             self.scale_stuff()
 
         w = self.finalimage.get_width()

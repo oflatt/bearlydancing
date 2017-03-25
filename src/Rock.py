@@ -56,8 +56,10 @@ class Rock():
         # scale base pic to right size
         self.base["img"] = pygame.transform.scale(self.base["img"], [int(self.base["w"] * s),
                                                                      int(self.base["h"] * s)])
-        for x in range(len(self.animation.pics)):
-            self.animation.pics[x]["img"] = pygame.transform.scale(self.animation.pics[x]["img"],
+
+        if not None == self.animation:
+            for x in range(len(self.animation.pics)):
+                self.animation.pics[x]["img"] = pygame.transform.scale(self.animation.pics[x]["img"],
                                                                    [int(self.base["w"] * s), int(self.base["h"] * s)])
         self.w = self.base["img"].get_width()
         self.h = self.base["img"].get_height()

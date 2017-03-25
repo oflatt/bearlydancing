@@ -49,6 +49,13 @@ class Menu():
         self.option = 0
         self.enemyanimation = enemies.random_enemy("woods")
 
+    def resume(self):
+        self.reset()
+        variables.settings.menuonq = False
+        classvar.player.change_of_state()
+        if not isinstance(classvar.battle, str):
+            classvar.battle.unpause()
+
     def draw(self):
         for x in range(len(self.optionpics)):
             pygame.draw.rect(variables.screen, variables.BLACK,

@@ -25,5 +25,6 @@ class Button:
         else:
             xpos = self.x
             ypos = self.y
+
         pygame.draw.rect(variables.screen, rectcolor, [xpos, ypos, self.tw, self.th])
         variables.screen.blit(self.textpic, [xpos, ypos])

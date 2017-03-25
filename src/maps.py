@@ -66,18 +66,18 @@ jeremyhome.conversations = [conversations.jeremy, conversations.dancelionpass]
 # outside1##############################################################################################################
 b = GR["horizontal"]["w"] / 10
 
-treerock = Rock(GR["pinetree0"], 3.5 * b, 1.5 * b, treecollidesection)
+treerock = Rock(GR["pttree0"], 3.5 * b, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + GR["pinetree0"]["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
 meangreenrock.background_range = treerock.background_range.copy()
-outside1 = Map(GR["horizontal"], [Rock(GR["house"], 0, 0, None),
+outside1 = Map(GR["horizontal"], [Rock(GR["honeyhouseoutside"], 0, 0, None),
                                   meangreenrock,
                                   Rock(GR["rock"], 6.5 * b, 7 * b, [0, 0, 1, 1]),
                                   Rock(GR["rock"], 5.5 * b, 3.5 * b, [0, 0, 1, 1]),
                                   Rock(GR["rock"], 2.5 * b, 6.3 * b, [0, 0, 1, 1]),
                                   treerock])
-housewidth = GR["house"]["w"]
-househeight = GR["house"]["h"]
+housewidth = GR["honeyhouseoutside"]["w"]
+househeight = GR["honeyhouseoutside"]["h"]
 outsidewidth = GR["horizontal"]["w"]
 outsideheight = GR["horizontal"]["h"]
 outside1.startpoint = [b * 8, b * 4]
@@ -126,7 +126,7 @@ littleletter.background_range = table.background_range.copy()
 honeyhome = Map(GR["honeyhouseinside"],
                 [table,
                  littleletter,
-                 Rock(GR['stash'], p * 130, p * 60, [0, 0.9, 1, 0.1])])
+                 Rock(GR['stash00'], p * 130, p * 60, [0, 0.9, 1, 0.1])])
 honeyhome.startpoint = [86 * p, 56 * p]
 doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                 True, 'outside1',

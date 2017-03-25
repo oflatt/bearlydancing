@@ -1,4 +1,4 @@
-import pygame, variables
+import pygame, variables, rdraw
 
 # Setup
 pygame.init()
@@ -24,12 +24,7 @@ font = pygame.font.SysFont(fontname, 30)
 
 print("starup time: " + str(pygame.time.get_ticks()) + " millis")
 
-wide_screen.fill(0)
-w = font.render("ABCDEFGHIJKLMNOPQRSSSSS", 0, variables.BLUE)
-wide_screen.blit(w, [0,100])
-print(font.size("ABCDEFGHIJKLMNOPQRSSSSS"))
-print(w.get_height())
-wide_screen.fill(variables.WHITE, pygame.Rect(0, 100, 20, 37))
+rdraw.drawtree(wide_screen)
 
 pygame.display.flip()
 
