@@ -233,7 +233,7 @@ def addtexture(surface, searchcolor, type, specialtextures = None):
         texturerow(surface, y, searchcolor, type, specialtextures)
 
 
-def drawtree(surface):
+def maketree():
     p = pygame.Surface([TREEWIDTH, TREEHEIGHT], pygame.SRCALPHA)
     l = pygame.Surface([TREEWIDTH, TREEHEIGHT], pygame.SRCALPHA)
     l2 = pygame.Surface([TREEWIDTH, TREEHEIGHT], pygame.SRCALPHA)
@@ -263,7 +263,7 @@ def drawtree(surface):
 
     #chance for special texture
     if randint(1, 3) == 1:
-        addtexture(p, TREEFILLCOLOR, "moss", [(randint(22, 28), randint(45, 65), randint(10, 25))])
+        addtexture(p, TREEFILLCOLOR, "moss", [(randint(22, 28), randint(55, 65), randint(10, 25))])
     else:
         addtexture(p, TREEFILLCOLOR, "moss")
 
@@ -278,4 +278,4 @@ def drawtree(surface):
         addtexture(p, TRUNKCOLOR, "moss", [(randint(22, 28), randint(45, 65), randint(10, 25))])
 
     p = pygame.transform.scale(p, [TREEWIDTH * 4, TREEHEIGHT * 4])
-    surface.blit(p, [0, 0])
+    return p
