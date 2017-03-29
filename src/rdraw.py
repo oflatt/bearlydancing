@@ -277,5 +277,5 @@ def maketree():
     if randint(1, 9) == 1:
         addtexture(p, TRUNKCOLOR, "moss", [(randint(22, 28), randint(45, 65), randint(10, 25))])
 
-    p = pygame.transform.scale(p, [TREEWIDTH * 4, TREEHEIGHT * 4])
+    p = pygame.transform.scale(p, [TREEWIDTH * 8, TREEHEIGHT * 8])
     return p

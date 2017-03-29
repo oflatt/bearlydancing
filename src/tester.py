@@ -25,9 +25,9 @@ font = pygame.font.SysFont(fontname, 30)
 print("starup time: " + str(pygame.time.get_ticks()) + " millis")
 
 wide_screen.blit(rdraw.maketree(), [0,0])
-wide_screen.blit(rdraw.maketree(), [400,0])
 wide_screen.blit(rdraw.maketree(), [800,0])
-wide_screen.blit(rdraw.maketree(), [1200,0])
+wide_screen.blit(rdraw.maketree(), [1600,0])
+wide_screen.blit(rdraw.maketree(), [2400,0])
 
 pygame.display.flip()
 
