@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import variables, classvar, conversations, enemies
+import variables, classvar, conversations, enemies, graphics
 from graphics import scale_pure
 from graphics import GR
 from Map import Map
@@ -30,11 +30,12 @@ outside3.lvrange = [1, 2]
 
 # outside2##############################################################################################################
 b = GR["leftturn"]["w"] / 10
+rpt = graphics.pinetree()
 outsideheight = GR["leftturn"]["h"]
 outside2 = Map(GR["leftturn"], [Rock(GR["rock"], 5 * b, 4 * b, [0, 0, 1, 1]),
                                 Rock(GR["rock"], 6 * b, 2 * b, [0, 0, 1, 1]),
-                                Rock(GR["pinetree0"], 4 * b, 5 * b, treecollidesection),
-                                Rock(GR["pinetree0"], 6 * b, 1.8 * b, treecollidesection),
+                                Rock(rpt, 4 * b, 5 * b, treecollidesection),
+                                Rock(rpt, 6 * b, 1.8 * b, treecollidesection),
                                 Rock(GR["pinetree1"], 5.5 * b, 4.5 * b, treecollidesection),
                                 Rock(GR["pinetree1"], 2 * b, 4.7 * b, treecollidesection),
                                 Rock(GR["pinetree1"], 1.7 * b, 0.3 * b, treecollidesection)])
@@ -66,11 +67,14 @@ jeremyhome.conversations = [conversations.jeremy, conversations.dancelionpass]
 # outside1##############################################################################################################
 b = GR["horizontal"]["w"] / 10
 
-treerock = Rock(GR["pttree0"], 3.5 * b, 1.5 * b, treecollidesection)
-meangreeny = treerock.y + GR["pinetree0"]["h"] - GR["meangreen0"]["h"]
+#stands for random pine tree
+rpt = graphics.pinetree()
+treerock = Rock(rpt, 3.5 * b, 1.5 * b, treecollidesection)
+meangreeny = treerock.y + rpt["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
 meangreenrock.background_range = treerock.background_range.copy()
-outside1 = Map(GR["horizontal"], [Rock(GR["honeyhouseoutside"], 0, 0, None),
+houserock = Rock(GR["honeyhouseoutside"], 0, 0, [0, 0, 1, 0.9])
+outside1 = Map(GR["horizontal"], [houserock,
                                   meangreenrock,
                                   Rock(GR["rock"], 6.5 * b, 7 * b, [0, 0, 1, 1]),
                                   Rock(GR["rock"], 5.5 * b, 3.5 * b, [0, 0, 1, 1]),
@@ -130,7 +134,7 @@ honeyhome = Map(GR["honeyhouseinside"],
 honeyhome.startpoint = [86 * p, 56 * p]
 doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                 True, 'outside1',
-                GR["house"]["w"] * (1 / 5), GR["house"]["h"] - honeyh + honeyfeetheight)
+                GR["honeyhouseoutside"]["w"] * (1 / 5), GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight)
 doorexit.conversation = conversations.hungry
 doorexit.conversation.storyrequirement = [1]
 honeyhome.exitareas = [doorexit,

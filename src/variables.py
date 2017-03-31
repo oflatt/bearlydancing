@@ -34,6 +34,10 @@ fontname = "use default"
 if "orangekidregular" in fontlist:
     fontname = "orangekidregular"
 font = pygame.font.SysFont(fontname, 30)
+newworldeachloadq = True
+
+#pinetreesused is used to keep track of how many randomly generated trees have been made
+pinetreesused = 0
 
 #battle
 healthanimationspeed = 2000#time in milliseconds for the health bar animation to go

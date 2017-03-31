@@ -8,7 +8,7 @@ import pygame, variables
 max_sample = 2 ** (16 - 1) - 1
 
 def sinesval(t, f):
-    return math.sin(2 * math.pi * f * t)
+    return math.sin(2 * math.pi * f * t) + (1/4)*math.sin(4 * math.pi * f * t) + (1/8)*math.sin(8 * math.pi * f * t)
 
 
 def squaresval(t, frequency, squareness):
@@ -89,7 +89,7 @@ def make_soundpack(wavetype, shapefactor):
     if os.path.exists("sounds/" + wavetype + "0.wav"):
         for x in range(37):
             l.append(pygame.mixer.Sound("sounds/" + wavetype + str(x) + ".wav"))
-            l[x].set_volume(variables.battle_volume)
+            l[x].set_volume(0)
     else:
         try:
             os.makedirs("sounds")
@@ -97,7 +97,7 @@ def make_soundpack(wavetype, shapefactor):
             pass
         for x in range(36 + 1):
             s = make_wave((440 * ((2 ** (1 / 12)) ** (x - 12))), wavetype, shapefactor)
-            s.set_volume(variables.battle_volume)
+            s.set_volume(0)
 
             # save it for future loading
             sfile = wave.open("sounds/" + wavetype + str(x) + ".wav", "w")
@@ -129,11 +129,12 @@ def play_tone(t):
     # add because values are centered on 0
     all_tones[variables.settings.soundpack][t + 12].play(loops=-1)
 
-
 def play_sound(s):
     if s == "drum kick heavy":
         Drum_kick_heavy.play()
 
-
 def stop_tone(t):
     all_tones[variables.settings.soundpack][t + 12].stop()
+
+def set_tone_volume(t, durationplayed):
+    all_tones[variables.settings.soundpack][t + 12].set_volume(((durationplayed/1000)%1)*variables.battle_volume)

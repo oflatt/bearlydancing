@@ -1,5 +1,5 @@
 import graphics, pygame, variables, copy
-from play_sound import stop_tone, play_tone
+from play_sound import stop_tone, play_tone, set_tone_volume
 from variables import padypos
 
 padxspace = variables.width / 12
@@ -19,6 +19,7 @@ class Beatmap():
     scores = []
     # held keys is false if the key is not held, and the tone if it is held
     held_keys = [False, False, False, False, False, False, False, False]
+    time_key_started = [0, 0, 0, 0, 0, 0, 0, 0]
     # when to stop displaying the text, in milliseconds
     feedback_timers = [0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -172,46 +173,29 @@ class Beatmap():
                     sound_value += self.scale[x % 7]
             return sound_value
 
+        def playnotepressed(kp):
+            v = check_place(kp)
+            v = simple_value_in_key(v)
+            self.held_keys[kp] = v
+            self.time_key_started[kp] = variables.settings.current_time
+            play_tone(v)
+
         if key in variables.settings.note1keys:
-            v = check_place(0)
-            v = simple_value_in_key(v)
-            self.held_keys[0] = v
-            play_tone(v)
+            playnotepressed(0)
         elif key in variables.settings.note2keys:
-            v = check_place(1)
-            v = simple_value_in_key(v)
-            self.held_keys[1] = v
-            play_tone(v)
+            playnotepressed(1)
         elif key in variables.settings.note3keys:
-            v = check_place(2)
-            v = simple_value_in_key(v)
-            self.held_keys[2] = v
-            play_tone(v)
+            playnotepressed(2)
         elif key in variables.settings.note4keys:
-            v = check_place(3)
-            v = simple_value_in_key(v)
-            self.held_keys[3] = v
-            play_tone(v)
+            playnotepressed(3)
         elif key in variables.settings.note5keys:
-            v = check_place(4)
-            v = simple_value_in_key(v)
-            self.held_keys[4] = v
-            play_tone(v)
+            playnotepressed(4)
         elif key in variables.settings.note6keys:
-            v = check_place(5)
-            v = simple_value_in_key(v)
-            self.held_keys[5] = v
-            play_tone(v)
+            playnotepressed(5)
         elif key in variables.settings.note7keys:
-            v = check_place(6)
-            v = simple_value_in_key(v)
-            self.held_keys[6] = v
-            play_tone(v)
+            playnotepressed(6)
         elif key in variables.settings.note8keys:
-            v = check_place(7)
-            v = simple_value_in_key(v)
-            self.held_keys[7] = v
-            play_tone(v)
+            playnotepressed(7)
 
     def onrelease(self, key):
 
@@ -323,6 +307,11 @@ class Beatmap():
                     # if you are in a part of the list before the screen, don't keep checking
                     # (assuming the list of notes must be ordered by time, of course)
                     break
+
+        #set the volume of the notes being played
+        for x in range(len(self.held_keys)):
+            if self.held_keys[x]:
+                set_tone_volume(self.held_keys[x], variables.settings.current_time-self.time_key_started[x])
 
     def reset_buttons(self):
         for x in range(8):

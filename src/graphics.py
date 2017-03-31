@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import pygame, os, variables
+import pygame, os, variables, rdraw
 
 def sscale(img):
     factor = 0.0025 #This basically determines how much of the map we can see
@@ -49,7 +49,7 @@ def scale_pure(img, s):
 def importpic(filename):
     return pygame.image.load(os.path.join('pics', filename)).convert_alpha()
 
-#simport now returns a dictionary with an image and what its new dimensions would be if scaled
+#simport returns a dictionary with an image and what its new dimensions would be if scaled
 def simport(filename):
     p = importpic(filename)
     dimensions = sscale_dimensions(p)
@@ -72,7 +72,26 @@ MISStext = pygame.transform.rotate(sscale_customfactor(variables.font.render("MI
 GR = {}
 picnames = os.listdir(os.path.dirname(os.path.abspath("__file__")) + "/pics")
 
+def nicename(filename):
+    return filename.replace(".png", "").lower()
+
+def addtoGR(filename):
+    p = simport(filename)
+    GR[nicename(filename)] = p
+
 for x in picnames:
-    p = simport(x)
-    nicename = x.replace(".png", "").lower()
-    GR[nicename] = p
+    addtoGR(x)
+
+def pinetree():
+    variables.pinetreesused += 1
+    filename = "randompinetree" + str(variables.pinetreesused-1) + ".png"
+
+    if not os.path.exists("pics/" + filename):
+        pygame.image.save(rdraw.maketree(), "pics/" + filename)
+        addtoGR(filename)
+    elif variables.newworldeachloadq:
+        os.remove(os.path.dirname(os.path.abspath("__file__")) + "/pics/" + filename)
+        pygame.image.save(rdraw.maketree(), "pics/" + filename)
+        addtoGR(filename)
+
+    return GR[nicename(filename)]

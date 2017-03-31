@@ -164,6 +164,7 @@ def drawtrunk(surface):
                 a = randint(1, 3) * changedir
         return a
 
+
     pl = addpoints(pl, 0, TREEWIDTH, 3)
     # variation- x positions first
     for x in range(len(pl)):
@@ -277,5 +278,4 @@ def maketree():
     if randint(1, 9) == 1:
         addtexture(p, TRUNKCOLOR, "moss", [(randint(22, 28), randint(45, 65), randint(10, 25))])
 
-    p = pygame.transform.scale(p, [TREEWIDTH * 8, TREEHEIGHT * 8])
     return p
