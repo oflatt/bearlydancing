@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# Oliver works on classes
 import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap, copy
 from Button import Button
 from play_sound import play_sound

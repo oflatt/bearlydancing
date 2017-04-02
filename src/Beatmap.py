@@ -58,7 +58,7 @@ class Beatmap():
 
         # draw which ones are pressed
         for x in range(0, 8):
-            if self.held_keys[x]:
+            if self.held_keys[x] == False:
                 xoffset = 0
                 if (x + 1 > 4):
                     xoffset = middleoffset
@@ -310,7 +310,7 @@ class Beatmap():
 
         #set the volume of the notes being played
         for x in range(len(self.held_keys)):
-            if self.held_keys[x]:
+            if self.held_keys[x] == False:
                 set_tone_volume(self.held_keys[x], variables.settings.current_time-self.time_key_started[x])
 
     def reset_buttons(self):

@@ -5,7 +5,7 @@ from Settings import Settings
 pygame.mixer.pre_init(22050, -16, 2, 512)
 pygame.mixer.init()
 pygame.init()
-pygame.mixer.set_num_channels(16)
+pygame.mixer.set_num_channels(46)
 
 # Set the width and height of the screen [width,height]
 modes = pygame.display.list_modes()

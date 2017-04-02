@@ -7,8 +7,10 @@ import pygame, variables
 # nessoundfont = "soundfonts/The_Nes_Soundfont.sf2"
 max_sample = 2 ** (16 - 1) - 1
 
+
 def sinesval(t, f):
-    return math.sin(2 * math.pi * f * t) + (1/4)*math.sin(4 * math.pi * f * t) + (1/8)*math.sin(8 * math.pi * f * t)
+    return math.sin(2 * math.pi * f * t) + (1 / 4) * math.sin(4 * math.pi * f * t) + (1 / 8) * math.sin(
+        8 * math.pi * f * t)
 
 
 def squaresval(t, frequency, squareness):
@@ -124,17 +126,31 @@ soundpackkeys = ["sine", 'square', 'squareh', 'triangle', 'triangleh', 'sawtooth
 Drum_kick_heavy = pygame.mixer.Sound("drum_heavy_kick.wav")
 Drum_kick_heavy.set_volume(variables.battle_volume * 6)
 
+channels = []
+for x in range(37):
+    channels.append(pygame.mixer.Channel(x))
 
 def play_tone(t):
     # add because values are centered on 0
-    all_tones[variables.settings.soundpack][t + 12].play(loops=-1)
+    channels[t+12].play(all_tones[variables.settings.soundpack][t + 12], loops=-1)
 
 def play_sound(s):
     if s == "drum kick heavy":
         Drum_kick_heavy.play()
 
+
 def stop_tone(t):
-    all_tones[variables.settings.soundpack][t + 12].stop()
+    channels[t+12].stop()
+
 
 def set_tone_volume(t, durationplayed):
-    all_tones[variables.settings.soundpack][t + 12].set_volume(((durationplayed/1000)%1)*variables.battle_volume)
+    attack = 100
+    decay = 600
+    sustainlevel = 0.15
+    if durationplayed <= attack:
+        volume = durationplayed/attack
+    elif durationplayed <= attack + decay:
+        volume = ((sustainlevel-1)/decay)*(durationplayed-attack) + 1
+    else:
+        volume = sustainlevel
+    all_tones[variables.settings.soundpack][t + 12].set_volume(volume)
