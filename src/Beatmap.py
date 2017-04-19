@@ -1,5 +1,5 @@
 import graphics, pygame, variables, copy
-from play_sound import stop_tone, play_tone, set_tone_volume
+from play_sound import stop_tone, play_tone
 from variables import padypos
 
 padxspace = variables.width / 12
@@ -17,8 +17,8 @@ class Beatmap():
     pausetime = 0
     # scores is a running list of the values for how well each note so far has been played (values for perfect, good ect)
     scores = []
-    # held keys is false if the key is not held, and the tone if it is held
-    held_keys = [False, False, False, False, False, False, False, False]
+    # held keys is None if the key is not held, and the tone if it is held
+    held_keys = [None, None, None, None, None, None, None, None]
     time_key_started = [0, 0, 0, 0, 0, 0, 0, 0]
     # when to stop displaying the text, in milliseconds
     feedback_timers = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -58,7 +58,7 @@ class Beatmap():
 
         # draw which ones are pressed
         for x in range(0, 8):
-            if self.held_keys[x] == False:
+            if self.held_keys[x] != None:
                 xoffset = 0
                 if (x + 1 > 4):
                     xoffset = middleoffset
@@ -252,35 +252,35 @@ class Beatmap():
         if key in variables.settings.note1keys:
             check_place(0)
             stop_tone(self.held_keys[0])
-            self.held_keys[0] = False
+            self.held_keys[0] = None
         elif key in variables.settings.note2keys:
             check_place(1)
             stop_tone(self.held_keys[1])
-            self.held_keys[1] = False
+            self.held_keys[1] = None
         elif key in variables.settings.note3keys:
             check_place(2)
             stop_tone(self.held_keys[2])
-            self.held_keys[2] = False
+            self.held_keys[2] = None
         elif key in variables.settings.note4keys:
             check_place(3)
             stop_tone(self.held_keys[3])
-            self.held_keys[3] = False
+            self.held_keys[3] = None
         elif key in variables.settings.note5keys:
             check_place(4)
             stop_tone(self.held_keys[4])
-            self.held_keys[4] = False
+            self.held_keys[4] = None
         elif key in variables.settings.note6keys:
             check_place(5)
             stop_tone(self.held_keys[5])
-            self.held_keys[5] = False
+            self.held_keys[5] = None
         elif key in variables.settings.note7keys:
             check_place(6)
             stop_tone(self.held_keys[6])
-            self.held_keys[6] = False
+            self.held_keys[6] = None
         elif key in variables.settings.note8keys:
             check_place(7)
             stop_tone(self.held_keys[7])
-            self.held_keys[7] = False
+            self.held_keys[7] = None
 
     def ontick(self):
         # remove notes that are off the screen
@@ -308,14 +308,10 @@ class Beatmap():
                     # (assuming the list of notes must be ordered by time, of course)
                     break
 
-        #set the volume of the notes being played
-        for x in range(len(self.held_keys)):
-            if self.held_keys[x] == False:
-                set_tone_volume(self.held_keys[x], variables.settings.current_time-self.time_key_started[x])
 
     def reset_buttons(self):
         for x in range(8):
-            self.held_keys[x] = False
+            self.held_keys[x] = None
         # turn off sound
         for x in range(-24, 24):
             stop_tone(x)

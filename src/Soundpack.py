@@ -1,0 +1,148 @@
+import pygame, os, wave, math, numpy
+from math import sin
+from math import pi
+
+initialvolume = 1
+max_sample = 2 ** (16 - 1) - 1
+bellvolume = [[0, 0], [100, 1], [600, 0.15]]
+
+class Soundpack():
+    soundlist = []
+    loopsoundlist = []
+
+    def __init__(self, wavetype, shapefactor, resetq=True):
+        self.volumelist = bellvolume
+        self.make_soundpack(wavetype, shapefactor, resetq)
+
+    def tone_volume(self, durationplayed):
+        listplace = 0
+        while True:
+            if listplace + 1 >= len(self.volumelist):
+                break
+            elif durationplayed >= self.volumelist[listplace + 1][0]:
+                listplace += 1
+            else:
+                break
+
+        dt = durationplayed - self.volumelist[listplace][0]
+        if listplace == len(self.volumelist)-1:
+            volume = self.volumelist[listplace][2]
+        else:
+            timebetween = (self.volumelist[listplace+1][0]-self.volumelist[listplace][0])
+            ydifference = (self.volumelist[listplace+1][1]-self.volumelist[listplace][1])
+            volume = ydifference * (dt/timebetween)
+        return volume
+
+    def sinesval(self, t, f):
+        wave = math.sin(2 * math.pi * f * t)
+        harmonic1 = (1 / 4) * math.sin(4 * math.pi * f * t)
+        harmonic2 = (1 / 8) * math.sin(8 * math.pi * f * t)
+        return (wave + harmonic1 + harmonic2)
+
+    def squaresval(self, t, frequency, squareness):
+        sval = 0
+        if squareness < 25:
+            for x in range(squareness):
+                sval += (1 / (x * 2 - 1)) * math.sin(math.pi * 2 * (2 * x - 1) * frequency * t)
+        # max of 25 for "true" square wave
+        elif squareness == 25:
+            if (frequency * t) % 2 < 0.5:
+                sval = 1
+            else:
+                sval = -1
+        # muted version
+        elif squareness > 25:
+            sval = (frequency * t) % 2
+
+        return sval
+
+    def trianglesval(self, t, f, shapefactor):
+        sval = 0
+        if shapefactor < 25:
+            for k in range(shapefactor):
+                sval += (-1 ** k) * (sin(2 * pi * (2 * k + 1) * f * t) / ((2 * k + 1) ** 2))
+        else:
+            p = 1 / f
+            sval = (2 / p) * abs((t % p) - p / 2) - p / 4
+        return sval
+
+    # shapefactor is a factor used for additive synthesis
+    def sawtoothsval(self, t, f, shapefactor):
+        p = 1 / f
+        sval = 0
+        if shapefactor < 25:
+            for a in range(shapefactor):
+                k = a + 1
+                sval += ((-1) ** k) * (sin(2 * pi * k * f * t) / k)
+        else:
+            sval = 2 * ((t / p) - ((0.5 + (t / p)) // 1))
+
+        return sval
+
+    # min refinement of 1 which means sine wave, and bigger numbers will take longer unless it is above 25 or so
+    def make_wave(self, frequency, type, shapefactor):
+        loopduration = (1 / frequency) * 2  # in seconds
+        if type == "sine":
+            duration = self.volumelist[-1][0]/1000
+        else:
+            duration = loopduration
+        sample_rate = 44100
+
+        n_samples_loop = int(round(loopduration * sample_rate))
+        n_samples = int(round(duration * sample_rate))
+
+        # setup our numpy array to handle 16 bit ints, which is what we set our mixer to expect with "bits" up above
+        # use small samplebuf to make large sound
+        samplebuf = numpy.zeros((n_samples_loop, 2), dtype=numpy.int16)
+        buf = numpy.zeros((n_samples, 2), dtype=numpy.int16)
+
+        for s in range(n_samples_loop):
+            t = float(s) / sample_rate  # time in seconds
+            sval = 0
+
+            if type == "sine":
+                sval = self.sinesval(t, frequency)
+            elif type == "square":
+                sval = self.squaresval(t, frequency, shapefactor)
+            elif type == "triangle":
+                sval = self.trianglesval(t, frequency, shapefactor)
+            elif type == "sawtooth":
+                sval = self.sawtoothsval(t, frequency, shapefactor)
+
+            samplebuf[s][0] = int(round(max_sample * sval))  # left
+            samplebuf[s][1] = int(round(max_sample * sval))  # right
+
+        for s in range(n_samples):
+            t = float(s) / sample_rate  # time in seconds
+            sval = samplebuf[s % n_samples_loop][0] * self.tone_volume(t * 1000)
+            buf[s][0] = sval
+            buf[s][1] = sval
+
+        return pygame.sndarray.make_sound(buf)
+
+    def make_soundpack(self, wavetype, shapefactor, resetq):
+        l = []
+        isexistingsounds = os.path.exists("sounds/" + wavetype + "0.wav")
+        if isexistingsounds and resetq == False:
+            for x in range(37):
+                l.append(pygame.mixer.Sound("sounds/" + wavetype + str(x) + ".wav"))
+                l[x].set_volume(initialvolume)
+        else:
+            try:
+                os.makedirs("sounds")
+            except OSError:
+                pass
+            for x in range(36 + 1):
+                s = self.make_wave((440 * ((2 ** (1 / 12)) ** (x - 12))), wavetype, shapefactor)
+                s.set_volume(initialvolume)
+
+                # save it for future loading
+                sfile = wave.open("sounds/" + wavetype + str(x) + ".wav", "w")
+                sfile.setframerate(22050)
+                sfile.setnchannels(2)
+                sfile.setsampwidth(2)
+                sfile.writeframesraw(s.get_raw())
+                sfile.close()
+
+                l.append(s)
+        self.soundlist = l
