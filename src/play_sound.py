@@ -30,5 +30,6 @@ def play_sound(s):
         Drum_kick_heavy.play()
 
 def stop_tone(t):
-    channels[t+12].stop()
+    if not t == None:
+        channels[t+12].stop()
 
