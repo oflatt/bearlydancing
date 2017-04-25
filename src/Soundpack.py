@@ -10,7 +10,7 @@ class Soundpack():
     soundlist = []
     loopsoundlist = []
 
-    def __init__(self, wavetype, shapefactor, resetq=True):
+    def __init__(self, wavetype, shapefactor, resetq=False):
         self.volumelist = bellvolume
         self.make_soundpack(wavetype, shapefactor, resetq)
 
@@ -85,22 +85,16 @@ class Soundpack():
     # min refinement of 1 which means sine wave, and bigger numbers will take longer unless it is above 25 or so
     def make_wave(self, frequency, type, shapefactor):
         loopduration = (1 / frequency) * 2  # in seconds
-        if type == "sine":
-            duration = self.volumelist[-1][0]/1000
-        else:
-            duration = loopduration
+        duration = self.volumelist[-1][0]/1000
         sample_rate = 44100
 
-        n_samples_loop = int(round(loopduration * sample_rate))
         n_samples = int(round(duration * sample_rate))
 
         # setup our numpy array to handle 16 bit ints, which is what we set our mixer to expect with "bits" up above
         # use small samplebuf to make large sound
-        samplelist = []
         buf = numpy.zeros((n_samples, 2), dtype=numpy.int16)
 
-        for s in range(n_samples_loop):
-            t = float(s) / sample_rate  # time in seconds
+        def get_sval(t):
             sval = 0
 
             if type == "sine":
@@ -112,11 +106,11 @@ class Soundpack():
             elif type == "sawtooth":
                 sval = self.sawtoothsval(t, frequency, shapefactor)
 
-            samplelist.append(int(round(max_sample * sval)))
+            return int(round(max_sample * sval))
 
         for s in range(n_samples):
             t = float(s) / sample_rate  # time in seconds
-            sval = samplelist[s % n_samples_loop] * self.tone_volume(t * 1000)
+            sval = get_sval(t) * self.tone_volume(t * 1000)
             buf[s][0] = sval # left
             buf[s][1] = sval # right
 
@@ -124,10 +118,10 @@ class Soundpack():
 
     def make_soundpack(self, wavetype, shapefactor, resetq):
         l = []
-        isexistingsounds = os.path.exists("sounds/" + wavetype + "0.wav")
+        isexistingsounds = os.path.exists("sounds/" + wavetype + "0_" + str(shapefactor) + ".wav")
         if isexistingsounds and resetq == False:
             for x in range(37):
-                l.append(pygame.mixer.Sound("sounds/" + wavetype + str(x) + ".wav"))
+                l.append(pygame.mixer.Sound("sounds/" + wavetype + str(x) + "_" + str(shapefactor) + ".wav"))
                 l[x].set_volume(initialvolume)
         else:
             try:
@@ -139,7 +133,7 @@ class Soundpack():
                 s.set_volume(initialvolume)
 
                 # save it for future loading
-                sfile = wave.open("sounds/" + wavetype + str(x) + ".wav", "w")
+                sfile = wave.open("sounds/" + wavetype + str(x) + "_" + str(shapefactor) + ".wav", "w")
                 sfile.setframerate(22050)
                 sfile.setnchannels(2)
                 sfile.setsampwidth(2)
