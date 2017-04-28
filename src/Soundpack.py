@@ -83,15 +83,16 @@ class Soundpack():
         return sval
 
     # min refinement of 1 which means sine wave, and bigger numbers will take longer unless it is above 25 or so
-    def make_wave(self, frequency, type, shapefactor):
-        loopduration = (1 / frequency) * 2  # in seconds
+    def make_wave(self, frequency, type, shapefactor, loopq = False):
+        loopduration = (1 / frequency) * 10  # in seconds
         duration = self.volumelist[-1][0]/1000
+        if loopq:
+            duration = loopduration
         sample_rate = 44100
 
         n_samples = int(round(duration * sample_rate))
 
-        # setup our numpy array to handle 16 bit ints, which is what we set our mixer to expect with "bits" up above
-        # use small samplebuf to make large sound
+        # setup our numpy array to handle 16 bit ints, which is what we set our mixer to expect with "bits"
         buf = numpy.zeros((n_samples, 2), dtype=numpy.int16)
 
         def get_sval(t):
@@ -110,7 +111,10 @@ class Soundpack():
 
         for s in range(n_samples):
             t = float(s) / sample_rate  # time in seconds
-            sval = get_sval(t) * self.tone_volume(t * 1000)
+            volume = self.volumelist[-1][1]
+            if loopq == False:
+                volume = self.tone_volume(t * 1000)
+            sval = get_sval(t) * volume
             buf[s][0] = sval # left
             buf[s][1] = sval # right
 
@@ -123,6 +127,9 @@ class Soundpack():
             for x in range(37):
                 l.append(pygame.mixer.Sound("sounds/" + wavetype + str(x) + "_" + str(shapefactor) + ".wav"))
                 l[x].set_volume(initialvolume)
+                loopwave = self.make_wave((440 * ((2 ** (1 / 12)) ** (x - 12))), wavetype, shapefactor, True)
+                self.loopsoundlist.append(loopwave)
+                self.loopsoundlist[x].set_volume(initialvolume)
         else:
             try:
                 os.makedirs("sounds")
@@ -141,4 +148,9 @@ class Soundpack():
                 sfile.close()
 
                 l.append(s)
+
+                loopwave = self.make_wave((440 * ((2 ** (1 / 12)) ** (x - 12))), wavetype, shapefactor, True)
+                self.loopsoundlist.append(loopwave)
+                self.loopsoundlist[x].set_volume(initialvolume)
+                
         self.soundlist = l

@@ -1,5 +1,5 @@
 import graphics, pygame, variables, copy
-from play_sound import stop_tone, play_tone
+from play_sound import stop_tone, play_tone, update_tone
 from variables import padypos
 
 padxspace = variables.width / 12
@@ -15,7 +15,7 @@ class Beatmap():
     speed = 1
     starttime = 0
     pausetime = 0
-    # scores is a running list of the values for how well each note so far has been played (values for perfect, good ect)
+    # scores is a running list of the values for how well each note so far has been played. values for perfect, ect
     scores = []
     # held keys is None if the key is not held, and the tone if it is held
     held_keys = [None, None, None, None, None, None, None, None]
@@ -308,6 +308,10 @@ class Beatmap():
                     # (assuming the list of notes must be ordered by time, of course)
                     break
 
+        # update played notes for looping
+        for k in self.held_keys:
+            if not k == None:
+                update_tone(k)
 
     def reset_buttons(self):
         for x in range(8):

@@ -23,7 +23,12 @@ for x in range(37):
 
 def play_tone(t):
     # add because values are centered on 0
-    channels[t+12].play(all_tones[variables.settings.soundpack].soundlist[t + 12], loops=-1)
+    channels[t+12].play(all_tones[variables.settings.soundpack].soundlist[t + 12])
+
+def update_tone(t):
+    c = channels[t+12]
+    if c.get_queue() == None:
+        c.queue(all_tones[variables.settings.soundpack].loopsoundlist[t + 12])
 
 def play_sound(s):
     if s == "drum kick heavy":
