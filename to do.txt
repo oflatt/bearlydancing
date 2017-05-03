@@ -1,0 +1,5 @@
+Bearly Dancing List
+
+-fix saving over different sized screens
+-Randomly generated background-possibly paths
+-Fix roof of house
