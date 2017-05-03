@@ -1,4 +1,4 @@
-import pygame, variables, rdraw
+import pygame, variables, rdraw, play_sound
 
 # Setup
 pygame.init()
@@ -24,10 +24,17 @@ font = pygame.font.SysFont(fontname, 30)
 
 print("starup time: " + str(pygame.time.get_ticks()) + " millis")
 
-wide_screen.blit(rdraw.maketree(), [0,0])
-wide_screen.blit(rdraw.maketree(), [800,0])
-wide_screen.blit(rdraw.maketree(), [1600,0])
-wide_screen.blit(rdraw.maketree(), [2400,0])
+loopl = play_sound.all_tones["sine"].loopbuffers[7]
+max_sample = 2 ** (16 - 1) - 1
+wheight = 400
+print(max_sample)
+for x in range(100):
+    print(loopl[x][1])
+    wide_screen.set_at((x, int((loopl[len(loopl)-(100-x)][1]/max_sample)*wheight+wheight+100)), (100,255,255))
+
+for x in range(100):
+    print(loopl[x][1])
+    wide_screen.set_at((x+100, int((loopl[x][1]/max_sample)*wheight+wheight+100)), (255,255,255))
 
 pygame.display.flip()
 

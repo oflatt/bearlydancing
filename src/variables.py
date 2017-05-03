@@ -2,7 +2,7 @@ import pygame, ctypes
 from Settings import Settings
 
 # Setup
-pygame.mixer.pre_init(22050, -16, 2, 512)
+pygame.mixer.pre_init(22050, -16, 2, 64)
 pygame.mixer.init()
 pygame.init()
 pygame.mixer.set_num_channels(46)

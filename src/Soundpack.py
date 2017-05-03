@@ -9,6 +9,7 @@ bellvolume = [[0, 0], [100, 1], [600, 0.15]]
 class Soundpack():
     soundlist = []
     loopsoundlist = []
+    loopbuffers = []
 
     def __init__(self, wavetype, shapefactor, resetq=False):
         self.volumelist = bellvolume
@@ -118,6 +119,9 @@ class Soundpack():
             buf[s][0] = sval # left
             buf[s][1] = sval # right
 
+        if loopq:
+            self.loopbuffers.append(buf)
+            
         return pygame.sndarray.make_sound(buf)
 
     def make_soundpack(self, wavetype, shapefactor, resetq):
