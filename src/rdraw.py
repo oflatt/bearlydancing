@@ -1,4 +1,4 @@
-import pygame, variables, copy, random
+import pygame, variables, copy, random, rdrawland
 from pygame import draw
 from random import randint
 
@@ -279,3 +279,6 @@ def maketree():
         addtexture(p, TRUNKCOLOR, "moss", [(randint(22, 28), randint(45, 65), randint(10, 25))])
 
     return p
+
+def makegrassland():
+    rdrawland.makegrassland()

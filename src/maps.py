@@ -92,7 +92,7 @@ outside1.exitareas = [Exit([outsidewidth, 0, extraarea, outsideheight], False, '
                             househeight * (1 / 5)],
                            True, 'honeyhome',
                            p * 41, insideheight - honeyh)]
-outside1.colliderects = [Rect(0, 0, housewidth, househeight)]
+outside1.colliderects = [Rect(0, 0, housewidth, househeight-(p*20))]
 outside1.lvrange = [1, 2]
 outside1c = conversations.secondscene
 outside1c.area = [treerock.x, 0, outsidewidth, outsideheight]
