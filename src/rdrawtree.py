@@ -31,7 +31,7 @@ def addpoints(l, leftbound, rightbound, maxvariation):
                 variationpoint[0] = rightbound - 1
 
             cl.insert(x + 1, variationpoint)
-            # add one to x and lengthbecause the length changes
+            # add one to x and length because the length changes
             x += 1
             length += 1
 
@@ -279,6 +279,3 @@ def maketree():
         addtexture(p, TRUNKCOLOR, "moss", [(randint(22, 28), randint(45, 65), randint(10, 25))])
 
     return p
-
-def makegrassland():
-    rdrawland.makegrassland()

@@ -18,7 +18,7 @@ insideheight = GR["honeyhouseinside"]["h"]
 # p is the width of a pixel
 p = insidewidth / 176
 
-treecollidesection = [0, 19 / 20, 1, 1 / 20]
+treecollidesection = [0, 18.5 / 20, 1, 1.5 / 20]
 
 # outside3##############################################################################################################
 b = GR["rightturn"]["w"] / 10
@@ -72,14 +72,13 @@ rpt = graphics.pinetree()
 treerock = Rock(rpt, 3.5 * b, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + rpt["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
-meangreenrock.background_range = treerock.background_range.copy()
 houserock = Rock(GR["honeyhouseoutside"], 0, 0, [0, 0, 1, 0.9])
 outside1 = Map(GR["horizontal"], [houserock,
-                                  meangreenrock,
                                   Rock(GR["rock"], 6.5 * b, 7 * b, [0, 0, 1, 1]),
                                   Rock(GR["rock"], 5.5 * b, 3.5 * b, [0, 0, 1, 1]),
                                   Rock(GR["rock"], 2.5 * b, 6.3 * b, [0, 0, 1, 1]),
-                                  treerock])
+                                  treerock,
+                                  meangreenrock])
 housewidth = GR["honeyhouseoutside"]["w"]
 househeight = GR["honeyhouseoutside"]["h"]
 outsidewidth = GR["horizontal"]["w"]

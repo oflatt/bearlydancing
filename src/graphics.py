@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import pygame, os, variables, rdraw
+import pygame, os, variables, rdrawtree
 
 def sscale(img):
     factor = 0.0025 #This basically determines how much of the map we can see
@@ -87,11 +87,11 @@ def pinetree():
     filename = "randompinetree" + str(variables.pinetreesused-1) + ".png"
 
     if not os.path.exists("pics/" + filename):
-        pygame.image.save(rdraw.maketree(), "pics/" + filename)
+        pygame.image.save(rdrawtree.maketree(), "pics/" + filename)
         addtoGR(filename)
     elif variables.newworldeachloadq:
         os.remove(os.path.dirname(os.path.abspath("__file__")) + "/pics/" + filename)
-        pygame.image.save(rdraw.maketree(), "pics/" + filename)
+        pygame.image.save(rdrawtree.maketree(), "pics/" + filename)
         addtoGR(filename)
 
     return GR[nicename(filename)]

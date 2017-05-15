@@ -4,3 +4,4 @@ Bearly Dancing List
 -Randomly generated background-possibly paths
 -Fix roof of house
 -write some tests for once
+-make bear be able to eat from stash

@@ -1,4 +1,18 @@
-((("initialvolume" .
+((("makepatch" .
+   [1 0 0 0 0 0 0 0 0])
+  ("append" .
+   [1 0 0 0 0 0])
+  ("patches" .
+   [1 0 0 0 0 0 0])
+  ("numofpatches" .
+   [1 0 0 0 0 0 0 0 0 0 0 0])
+  ("randint" .
+   [1 0 0 0 0 0 0])
+  ("height" .
+   [3 0 0 0 0 0])
+  ("width" .
+   [3 0 0 0 0])
+  ("initialvolume" .
    [1 0 0 0 0 0 0 0 0 0 0 1 0])
   ("update_tone" .
    [1 0 0 0 0 0 0 0 1 0 0])
