@@ -1,17 +1,14 @@
 import pygame, variables, copy, random, rdrawland
+from addtexture import addtexture
 from pygame import draw
 from random import randint
+from Texture import Texture
 
 TREEWIDTH = 100
 TREEHEIGHT = 200
 TREEFILLCOLOR = (33, 52, 27, 255)
 TREEOUTLINECOLOR = (22, 40, 20)
 TRUNKCOLOR = (39, 32, 32, 255)
-
-
-def pointinbounds(p):
-    return p[0] >= 0 and p[0] < TREEWIDTH and p[1] >= 0 and p[1] < TREEHEIGHT
-
 
 def addpoints(l, leftbound, rightbound, maxvariation):
     cl = copy.deepcopy(l)
@@ -178,62 +175,6 @@ def drawtrunk(surface):
 
     draw.polygon(surface, TRUNKCOLOR, pl)
 
-
-#specialtextures is a list of colors to use instead of the normal ones
-def texturepoint(surface, x, y, searchcolor, type, specialtextures):
-    moss1 = (28, 61, 33)
-    moss2 = (26, 47, 21)
-    moss3 = (28, 63, 12)
-    bark1 = (45, 32, 32)
-    bark2 = (46, 35, 35)
-
-    def patchoftexturechance(t, defaultchance, xcfactor, ycfactor):
-        points = [[x, y]]
-        while len(points) > 0:
-            p = points.pop(0)
-            if pointinbounds(p):
-                if surface.get_at(p) == searchcolor:
-                    chance = defaultchance
-                    if p[0] != x:
-                        chance *= xcfactor
-                    if p[1] != y:
-                        chance *= ycfactor
-
-                    if random.random() <= 1/chance:
-                        surface.set_at(p, t)
-                        # then go again on the points to the side and the one below
-                        points.extend([[p[0], p[1] + 1], [p[0] - 1, p[1]], [p[0] + 1, p[1]]])
-
-    if surface.get_at([x, y]) == searchcolor:
-        if type == "moss":
-            if randint(1, 80) == 1:
-                surface.set_at([x, y], moss1)
-            elif randint(1, 10) == 1:
-                patchoftexturechance(moss3, 7, 3, 1/4)
-            else:
-                if specialtextures != None:
-                    patchoftexturechance(specialtextures[0], 7, 3, 1 / 4)
-                else:
-                    patchoftexturechance(moss2, 7, 3, 1/4)
-        if type == "bark":
-            if randint(1, 5) == 1:
-                patchoftexturechance(bark1, 20, 8, 1/18)
-            elif randint(1, 2) == 1:
-                if specialtextures != None:
-                    patchoftexturechance(specialtextures[0], 20, 8, 1/18)
-                else:
-                    patchoftexturechance(bark2, 20, 8, 1 / 18)
-
-def texturerow(surface, y, searchcolor, type, specialtextures):
-    for x in range(surface.get_width()):
-        texturepoint(surface, x, y, searchcolor, type, specialtextures)
-
-#type is a string that refers to a set of textures and random patterns
-def addtexture(surface, searchcolor, type, specialtextures = None):
-    for y in range(surface.get_height()):
-        texturerow(surface, y, searchcolor, type, specialtextures)
-
-
 def maketree():
     p = pygame.Surface([TREEWIDTH, TREEHEIGHT], pygame.SRCALPHA)
     l = pygame.Surface([TREEWIDTH, TREEHEIGHT], pygame.SRCALPHA)
@@ -262,20 +203,34 @@ def maketree():
     p.blit(l3, [0, 0])
     p.blit(l4, [0, 0])
 
-    #chance for special texture
+    # first texturize the green part of the tree
+    moss1 = Texture((26, 47, 21), 1/12, 1/21, 4/7, acceptedcolors = [TREEFILLCOLOR])
+    moss2 = Texture((28, 63, 12), 1/70, 1/21, 4/7, acceptedcolors = [TREEFILLCOLOR])
+    moss3 = Texture((28, 61, 33), 1/70, 0, 0, acceptedcolors = [TREEFILLCOLOR])
+
     if randint(1, 3) == 1:
-        addtexture(p, TREEFILLCOLOR, "moss", [(randint(22, 28), randint(55, 65), randint(10, 25))])
-    else:
-        addtexture(p, TREEFILLCOLOR, "moss")
+        moss1.color = (randint(22, 28), randint(55, 65), randint(10, 25))
+    addtexture(p, moss1)
+    addtexture(p, moss2)
+    addtexture(p, moss3)
 
-    #chance to add a different special texture
+    # then texture the bark
+    bark1 = Texture((46, 35, 35), 1/40, 1/160, 18/20, acceptedcolors = [TRUNKCOLOR])
+    bark2 = Texture((45, 32, 32), 1/100, 1/160, 18/20, acceptedcolors = [TRUNKCOLOR])
+
     if randint(1, 10) == 1:
-        addtexture(p, TRUNKCOLOR, "bark", [(randint(30, 45), randint(30, 45), randint(30, 45))])
-    else:
-        addtexture(p, TRUNKCOLOR, "bark")
+        bark1.color = (randint(30, 45), randint(30, 45), randint(30, 45))
+    addtexture(p, bark1)
+    addtexture(p, bark2)
 
-    # chance to add moss to tree
+    # then chance to add moss to tree
     if randint(1, 9) == 1:
-        addtexture(p, TRUNKCOLOR, "moss", [(randint(22, 28), randint(45, 65), randint(10, 25))])
+        moss1.color = (randint(22, 28), randint(45, 65), randint(10, 25))
+        moss1.acceptedcolors = [TRUNKCOLOR]
+        moss2.acceptedcolors = [TRUNKCOLOR]
+        moss3.acceptedcolors = [TRUNKCOLOR]
+        addtexture(p, moss1)
+        addtexture(p, moss2)
+        addtexture(p, moss3)
 
     return p

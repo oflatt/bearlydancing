@@ -10,7 +10,7 @@ class Texture():
     # if bounds are none, it defaults to using the entire surface
     bounds = [None, None, None, None]
 
-    def __init__(self, color, initialchance, xchance, ychance, stopcolors = []):
+    def __init__(self, color, initialchance, xchance, ychance, stopcolors = [], acceptedcolors = None):
         # color of the texture added
         self.color = color
 
@@ -25,3 +25,6 @@ class Texture():
 
         # colors not to draw on
         self.stopcolors = stopcolors
+
+        # if acceptedcolors is a list, the color to paint on must be in it
+        self.acceptedcolors = acceptedcolors
