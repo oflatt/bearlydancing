@@ -47,12 +47,13 @@ outside2.enemies = enemies.woodsenemies
 outside2.lvrange = [1]
 
 # jeremyhome############################################################################################################
+rgrassland = graphics.grassland(500, 200)
 b = GR["halfpath"]["w"] / 10
 hole = Rock(GR["rabbithole"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 1 / 2, 1, 1 / 2])
 jmyman = Rock(GR["jeremy0"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 3 / 4, 1, 1 / 4])
 jmyman.background_range = hole.background_range.copy()
 
-jeremyhome = Map(GR["horizontal"], [hole,
+jeremyhome = Map(rgrassland, [hole,
                                     jmyman,
                                     Rock(GR["dancelion0"], 0, b * 4, [0, 3 / 4, 1, 1 / 4])])
 jeremyhome.exitareas = [
@@ -122,7 +123,7 @@ conversations.thatracoon.part_of_story = 1
 letter.conversations = [conversations.thatracoon]
 letter.exitareas = [Exit([0, 0, b * 10, b * 10], True, 'honeyhome', 'same', 'same')]
 
-# honeyhome#############################################################################################################
+# honeyhome#####################################################################################
 b = insidewidth / 10
 table = Rock(GR["table"], p * 75, p * 110, [0, 0.5, 1, 0.5])
 littleletter = Rock(GR['letter'], p * 75, p * 110, None)

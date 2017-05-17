@@ -1,17 +1,33 @@
-((("makepatch" .
+((("brightness" .
+   [1 0 0 0 0 0 0 0 0 0])
+  ("key" .
+   [1 0 0])
+  ("randomcolorsunsorted" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("backgroundcolor" .
+   [0 0 0 0 0 0 0 1 0 0 0 0 0 0 0])
+  ("randompink" .
+   [4 0 0 0 0 0 0 0 0 0])
+  ("pinkmodeonq" .
+   [0 0 0 0 0 1 2 0 0 0 0])
+  ("graphics" .
+   [1 0 0 0 0 0 0 0])
+  ("rgrassland" .
+   [2 0 0 0 0 1 0 0 0 0])
+  ("makepatch" .
    [1 0 0 0 0 0 0 0 0])
   ("append" .
-   [5 0 0 0 0 0])
+   [6 0 0 0 0 0])
   ("patches" .
    [1 0 0 0 0 0 0])
   ("numofpatches" .
    [1 0 0 0 0 0 0 0 0 0 0 0])
   ("randint" .
-   [5 0 0 0 0 0 0])
+   [8 0 0 0 0 0 0])
   ("height" .
-   [3 0 0 0 0 0])
+   [4 0 0 0 0 0])
   ("width" .
-   [3 0 0 0 0])
+   [4 0 0 0 0])
   ("initialvolume" .
    [1 0 0 0 0 0 0 0 0 0 0 1 0])
   ("update_tone" .
@@ -73,7 +89,7 @@
   ("set_at" .
    [1 0 0 0 0 0])
   ("color" .
-   [5 0 0 0 0])
+   [8 0 0 0 0])
   ("addupq" .
    [1 0 0 0 0 0])
   ("adddownq" .
@@ -107,4 +123,14 @@
   ("add" .
    [1 0 0])
   ("moss" .
-   [1 0 0 0])))
+   [1 0 0 0])
+  ("randomcolors" .
+   [10 0 0 0 0 0 0 0 0 0 0 0])
+  ("randomgreens" .
+   [4 0 0 0 0 0 0 0 0 0 0 0])
+  ("pygame" .
+   [2 0 0 0 0 0])
+  ("Surface" .
+   [1 0 0 0 0 0 0])
+  ("SRCALPHA" .
+   [0 0 0 1 0 0 0 0])))
