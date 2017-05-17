@@ -37,8 +37,9 @@ font = pygame.font.SysFont(fontname, 30)
 newworldeachloadq = True
 
 # map stuff
-#pinetreesused is used to keep track of how many randomly g
+# pinetreesused is used to keep track of how many random trees are used
 pinetreesused = 0
+grasslandsused = 0
 basemapsize = 360
 
 #battle

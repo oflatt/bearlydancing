@@ -217,6 +217,8 @@ def maketree():
     # then texture the bark
     bark1 = Texture((46, 35, 35), 1/40, 1/160, 18/20, acceptedcolors = [TRUNKCOLOR])
     bark2 = Texture((45, 32, 32), 1/100, 1/160, 18/20, acceptedcolors = [TRUNKCOLOR])
+    bark1.xinvisiblechance = 1
+    bark2.xinvisiblechance = 1
 
     if randint(1, 10) == 1:
         bark1.color = (randint(30, 45), randint(30, 45), randint(30, 45))

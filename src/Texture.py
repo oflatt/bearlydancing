@@ -10,8 +10,15 @@ class Texture():
     # if bounds are none, it defaults to using the entire surface
     bounds = [None, None, None, None]
 
+    # chance for the new point moving the x direction to be invisible, not colored
+    xinvisiblechance = 0
+    yinvisiblechance = 0
+
+    # if backtrack mode is off, it will not return back in the direction of the first point
+    backtrackmodeonq = False
+
     def __init__(self, color, initialchance, xchance, ychance, stopcolors = [], acceptedcolors = None):
-        # color of the texture added
+        # color of tnhe texture added
         self.color = color
 
         # chance to add color at one pixel and spread

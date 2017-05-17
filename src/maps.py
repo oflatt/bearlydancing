@@ -69,11 +69,12 @@ b = GR["horizontal"]["w"] / 10
 
 #stands for random pine tree
 rpt = graphics.pinetree()
+rgrassland = graphics.grassland(500, 500)
 treerock = Rock(rpt, 3.5 * b, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + rpt["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
 houserock = Rock(GR["honeyhouseoutside"], 0, 0, [0, 0, 1, 0.9])
-outside1 = Map(GR["horizontal"], [houserock,
+outside1 = Map(rgrassland, [houserock,
                                   Rock(GR["rock"], 6.5 * b, 7 * b, [0, 0, 1, 1]),
                                   Rock(GR["rock"], 5.5 * b, 3.5 * b, [0, 0, 1, 1]),
                                   Rock(GR["rock"], 2.5 * b, 6.3 * b, [0, 0, 1, 1]),
@@ -81,8 +82,8 @@ outside1 = Map(GR["horizontal"], [houserock,
                                   meangreenrock])
 housewidth = GR["honeyhouseoutside"]["w"]
 househeight = GR["honeyhouseoutside"]["h"]
-outsidewidth = GR["horizontal"]["w"]
-outsideheight = GR["horizontal"]["h"]
+outsidewidth = rgrassland["w"]
+outsideheight = rgrassland["h"]
 outside1.startpoint = [b * 8, b * 4]
 outside1.exitareas = [Exit([outsidewidth, 0, extraarea, outsideheight], False, 'outside2', 0, "same"),
                       Exit([-extraarea, 0, extraarea, outsideheight], False, 'jeremyhome', GR["halfpath"]["w"] - honeyw,
