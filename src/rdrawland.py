@@ -25,7 +25,10 @@ def makegrassland(width, height):
     patches = []
     numofpatches = randint(5, 10)
 
-    pinkmodeonq = True
+    pinkmodeonq = False
+    if random.random() < 0.005:
+        pinkmodeonq = True
+
 
     def randompink():
         return (randint(140, 255), randint(0, 100), randint(150, 255))
