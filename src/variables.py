@@ -11,12 +11,13 @@ pygame.mixer.set_num_channels(46)
 modes = pygame.display.list_modes()
 ctypes.windll.user32.SetProcessDPIAware()
 mode = modes[0]
-height = mode[1]#displayinfo.current_h - 200
-width = height #for not it is a square window
+height = mode[1]
+width = mode[0]
 hh = height/2
+hw = width/2
 flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
-wide_screen = pygame.display.set_mode(mode, flags)
-screen = pygame.Surface([height, width])
+screen = pygame.display.set_mode(mode, flags)
+#screen = pygame.Surface([height, width])
 
 # Define some colors
 BLACK = (0, 0, 0)

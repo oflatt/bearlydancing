@@ -16,6 +16,10 @@ class Player(Dancer):
     normal_height = 10
     xpos = 0
     ypos = 0
+    drawx = 0
+    drawy = 0
+    mapdrawx = 0
+    mapdrawy = 0
     lastxupdate = 0
     lastyupdate = 0
     storyprogress = 1
@@ -36,24 +40,40 @@ class Player(Dancer):
         if not y == "same":
             self.ypos = y
 
-    def draw(self): #movement is combination of top down scrolling and free range
+    def update_drawpos(self):
+        x = self.xpos
+        y = self.ypos
         m = maps.current_map
-        mw = m.finalimage.get_width()
-        mh = m.finalimage.get_height()
-        if self.xpos >= variables.hh and self.xpos <= (mw - variables.hh):#If in scrolling area
-            drawx = variables.hh #middle of screen
-        elif self.xpos > (mw - variables.hh): #if on right side
-            drawx = self.xpos - (mw - variables.height) #normal x pos adjusted for scrolling area
+        w = m.finalimage.get_width()
+        h = m.finalimage.get_height()
+        pwidth = self.normal_width
+        pheight = self.normal_height
+        hpheight = pheight/2
+        hpwidth = pwidth/2
+        if x < variables.hw - hpwidth:  # if it is in the left side of the map
+            self.mapdrawx = 0  # do not scroll the map at all
+            self.drawx = x
+        elif x > (w - variables.hw - hpwidth):  # if it is on the right side of the map
+            self.mapdrawx = w - variables.width  # set it to the maximum scroll
+            self.drawx = x - (w-variables.width)
         else:
-            drawx = self.xpos #otherwise make the coordinates normal
-        if self.ypos >= variables.hh and self.ypos <= (mh - variables.hh): #same logic for y pos
-            drawy = variables.hh
-        elif self.ypos > (mh - variables.hh):
-            drawy = self.ypos - (mh - variables.height) #mh - variables.height is the height of the scrolling area
+            # otherwise, scroll it by pos (accounting for the initial non-scolling area)
+            self.mapdrawx = x - variables.hw + hpwidth
+            self.drawx = variables.hw - hpwidth
+        
+        if y < variables.hh - hpheight:  # same but for y pos
+            self.mapdrawy = 0
+            self.drawy = y
+        elif y > (h - variables.hh - hpheight):
+            self.mapdrawy = h - variables.height
+            self.drawy = y - (h-variables.height)
         else:
-            drawy = self.ypos
+            self.mapdrawy = y - variables.hh + hpheight
+            self.drawy = variables.hh - hpheight
+
+    def draw(self): #movement is combination of top down scrolling and free range
         self.current_pic_scaled()
-        variables.screen.blit(self.current_display, [drawx, drawy])
+        variables.screen.blit(self.current_display, [self.drawx, self.drawy])
 
     def change_animation(self):
         oldanimation = self.current_animation
@@ -156,6 +176,8 @@ class Player(Dancer):
                 self.xpos = 0
                 iscollisionx = True
             elif movedxpos+self.normal_width>m.finalimage.get_width():
+                print("xpos: " + str(self.xpos) + " normalw: " + str(self.normal_width))
+                print(m.finalimage.get_width())
                 self.xpos = m.finalimage.get_width()-self.normal_width
                 iscollisionx = True
             else:
@@ -218,7 +240,7 @@ class Player(Dancer):
         self.current_display = c
 
     def scale_by_offset(self):
-        c = self.current_animation.pics[1]
+        c = self.right_animation.pics[1]
         maskpic = pygame.transform.scale(c["img"],
                                     [int(c["w"]*variables.scaleoffset),
                                      int(c["h"]*variables.scaleoffset)])

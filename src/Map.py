@@ -19,6 +19,7 @@ class Map():
     encounterchecksnotactivated = 0
     conversations = []  # list of conversation on the map
     isscaled = False  # if scale stuff has been called
+    screenxoffset = 0 # this is if the map width is less than the screen width
 
     def __init__(self, base, terrain):
         self.base = base
@@ -32,8 +33,8 @@ class Map():
             smaller = mapw
         else:
             smaller = maph
-        if mapw < variables.width or maph < variables.height:
-            self.map_scale_offset = variables.width / smaller
+        if maph < variables.height:
+            self.map_scale_offset = variables.height / smaller
         else:
             self.map_scale_offset = 1
 
@@ -60,29 +61,14 @@ class Map():
             x.width *= self.map_scale_offset
             x.height *= self.map_scale_offset
         self.isscaled = True
-
+        
     # x and y are the player's x and y pos
-    def draw(self, x, y):
+    def draw(self, drawpos):
         # check if scale stuff needs to be called- only called for the first map
         if not self.isscaled:
             self.scale_stuff()
 
-        w = self.finalimage.get_width()
-        h = self.finalimage.get_height()
-        if x < variables.hh:  # if it is in the left side of the map
-            drawx = 0  # do not scroll the map at all
-        elif x > (w - variables.hh):  # if it is on the right side of the map
-            drawx = w - variables.height  # set it to the maximum scroll
-        else:
-            drawx = x - variables.hh  # otherwise, scroll it by pos (accounting for the initial non-scolling area
-        if y < variables.hh:  # same but for y pos
-            drawy = 0
-        elif y > (h - variables.hh):
-            drawy = h - variables.height
-        else:
-            drawy = y - variables.hh
-
-        variables.screen.blit(self.finalimage, [-drawx, -drawy])
+        variables.screen.blit(self.finalimage, [-drawpos[0], -drawpos[1]])
 
         # draw button above exits and conversations
         e = self.checkexit()

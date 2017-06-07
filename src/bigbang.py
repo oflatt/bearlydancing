@@ -2,8 +2,7 @@
 import pygame, variables, copy
 
 LOADINGTEXT = pygame.transform.scale2x(variables.font.render("LOADING...", 0, variables.WHITE))
-variables.screen.blit(LOADINGTEXT, [0,0])
-variables.wide_screen.blit(LOADINGTEXT, [0, 0])
+variables.screen.blit(LOADINGTEXT, [0, 0])
 pygame.display.flip()
 
 import maps
@@ -25,7 +24,7 @@ pygame.event.get()
 menu = Menu.load()
 menu.resume()
 
-#draw to make sure it's pic is available
+#draw to make sure its pic is available
 classvar.player.draw()
 
 # -------- Main Program Loop -----------
@@ -85,14 +84,17 @@ while not done:
             classvar.battle.ontick()
 
     # --- Drawing Code
-    variables.screen.fill(variables.WHITE)
+    variables.screen.fill(variables.BLACK)
     if variables.settings.state == "conversation":
-        maps.current_map.draw(classvar.player.xpos, classvar.player.ypos)
+        classvar.player.update_drawpos()
+        maps.current_map.draw([classvar.player.mapdrawx, classvar.player.mapdrawy])
         classvar.player.draw()
         maps.current_map.draw_foreground()
         conversations.currentconversation.draw()
     elif variables.settings.state == "world":
-        maps.current_map.draw(classvar.player.xpos, classvar.player.ypos)
+        classvar.player.update_drawpos()
+        maps.current_map.draw([classvar.player.mapdrawx,
+                               classvar.player.mapdrawy])
         classvar.player.draw()
         maps.current_map.draw_foreground()
     elif variables.settings.state == "battle":
@@ -101,10 +103,9 @@ while not done:
     if (variables.settings.menuonq):
         menu.draw()
 
-    # put the screen on the widescreen
-    pygame.draw.rect(variables.wide_screen, variables.BLACK, [0, 0, variables.mode[0], variables.mode[1]])
-    variables.wide_screen.blit(variables.screen, [int(variables.mode[0] / 2 - variables.width / 2), 0])
-    variables.wide_screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [20, 20])
+
+    # blit fps
+    variables.screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [20, 20])
 
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()

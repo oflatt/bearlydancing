@@ -411,11 +411,11 @@ def random_value(t, ischord, list, specs):
     if not rv == "rest":
         if ('melodic' in specs['rules']) and not (ischord) and depth > 0:
             rv = melodic_value(rv, depth, specs, l)
-        elif ('melodic' in specs['rules']) and ischord and not rv == "rest":
+        elif ('melodic' in specs['rules']) and ischord and not rv == "rest" and depth>0:
             rv = melodicchord(rv)
         elif ('alternating' in specs['rules']) and not (ischord) and depth > 0:
             rv = alternating_value(rv, depth, specs, l)
-        elif ('alternating' in specs['rules']) and ischord:
+        elif ('alternating' in specs['rules']) and ischord and depth>0:
             rv = melodicchord(rv)
 
     iscopy = False
