@@ -3,7 +3,7 @@ from play_sound import stop_tone, play_tone, update_tone
 from variables import padypos
 
 padxspace = variables.width / 12
-padheight = variables.width / 80
+padheight = variables.height / 80
 middleoffset = padxspace / 2
 
 # list of text pics to display for each note (perfect ect.)
@@ -50,12 +50,7 @@ class Beatmap():
         self.notes = copy.deepcopy(self.originalnotes)
 
     def draw(self):
-        # draw the notes that are on the screen
-        n = self.notes_on_screen()
-        for x in range(0, len(n)):
-            n[x].draw(self.tempo)
         w = variables.width / 20
-
         # draw which ones are pressed
         for x in range(0, 8):
             if self.held_keys[x] != None:
@@ -66,7 +61,11 @@ class Beatmap():
                 pygame.draw.ellipse(variables.screen, variables.WHITE, [padxspace * (x + 1) - w / 8 + xoffset,
                                                                         padypos - padheight + padheight / 2 - ew / 4,
                                                                         ew, ew / 2])
-
+        # draw the notes that are on the screen
+        n = self.notes_on_screen()
+        for x in range(0, len(n)):
+            n[x].draw(self.tempo)
+        
         self.draw_pads()
 
     def draw_pads(self):

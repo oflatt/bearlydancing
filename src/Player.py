@@ -50,7 +50,11 @@ class Player(Dancer):
         pheight = self.normal_height
         hpheight = pheight/2
         hpwidth = pwidth/2
-        if x < variables.hw - hpwidth:  # if it is in the left side of the map
+        if w <= variables.width:
+            # if the map fits in the screen, no scrolling needed
+            self.drawx = x
+            self.mapdrawx = 0
+        elif x < variables.hw - hpwidth:  # if it is in the left side of the map
             self.mapdrawx = 0  # do not scroll the map at all
             self.drawx = x
         elif x > (w - variables.hw - hpwidth):  # if it is on the right side of the map
@@ -60,8 +64,11 @@ class Player(Dancer):
             # otherwise, scroll it by pos (accounting for the initial non-scolling area)
             self.mapdrawx = x - variables.hw + hpwidth
             self.drawx = variables.hw - hpwidth
-        
-        if y < variables.hh - hpheight:  # same but for y pos
+
+        if h <= variables.height:
+            self.drawy = y
+            self.mapdrawy = 0
+        elif y < variables.hh - hpheight:  # same but for y pos
             self.mapdrawy = 0
             self.drawy = y
         elif y > (h - variables.hh - hpheight):
@@ -70,6 +77,10 @@ class Player(Dancer):
         else:
             self.mapdrawy = y - variables.hh + hpheight
             self.drawy = variables.hh - hpheight
+
+        # then add the map's x offset for drawing small maps in the middle
+        self.drawx += m.screenxoffset
+        self.mapdrawx -= m.screenxoffset
 
     def draw(self): #movement is combination of top down scrolling and free range
         self.current_pic_scaled()
@@ -176,8 +187,6 @@ class Player(Dancer):
                 self.xpos = 0
                 iscollisionx = True
             elif movedxpos+self.normal_width>m.finalimage.get_width():
-                print("xpos: " + str(self.xpos) + " normalw: " + str(self.normal_width))
-                print(m.finalimage.get_width())
                 self.xpos = m.finalimage.get_width()-self.normal_width
                 iscollisionx = True
             else:
@@ -200,7 +209,6 @@ class Player(Dancer):
                 self.ypos = 0
                 iscollisiony = True
             elif movedypos+self.normal_height>m.finalimage.get_height():
-                print('further down')
                 self.ypos = m.finalimage.get_height()-self.normal_height
                 iscollisiony = True
             else:

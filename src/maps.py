@@ -90,7 +90,7 @@ outside1.startpoint = [b * 8, b * 4]
 outside1.exitareas = [Exit([outsidewidth, 0, extraarea, outsideheight], False, 'outside2', 0, "same"),
                       Exit([-extraarea, 0, extraarea, outsideheight], False, 'jeremyhome', GR["halfpath"]["w"] - honeyw,
                            "same"),
-                      Exit([housewidth * (1.5 / 5), househeight * (3 / 5), housewidth * (1 / 10),
+                      Exit([housewidth * (1.5 / 5) + houserock.x, househeight * (3 / 5), housewidth * (1 / 10),
                             househeight * (1 / 5)],
                            True, 'honeyhome',
                            p * 41, insideheight - honeyh)]
@@ -136,7 +136,7 @@ honeyhome = Map(GR["honeyhouseinside"],
 honeyhome.startpoint = [86 * p, 56 * p]
 doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                 True, 'outside1',
-                GR["honeyhouseoutside"]["w"] * (1 / 5), GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight)
+                GR["honeyhouseoutside"]["w"] * (1 / 5) + houserock.x, GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight)
 doorexit.conversation = conversations.hungry
 doorexit.conversation.storyrequirement = [1]
 honeyhome.exitareas = [doorexit,
@@ -152,6 +152,7 @@ honeyhome.uselastposq = True
 # teleportation and stuff###############################################################################################
 home_map = honeyhome
 current_map = home_map
+current_map.scale_stuff()
 current_map_name = 'honeyhome'
 classvar.player.teleport(current_map.startpoint[0] * current_map.map_scale_offset,
                          current_map.startpoint[1] * current_map.map_scale_offset)

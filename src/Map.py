@@ -38,19 +38,13 @@ class Map():
         else:
             self.map_scale_offset = 1
 
-    def draw_map(self, b, t):
-        i = b
-        for x in range(0, len(t)):
-            r = t[x]
-            i.blit(r.base["img"], [r.x, r.y])
-        return i
-
     def scale_stuff(self):
         for x in range(len(self.terrain)):
             self.terrain[x].scale_by_offset(self.map_scale_offset)
-        scaled_base = pygame.transform.scale(self.base["img"], [int(self.base["w"] * self.map_scale_offset),
-                                                                int(self.base["h"] * self.map_scale_offset)])
-        self.finalimage = self.draw_map(scaled_base, self.terrain)
+        newwidth = int(self.base["w"] * self.map_scale_offset)
+        newheight = int(self.base["h"] * self.map_scale_offset)
+        self.finalimage = pygame.transform.scale(self.base["img"], [newwidth,
+                                                                    newheight])
         for x in range(0, len(self.exitareas)):
             self.exitareas[x].scale_by_offset(self.map_scale_offset)
         for x in range(0, len(self.conversations)):
@@ -61,33 +55,41 @@ class Map():
             x.width *= self.map_scale_offset
             x.height *= self.map_scale_offset
         self.isscaled = True
+
+        # compute screenxoffset if needed
+        if newwidth < variables.width:
+            self.screenxoffset = int((variables.width-newwidth)/2)
+
+    def draw_background(self, drawpos):
+        offset = [-drawpos[0], -drawpos[1]]
+        variables.screen.blit(self.finalimage, offset)
+        for r in self.terrain:
+            r.draw(offset)
         
     # x and y are the player's x and y pos
     def draw(self, drawpos):
-        # check if scale stuff needs to be called- only called for the first map
-        if not self.isscaled:
-            self.scale_stuff()
-
-        variables.screen.blit(self.finalimage, [-drawpos[0], -drawpos[1]])
+        self.draw_background(drawpos)
 
         # draw button above exits and conversations
-        e = self.checkexit()
         pw = classvar.player.normal_width / 2
+        buttonx = classvar.player.xpos + classvar.player.normal_width / 2 - pw / 2 - drawpos[0]
+        buttony = classvar.player.ypos - pw - drawpos[1]
+        
+        e = self.checkexit()
         if not e == False:
-            self.draw_interation_button(classvar.player.xpos + classvar.player.current_display.get_width() / 2 - pw / 2,
-                                        classvar.player.ypos - pw, pw)
+            self.draw_interation_button(buttonx, buttony, pw)
         c = self.checkconversation()
         if not c == False and c.isbutton:
-            self.draw_interation_button(classvar.player.xpos + classvar.player.current_display.get_width() / 2 - pw / 2,
-                                        classvar.player.ypos - pw, pw)
+            self.draw_interation_button(buttonx, buttony, pw)
 
-    def draw_foreground(self):
+    def draw_foreground(self, drawpos):
+        rockoffset = [-drawpos[0], -drawpos[1]]
         # detect if within the foreground range
         playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
                                  classvar.player.normal_height)
         for r in self.terrain:
             if (not r.background_range.colliderect(playerrect)):
-                r.draw()
+                r.draw(rockoffset)
 
     def draw_interation_button(self, xpos, ypos, width):
         pygame.draw.ellipse(variables.screen, variables.WHITE, [xpos, ypos, width, width])

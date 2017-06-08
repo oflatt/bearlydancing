@@ -21,7 +21,7 @@ class Speak():
         line1 = graphics.sscale_customfactor(variables.font.render(self.dialogue[0], 0, variables.WHITE), self.textsize)
         line_height = line1.get_height()
         h = variables.height
-        w = variables.height
+        w = variables.width
         b = h-variables.textbox_height
         pygame.draw.rect(variables.screen, variables.BLACK, [0, b, w, h])
         numoflines = self.lines_in_sceen()

@@ -24,11 +24,11 @@ pygame.event.get()
 menu = Menu.load()
 menu.resume()
 
-#draw to make sure its pic is available
-classvar.player.draw()
-
 # -------- Main Program Loop -----------
 while not done:
+    # add the past tick to the current time
+    variables.settings.current_time += clock.get_time()
+    
     # --- Event Processing- this is like keyPressed
     for event in pygame.event.get():
         #first check for saving and exiting
@@ -84,20 +84,22 @@ while not done:
             classvar.battle.ontick()
 
     # --- Drawing Code
-    variables.screen.fill(variables.BLACK)
-    if variables.settings.state == "conversation":
+
+    def draw_world():
+        if maps.current_map.screenxoffset != 0:
+            variables.screen.fill(variables.BLACK)
         classvar.player.update_drawpos()
         maps.current_map.draw([classvar.player.mapdrawx, classvar.player.mapdrawy])
         classvar.player.draw()
-        maps.current_map.draw_foreground()
+        maps.current_map.draw_foreground([classvar.player.mapdrawx, classvar.player.mapdrawy])
+    
+    if variables.settings.state == "conversation":
+        draw_world()
         conversations.currentconversation.draw()
     elif variables.settings.state == "world":
-        classvar.player.update_drawpos()
-        maps.current_map.draw([classvar.player.mapdrawx,
-                               classvar.player.mapdrawy])
-        classvar.player.draw()
-        maps.current_map.draw_foreground()
+        draw_world()
     elif variables.settings.state == "battle":
+        variables.screen.fill(variables.BLACK)
         classvar.battle.draw()
 
     if (variables.settings.menuonq):
@@ -112,9 +114,6 @@ while not done:
 
     # Limit frames per second
     clock.tick(240)
-
-    # add the past tick to the current time
-    variables.settings.current_time += clock.get_time()
 
 # Close the window and quit, this is after the main loop has finished
 pygame.quit()

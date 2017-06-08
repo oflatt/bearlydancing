@@ -1,4 +1,4 @@
-import pygame, variables, rdraw, play_sound
+import pygame, ctypes, os
 
 # Setup
 pygame.init()
@@ -8,12 +8,14 @@ clock = pygame.time.Clock()
 
 # Set the width and height of the screen [width,height]
 modes = pygame.display.list_modes()
+ctypes.windll.user32.SetProcessDPIAware()
 mode = modes[0]
+mode = [int(mode[0]/2), int(mode[1]/2)]
 height = mode[1]#displayinfo.current_h - 200
-width = height #for not it is a square window
+width = mode[0]
 hh = height/2
-flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
-wide_screen = pygame.display.set_mode(mode, pygame.FULLSCREEN)
+flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
+wide_screen = pygame.display.set_mode(mode, flags)
 running = True
 
 fontlist = pygame.font.get_fonts()
@@ -24,19 +26,22 @@ font = pygame.font.SysFont(fontname, 30)
 
 print("starup time: " + str(pygame.time.get_ticks()) + " millis")
 
-loopl = play_sound.all_tones["sine"].loopbuffers[7]
-max_sample = 2 ** (16 - 1) - 1
-wheight = 400
-print(max_sample)
-for x in range(100):
-    print(loopl[x][1])
-    wide_screen.set_at((x, int((loopl[len(loopl)-(100-x)][1]/max_sample)*wheight+wheight+100)), (100,255,255))
+def sscale(img):
+    factor = 0.0025 #This basically determines how much of the map we can see
+    w = img.get_width()
+    h = img.get_height()
+    endsize = height*factor
+    if w > h:
+        smaller = h
+    else:
+        smaller = w
+    return pygame.transform.scale(img, [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)])
 
-for x in range(100):
-    print(loopl[x][1])
-    wide_screen.set_at((x+100, int((loopl[x][1]/max_sample)*wheight+wheight+100)), (255,255,255))
+bigpic = pygame.image.load(os.path.join('pics', "randomgrassland0.png")).convert_alpha()
+#bigpic = sscale(bigpic)
 
-pygame.display.flip()
+bigpics = [bigpic.subsurface([0,0,int(bigpic.get_width()/2), bigpic.get_height()]),
+           bigpic.subsurface([int(bigpic.get_width()/2),0,int(bigpic.get_width()/2), bigpic.get_height()])]
 
 while running:
     for event in pygame.event.get():
@@ -45,5 +50,11 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
+                
+    wide_screen.blit(bigpic, [0,0])
+    pygame.transform.scale(wide_screen, [80, 80])
+    wide_screen.blit(font.render(str(clock.get_fps()), 0, (255,255,255)), [20, 20])
+                
+    pygame.display.flip()
 
-    clock.tick(60)
+    clock.tick(240)

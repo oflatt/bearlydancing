@@ -24,11 +24,11 @@ class Rock():
         self.h = 2
         self.make_mask(True)
 
-    def draw(self):
+    def draw(self, offset = [0,0]):
         if not self.animation == None:
             variables.screen.blit(self.animation.current_frame())
         else:
-            variables.screen.blit(self.base["img"], [self.x, self.y])
+            variables.screen.blit(self.base["img"], [self.x + offset[0], self.y + offset[1]])
 
     def make_mask(self, isresetbackgroundrange):
         cs = self.collidesection
