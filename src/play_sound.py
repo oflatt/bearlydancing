@@ -6,13 +6,13 @@ from Soundpack import Soundpack
 
 # each soundpack is a list of sounds from A3 to A6
 # value of 0 corresponds to A4, -12 is A3
-all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 3),
-             "squareh": Soundpack("square", 25), "triangle": Soundpack("triangle", 2),
+all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 25),
+             "triangle": Soundpack("triangle", 2),
              "triangleh": Soundpack("triangle", 30), "sawtooth": Soundpack("sawtooth", 2),
              "sawtoothh": Soundpack("sawtooth", 30)}
 
 # all possible soundpacks
-soundpackkeys = ["sine", 'square', 'squareh', 'triangle', 'triangleh', 'sawtooth', 'sawtoothh']
+soundpackkeys = ["sine", 'square', 'triangle', 'triangleh', 'sawtooth', 'sawtoothh']
 
 Drum_kick_heavy = pygame.mixer.Sound("drum_heavy_kick.wav")
 Drum_kick_heavy.set_volume(variables.battle_volume * 6)

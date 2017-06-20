@@ -20,7 +20,7 @@ p = insidewidth / 176
 
 treecollidesection = [0, 18.5 / 20, 1, 1.5 / 20]
 
-# outside3##############################################################################################################
+# outside3######################################################################################
 b = GR["rightturn"]["w"] / 10
 outsideheight = GR["rightturn"]["h"]
 outside3 = Map(GR["rightturn"], [])
@@ -28,7 +28,7 @@ outside3.exitareas = [Exit([0, outsideheight, b * 10, extraarea], False, "outsid
 outside3.enemies = enemies.woodsenemies
 outside3.lvrange = [1, 2]
 
-# outside2##############################################################################################################
+# outside2######################################################################################
 b = GR["leftturn"]["w"] / 10
 rpt = graphics.pinetree()
 outsideheight = GR["leftturn"]["h"]
@@ -46,18 +46,18 @@ outside2.exitareas = [
 outside2.enemies = enemies.woodsenemies
 outside2.lvrange = [1]
 
-# jeremyhome############################################################################################################
-rgrassland = graphics.grassland(500, 200)
-b = GR["halfpath"]["w"] / 10
+# jeremyhome####################################################################################
+rgrassland = graphics.grassland(800, 500)
+b = rgrassland["w"]/10
 hole = Rock(GR["rabbithole"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 1 / 2, 1, 1 / 2])
 jmyman = Rock(GR["jeremy0"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 3 / 4, 1, 1 / 4])
 jmyman.background_range = hole.background_range.copy()
 
 jeremyhome = Map(rgrassland, [hole,
-                                    jmyman,
-                                    Rock(GR["dancelion0"], 0, b * 4, [0, 3 / 4, 1, 1 / 4])])
-jeremyhome.exitareas = [
-    Exit([b * 10, int(GR["house"]["h"]), extraarea, GR["halfpath"]["h"]], False, 'outside1', 0, "same")]
+                              jmyman,
+                              Rock(GR["dancelion0"], 0, b * 4, [0, 3 / 4, 1, 1 / 4])])
+jeremyhome.exitareas = [Exit([b * 10, int(GR["house"]["h"]),
+                              extraarea, GR["halfpath"]["h"]], False, 'outside1', 0, "same")]
 conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"] - (honeyw / 2), GR["rabbithole"]["h"]]
 conversations.dancelionpass.area = [0, 0, b, b * 10]
@@ -103,7 +103,7 @@ outside1c.part_of_story = 2
 outside1c.special_battle = enemies.greenie
 outside1.conversations = [outside1c]
 
-# letter################################################################################################################
+# letter########################################################################################
 b = GR['backgroundforpaper']['w'] / 10
 bigpaper = Rock(GR["paper"], (GR["backgroundforpaper"]['w'] - GR["paper"]["w"]) / 2, 0, [0, 0, 1, 1])
 bigpaper.background_range = None  # always in front
@@ -149,7 +149,7 @@ honeyhome.colliderects = [Rect(0, 0, p * 31, p * 74),  # bed
                           Rect(p * 75, p * 110 + p * 11, p * 44, p * 13)]  # table
 honeyhome.uselastposq = True
 
-# teleportation and stuff###############################################################################################
+# teleportation and stuff#######################################################################
 home_map = honeyhome
 current_map = home_map
 current_map.scale_stuff()
