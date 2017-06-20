@@ -2,7 +2,7 @@ import pygame, ctypes
 from Settings import Settings
 
 # Setup
-pygame.mixer.pre_init(22050, -16, 2, 64)
+pygame.mixer.pre_init(22050, -16, 2, 128)
 pygame.mixer.init()
 pygame.init()
 pygame.mixer.set_num_channels(46)
@@ -43,7 +43,7 @@ pinetreesused = 0
 grasslandsused = 0
 basemapsize = 360
 
-#battle
+# battle
 healthanimationspeed = 2000#time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
 dancespeed = height/8 * 0.001#factor for displaying notes

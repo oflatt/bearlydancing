@@ -11,7 +11,7 @@ class Soundpack():
     loopsoundlist = []
     loopbuffers = []
 
-    def __init__(self, wavetype, shapefactor, resetq=False):
+    def __init__(self, wavetype, shapefactor, resetq=True):
         self.volumelist = bellvolume
         self.make_soundpack(wavetype, shapefactor, resetq)
 
@@ -28,7 +28,7 @@ class Soundpack():
 
         dt = durationplayed - self.volumelist[listplace][0]
         if listplace == len(self.volumelist)-1:
-            volume = self.volumelist[listplace][2]
+            volume = self.volumelist[listplace][1]
         else:
             timebetween = (self.volumelist[listplace+1][0]-self.volumelist[listplace][0])
             ydifference = (self.volumelist[listplace+1][1]-self.volumelist[listplace][1])
@@ -85,8 +85,8 @@ class Soundpack():
 
     # min refinement of 1 which means sine wave, and bigger numbers will take longer unless it is above 25 or so
     def make_wave(self, frequency, type, shapefactor, loopq = False):
-        loopduration = (1 / frequency) * 10  # in seconds
-        duration = self.volumelist[-1][0]/1000
+        loopduration = (1 / frequency) * 50  # in seconds
+        duration = self.volumelist[-1][0]/1000 + loopduration
         if loopq:
             duration = loopduration
         sample_rate = 44100
