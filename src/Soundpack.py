@@ -7,11 +7,12 @@ max_sample = 2 ** (16 - 1) - 1
 bellvolume = [[0, 0], [100, 1], [600, 0.15]]
 
 class Soundpack():
-    soundlist = []
-    loopsoundlist = []
-    loopbuffers = []
+    
 
-    def __init__(self, wavetype, shapefactor, resetq=True):
+    def __init__(self, wavetype, shapefactor, resetq=False):
+        self.soundlist = []
+        self.loopsoundlist = []
+        self.loopbuffers = []
         self.volumelist = bellvolume
         self.make_soundpack(wavetype, shapefactor, resetq)
 
@@ -84,7 +85,7 @@ class Soundpack():
         return sval
 
     # min refinement of 1 which means sine wave, and bigger numbers will take longer unless it is above 25 or so
-    def make_wave(self, frequency, type, shapefactor, loopq = False):
+    def make_wave(self, frequency, wavetype, shapefactor, loopq = False):
         loopduration = (1 / frequency) * 50  # in seconds
         duration = self.volumelist[-1][0]/1000 + loopduration
         if loopq:
@@ -99,13 +100,13 @@ class Soundpack():
         def get_sval(t):
             sval = 0
 
-            if type == "sine":
+            if wavetype == "sine":
                 sval = self.sinesval(t, frequency)
-            elif type == "square":
+            elif wavetype == "square":
                 sval = self.squaresval(t, frequency, shapefactor)
-            elif type == "triangle":
+            elif wavetype == "triangle":
                 sval = self.trianglesval(t, frequency, shapefactor)
-            elif type == "sawtooth":
+            elif wavetype == "sawtooth":
                 sval = self.sawtoothsval(t, frequency, shapefactor)
 
             return int(round(max_sample * sval))
@@ -140,7 +141,9 @@ class Soundpack():
             except OSError:
                 pass
             for x in range(36 + 1):
-                s = self.make_wave((440 * ((2 ** (1 / 12)) ** (x - 12))), wavetype, shapefactor)
+                currentfrequency = 440 * ((2 ** (1 / 12)) ** (x - 12))
+                
+                s = self.make_wave(currentfrequency, wavetype, shapefactor)
                 s.set_volume(initialvolume)
 
                 # save it for future loading
@@ -153,8 +156,8 @@ class Soundpack():
 
                 l.append(s)
 
-                loopwave = self.make_wave((440 * ((2 ** (1 / 12)) ** (x - 12))), wavetype, shapefactor, True)
+                loopwave = self.make_wave(currentfrequency, wavetype, shapefactor, True)
+                loopwave.set_volume(initialvolume)
                 self.loopsoundlist.append(loopwave)
-                self.loopsoundlist[x].set_volume(initialvolume)
                 
         self.soundlist = l
