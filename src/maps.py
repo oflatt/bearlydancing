@@ -80,15 +80,14 @@ meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, 
 houserock = Rock(GR["honeyhouseoutside"], housewidth, 0, None)
 outside1 = Map(rgrassland, [houserock,
                                   Rock(GR["rock"], 6.5 * b, 7 * b, [0, 0, 1, 1]),
-                                  Rock(GR["rock"], 5.5 * b, 3.5 * b, [0, 0, 1, 1]),
                                   Rock(GR["rock"], 2.5 * b, 6.3 * b, [0, 0, 1, 1]),
                                   treerock,
                                   meangreenrock])
 outsidewidth = rgrassland["w"]
 outsideheight = rgrassland["h"]
 outside1.startpoint = [b * 8, b * 4]
-outside1.exitareas = [Exit([outsidewidth, 0, extraarea, outsideheight], False, 'outside2', 0, "same"),
-                      Exit([-extraarea, 0, extraarea, outsideheight], False, 'jeremyhome', GR["halfpath"]["w"] - honeyw,
+outside1.exitareas = [Exit("right", False, 'outside2', 0, "same"),
+                      Exit("left", False, 'jeremyhome', "right",
                            "same"),
                       Exit([housewidth * (1.5 / 5) + houserock.x, househeight * (3 / 5), housewidth * (1 / 10),
                             househeight * (1 / 5)],
@@ -188,6 +187,16 @@ def change_map(name, newx, newy):
 
     #now current map is the new one
     change_map_nonteleporting(name)
+
+    # now handle newx and newy if they are a string
+    if newx == "right" or newx == "r":
+        xpos = current_map.base["w"] - honeyw
+    if newx == "left" or newx == "l":
+        xpos = 0
+    if newy == "up" or newy == "u":
+        newy = 0
+    if newy == "down" or newy == "bottom" or newy == "d":
+        newy = current_map.base["h"]
 
     #if the new pos is the same
     if (isinstance(xpos, str)):

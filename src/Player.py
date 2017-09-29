@@ -236,7 +236,7 @@ class Player(Dancer):
         self.lastyupdate = variables.settings.current_time
 
 
-    def current_pic_scaled(self): #returns the current pic to display
+    def current_pic_scaled(self): # returns the current pic to display
         if self.leftpresstime == 0 and self.rightpresstime == 0 and \
             self.uppresstime == 0 and self.downpresstime == 0:
             c = self.current_animation.pics[0]

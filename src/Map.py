@@ -3,6 +3,7 @@
 import variables, pygame, classvar, random, stathandeling, math
 from Battle import Battle
 
+extraarea = 50
 
 class Map():
     startpoint = [10, 10]  # xy coordinates of spawn point
@@ -39,6 +40,17 @@ class Map():
             self.map_scale_offset = 1
 
     def scale_stuff(self):
+        mapw = self.base["w"]
+        maph = self.base["h"]
+        for e in self.exitareas:
+            if e.area == "left" or e.area == "l":
+                e.area = [-extraarea, 0, extraarea, maph]
+            elif e.area == "right" or e.area == "r":
+                e.area = [mapw, 0, extraarea, maph]
+            elif e.area == "up" or e.area == "u":
+                e.area = [0, -extraarea, mapw, extraarea]
+            elif e.area == "down" or e.area == "d":
+                e.area = [0, maph, mapw, extraarea]
         for x in range(len(self.terrain)):
             self.terrain[x].scale_by_offset(self.map_scale_offset)
         newwidth = int(self.base["w"] * self.map_scale_offset)
