@@ -44,9 +44,9 @@ grasslandsused = 0
 basemapsize = 360
 
 # battle
-healthanimationspeed = 2000#time in milliseconds for the health bar animation to go
+healthanimationspeed = 2000# time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
-dancespeed = height/8 * 0.001#factor for displaying notes
+dancespeed = height/8 * 0.001# factor for displaying notes
 padypos = height*(13/16)
 
 generic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : []}

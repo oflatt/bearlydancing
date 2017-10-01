@@ -108,7 +108,7 @@ while not done:
 
     # blit fps
     variables.screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [20, 20])
-
+    
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
 

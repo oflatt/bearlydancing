@@ -10,7 +10,6 @@ clock = pygame.time.Clock()
 modes = pygame.display.list_modes()
 ctypes.windll.user32.SetProcessDPIAware()
 mode = modes[0]
-mode = [int(mode[0]/2), int(mode[1]/2)]
 height = mode[1]#displayinfo.current_h - 200
 width = mode[0]
 hh = height/2
@@ -50,9 +49,12 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
-                
-    wide_screen.blit(bigpic, [0,0])
-    pygame.transform.scale(wide_screen, [80, 80])
+    wide_screen.fill((0,0,0))
+    #wide_screen.blit(bigpic, [0,0])
+    #pygame.transform.scale(wide_screen, [80, 80])
+    hpic = pygame.image.load(os.path.join('pics', "honeyside0.png")).convert_alpha()
+    wide_screen.blit(pygame.transform.scale(hpic, [hpic.get_width()*10, hpic.get_height()*10]), [0,0])
+
     wide_screen.blit(font.render(str(clock.get_fps()), 0, (255,255,255)), [20, 20])
                 
     pygame.display.flip()
