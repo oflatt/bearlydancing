@@ -2,12 +2,16 @@
 
 import pygame, os, variables, rdrawtree, rdrawland
 
-viewfactor = round(variables.height*0.0025) #the master scaling factor for importing pixel art
+viewfactor = variables.height*0.0025
+viewfactorrounded = round(variables.height*0.0025) #the master scaling factor for importing pixel art
 
-def sscale(img):
+def sscale(img, rounded = True):
     w = img.get_width()
     h = img.get_height()
-    endsize = viewfactor
+    if rounded:
+        endsize = viewfactorrounded
+    else:
+        endsize = viewfactor
     if w > h:
         smaller = h
     else:
@@ -15,20 +19,26 @@ def sscale(img):
     return pygame.transform.scale(img, [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)])
 
 #like sscale but instead of returning a scaled pic, it returns what the dimensions of the new pic would have been
-def sscale_dimensions(img):
+def sscale_dimensions(img, rounded = True):
     w = img.get_width()
     h = img.get_height()
-    endsize = viewfactor
+    if rounded:
+        endsize = viewfactorrounded
+    else:
+        endsize = viewfactorendsize = viewfactor
     if w > h:
         smaller = h
     else:
         smaller = w
     return [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)]
 
-def sscale_customfactor(img, factor):
+def sscale_customfactor(img, factor, rounded = True):
     w = img.get_width()
     h = img.get_height()
-    endsize = viewfactor
+    if rounded:
+        endsize = viewfactorrounded
+    else:
+        endsize = viewfactor
     if w > h:
         smaller = h
     else:

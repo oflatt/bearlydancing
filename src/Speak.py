@@ -13,12 +13,14 @@ class Speak():
         self.dialogue = dialogue
 
     def lines_in_sceen(self):
-        line1 = graphics.sscale_customfactor(variables.font.render(self.dialogue[0], 0, variables.WHITE), self.textsize)
+        line1 = graphics.sscale_customfactor(variables.font.render(self.dialogue[0], 0, variables.WHITE),
+                                             self.textsize, False)
         return int(variables.textbox_height/line1.get_height())
 
     def draw(self):
         #text
-        line1 = graphics.sscale_customfactor(variables.font.render(self.dialogue[0], 0, variables.WHITE), self.textsize)
+        line1 = graphics.sscale_customfactor(variables.font.render(self.dialogue[0], 0, variables.WHITE),
+                                             self.textsize, False)
         line_height = line1.get_height()
         h = variables.height
         w = variables.width

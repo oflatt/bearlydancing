@@ -1,7 +1,10 @@
 Bearly Dancing List
 
+-expand the map!
 -fix saving over different sized screens
--Randomly generated background-possibly paths
--Fix roof of house
+-more complex asthetic background grass
 -write some tests for once
 -make bear be able to eat from stash
+
+-Fix roof of house (sophie fixes shingles in front)
+-flying chimney!

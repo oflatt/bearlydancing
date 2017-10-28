@@ -374,9 +374,9 @@ def alternating_value(rv, depth, specs, l):
         return value
 
 
-def random_value(t, ischord, list, specs):
+def random_value(t, ischord, unflippedlist, specs):
     # flip l because it's easier to look at it that way
-    l = list[::-1]
+    l = unflippedlist[::-1]
 
     rv = randint(variables.minvalue, variables.maxvalue)
     depth = notedepth(l)
