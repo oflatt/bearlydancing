@@ -1,6 +1,7 @@
-#Bearly Dancing#
+# Bearly Dancing
+A rhythm rpg with randomly generated beatmaps, written purely in python using the pygame library.
 
-##Setting up the environment##
+## Setting up the environment
 
 Download a version of python 3, and add it to PATH.
 
