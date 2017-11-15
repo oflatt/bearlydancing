@@ -1,7 +1,39 @@
-import pygame, variables, random, addtexture
+import pygame, variables, random
 from pygame import draw
 from random import randint
 from Texture import Texture
+from addtexture import addtexture
+
+dirtcolor = (70, 71, 14)
+pathwidth = 16
+
+def addroad(grasssurface, leftpath, rightpath, uppath, downpath):
+    surface = grasssurface
+    width = surface.get_width()
+    height = surface.get_height()
+    randcolor = (60, 61, randint(0, 50))
+    randcolor2 = (randcolor[0]-10, randcolor[1]-10, randcolor[2])
+    if leftpath:
+        surface.fill(dirtcolor, pygame.Rect(0, int((height/2)-(pathwidth/2)), int(width/2), pathwidth))
+    if rightpath:
+        surface.fill(dirtcolor, pygame.Rect(int(width/2), int((height/2)-(pathwidth/2)), int(width/2), pathwidth))
+    horizontaltexture = Texture(randcolor, 1/15, 1/3, 1/5)
+    horizontaltexture2 = Texture(randcolor2, 1/20, 1/40, 1/40)
+    horizontaltexture.bounds = [0 , int((height/2)-(pathwidth/2))-1, width, pathwidth+2]
+    horizontaltexture2.bounds = horizontaltexture.bounds
+    addtexture(surface, horizontaltexture)
+    addtexture(surface, horizontaltexture2)
+    if uppath:
+        surface.fill(dirtcolor, pygame.Rect(int((width/2)-(pathwidth/2)), 0, pathwidth, int(height/2)))
+    if downpath:
+        surface.fill(dirtcolor, pygame.Rect(int((width/2)-(pathwidth/2)), int(height/2), pathwidth, int(height/2)))
+    verticaltexture = Texture(randcolor, 1/15, 1/5, 1/3)
+    verticaltexture2 = Texture(randcolor2, 1/20, 1/40, 1/40)
+    verticaltexture.bounds = [int((width/2)-(pathwidth/2))-1, 0, pathwidth+2, height]
+    verticaltexture2.bounds = verticaltexture.bounds
+    addtexture(surface, verticaltexture)
+    addtexture(surface, verticaltexture2)
+    return surface
 
 def makepatch(randomcolorsunsorted, width, height):
     def brightness(color):
@@ -16,10 +48,10 @@ def makepatch(randomcolorsunsorted, width, height):
     for t in textures:
         t.xinvisiblechance = 1/2
         t.yinvisiblechance = 1/2
-        addtexture.addtexture(s, t)
+        addtexture(s, t)
     return s
 
-def makegrassland(width, height):
+def makegrassland(width, height, leftpath = True, rightpath = True, uppath = True, downpath = True):
     patchwidth = randint(15, 30)
     patchheight = randint(15, 30)
     patches = []
@@ -46,6 +78,7 @@ def makegrassland(width, height):
 
     for x in range(numofpatches):
         patches.append(makepatch(randomcolors, patchwidth, patchheight))
+    
     surface = pygame.Surface([width, height], pygame.SRCALPHA)
     if pinkmodeonq:
         backgroundcolor = (255, 119, 228)
@@ -66,4 +99,6 @@ def makegrassland(width, height):
         addrow(ypos)
         ypos += patchheight + randint(-spacingvariability, 0)
 
+    surface = addroad(surface, leftpath, rightpath, uppath, downpath)
+        
     return surface

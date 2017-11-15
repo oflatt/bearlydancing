@@ -72,7 +72,7 @@ househeight = GR["honeyhouseoutside"]["h"]
 
 #stands for random pine tree
 rpt = graphics.pinetree()
-rgrassland = graphics.grassland(1000, 500)
+rgrassland = graphics.grassland(1000, 500, uppath = True, downpath = True)
 treerock = Rock(rpt, 3.5 * b + housewidth, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + rpt["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])

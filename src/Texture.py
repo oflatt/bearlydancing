@@ -7,8 +7,11 @@ class Texture():
     addleftq = True
     addrightq = True
 
-    # if bounds are none, it defaults to using the entire surface
+    # if bounds are none, it defaults to using the entire surface, x y width height
     bounds = [None, None, None, None]
+
+    # by default set to the bounds, they define the area of pixels to be drawn on
+    texturingbounds = [None, None, None, None]
 
     # chance for the new point moving the x direction to be invisible, not colored
     xinvisiblechance = 0
@@ -18,7 +21,7 @@ class Texture():
     backtrackmodeonq = False
 
     def __init__(self, color, initialchance, xchance, ychance, stopcolors = [], acceptedcolors = None):
-        # color of tnhe texture added
+        # color of the texture added
         self.color = color
 
         # chance to add color at one pixel and spread

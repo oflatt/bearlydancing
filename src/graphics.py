@@ -105,16 +105,18 @@ def pinetree():
 
     return GR[nicename(filename)]
 
-def grassland(width, height):
+def grassland(width, height, leftpath = True, rightpath = True, uppath = False, downpath = False):
     variables.grasslandsused += 1
     filename = "randomgrassland" + str(variables.grasslandsused-1) + ".png"
 
+    newland = rdrawland.makegrassland(width, height, leftpath, rightpath, uppath, downpath)
+    
     if not os.path.exists("pics/" + filename):
-        pygame.image.save(rdrawland.makegrassland(width, height), "pics/" + filename)
+        pygame.image.save(newland, "pics/" + filename)
         addtoGR(filename)
     elif variables.newworldeachloadq:
         os.remove(os.path.dirname(os.path.abspath("__file__")) + "/pics/" + filename)
-        pygame.image.save(rdrawland.makegrassland(width, height), "pics/" + filename)
+        pygame.image.save(newland, "pics/" + filename)
         addtoGR(filename)
 
     return GR[nicename(filename)]
