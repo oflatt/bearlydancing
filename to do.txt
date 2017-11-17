@@ -1,10 +1,11 @@
 Bearly Dancing List
 
+-have bear go halfway off screen before switching to other screen
 -expand the map!
 -fix saving over different sized screens
 -more complex asthetic background grass
 -write some tests for once
 -make bear be able to eat from stash
 
--Fix roof of house (sophie fixes shingles in front)
+-Fix roof of house and add more natural transition (sophie fixes shingles in front)
 -flying chimney!

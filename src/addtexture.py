@@ -61,10 +61,12 @@ def get_bounds(surface, texture):
     return b
 
 def get_texturing_bounds(bounds, texturebounds):
-    tbounds = bounds
+    tbounds = []
     for x in range(4):
         if not texturebounds[x] == None:
-            tbounds[x] = texturebounds[x]
+            tbounds.append(texturebounds[x])
+        else:
+            tbounds.append(bounds[x])
     return tbounds
 
 def texturerow(surface, y, texture, b, tbounds):
