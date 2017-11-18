@@ -22,7 +22,11 @@ class Map():
     isscaled = False  # if scale stuff has been called
     screenxoffset = 0 # this is if the map width is less than the screen width
 
-    def __init__(self, base, terrain):
+    def __init__(self, base, terrain, leftbound = True, rightbound = True, topbound = True, bottombound = True):
+        self.topbound = topbound
+        self.rightbound = rightbound
+        self.bottombound = bottombound
+        self.leftbound = leftbound
         self.base = base
         # terrain is a list of Rock
         self.terrain = terrain
@@ -40,17 +44,25 @@ class Map():
             self.map_scale_offset = 1
 
     def scale_stuff(self):
+        honeywidth = classvar.player.left_animation.pics[0]["w"]
+        honeyheight = classvar.player.left_animation.pics[0]["h"]
+        halfhoneyw = int(honeywidth/2)*self.map_scale_offset
+        halfhoneyh = int(honeyheight/2)*self.map_scale_offset
         mapw = self.base["w"]
         maph = self.base["h"]
         for e in self.exitareas:
             if e.area == "left" or e.area == "l":
-                e.area = [-extraarea, 0, extraarea, maph]
+                self.leftbound = False
+                e.area = [-extraarea-halfhoneyw, 0, extraarea, maph]
             elif e.area == "right" or e.area == "r":
-                e.area = [mapw, 0, extraarea, maph]
-            elif e.area == "up" or e.area == "u":
-                e.area = [0, -extraarea, mapw, extraarea]
-            elif e.area == "down" or e.area == "d":
-                e.area = [0, maph, mapw, extraarea]
+                self.rightbound = False
+                e.area = [mapw+halfhoneyw, 0, extraarea, maph]
+            elif e.area == "up" or e.area == "u" or e.area == "top" or e.area == "t":
+                self.topbound = False
+                e.area = [0, -extraarea-halfhoneyh, mapw, extraarea]
+            elif e.area == "down" or e.area == "d" or e.area == "bottom" or e.area == "b":
+                self.bottombound = False
+                e.area = [0, maph+halfhoneyh, mapw, extraarea]
         for x in range(len(self.terrain)):
             self.terrain[x].scale_by_offset(self.map_scale_offset)
         newwidth = int(self.base["w"] * self.map_scale_offset)

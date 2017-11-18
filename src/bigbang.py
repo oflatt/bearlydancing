@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import pygame, variables, copy
+from pygame import Rect
 
 LOADINGTEXT = pygame.transform.scale2x(variables.font.render("LOADING...", 0, variables.WHITE))
 variables.screen.blit(LOADINGTEXT, [0, 0])
@@ -86,12 +87,18 @@ while not done:
     # --- Drawing Code
 
     def draw_world():
-        if maps.current_map.screenxoffset != 0:
-            variables.screen.fill(variables.BLACK)
         classvar.player.update_drawpos()
         maps.current_map.draw([classvar.player.mapdrawx, classvar.player.mapdrawy])
         classvar.player.draw()
         maps.current_map.draw_foreground([classvar.player.mapdrawx, classvar.player.mapdrawy])
+
+        #fill edges in with black
+        screenxoffset = maps.current_map.screenxoffset
+        if screenxoffset != 0:
+            variables.screen.fill(variables.BLACK,
+                                  Rect(0, 0, screenxoffset, variables.height))
+            variables.screen.fill(variables.BLACK,
+                                  Rect(variables.width-screenxoffset-1, 0, screenxoffset+1, variables.height))
     
     if variables.settings.state == "conversation":
         draw_world()

@@ -182,11 +182,11 @@ class Player(Dancer):
 
 
         if not self.xspeed == 0:
-            #first check for edges of map
-            if movedxpos < 0:
+            #first check for edges of map, this is the left
+            if movedxpos < 0 and m.leftbound:
                 self.xpos = 0
                 iscollisionx = True
-            elif movedxpos+self.normal_width>m.finalimage.get_width():
+            elif movedxpos+self.normal_width>m.finalimage.get_width() and m.rightbound:
                 self.xpos = m.finalimage.get_width()-self.normal_width
                 iscollisionx = True
             else:
@@ -205,10 +205,10 @@ class Player(Dancer):
                         break
 
         if not self.yspeed == 0:
-            if movedypos < 0:
+            if movedypos < 0 and m.topbound:
                 self.ypos = 0
                 iscollisiony = True
-            elif movedypos+self.normal_height>m.finalimage.get_height():
+            elif movedypos+self.normal_height>m.finalimage.get_height() and m.bottombound:
                 self.ypos = m.finalimage.get_height()-self.normal_height
                 iscollisiony = True
             else:

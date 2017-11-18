@@ -1,6 +1,6 @@
 Bearly Dancing List
 
--have bear go halfway off screen before switching to other screen
+-possible bug with rocks and position while scrolling?
 -expand the map!
 -fix saving over different sized screens
 -more complex asthetic background grass

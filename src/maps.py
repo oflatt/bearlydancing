@@ -21,28 +21,30 @@ p = insidewidth / 176
 treecollidesection = [0, 18.5 / 20, 1, 1.5 / 20]
 
 # outside3######################################################################################
-b = GR["rightturn"]["w"] / 10
-outsideheight = GR["rightturn"]["h"]
-outside3 = Map(GR["rightturn"], [])
-outside3.exitareas = [Exit([0, outsideheight, b * 10, extraarea], False, "outside2", "same", 0)]
+rgrassland = graphics.grassland(600, 500, leftpath = False, downpath = True)
+b = rgrassland["w"] / 10
+outsideheight = rgrassland["h"]
+outside3 = Map(rgrassland, [])
+outside3.exitareas = [Exit("bottom", False, "outside2", "same", "top")]
 outside3.enemies = enemies.woodsenemies
 outside3.lvrange = [1, 2]
 
 # outside2######################################################################################
-b = GR["leftturn"]["w"] / 10
 rpt = graphics.pinetree()
-outsideheight = GR["leftturn"]["h"]
-outside2 = Map(GR["leftturn"], [Rock(GR["rock"], 5 * b, 4 * b, [0, 0, 1, 1]),
-                                Rock(GR["rock"], 6 * b, 2 * b, [0, 0, 1, 1]),
-                                Rock(rpt, 4 * b, 5 * b, treecollidesection),
-                                Rock(rpt, 6 * b, 1.8 * b, treecollidesection),
-                                Rock(GR["pinetree1"], 5.5 * b, 4.5 * b, treecollidesection),
-                                Rock(GR["pinetree1"], 2 * b, 4.7 * b, treecollidesection),
-                                Rock(GR["pinetree1"], 1.7 * b, 0.3 * b, treecollidesection)])
+rgrassland = graphics.grassland(600, 500, rightpath = False, uppath = True)
+outsideheight = rgrassland["h"]
+b = rgrassland["w"] / 10
+outside2 = Map(rgrassland, [Rock(GR["rock"], 5 * b, 4 * b, [0, 0, 1, 1]),
+                            Rock(GR["rock"], 6 * b, 2 * b, [0, 0, 1, 1]),
+                            Rock(rpt, 4 * b, 5 * b, treecollidesection),
+                            Rock(rpt, 6 * b, 1.8 * b, treecollidesection),
+                            Rock(GR["pinetree1"], 5.5 * b, 4.5 * b, treecollidesection),
+                            Rock(GR["pinetree1"], 2 * b, 4.7 * b, treecollidesection),
+                            Rock(GR["pinetree1"], 1.7 * b, 0.3 * b, treecollidesection)])
 
 outside2.exitareas = [
-    Exit([-extraarea, 0, extraarea, outsideheight], False, 'outside1', GR["horizontal"]["w"] - honeyw, "same"),
-    Exit([0, -extraarea, b * 10, extraarea], False, 'outside3', "same", GR["rightturn"]["h"] - honeyh)]
+    Exit("left", False, 'outside1', "right", "same"),
+    Exit("top", False, 'outside3', "same", "bottom")]
 outside2.enemies = enemies.woodsenemies
 outside2.lvrange = [1]
 
@@ -56,8 +58,7 @@ jmyman.background_range = hole.background_range.copy()
 jeremyhome = Map(rgrassland, [hole,
                               jmyman,
                               Rock(GR["dancelion0"], 0, b * 4, [0, 3 / 4, 1, 1 / 4])])
-jeremyhome.exitareas = [Exit([b * 10, int(GR["house"]["h"]),
-                              extraarea, GR["halfpath"]["h"]], False, 'outside1', 0, "same")]
+jeremyhome.exitareas = [Exit("right", False, 'outside1', "left", "same")]
 conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"] - (honeyw / 2), GR["rabbithole"]["h"]]
 conversations.dancelionpass.area = [0, 0, b, b * 10]
@@ -72,21 +73,21 @@ househeight = GR["honeyhouseoutside"]["h"]
 
 #stands for random pine tree
 rpt = graphics.pinetree()
-rgrassland = graphics.grassland(1000, 500)
+rgrassland = graphics.grassland(700, 500)
 treerock = Rock(rpt, 3.5 * b + housewidth, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + rpt["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
 
 houserock = Rock(GR["honeyhouseoutside"], housewidth, 0, None)
-outside1 = Map(rgrassland, [houserock,
-                                  Rock(GR["rock"], 6.5 * b, 7 * b, [0, 0, 1, 1]),
-                                  Rock(GR["rock"], 2.5 * b, 6.3 * b, [0, 0, 1, 1]),
-                                  treerock,
-                                  meangreenrock])
+outside1 = Map(rgrassland,
+               [houserock,
+                Rock(GR["rock"], 6.5 * b, 7 * b, [0, 0, 1, 1]),
+               treerock,
+               meangreenrock])
 outsidewidth = rgrassland["w"]
 outsideheight = rgrassland["h"]
 outside1.startpoint = [b * 8, b * 4]
-outside1.exitareas = [Exit("right", False, 'outside2', 0, "same"),
+outside1.exitareas = [Exit("right", False, 'outside2', "left", "same"),
                       Exit("left", False, 'jeremyhome', "right",
                            "same"),
                       Exit([housewidth * (1.5 / 5) + houserock.x, househeight * (3 / 5), housewidth * (1 / 10),
@@ -188,18 +189,21 @@ def change_map(name, newx, newy):
     #now current map is the new one
     change_map_nonteleporting(name)
 
+    halfhoneywidth = int(honeyw/2)*current_map.map_scale_offset
+    halfhoneyheight = int(honeyh/2) * current_map.map_scale_offset
     # now handle newx and newy if they are a string
     if newx == "right" or newx == "r":
-        xpos = current_map.base["w"] - honeyw
-    if newx == "left" or newx == "l":
-        xpos = 0
-    if newy == "up" or newy == "u":
-        newy = 0
-    if newy == "down" or newy == "bottom" or newy == "d":
-        newy = current_map.base["h"]
+        xpos = current_map.base["w"] - halfhoneywidth-1
+    elif newx == "left" or newx == "l":
+        xpos = -halfhoneywidth+1
+    if newy == "up" or newy == "u" or newy == "top" or newy == "t":
+        print("went to top of next map")
+        ypos = -halfhoneyheight+1
+    elif newy == "down" or newy == "bottom" or newy == "d" or newy == "b":
+        ypos = current_map.base["h"]-halfhoneyheight-1
 
     #if the new pos is the same
-    if (isinstance(xpos, str)):
+    if newx == "same" or newx == "s":
         xpos = classvar.player.xpos
         xpos /= oldscaleoffset
         xpos *= current_map.map_scale_offset
@@ -210,7 +214,7 @@ def change_map(name, newx, newy):
     else:
         xpos *= current_map.map_scale_offset
 
-    if (isinstance(newy, str)):
+    if newy == "same" or newy == "s":
         ypos = classvar.player.ypos
         ypos /= oldscaleoffset
         ypos *= current_map.map_scale_offset
