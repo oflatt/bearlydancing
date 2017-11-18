@@ -20,8 +20,8 @@ class Rock():
         self.base = base
         self.x = x
         self.y = y
-        self.w = 2
-        self.h = 2
+        self.w = None
+        self.h = None
         self.make_mask(True)
 
     def draw(self, offset = [0,0]):
@@ -53,6 +53,9 @@ class Rock():
         s = scale
         self.x *= s
         self.y *= s
+        self.x = int(self.x)
+        self.y = int(self.y)
+        
         # scale base pic to right size
         self.base["img"] = pygame.transform.scale(self.base["img"], [int(self.base["w"] * s),
                                                                      int(self.base["h"] * s)])

@@ -87,8 +87,14 @@ class Map():
     def draw_background(self, drawpos):
         offset = [-drawpos[0], -drawpos[1]]
         variables.screen.blit(self.finalimage, offset)
+
+        # detect if within the foreground range
+        playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
+                                 classvar.player.normal_height)
+
         for r in self.terrain:
-            r.draw(offset)
+            if r.background_range.colliderect(playerrect):
+                r.draw(offset)
         
     # x and y are the player's x and y pos
     def draw(self, drawpos):

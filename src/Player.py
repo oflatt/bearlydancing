@@ -81,6 +81,9 @@ class Player(Dancer):
         # then add the map's x offset for drawing small maps in the middle
         self.drawx += m.screenxoffset
         self.mapdrawx -= m.screenxoffset
+        #round to nearest pixel
+        self.mapdrawx = int(self.mapdrawx)
+        self.mapdrawy = int(self.mapdrawy)
 
     def draw(self): #movement is combination of top down scrolling and free range
         self.current_pic_scaled()
