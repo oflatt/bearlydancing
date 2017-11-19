@@ -1,5 +1,5 @@
 import pygame, variables, copy, random, rdrawland
-from addtexture import addtexture
+from addtexture import addtexture, fillpolygon
 from pygame import draw
 from random import randint
 from Texture import Texture
@@ -99,27 +99,8 @@ def drawlayer(p, yoffset, leftbound, rightbound, istoplayer=False):
     insidecolorbefore = p.get_at(startingpoint)
     draw.polygon(p, TREEOUTLINECOLOR, rightpoints, 1)  # outline
 
-    # fills a polygon with a point in the polygon
-    def fillpolygon(s, firstpoint):
-        pointlist = [firstpoint]
-
-        while len(pointlist) != 0:
-            point = pointlist.pop(0)
-            s.set_at(point, TREEFILLCOLOR)
-            if (point[0] > 0):
-                if (s.get_at([point[0] - 1, point[1]]) == insidecolorbefore):
-                    pointlist.insert(0, [point[0] - 1, point[1]])
-            if (point[0] < rightbound - 1):
-                if (s.get_at([point[0] + 1, point[1]]) == insidecolorbefore):
-                    pointlist.insert(0, [point[0] + 1, point[1]])
-            if (point[1] > 0):
-                if (s.get_at([point[0], point[1] - 1]) == insidecolorbefore):
-                    pointlist.insert(0, [point[0], point[1] - 1])
-            if (point[1] < s.get_height() - 1):
-                if (s.get_at([point[0], point[1] + 1]) == insidecolorbefore):
-                    pointlist.insert(0, [point[0], point[1] + 1])
-
-    fillpolygon(p, startingpoint)
+    fillpolygon(p, startingpoint, TREEFILLCOLOR, [insidecolorbefore],
+                fillbounds= [leftbound, 0, rightbound-leftbound, TREEHEIGHT])
 
 
 def drawtrunk(surface):
@@ -148,24 +129,24 @@ def drawtrunk(surface):
         x[1] += bottom
 
     def changeamount(p, changedir):
-        # this is so that if it changes towards the center, it changes much less (prevents trees with empty regions
+        # this is so that if it changes towards the center, it changes much less,prevents trees with empty regions
         if p[0] > midpoint:
             if changedir < 0:
-                a = randint(1, 3) * changedir
+                a = randint(1, 2) * changedir
             else:
-                a = randint(3, 10) * changedir
+                a = randint(3, 8) * changedir
         else:
             if changedir < 0:
-                a = randint(3, 10) * changedir
+                a = randint(3, 8) * changedir
             else:
-                a = randint(1, 3) * changedir
+                a = randint(1, 2) * changedir
         return a
 
 
-    pl = addpoints(pl, 0, TREEWIDTH, 3)
+    pl = addpoints(pl, 0, TREEWIDTH, 1)
     # variation- x positions first
     for x in range(len(pl)):
-        if randint(1, 5) == 1:
+        if randint(1, 4) == 1:
             changedir = random.choice([-1, 1])
             pl[x][0] += changeamount(pl[x], changedir)
             a = 1
@@ -187,10 +168,15 @@ def maketree():
     l3.fill([255, 255, 255, 0])
     l4.fill([255, 255, 255, 0])
 
+    treeshortener = randint(0, 15)
+    if randint(0, 5) < 1:
+        treeshortener += randint(0, 10)
+    
     drawtrunk(p)
 
-    yoffset = randint(30, 40)
-    drawlayer(l, yoffset, 0, TREEWIDTH)
+    yoffset = randint(30, 40) + treeshortener
+    if randint(0, 8) > 0:
+        drawlayer(l, yoffset, 0, TREEWIDTH)
     yoffset += randint(-25, -15)
     drawlayer(l2, yoffset, 5, TREEWIDTH - 5)
     yoffset += randint(-25, -15)
