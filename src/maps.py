@@ -16,9 +16,9 @@ extraarea = 50
 insidewidth = GR["honeyhouseinside"]["w"]
 insideheight = GR["honeyhouseinside"]["h"]
 # p is the width of a pixel
-p = insidewidth / 176
+p = graphics.viewfactorrounded
 
-treecollidesection = [0, 18.5 / 20, 1, 1.5 / 20]
+treecollidesection = variables.TREECOLLIDESECTION
 
 # outside3######################################################################################
 rgrassland = graphics.grassland(600, 500, leftpath = False, downpath = True)
@@ -30,17 +30,12 @@ outside3.enemies = enemies.woodsenemies
 outside3.lvrange = [1, 2]
 
 # outside2######################################################################################
-rpt = graphics.pinetree()
 rgrassland = graphics.grassland(600, 500, rightpath = False, uppath = True)
 outsideheight = rgrassland["h"]
 b = rgrassland["w"] / 10
 outside2 = Map(rgrassland, [Rock(GR["rock"], 5 * b, 4 * b, [0, 0, 1, 1]),
-                            Rock(GR["rock"], 6 * b, 2 * b, [0, 0, 1, 1]),
-                            Rock(rpt, 4 * b, 5 * b, treecollidesection),
-                            Rock(rpt, 6 * b, 1.8 * b, treecollidesection),
-                            Rock(GR["pinetree1"], 5.5 * b, 4.5 * b, treecollidesection),
-                            Rock(GR["pinetree1"], 2 * b, 4.7 * b, treecollidesection),
-                            Rock(GR["pinetree1"], 1.7 * b, 0.3 * b, treecollidesection)])
+                            Rock(GR["rock"], 6 * b, 2 * b, [0, 0, 1, 1])])
+outside2.populate_with("pinetree", 15)
 
 outside2.exitareas = [
     Exit("left", False, 'outside1', "right", "same"),

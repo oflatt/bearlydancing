@@ -44,10 +44,13 @@ class Rock():
 
         h = self.base["h"]
         # by default background range is by the top of the mask, the collision box
-        if (not cs == [0, 0, 1, 1] and isresetbackgroundrange):
-            self.background_range = pygame.Rect(0, self.y + cs[1] * h + cs[3] * (1 / 3) * h,
-                                                variables.width * 100,
-                                                variables.height * 100)
+        if isresetbackgroundrange:
+            if cs == [0, 0, 1, 1]:
+                self.background_range = pygame.Rect(0, self.y, variables.width*100, variables.height*100)
+            else:
+                self.background_range = pygame.Rect(0, self.y + cs[1] * h + cs[3] * (1 / 3) * h,
+                                                    variables.width * 100,
+                                                    variables.height * 100)
 
     def scale_by_offset(self, scale):
         s = scale

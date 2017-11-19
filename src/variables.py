@@ -43,6 +43,10 @@ pinetreesused = 0
 grasslandsused = 0
 basemapsize = 360
 
+TREEWIDTH = 100
+TREEHEIGHT = 200
+TREECOLLIDESECTION = [0, 18.5 / 20, 1, 1.5 / 20]
+
 # battle
 healthanimationspeed = 2000# time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
@@ -75,7 +79,7 @@ photo_size = width/6
 playerspeed = height/800 * 0.1 #factor against time
 #encountering enemies
 encounter_check_rate = 100 #rate of check in milliseconds
-encounter_chance = 0.0025#chance per check
+encounter_chance = 0.002#chance per check
 
 settings = Settings()
 

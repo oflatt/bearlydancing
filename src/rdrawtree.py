@@ -3,9 +3,8 @@ from addtexture import addtexture
 from pygame import draw
 from random import randint
 from Texture import Texture
+from variables import TREEWIDTH, TREEHEIGHT
 
-TREEWIDTH = 100
-TREEHEIGHT = 200
 TREEFILLCOLOR = (33, 52, 27, 255)
 TREEOUTLINECOLOR = (22, 40, 20)
 TRUNKCOLOR = (39, 32, 32, 255)
@@ -94,6 +93,7 @@ def drawlayer(p, yoffset, leftbound, rightbound, istoplayer=False):
     rightpoints.extend(leftpoints[::-1])
     # Then call a function that randomly adds new points for complexity
     rightpoints = addpoints(rightpoints, leftbound, rightbound, 4)
+    rightpoints = addpoints(rightpoints, leftbound, rightbound, 2)
 
     startingpoint = [middlebound, int((100 + yoffset - topy) / 2) + topy]
     insidecolorbefore = p.get_at(startingpoint)

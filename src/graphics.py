@@ -12,11 +12,7 @@ def sscale(img, rounded = True):
         endsize = viewfactorrounded
     else:
         endsize = viewfactor
-    if w > h:
-        smaller = h
-    else:
-        smaller = w
-    return pygame.transform.scale(img, [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)])
+    return pygame.transform.scale(img, [int(w*endsize), int(h*endsize)])
 
 #like sscale but instead of returning a scaled pic, it returns what the dimensions of the new pic would have been
 def sscale_dimensions(img, rounded = True):
@@ -25,12 +21,8 @@ def sscale_dimensions(img, rounded = True):
     if rounded:
         endsize = viewfactorrounded
     else:
-        endsize = viewfactorendsize = viewfactor
-    if w > h:
-        smaller = h
-    else:
-        smaller = w
-    return [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)]
+        endsize = viewfactor
+    return [int(w*endsize), int(h*endsize)]
 
 def sscale_customfactor(img, factor, rounded = True):
     w = img.get_width()
@@ -39,11 +31,7 @@ def sscale_customfactor(img, factor, rounded = True):
         endsize = viewfactorrounded
     else:
         endsize = viewfactor
-    if w > h:
-        smaller = h
-    else:
-        smaller = w
-    return pygame.transform.scale(img, [int((w/smaller)*endsize*smaller), int((h/smaller)*endsize*smaller)])
+    return pygame.transform.scale(img, [int(w*endsize*factor), int(h*endsize*factor)])
 
 #use if you want pictures where the smaller dimension is a set size
 def scale_pure(img, s):

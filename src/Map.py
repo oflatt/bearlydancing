@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # Oliver Flatt works on Classes
-import variables, pygame, classvar, random, stathandeling, math
+import variables, pygame, classvar, random, stathandeling, math, graphics
 from Battle import Battle
+from graphics import viewfactorrounded
+from Rock import Rock
 
 extraarea = 50
 
@@ -43,6 +45,50 @@ class Map():
         else:
             self.map_scale_offset = 1
 
+    # puts a number of one kind of object into the map randomly
+    # if the randomly generated coordinates collide with anything, they are skipped
+    # can only be used before the scaling happens
+    def populate_with(self, rocktype, number):
+        width = self.base["w"]
+        height = self.base["h"]
+        pwidth = viewfactorrounded
+        treewscaled = variables.TREEWIDTH*pwidth
+        treehscaled = variables.TREEHEIGHT*pwidth
+        yconstraints = [-20*pwidth, height+(20*pwidth)-treehscaled]
+        xconstraints = [0, width-treewscaled]
+        x_min_distance = 6*pwidth
+        y_min_distance = 8*pwidth
+        
+        def collidewithonep(xpos, ypos, rock):
+            return abs(xpos-rock.x) < x_min_distance or abs(ypos-rock.y) < y_min_distance
+        
+        def collidesp(xpos, ypos, rocklist):
+            collisiontracker = False
+            if not collisiontracker:
+                for r in self.terrain:
+                    if collidewithonep(xpos, ypos, r):
+                        collisiontracker = True
+                        break
+            if not collisiontracker:
+                for r in rocklist:
+                    if collidewithonep(xpos, ypos, r):
+                        collisiontracker = True
+                        break
+            return collisiontracker
+
+        # first generate the y-values for the rocks
+        ypositions = [random.randint(yconstraints[0],yconstraints[1]) for _ in range(number)]
+        newrocks = []
+        for randy in ypositions:
+            randx = random.randint(xconstraints[0], xconstraints[1])
+            if not collidesp(randx, randy, newrocks):
+                if rocktype == "pinetree" or rocktype == "pine tree":
+                    newrocks.append(Rock(graphics.pinetree(), randx, randy, variables.TREECOLLIDESECTION))
+                    
+        self.terrain.extend(newrocks)
+        
+        
+            
     def scale_stuff(self):
         honeywidth = classvar.player.left_animation.pics[0]["w"]
         honeyheight = classvar.player.left_animation.pics[0]["h"]
@@ -83,6 +129,11 @@ class Map():
         # compute screenxoffset if needed
         if newwidth < variables.width:
             self.screenxoffset = int((variables.width-newwidth)/2)
+
+        #also sort the rocks by the y-position of their base
+        def getbaseypos(rock):
+            return rock.y + rock.h
+        self.terrain.sort(key=getbaseypos)
 
     def draw_background(self, drawpos):
         offset = [-drawpos[0], -drawpos[1]]
