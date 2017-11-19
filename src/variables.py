@@ -41,6 +41,7 @@ newworldeachloadq = True
 # pinetreesused is used to keep track of how many random trees are used
 pinetreesused = 0
 grasslandsused = 0
+greyrocksused = 0
 basemapsize = 360
 
 TREEWIDTH = 100

@@ -5,28 +5,40 @@ from Texture import Texture
 # s is the surface, firstpoint is the starting point, fillcolor is the color to fill
 # checkcolors is a list of colors that will be overridden
 # bounds is a list x y width height of where the points can color, inclusive
-def fillpolygon(s, firstpoint, fillcolor, checkcolors, fillbounds = None):
+def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None, fillbounds = None):
     if fillbounds == None:
         bounds = [0, 0, s.get_width(), s.get_height()]
     else:
         bounds = fillbounds
     pointlist = [firstpoint]
 
+    def paintoverp(c):
+        stopp = False
+        if checkcolors != None:
+            if not c in checkcolors:
+                stopp = True
+        if stopcolors != None:
+            if c in stopcolors:
+                stopp = True
+        if c == fillcolor:
+            stopp = True
+        return not stopp
+    
     while len(pointlist) != 0:
         point = pointlist.pop(0)
         s.set_at(point, fillcolor)
         #if there is still a point to the left in the boudns
         if point[0] > bounds[0]:
-            if (s.get_at([point[0] - 1, point[1]]) in checkcolors):
+            if paintoverp(s.get_at([point[0] - 1, point[1]])):
                 pointlist.insert(0, [point[0] - 1, point[1]])
         if point[0] < bounds[0]+bounds[2]:
-            if (s.get_at([point[0] + 1, point[1]]) in checkcolors):
+            if paintoverp(s.get_at([point[0] + 1, point[1]])):
                 pointlist.insert(0, [point[0] + 1, point[1]])
         if point[1] > bounds[1]:
-            if (s.get_at([point[0], point[1] - 1]) in checkcolors):
+            if paintoverp(s.get_at([point[0], point[1] - 1])):
                 pointlist.insert(0, [point[0], point[1] - 1])
         if point[1] < bounds[1]+bounds[3]:
-            if (s.get_at([point[0], point[1] + 1]) in checkcolors):
+            if paintoverp(s.get_at([point[0], point[1] + 1])):
                 pointlist.insert(0, [point[0], point[1] + 1])
 
 def pointinbounds(point, bounds):

@@ -1,4 +1,4 @@
-import pygame, variables, copy, random, rdrawland
+import pygame, variables, copy, random
 from addtexture import addtexture, fillpolygon
 from pygame import draw
 from random import randint

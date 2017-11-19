@@ -33,7 +33,7 @@ outside3.lvrange = [1, 2]
 rgrassland = graphics.grassland(600, 500, rightpath = False, uppath = True)
 outsideheight = rgrassland["h"]
 b = rgrassland["w"] / 10
-outside2 = Map(rgrassland, [Rock(GR["rock"], 5 * b, 4 * b, [0, 0, 1, 1]),
+outside2 = Map(rgrassland, [Rock(graphics.greyrock(), 5 * b, 4 * b, [0, 0, 1, 1]),
                             Rock(GR["rock"], 6 * b, 2 * b, [0, 0, 1, 1])])
 outside2.populate_with("pinetree", 15)
 
@@ -76,7 +76,7 @@ meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, 
 houserock = Rock(GR["honeyhouseoutside"], housewidth, 0, None)
 outside1 = Map(rgrassland,
                [houserock,
-                Rock(GR["rock"], 6.5 * b, 7 * b, [0, 0, 1, 1]),
+                Rock(graphics.greyrock(), 6.5 * b, 7 * b, [0, 0, 1, 1]),
                treerock,
                meangreenrock])
 outsidewidth = rgrassland["w"]

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import pygame, os, variables, rdrawtree, rdrawland
+import pygame, os, variables, rdrawtree, rdrawland, rdrawrock
 
 viewfactor = variables.height*0.0025
 viewfactorrounded = round(variables.height*0.0025) #the master scaling factor for importing pixel art
@@ -89,6 +89,20 @@ def pinetree():
     elif variables.newworldeachloadq:
         os.remove(os.path.dirname(os.path.abspath("__file__")) + "/pics/" + filename)
         pygame.image.save(rdrawtree.maketree(), "pics/" + filename)
+        addtoGR(filename)
+
+    return GR[nicename(filename)]
+
+def greyrock():
+    variables.greyrocksused += 1
+    filename = "greyrock" + str(variables.greyrocksused-1) + ".png"
+
+    if not os.path.exists("pics/" + filename):
+        pygame.image.save(rdrawrock.makerock(), "pics/" + filename)
+        addtoGR(filename)
+    elif variables.newworldeachloadq:
+        os.remove(os.path.dirname(os.path.abspath("__file__")) + "/pics/" + filename)
+        pygame.image.save(rdrawrock.makerock(), "pics/" + filename)
         addtoGR(filename)
 
     return GR[nicename(filename)]
