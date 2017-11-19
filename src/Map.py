@@ -60,7 +60,7 @@ class Map():
         pwidth = viewfactorrounded
         treewscaled = variables.TREEWIDTH*pwidth
         treehscaled = variables.TREEHEIGHT*pwidth
-        yconstraints = [-int(variables.TREEHEIGHT), height+(20*pwidth)-treehscaled]
+        yconstraints = [-int(treehscaled/2), height-int(treehscaled/2)]
         xconstraints = [0, width-treewscaled]
         x_min_distance = 6*pwidth
         y_min_distance = 8*pwidth
@@ -78,6 +78,8 @@ class Map():
                 overlapp = rmask.overlap(rock.mask, (int((xpos-rock.x)/pwidth), int((ypos-rock.y)/pwidth)))
             else:
                 overlapp = False
+            if overlapp:
+                print("got collision")
             return overlapp
         
         def collidesp(xpos, ypos, rocklist):

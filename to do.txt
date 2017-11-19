@@ -1,6 +1,7 @@
 Bearly Dancing List
 
--possible bug with rocks and position while scrolling?
+-field of rocks, one is a sheep
+-loading bar for generating map
 -expand the map!
 -fix saving over different sized screens
 -more complex asthetic background grass

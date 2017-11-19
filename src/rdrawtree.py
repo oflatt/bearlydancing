@@ -110,11 +110,11 @@ def drawtrunk(surface):
     # if changechance is 4, it means each point has a 1 in 4 chance of being varied
     changechance = 4
 
-    def changeamount(p):
+    def changeamount(p, minimum = 2, maximum = 6):
         changedir = 1
         a = 0
         if len(p) == 2:
-            a = randint(2, 7)
+            a = randint(2, maximum+1)
         return a
 
     def changedir(p):
@@ -139,7 +139,7 @@ def drawtrunk(surface):
     # now alter the unchanging one, the top of the base
     def basechange(halflist, midoffset = 1):
         if randint(0, changechance) == 0:
-            changea = changeamount([midpoint+midoffset, 0])
+            changea = changeamount([midpoint+midoffset, 0], maximum = 4)
             for x in range(len(pl)-1):
                 halflist[x][0] += changea
                 
