@@ -107,17 +107,45 @@ def drawtrunk(surface):
     midpoint = int(TREEWIDTH / 2)
     halfh = int(TREEHEIGHT / 2)
     bottom = TREEHEIGHT - 1
+    changechance = 3
 
+    def changeamount(p):
+        changedir = random.choice([-1, 1])
+        a = 0
+        if len(p) == 2:
+            # this is so that if it changes towards the center, it changes much less
+            if p[0] > midpoint:
+                if changedir < 0:
+                    a = 1 * changedir
+                else:
+                    a = randint(3, 8) * changedir
+            else:
+                if changedir < 0:
+                    a = 1 * changedir
+                else:
+                    a = randint(1, 2) * changedir
+        return a
+    
     pl = [[0, 0],
           [3, -1],
           [7, -2],
           [10, -4],
           [12, -8],
           [10, -12],
-          [7, -15],
+          [7, -15, "unchanging"], #unchanging tag means that changeamount returns 0
           [7, -halfh]]
 
     reversepl = copy.deepcopy(pl)
+
+    # now alter the unchanging one, the top of the base
+    def basechange(halflist, midoffset = 1):
+        if randint(0, changechance) == 0:
+            changea = changeamount([midpoint+midoffset, 0])
+            for x in range(len(pl)-1):
+                halflist[x][0] += changea
+    basechange(pl)
+    basechange(reversepl, -1)
+
     reversepl = reversepl[::-1]
     for x in reversepl:
         x[0] = -x[0]
@@ -128,31 +156,21 @@ def drawtrunk(surface):
         x[0] += midpoint
         x[1] += bottom
 
-    def changeamount(p, changedir):
-        # this is so that if it changes towards the center, it changes much less,prevents trees with empty regions
-        if p[0] > midpoint:
-            if changedir < 0:
-                a = randint(1, 2) * changedir
-            else:
-                a = randint(3, 8) * changedir
-        else:
-            if changedir < 0:
-                a = randint(3, 8) * changedir
-            else:
-                a = randint(1, 2) * changedir
-        return a
-
-
     pl = addpoints(pl, 0, TREEWIDTH, 1)
-    # variation- x positions first
+
+    # variation
     for x in range(len(pl)):
-        if randint(1, 4) == 1:
+        if randint(0, changechance) == 0:
             changedir = random.choice([-1, 1])
-            pl[x][0] += changeamount(pl[x], changedir)
+            pl[x][0] += changeamount(pl[x])
             a = 1
             while randint(1, 3) > 1:
-                pl[(x + a) % len(pl)][0] += changeamount(pl[(x + a) % len(pl)], changedir)
+                pl[(x + a) % len(pl)][0] += changeamount(pl[(x + a) % len(pl)])
                 a += 1
+
+    for point in pl:
+        if len(point) > 2:
+            point = point[:2]
 
     draw.polygon(surface, TRUNKCOLOR, pl)
 

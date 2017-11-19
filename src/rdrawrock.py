@@ -74,7 +74,7 @@ def makerock():
     s = pygame.Surface([rockwidth, rockheight], pygame.SRCALPHA)
 
     pygame.draw.polygon(s, outlinecolor, pointlist, 1)
-    fillpolygon(s, [5,5], insidecolor, stopcolors = [outlinecolor])
+    fillpolygon(s, [int(rockwidth/2),int(rockheight/2)], insidecolor, stopcolors = [outlinecolor])
     texture1 = Texture(texture1color, 1/10, 1/20, 1/20, acceptedcolors=[insidecolor])
     texture1.addupq = True
     texture2 = Texture(texture2color, 1/10, 1/30, 1/30, acceptedcolors=[insidecolor])

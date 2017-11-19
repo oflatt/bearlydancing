@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import variables, classvar, conversations, enemies, graphics
+from random import randint
 from graphics import scale_pure
 from graphics import GR
 from Map import Map
@@ -35,10 +36,9 @@ outside3.lvrange = [1, 2]
 rgrassland = graphics.grassland(600, 500, rightpath = False, uppath = True)
 outsideheight = rgrassland["h"]
 b = rgrassland["w"] / 10
-outside2 = Map(rgrassland, [Rock(graphics.greyrock(), 5 * b, 4 * b, [0, 0, 1, 1]),
-                            Rock(GR["rock"], 6 * b, 2 * b, [0, 0, 1, 1])])
-outside2.populate_with("pinetree", 10)
-outside2.populate_with("greyrock", 10)
+outside2 = Map(rgrassland, [])
+outside2.populate_with("pinetree", 15)
+outside2.populate_with("greyrock", randint(3, 5))
 
 outside2.exitareas = [
     Exit("left", False, 'outside1', "right", "same"),

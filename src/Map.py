@@ -7,11 +7,11 @@ from Rock import Rock
 from pygame import Mask
 
 extraarea = 50
-TREEMASK = Mask((variables.TREEWIDTH*viewfactorrounded, variables.TREEHEIGHT*viewfactorrounded))
-BASEMASK = Mask((25*viewfactorrounded, 15*viewfactorrounded))
+TREEMASK = Mask((variables.TREEWIDTH, variables.TREEHEIGHT))
+BASEMASK = Mask((25, 15))
 BASEMASK.fill()
 TREEMASK.draw(BASEMASK,
-              ((int(variables.TREEWIDTH)-13)*viewfactorrounded, (variables.TREEHEIGHT-15)*viewfactorrounded))
+              (int(variables.TREEWIDTH)-13, variables.TREEHEIGHT-15))
 
 class Map():
     startpoint = [10, 10]  # xy coordinates of spawn point
@@ -67,17 +67,18 @@ class Map():
         rockp = rocktype == "greyrock" or rocktype == "grey rock" or rocktype == "rock"
 
         if rockp:
-            xconstraints = [0, width-20]
-            yconstraints = [0, height-30]
-        
+            xconstraints = [0, width-(20*pwidth)]
+            yconstraints = [0, height-(30*pwidth)]
+
+        # this compares unscaled coordinates
         def collidewithonep(xpos, ypos, rock):
-            if rockp:
-                rmask = Mask((width, height))
-                rmask.fill()
-            #if it's a tree
-            else:
+            #don't do collision with placing rocks
+            if not rockp:
                 rmask = TREEMASK
-            return rmask.overlap(rock.mask, (int(xpos-rock.x), int(ypos-rock.y)))
+                overlapp = rmask.overlap(rock.mask, (int((xpos-rock.x)/pwidth), int((ypos-rock.y)/pwidth)))
+            else:
+                overlapp = False
+            return overlapp
         
         def collidesp(xpos, ypos, rocklist):
             collisiontracker = False
@@ -149,9 +150,9 @@ class Map():
         if newwidth < variables.width:
             self.screenxoffset = int((variables.width-newwidth)/2)
 
-        #also sort the rocks by the y-position of their base
+        #also sort the rocks by the y-position of the top of their background range
         def getbaseypos(rock):
-            return rock.y + rock.h
+            return rock.background_range.y
         self.terrain.sort(key=getbaseypos)
 
     def draw_background(self, drawpos):
