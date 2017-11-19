@@ -21,6 +21,10 @@ class Texture():
     backtrackmodeonq = False
 
     def __init__(self, color, initialchance, xchance, ychance, stopcolors = [], acceptedcolors = None):
+        self.addupq = False
+        self.adddownq = True
+        self.addleftq = True
+        self.addrightq = True
         # color of the texture added
         self.color = color
 

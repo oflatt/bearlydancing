@@ -25,6 +25,8 @@ rgrassland = graphics.grassland(600, 500, leftpath = False, downpath = True)
 b = rgrassland["w"] / 10
 outsideheight = rgrassland["h"]
 outside3 = Map(rgrassland, [])
+outside3.populate_with("pinetree", 8)
+outside3.populate_with("greyrock", 4)
 outside3.exitareas = [Exit("bottom", False, "outside2", "same", "top")]
 outside3.enemies = enemies.woodsenemies
 outside3.lvrange = [1, 2]
@@ -35,7 +37,8 @@ outsideheight = rgrassland["h"]
 b = rgrassland["w"] / 10
 outside2 = Map(rgrassland, [Rock(graphics.greyrock(), 5 * b, 4 * b, [0, 0, 1, 1]),
                             Rock(GR["rock"], 6 * b, 2 * b, [0, 0, 1, 1])])
-outside2.populate_with("pinetree", 15)
+outside2.populate_with("pinetree", 10)
+outside2.populate_with("greyrock", 10)
 
 outside2.exitareas = [
     Exit("left", False, 'outside1', "right", "same"),

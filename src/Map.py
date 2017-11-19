@@ -4,8 +4,14 @@ import variables, pygame, classvar, random, stathandeling, math, graphics
 from Battle import Battle
 from graphics import viewfactorrounded
 from Rock import Rock
+from pygame import Mask
 
 extraarea = 50
+TREEMASK = Mask((variables.TREEWIDTH*viewfactorrounded, variables.TREEHEIGHT*viewfactorrounded))
+BASEMASK = Mask((25*viewfactorrounded, 15*viewfactorrounded))
+BASEMASK.fill()
+TREEMASK.draw(BASEMASK,
+              ((int(variables.TREEWIDTH)-13)*viewfactorrounded, (variables.TREEHEIGHT-15)*viewfactorrounded))
 
 class Map():
     startpoint = [10, 10]  # xy coordinates of spawn point
@@ -54,13 +60,24 @@ class Map():
         pwidth = viewfactorrounded
         treewscaled = variables.TREEWIDTH*pwidth
         treehscaled = variables.TREEHEIGHT*pwidth
-        yconstraints = [-20*pwidth, height+(20*pwidth)-treehscaled]
+        yconstraints = [-int(variables.TREEHEIGHT/2), height+(20*pwidth)-treehscaled]
         xconstraints = [0, width-treewscaled]
         x_min_distance = 6*pwidth
         y_min_distance = 8*pwidth
+        rockp = rocktype == "greyrock" or rocktype == "grey rock" or rocktype == "rock"
+
+        if rockp:
+            xconstraints = [0, width-20]
+            yconstraints = [0, height-30]
         
         def collidewithonep(xpos, ypos, rock):
-            return abs(xpos-rock.x) < x_min_distance or abs(ypos-rock.y) < y_min_distance
+            if rockp:
+                rmask = Mask((width, height))
+                rmask.fill()
+            #if it's a tree
+            else:
+                rmask = TREEMASK
+            return rmask.overlap(rock.mask, (int(xpos-rock.x), int(ypos-rock.y)))
         
         def collidesp(xpos, ypos, rocklist):
             collisiontracker = False
@@ -84,6 +101,8 @@ class Map():
             if not collidesp(randx, randy, newrocks):
                 if rocktype == "pinetree" or rocktype == "pine tree":
                     newrocks.append(Rock(graphics.pinetree(), randx, randy, variables.TREECOLLIDESECTION))
+                if rockp:
+                    newrocks.append(Rock(graphics.greyrock(), randx, randy, [0,0,1,1]))
                     
         self.terrain.extend(newrocks)
         
