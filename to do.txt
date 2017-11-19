@@ -1,12 +1,13 @@
 Bearly Dancing List
 
 -field of rocks, one is a sheep
--loading bar for generating map
 -expand the map!
 -fix saving over different sized screens
 -more complex asthetic background grass
 -write some tests for once
 -make bear be able to eat from stash
+-flying chimney once sophie makes it
 
+Sophie:
 -Fix roof of house and add more natural transition (sophie fixes shingles in front)
 -flying chimney!

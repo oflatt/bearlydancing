@@ -21,6 +21,14 @@ p = graphics.viewfactorrounded
 
 treecollidesection = variables.TREECOLLIDESECTION
 
+# outside4######################################################################################
+rgrassland = graphics.grassland(800, 500)
+outside4 = Map(rgrassland, [])
+outside4.populate_with("greyrock", randint(35, 35))
+outside4.exitareas = [Exit("left", False, "outside3", "right", "same")]
+outside4.enemies = enemies.woodsenemies
+outside4.lvrange = [2, 3]
+
 # outside3######################################################################################
 rgrassland = graphics.grassland(600, 500, leftpath = False, downpath = True)
 b = rgrassland["w"] / 10
@@ -28,7 +36,8 @@ outsideheight = rgrassland["h"]
 outside3 = Map(rgrassland, [])
 outside3.populate_with("greyrock", 4)
 outside3.populate_with("pinetree", 8)
-outside3.exitareas = [Exit("bottom", False, "outside2", "same", "top")]
+outside3.exitareas = [Exit("bottom", False, "outside2", "same", "top"),
+                      Exit("right", False, "outside4", "left", "same")]
 outside3.enemies = enemies.woodsenemies
 outside3.lvrange = [1, 2]
 

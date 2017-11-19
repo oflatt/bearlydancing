@@ -13,7 +13,6 @@ import conversations, classvar, Menu
 # save the properties to record how many things needed to be loaded
 variables.save_properties()
 
-
 pygame.display.set_caption("Bearly Dancing")
 
 # Loop until the user clicks the close button.

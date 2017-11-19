@@ -32,7 +32,7 @@ def makerock():
     #chance for small rock
     if random.randint(0, 5) < 1:
         radius = randint(4, 9)
-    
+        
     for t in range(numofpoints):
         radians = (t/numofpoints) * 2 * math.pi
         xpos = radius * math.cos(radians) + 1.5 * math.cos(radians)
