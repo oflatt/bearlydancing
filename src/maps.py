@@ -80,8 +80,8 @@ houserock = Rock(GR["honeyhouseoutside"], housewidth, 0, None)
 outside1 = Map(rgrassland,
                [houserock,
                 Rock(graphics.greyrock(), 6.5 * b, 7 * b, [0, 0, 1, 1]),
-               treerock,
-               meangreenrock])
+                treerock,
+                meangreenrock])
 outsidewidth = rgrassland["w"]
 outsideheight = rgrassland["h"]
 outside1.startpoint = [b * 8, b * 4]

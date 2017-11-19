@@ -79,6 +79,9 @@ def addtoGR(filename):
 for x in picnames:
     addtoGR(x)
 
+def endofgeneration():
+    variables.draw_progress_bar()
+    
 def pinetree():
     variables.pinetreesused += 1
     filename = "randompinetree" + str(variables.pinetreesused-1) + ".png"
@@ -91,6 +94,7 @@ def pinetree():
         pygame.image.save(rdrawtree.maketree(), "pics/" + filename)
         addtoGR(filename)
 
+    endofgeneration()
     return GR[nicename(filename)]
 
 def greyrock():
@@ -105,6 +109,7 @@ def greyrock():
         pygame.image.save(rdrawrock.makerock(), "pics/" + filename)
         addtoGR(filename)
 
+    endofgeneration()
     return GR[nicename(filename)]
 
 def grassland(width, height, leftpath = True, rightpath = True, uppath = False, downpath = False):
@@ -121,4 +126,5 @@ def grassland(width, height, leftpath = True, rightpath = True, uppath = False, 
         pygame.image.save(newland, "pics/" + filename)
         addtoGR(filename)
 
+    endofgeneration()
     return GR[nicename(filename)]

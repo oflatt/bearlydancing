@@ -2,12 +2,17 @@
 import pygame, variables, copy
 from pygame import Rect
 
-LOADINGTEXT = pygame.transform.scale2x(variables.font.render("LOADING...", 0, variables.WHITE))
-variables.screen.blit(LOADINGTEXT, [0, 0])
+variables.load_properties()
+variables.draw_loading_text("importing graphics (1/2)")
 pygame.display.flip()
 
+# now go ahead and load everything in
 import maps
 import conversations, classvar, Menu
+
+# save the properties to record how many things needed to be loaded
+variables.save_properties()
+
 
 pygame.display.set_caption("Bearly Dancing")
 

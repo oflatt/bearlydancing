@@ -78,8 +78,8 @@ class Map():
                 overlapp = rmask.overlap(rock.mask, (int((xpos-rock.x)/pwidth), int((ypos-rock.y)/pwidth)))
             else:
                 overlapp = False
-            if overlapp:
-                print("got collision")
+            #if overlapp:
+            #    print("got collision")
             return overlapp
         
         def collidesp(xpos, ypos, rocklist):

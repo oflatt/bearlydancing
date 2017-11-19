@@ -1,5 +1,7 @@
-import pygame, ctypes
+import pygame, ctypes, os, pickle
+from pygame import Rect
 from Settings import Settings
+from Properties import Properties
 
 # Setup
 pygame.mixer.pre_init(22050, -16, 2, 128)
@@ -42,6 +44,10 @@ newworldeachloadq = True
 pinetreesused = 0
 grasslandsused = 0
 greyrocksused = 0
+
+def num_of_generated_graphics_used():
+    return pinetreesused + grasslandsused + greyrocksused
+
 basemapsize = 360
 
 TREEWIDTH = 100
@@ -83,6 +89,50 @@ encounter_check_rate = 100 #rate of check in milliseconds
 encounter_chance = 0.002#chance per check
 
 settings = Settings()
+properties = Properties()
+properties_filename = "properties.txt"
+
+def load_properties():
+    global properties
+    if os.path.isfile(os.path.abspath(properties_filename)):
+        if os.path.getsize(os.path.abspath(properties_filename)) > 0:
+            f = open(properties_filename, "rb")
+            properties = pickle.load(f)
+
+def save_properties():
+    properties.num_of_generated_graphics = num_of_generated_graphics_used()
+    with open("properties.txt", "wb") as f:
+        pickle.dump(properties, f)
+
+def draw_loading_text(string):
+    text = pygame.transform.scale2x(font.render(string, 0, WHITE))
+    xpos = int((width / 2) - (text.get_width() / 2))
+    ypos = int((height / 2) - text.get_height() - height/10)
+    screen.fill(BLACK, Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height()*2))
+    screen.blit(text, [xpos, ypos])
+
+def draw_progress_bar():
+    numused = num_of_generated_graphics_used()
+    estimated = properties.num_of_generated_graphics
+    
+    if numused == 1:
+        draw_loading_text("generating world (2/2)")
+        if estimated == None:
+            pygame.display.flip()
+    
+    if not estimated == None:
+        percent_complete = numused / estimated
+
+        progresstext = pygame.transform.scale2x(font.render(str(numused) + "/" + str(estimated), 0, WHITE))
+
+        texty = int(height/2 + height/5)
+        
+        screen.fill(BLUE, Rect(0, int(height/2), width*percent_complete, height/10))
+        
+        screen.fill(BLACK, Rect(0, int(height/2 + height/10), width, int(height/2 + progresstext.get_height()*2)))
+        
+        screen.blit(progresstext, [int(width/2 - progresstext.get_width()/2), texty])
+        pygame.display.flip()
 
 #helpful functions
 def smaller(a, b):
