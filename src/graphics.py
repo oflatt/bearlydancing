@@ -95,7 +95,7 @@ def pinetree():
 
 def greyrock():
     variables.greyrocksused += 1
-    filename = "greyrock" + str(variables.greyrocksused-1) + ".png"
+    filename = "randomgreyrock" + str(variables.greyrocksused-1) + ".png"
 
     if not os.path.exists("pics/" + filename):
         pygame.image.save(rdrawrock.makerock(), "pics/" + filename)

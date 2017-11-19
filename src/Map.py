@@ -60,7 +60,7 @@ class Map():
         pwidth = viewfactorrounded
         treewscaled = variables.TREEWIDTH*pwidth
         treehscaled = variables.TREEHEIGHT*pwidth
-        yconstraints = [-int(variables.TREEHEIGHT/2), height+(20*pwidth)-treehscaled]
+        yconstraints = [-int(variables.TREEHEIGHT), height+(20*pwidth)-treehscaled]
         xconstraints = [0, width-treewscaled]
         x_min_distance = 6*pwidth
         y_min_distance = 8*pwidth

@@ -107,24 +107,23 @@ def drawtrunk(surface):
     midpoint = int(TREEWIDTH / 2)
     halfh = int(TREEHEIGHT / 2)
     bottom = TREEHEIGHT - 1
-    changechance = 3
+    # if changechance is 4, it means each point has a 1 in 4 chance of being varied
+    changechance = 4
 
     def changeamount(p):
-        changedir = random.choice([-1, 1])
+        changedir = 1
         a = 0
         if len(p) == 2:
-            # this is so that if it changes towards the center, it changes much less
-            if p[0] > midpoint:
-                if changedir < 0:
-                    a = 1 * changedir
-                else:
-                    a = randint(3, 8) * changedir
-            else:
-                if changedir < 0:
-                    a = 1 * changedir
-                else:
-                    a = randint(1, 2) * changedir
+            a = randint(2, 7)
         return a
+
+    def changedir(p):
+        dir = 1
+        if p[0]<midpoint:
+            dir = -1
+        elif int(p[0]) == midpoint:
+            dir = random.choice([-1,1])
+        return dir
     
     pl = [[0, 0],
           [3, -1],
@@ -143,6 +142,7 @@ def drawtrunk(surface):
             changea = changeamount([midpoint+midoffset, 0])
             for x in range(len(pl)-1):
                 halflist[x][0] += changea
+                
     basechange(pl)
     basechange(reversepl, -1)
 
@@ -161,12 +161,14 @@ def drawtrunk(surface):
     # variation
     for x in range(len(pl)):
         if randint(0, changechance) == 0:
-            changedir = random.choice([-1, 1])
-            pl[x][0] += changeamount(pl[x])
+            pullamount = changeamount(pl[x])
+            pl[x][0] += pullamount * changedir(pl[x])
             a = 1
-            while randint(1, 3) > 1:
-                pl[(x + a) % len(pl)][0] += changeamount(pl[(x + a) % len(pl)])
-                a += 1
+            while randint(0, 2) > 0:
+                followpoint = pl[(x + a) % len(pl)]
+                if not len(followpoint) > 2:
+                    followpoint[0] += pullamount * changedir(followpoint)
+                    a += 1
 
     for point in pl:
         if len(point) > 2:
