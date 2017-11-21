@@ -9,6 +9,7 @@ from Rock import Rock
 from Exit import Exit
 from pygame import Rect
 from Conversation import Conversation
+from Speak import Speak
 
 # Coordinates for maps are based on the base of each map respectively
 honeyw = GR["honeyside0"]["w"]
@@ -146,7 +147,11 @@ honeyhome = Map(GR["honeyhouseinside"],
                 [table,
                  littleletter,
                  Rock(stashlist, p * 130, p * 60, [0, 0.9, 1, 0.1], name="stash")])
-eatfromstash = Conversation([], switchthisrock="stash")
+hungryspeak = Speak(GR["honeyside0"],["And... I'm still hungry"])
+eatfromstash = Conversation([],
+                            speaksafter = [[],[],[],[],[],[],[],[],[],
+                                           [hungryspeak]],
+                            switchthisrock="stash")
 eatfromstashoffset = p*10
 eatfromstash.area = [p*130+eatfromstashoffset, p*60, GR["stash00"]["w"]-2*eatfromstashoffset, GR["stash00"]["h"]]
 honeyhome.conversations = [eatfromstash]
@@ -263,8 +268,12 @@ def engage_conversation(c):
         variables.settings.state = "conversation"
         classvar.player.storyprogress += 1
         conversations.currentconversation = c
-    if len(conversations.currentconversation.speaks) == 0:
-        conversations.currentconversation.exit_conversation()
+    current = conversations.currentconversation
+    
+    if len(current.speaks) == 0:
+        if current.switchthisrock != None:
+            current_map.changerock(current.switchthisrock)
+        current.exit_conversation()
 
 
 def on_key(key):

@@ -23,9 +23,12 @@ class Conversation():
         # a list of Speak
         self.speaks = speaks
         
-        # a list of Speak for after the first time they are talked to
+        # a list lists of Speak for after the first time they are talked to
         if speaksafter != None:
-            self.speaksafter = speaksafter
+            if type(speaksafter) == list:
+                self.speaksafter = speaksafter
+            else:
+                self.speaksafter = [speaksafter]
 
         # a string of a name of a rock to switch the animation of
         if switchthisrock != None:
@@ -73,8 +76,8 @@ class Conversation():
             classvar.battle = Battle(self.special_battle)
 
         self.timestalkedto += 1
-        if self.speaksafter != None:
-            self.speaks = self.speaksafter
+        if self.speaksafter != None and self.timestalkedto < len(self.speaksafter):
+            self.speaks = self.speaksafter[self.timestalkedto]
         if self.exitteleport != ["same", "same"]:
             classvar.player.teleport(self.exitteleport[0], self.exitteleport[1])
 

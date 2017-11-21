@@ -11,6 +11,7 @@ class Rock():
     background_range = pygame.Rect(0, 0, variables.width * 100, variables.height * 100)
     animations = None
     name = None
+    loopanimationsp = False
 
     def __init__(self, base, x, y, collidesection, name = None):
         # collidesection is a list x y width height all of the arguments are relative to the rock's pos and dimensions
@@ -35,6 +36,7 @@ class Rock():
 
         if name != None:
             self.name = name
+            self.loopanimationsp = False
         self.x = x
         self.y = y
         self.w = None
@@ -42,7 +44,8 @@ class Rock():
         self.make_mask(True)
 
     def nextanimation(self):
-        self.animationnum = (animationnum + 1) % len(self.animations)
+        if self.animationnum+1 < len(self.animations) or self.loopanimationsp:
+            self.animationnum = (self.animationnum + 1) % len(self.animations)
 
     def draw(self, offset = [0,0]):
         variables.screen.blit(self.animations[self.animationnum].current_frame()["img"], [self.x + offset[0], self.y + offset[1]])
