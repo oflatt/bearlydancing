@@ -60,7 +60,8 @@ while not done:
                 classvar.player.change_of_state()
             if (not variables.settings.menuonq):
                 if variables.settings.state == "conversation":
-                    conversations.currentconversation.keypress(event.key)
+                    rockname = conversations.currentconversation.keypress(event.key)
+                    maps.changerock(rockname)
                 elif variables.settings.state == "world":
                     classvar.player.keypress(event.key)
                     maps.on_key(event.key)

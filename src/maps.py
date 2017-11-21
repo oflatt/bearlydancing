@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import variables, classvar, conversations, enemies, graphics
+from Animation import Animation
 from random import randint
 from graphics import scale_pure
 from graphics import GR
@@ -61,10 +62,11 @@ b = rgrassland["w"]/10
 hole = Rock(GR["rabbithole"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 1 / 2, 1, 1 / 2])
 jmyman = Rock(GR["jeremy0"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 3 / 4, 1, 1 / 4])
 jmyman.background_range = hole.background_range.copy()
+dancelionanim = Animation([GR["dancelion0"], GR["dancelion1"]], 3000)
 
 jeremyhome = Map(rgrassland, [hole,
                               jmyman,
-                              Rock(GR["dancelion0"], 0, b * 4, [0, 3 / 4, 1, 1 / 4])])
+                              Rock(dancelionanim, 0, b * 4, [0, 3 / 4, 1, 1 / 4])])
 jeremyhome.exitareas = [Exit("right", False, 'outside1', "left", "same")]
 conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"] - (honeyw / 2), GR["rabbithole"]["h"]]
@@ -136,10 +138,19 @@ b = insidewidth / 10
 table = Rock(GR["table"], p * 75, p * 110, [0, 0.5, 1, 0.5])
 littleletter = Rock(GR['letter'], p * 75, p * 110, None)
 littleletter.background_range = table.background_range.copy()
+stashlist = []
+for x in range(10):
+    stashname = "stash0" + str(x)
+    stashlist.append(GR[stashname])
 honeyhome = Map(GR["honeyhouseinside"],
                 [table,
                  littleletter,
-                 Rock(GR['stash00'], p * 130, p * 60, [0, 0.9, 1, 0.1])])
+                 Rock(stashlist, p * 130, p * 60, [0, 0.9, 1, 0.1], name="stash")])
+eatfromstash = Conversation([], switchthisrock="stash")
+eatfromstashoffset = p*10
+eatfromstash.area = [p*130+eatfromstashoffset, p*60, GR["stash00"]["w"]-2*eatfromstashoffset, GR["stash00"]["h"]]
+honeyhome.conversations = [eatfromstash]
+
 honeyhome.startpoint = [86 * p, 56 * p]
 doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                 True, 'outside1',
@@ -252,6 +263,8 @@ def engage_conversation(c):
         variables.settings.state = "conversation"
         classvar.player.storyprogress += 1
         conversations.currentconversation = c
+    if len(conversations.currentconversation.speaks) == 0:
+        conversations.currentconversation.exit_conversation()
 
 
 def on_key(key):
@@ -280,3 +293,6 @@ def checkconversation():
     if not c == False:
         if c.isbutton == False:
             engage_conversation(c)
+
+def changerock(rockname):
+    current_map.changerock(rockname)

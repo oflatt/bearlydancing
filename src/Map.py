@@ -199,6 +199,12 @@ class Map():
         pygame.draw.ellipse(variables.screen, variables.GRAY,
                             [xpos + width / 4, ypos + width / 4, width / 2, width / 2])
 
+    def changerock(self,rockname):
+        if rockname != None:
+            for rock in self.terrain:
+                if rock.name == rockname:
+                    rock.nextanimation()
+
     def checkexit(self):
         currentexit = False
         for x in range(0, len(self.exitareas)):

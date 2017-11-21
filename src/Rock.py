@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import pygame, variables
-
+from Animation import Animation
 
 class Rock():
     collidex = None
@@ -9,32 +9,50 @@ class Rock():
     collideh = None
     # background range is the range of the player's location that it is drawn behind the player
     background_range = pygame.Rect(0, 0, variables.width * 100, variables.height * 100)
-    animation = None
+    animations = None
+    name = None
 
-    def __init__(self, base, x, y, collidesection):
+    def __init__(self, base, x, y, collidesection, name = None):
         # collidesection is a list x y width height all of the arguments are relative to the rock's pos and dimensions
         # width and height of collidesection are multiplied by the width and height of the base
         self.collidesection = collidesection
         if self.collidesection == None:
             self.collidesection = [0, 0, 0, 0]
-        self.base = base
+
+        # base can be either an image (dictionary), a list of images, an animation, or a list of animations
+        #if it is just a single image, put it in an animation
+        self.animationnum = 0
+        if type(base) == Animation:
+            self.animations = [base]
+        elif type(base) == dict:
+            self.animations = [Animation([base], 1)]
+        else:
+            #if it's a list of images, wrap them all in animations
+            if type(base[0]) == dict:
+                for i in range(len(base)):
+                    base[i] = Animation([base[i]], 1)
+            self.animations = base
+
+        if name != None:
+            self.name = name
         self.x = x
         self.y = y
         self.w = None
         self.h = None
         self.make_mask(True)
 
+    def nextanimation(self):
+        self.animationnum = (animationnum + 1) % len(self.animations)
+
     def draw(self, offset = [0,0]):
-        if not self.animation == None:
-            variables.screen.blit(self.animation.current_frame())
-        else:
-            variables.screen.blit(self.base["img"], [self.x + offset[0], self.y + offset[1]])
+        variables.screen.blit(self.animations[self.animationnum].current_frame()["img"], [self.x + offset[0], self.y + offset[1]])
 
     def make_mask(self, isresetbackgroundrange):
         cs = self.collidesection
-        maskpic = self.base["img"].copy()
-        w = self.base["img"].get_width()
-        h = self.base["img"].get_height()
+        base = self.animations[0].pics[0]
+        maskpic = base["img"].copy()
+        w = base["img"].get_width()
+        h = base["img"].get_height()
         # fill all but the collide section
         maskpic.fill(pygame.Color(0, 0, 0, 0), [0, 0, w, cs[1] * h])
         maskpic.fill(pygame.Color(0, 0, 0, 0), [0, 0, cs[0] * w, h])
@@ -42,7 +60,7 @@ class Rock():
         maskpic.fill(pygame.Color(0, 0, 0, 0), [0, cs[1] * h + cs[3] * h, w, h - (cs[1] * h + cs[3] * h)])
         self.mask = pygame.mask.from_surface(maskpic)
 
-        h = self.base["h"]
+        h = base["h"]
         # by default background range is by the top of the mask, the collision box
         if isresetbackgroundrange:
             if cs == [0, 0, 1, 1]:
@@ -59,16 +77,15 @@ class Rock():
         self.x = int(self.x)
         self.y = int(self.y)
         
-        # scale base pic to right size
-        self.base["img"] = pygame.transform.scale(self.base["img"], [int(self.base["w"] * s),
-                                                                     int(self.base["h"] * s)])
-
-        if not None == self.animation:
-            for x in range(len(self.animation.pics)):
-                self.animation.pics[x]["img"] = pygame.transform.scale(self.animation.pics[x]["img"],
-                                                                   [int(self.base["w"] * s), int(self.base["h"] * s)])
-        self.w = self.base["img"].get_width()
-        self.h = self.base["img"].get_height()
+        # scale base pics to right size
+        for anim in self.animations:
+            for pic in anim.pics:
+                pic["img"] = pygame.transform.scale(pic["img"], [int(pic["w"] * s),
+                                                                   int(pic["h"] * s)])
+        base = self.animations[0].pics[0]
+        
+        self.w = base["img"].get_width()
+        self.h = base["img"].get_height()
 
         if self.collidex == None:
             self.collidex = self.x

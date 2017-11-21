@@ -16,37 +16,53 @@ class Conversation():
     special_battle = "none"  # none or an enemy to encounter after the conversation
     timestalkedto = 0
     exitteleport = ["same", "same"]
+    speaksafter = None
+    switchthisrock = None
 
-    def __init__(self, speaks, speaksafter=None):
+    def __init__(self, speaks, speaksafter=None, switchthisrock=None):
         # a list of Speak
         self.speaks = speaks
-        self.speaksafter = speaksafter
+        
+        # a list of Speak for after the first time they are talked to
+        if speaksafter != None:
+            self.speaksafter = speaksafter
+
+        # a string of a name of a rock to switch the animation of
+        if switchthisrock != None:
+            self.switchthisrock = switchthisrock
 
     def draw(self):
-        # draws text
-        self.speaks[self.progress].draw()
+        if len(self.speaks) > 0:
+            # draws text
+            self.speaks[self.progress].draw()
 
-        # draw picture
-        currentpic = self.speaks[self.progress].pic
-        w = currentpic.get_width()
-        h = currentpic.get_height()
-        b = variables.height - variables.textbox_height
-        if self.progress % 2 == 0 or self.speaks[self.progress].side == 'l' or self.speaks[
-            self.progress].side == 'left':
-            xpos = 0
-        else:
-            xpos = variables.width - w
-        variables.screen.blit(currentpic, [xpos, b - h])
-
-    def keypress(self, key):
-        r = self.speaks[self.progress].keypress(key)
-        if r == "done":
-            if self.progress < len(self.speaks) - 1:
-                self.progress += 1
+            # draw picture
+            currentpic = self.speaks[self.progress].pic
+            w = currentpic.get_width()
+            h = currentpic.get_height()
+            b = variables.height - variables.textbox_height
+            if self.progress % 2 == 0 or self.speaks[self.progress].side == 'l' or self.speaks[
+                    self.progress].side == 'left':
+                xpos = 0
             else:
-                self.exit_conversation()
+                xpos = variables.width - w
+            variables.screen.blit(currentpic, [xpos, b - h])
+
+    #returns None or the name of a rock to change the animation of
+    def keypress(self, key):
+        rockname = None
+        if len(self.speaks) > 0:
+            r = self.speaks[self.progress].keypress(key)
+            if r == "done":
+                if self.progress < len(self.speaks) - 1:
+                    self.progress += 1
+                else:
+                    rockname = self.switchthisrock
+                    self.exit_conversation()
+        return rockname
 
     def exit_conversation(self):
+        
         if self.special_battle == "none":
             self.progress = 0
             variables.settings.state = "world"

@@ -11,3 +11,4 @@ Bearly Dancing List
 Sophie:
 -Fix roof of house and add more natural transition (sophie fixes shingles in front)
 -flying chimney!
+-nice looking interaction button to replace circle
