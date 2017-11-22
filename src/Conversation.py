@@ -13,7 +13,7 @@ class Conversation():
     #list of all the story numbers that it would appear in
     #empty means none
     storyrequirement = []
-    special_battle = "none"  # none or an enemy to encounter after the conversation
+    special_battle = "none"  # none or an enemy object to encounter after the conversation
     timestalkedto = 0
     exitteleport = ["same", "same"]
     speaksafter = None
@@ -44,8 +44,8 @@ class Conversation():
             w = currentpic.get_width()
             h = currentpic.get_height()
             b = variables.height - variables.textbox_height
-            if self.progress % 2 == 0 or self.speaks[self.progress].side == 'l' or self.speaks[
-                    self.progress].side == 'left':
+            side = self.speaks[self.progress].side
+            if (self.progress % 2 == 0 or side == 'l' or side == 'left') and side != 'right':
                 xpos = 0
             else:
                 xpos = variables.width - w

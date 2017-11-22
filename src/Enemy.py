@@ -6,6 +6,7 @@ import graphics, variables, enemies, copy
 class Enemy(Dancer):
 
     def __init__(self, animationnum, rarity, name, beatmaprules):
+        self.lv = 0
         self.animationnum = animationnum
         self.reset()
         self.rarity = rarity

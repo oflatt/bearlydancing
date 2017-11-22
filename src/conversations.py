@@ -76,4 +76,12 @@ dancelionpass = Conversation([Speak(GR["dancelion0"],
                              [Speak(GR["dancelion0"], ["Come back when your bard can play in the key of C minor.",
                                                        "I only dance to music in that key."])])
 
+sheepconversation = Conversation([Speak(GR["sheepstanding"], ["Woah, how'd you know?"], "right"),
+                                  Speak(GR["sheepstanding"], ["How'd you know I am a sheep and not a rock?"], "right"),
+                                  Speak(GR["honeyside0"], ["..."]),
+                                  Speak(GR["sheepstanding"], ["Well, naturally, I suppose you are expecting a dance battle right?"]),
+                                  Speak(GR["honeyside0"], ["Wait wha-"]),
+                                  Speak(GR["sheepstanding"], ["Here we go!", "I'll show you my best moves!"])],
+                                 switchthisrock="sheeprock")
+
 currentconversation = testconversation

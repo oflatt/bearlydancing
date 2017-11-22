@@ -7,10 +7,12 @@ class Speak():
     line = 0
     textsize = 0.5
 
-    def __init__(self, pic, dialogue):
+    def __init__(self, pic, dialogue, side = None):
         #dialogue is a list of strings, one per line. Writer has to make sure they fit
         self.pic = graphics.scale_pure(pic["img"], variables.photo_size)
         self.dialogue = dialogue
+        if side != None:
+            self.side = side
 
     def lines_in_sceen(self):
         line1 = graphics.sscale_customfactor(variables.font.render(self.dialogue[0], 0, variables.WHITE),

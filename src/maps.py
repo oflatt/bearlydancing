@@ -50,10 +50,11 @@ for x in range(3):
 
 randrock.animations.append(Animation([GR["sheepstanding"]],1))
 randrock.name = "sheeprock"
-sheepconversation = Conversation([Speak(GR["sheepstanding"], ["Woah, how'd you know?"]),
-                                  Speak(GR["sheepstanding"], ["How'd you know I am a sheep and not a rock?"])],
-                                 switchthisrock="sheeprock")
+
+sheepconversation = conversations.sheepconversation
 sheepconversation.area = [randrock.x, randrock.y, randrock.w, randrock.h]
+sheepconversation.special_battle = enemies.sheep
+sheepconversation.special_battle.lv = 4
 
 outside4.conversations = [sheepconversation]
 
