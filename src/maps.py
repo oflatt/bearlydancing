@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import variables, classvar, conversations, enemies, graphics
+import variables, classvar, conversations, enemies, graphics, random
 from Animation import Animation
 from random import randint
 from graphics import scale_pure
@@ -23,10 +23,40 @@ p = graphics.viewfactorrounded
 
 treecollidesection = variables.TREECOLLIDESECTION
 
-# outside4######################################################################################
+# outside4/rockorsheep##########################################################################
 rgrassland = graphics.grassland(800, 500)
 outside4 = Map(rgrassland, [])
-outside4.populate_with("greyrock", randint(35, 35))
+outside4.populate_with("greyrock", randint(35, 45))
+
+# this is how many pixels away each dimension of the rock has to be to the sheep to work
+sheeptorocktolerance = 5
+def getrandomrock():
+    return random.choice(outside4.terrain)
+randrock = getrandomrock()
+# returns true if the rock is within the sheeptorocktolerance
+def sheepsizep(rrock):
+    # get unscaled pure width and height to compare to the sheep picture
+    rrockw = rrock.animations[0].pics[0]["img"].get_width()
+    rrockh = rrock.animations[0].pics[0]["img"].get_height()
+    sheepw = GR["sheepstanding"]["img"].get_width()
+    sheeph = GR["sheepstanding"]["img"].get_height()
+    return abs(rrockw-sheepw) <= sheeptorocktolerance and abs(rrockh-sheeph) <= sheeptorocktolerance
+for x in range(3):
+    if sheepsizep(randrock):
+        break
+    else:
+        # if it does not fit try again
+        randrock = getrandomrock()
+
+randrock.animations.append(Animation([GR["sheepstanding"]],1))
+randrock.name = "sheeprock"
+sheepconversation = Conversation([Speak(GR["sheepstanding"], ["Woah, how'd you know?"]),
+                                  Speak(GR["sheepstanding"], ["How'd you know I am a sheep and not a rock?"])],
+                                 switchthisrock="sheeprock")
+sheepconversation.area = [randrock.x, randrock.y, randrock.w, randrock.h]
+
+outside4.conversations = [sheepconversation]
+
 outside4.exitareas = [Exit("left", False, "outside3", "right", "same")]
 outside4.enemies = enemies.woodsenemies
 outside4.lvrange = [2, 3]
@@ -174,6 +204,7 @@ honeyhome.uselastposq = True
 
 # teleportation and stuff#######################################################################
 home_map = honeyhome
+home_map_name = "honeyhome"
 current_map = home_map
 current_map.scale_stuff()
 current_map_name = 'honeyhome'
@@ -269,10 +300,11 @@ def engage_conversation(c):
         classvar.player.storyprogress += 1
         conversations.currentconversation = c
     current = conversations.currentconversation
+
+    if conversations.currentconversation.switchthisrock != None:
+        current_map.changerock(conversations.currentconversation.switchthisrock)
     
     if len(current.speaks) == 0:
-        if current.switchthisrock != None:
-            current_map.changerock(current.switchthisrock)
         current.exit_conversation()
 
 

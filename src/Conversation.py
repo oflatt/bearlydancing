@@ -53,16 +53,13 @@ class Conversation():
 
     #returns None or the name of a rock to change the animation of
     def keypress(self, key):
-        rockname = None
         if len(self.speaks) > 0:
             r = self.speaks[self.progress].keypress(key)
             if r == "done":
                 if self.progress < len(self.speaks) - 1:
                     self.progress += 1
                 else:
-                    rockname = self.switchthisrock
                     self.exit_conversation()
-        return rockname
 
     def exit_conversation(self):
         

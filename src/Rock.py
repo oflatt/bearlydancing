@@ -39,8 +39,8 @@ class Rock():
             self.loopanimationsp = False
         self.x = x
         self.y = y
-        self.w = None
-        self.h = None
+        self.w = self.animations[0].pics[0]["w"]
+        self.h = self.animations[0].pics[0]["h"]
         self.make_mask(True)
 
     def nextanimation(self):
