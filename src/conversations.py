@@ -46,17 +46,23 @@ firstscene = Conversation([Speak(GR["honeyside0"], ohhoney),
                            Speak(GR["honeyside0"], ohhoney3)])
 
 monster = ["Greenie Meanie: Who goes there!"]
-ohhoney4 = ["It's me, Honey! I'm just here to get my quiche."]
+ohhoney4 = ["You know who it is, Meanie. TP took my quiche and I want it back."]
 monster2 = ["No one may pass!"]
-ohhoney5 = ["So what.......do you want me to fight you??"]
+ohhoney5 = ["So what...you want to fight?"]
 monster3 = ["No! I want to have a DANCE-OFF with you!"]
-ohhoney6 = ["Well that's a relief. I'm way better at dancing than fighting..."]
+ohhoney6 = ["Ugh... did TP put you up to this? What'd he promise you?"]
+monster4 = ["No... um, nothing!"]
+ohhoney7 = ["This isn't going anywhere..."]
+ohhoney8 = ["Wait, how long have you been here?", "It looks like you have an instrument there.",
+            "Good thing too, I'm in need of a bard to get me through this dance battle here.",
+            "You're going to play the tunes."]
 
 jeremy = Conversation([Speak(GR["jeremy0"], ["Howdey, Honey",
                                              "Have a random piece of advice.",
                                              "Better dancers live further away from your home for whatever reason.",
                                              "If you don't feel ready to continue, just stick around in one area for a while."])],
-                      [Speak(GR["jeremy0"], ["Your bard is bad and you might have to have them train a while.",
+                      [Speak(GR["jeremy0"], ["Your bard is bad, and you might have to make up for it with your dance level",
+                                             "... or give your bard a bit of practice.",
                                              "Now bug off."])])
 
 secondscene = Conversation([Speak(GR["meangreen0"], monster),
@@ -64,7 +70,10 @@ secondscene = Conversation([Speak(GR["meangreen0"], monster),
                             Speak(GR["meangreen0"], monster2),
                             Speak(GR["honeyside3"], ohhoney5),
                             Speak(GR["meangreen0"], monster3),
-                            Speak(GR["honeyside3"], ohhoney6)])
+                            Speak(GR["honeyside3"], ohhoney6),
+                            Speak(GR["meangreen0"], monster4),
+                            Speak(GR["honeyside3"], ohhoney7),
+                            Speak(GR["honeyback3"], ohhoney8, side="right")])
 
 dancelionpass = Conversation([Speak(GR["dancelion0"],
                                     ["Hey, I'll only let you through if you beat me in a dance battle.",
@@ -78,8 +87,9 @@ dancelionpass = Conversation([Speak(GR["dancelion0"],
 
 sheepconversation = Conversation([Speak(GR["sheepstanding"], ["Woah, how'd you know?"], "right"),
                                   Speak(GR["sheepstanding"], ["How'd you know I am a sheep and not a rock?"], "right"),
-                                  Speak(GR["honeyside0"], ["..."]),
-                                  Speak(GR["sheepstanding"], ["Well, naturally, I suppose you are expecting a dance battle right?"]),
+                                  Speak(GR["honeyside0"], ["..."], "left"),
+                                  Speak(GR["sheepstanding"], ["Interaction button? What?",
+                                                              "Whatever. Naturally, I suppose you are expecting a dance battle."]),
                                   Speak(GR["honeyside0"], ["Wait wha-"]),
                                   Speak(GR["sheepstanding"], ["Here we go!", "I'll show you my best moves!"])],
                                  switchthisrock="sheeprock")

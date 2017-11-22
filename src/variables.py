@@ -37,7 +37,7 @@ fontname = "use default"
 if "orangekidregular" in fontlist:
     fontname = "orangekidregular"
 font = pygame.font.SysFont(fontname, 30)
-newworldeachloadq = True
+newworldeachloadq = False
 
 # map stuff
 # pinetreesused is used to keep track of how many random trees are used

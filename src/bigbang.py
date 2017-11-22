@@ -27,7 +27,8 @@ maps.new_scale_offset()
 pygame.event.get()
 
 menu = Menu.load()
-menu.resume()
+
+variables.settings.menuonq = True
 
 # -------- Main Program Loop -----------
 while not done:

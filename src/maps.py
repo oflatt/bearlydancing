@@ -54,13 +54,13 @@ randrock.name = "sheeprock"
 sheepconversation = conversations.sheepconversation
 sheepconversation.area = [randrock.x, randrock.y, randrock.w, randrock.h]
 sheepconversation.special_battle = enemies.sheep
-sheepconversation.special_battle.lv = 4
+sheepconversation.special_battle.lv = 3
 
 outside4.conversations = [sheepconversation]
 
 outside4.exitareas = [Exit("left", False, "outside3", "right", "same")]
 outside4.enemies = enemies.woodsenemies
-outside4.lvrange = [2, 3]
+outside4.lvrange = [2]
 
 # outside3######################################################################################
 rgrassland = graphics.grassland(600, 500, leftpath = False, downpath = True)

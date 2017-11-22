@@ -35,15 +35,19 @@ class Menu():
     optionpics = []
     textxoffset = 0
     textyspace = 0
+    # if it is true, it is displaying the main menu
+    mainmenup = True
 
     def __init__(self):
+        self.playpic = graphics.sscale_customfactor(variables.font.render("play", 0, variables.WHITE), 1)
         for o in self.options:
             textpic = graphics.sscale_customfactor(variables.font.render(o, 0, variables.WHITE), 1)
             self.optionpics.append(textpic)
 
-        self.textyspace = variables.font.get_linesize()*variables.height*0.0025
+        self.textyspace = variables.font.get_linesize()*variables.height*0.003
         self.textxoffset = self.optionpics[0].get_width() / 6
         self.reset()
+        self.mainmenup = True
 
     def reset(self):
         self.option = 0
@@ -51,21 +55,38 @@ class Menu():
 
     def resume(self):
         self.reset()
+        self.mainmenup = False
         variables.settings.menuonq = False
         classvar.player.change_of_state()
         if not isinstance(classvar.battle, str):
             classvar.battle.unpause()
 
     def draw(self):
+        xoffset = self.textxoffset
+        
         for x in range(len(self.optionpics)):
+            textpic = self.optionpics[x]
+            
+            if self.mainmenup:
+                if x == 0:
+                    textpic = self.playpic
+                xoffset = int(variables.width / 2 - (textpic.get_width() / 2))
+            extrabuttonwidth = self.textxoffset / 4
             pygame.draw.rect(variables.screen, variables.BLACK,
-                             pygame.Rect(self.textxoffset, (x + 1) * self.textyspace, self.optionpics[x].get_width(),
-                                         self.optionpics[x].get_height()))
-            variables.screen.blit(self.optionpics[x],
-                                  [self.textxoffset, (x + 1) * self.textyspace])
-
+                             pygame.Rect(xoffset-extrabuttonwidth,
+                                         (x + 1) * self.textyspace,
+                                         textpic.get_width() + 2*extrabuttonwidth,
+                                         textpic.get_height()))
+            variables.screen.blit(textpic,
+                                  [xoffset, (x + 1) * self.textyspace])
+        dotxoffset = self.textxoffset
+        if self.mainmenup:
+            if self.option == 0:
+                dotxoffset = int(variables.width / 2 - (self.playpic.get_width() / 2))
+            else:
+                dotxoffset = int(variables.width / 2 - (self.optionpics[self.option].get_width() / 2))
         pygame.draw.rect(variables.screen, variables.WHITE,
-                         [self.textxoffset / 4, (self.option + 1) * self.textyspace, self.textxoffset * (3 / 4),
+                         [dotxoffset - (self.textxoffset * (3/4)), (self.option + 1) * self.textyspace, self.textxoffset * (3 / 4),
                           self.textxoffset * (3 / 4)])
 
     def onkey(self, key):
@@ -75,8 +96,4 @@ class Menu():
             self.option = (self.option + 1) % len(self.options)
         elif key in variables.settings.enterkeys:
             if self.options[self.option] == "resume":
-                self.reset()
-                variables.settings.menuonq = False
-                classvar.player.change_of_state()
-                if (not isinstance(classvar.battle, str)):
-                    classvar.battle.unpause()
+                self.resume()
