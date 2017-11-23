@@ -22,7 +22,7 @@ class Player(Dancer):
     mapdrawy = 0
     lastxupdate = 0
     lastyupdate = 0
-    storyprogress = 1
+    storyprogress = 0
 
     #animation
     left_animation = Animation([GR["honeyside3"], GR["honeyside4"], GR["honeyside3"], GR["honeyside4"]], 200)

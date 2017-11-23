@@ -146,6 +146,8 @@ class Map():
             x.y *= self.map_scale_offset
             x.width *= self.map_scale_offset
             x.height *= self.map_scale_offset
+        self.startpoint[0] *= self.map_scale_offset
+        self.startpoint[1] *= self.map_scale_offset
         self.isscaled = True
 
         # compute screenxoffset if needed

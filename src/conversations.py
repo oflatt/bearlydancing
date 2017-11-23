@@ -86,6 +86,10 @@ dancelionpass = Conversation([Speak(GR["dancelion0"],
                              [Speak(GR["dancelion0"], ["Come back when your bard can play in the key of C minor.",
                                                        "I only dance to music in that key."])])
 
+gotoforest = Conversation([Speak(GR["honeyside0"],
+                                 ["I think TP went deeper into the forest to the right,",
+                                  "so I should go that way."])])
+
 sheepconversation = Conversation([Speak(GR["sheepstanding"], ["Woah, how'd you know?"], "right"),
                                   Speak(GR["sheepstanding"], ["How'd you know I am a sheep and not a rock?"], "right"),
                                   Speak(GR["honeyside0"], ["..."], "left"),
@@ -93,6 +97,7 @@ sheepconversation = Conversation([Speak(GR["sheepstanding"], ["Woah, how'd you k
                                                               "Whatever. Naturally, I suppose you are expecting a dance battle."]),
                                   Speak(GR["honeyside0"], ["Wait wha-"]),
                                   Speak(GR["sheepstanding"], ["Here we go!", "I'll show you my best moves!"])],
+                                 speaksafter = [Speak(GR["sheepstanding"], ["Let's go again! I'll show you my best moves!"])],
                                  switchthisrock="sheeprock")
 
 tutorialconversation1 = Conversation([Speak(GR["honeyback3"],
@@ -136,5 +141,15 @@ releasedearly = Conversation([releasedearlyspeak])
 endtutorial = Conversation([Speak(GR["honeyback3"],
                                   ["Alright, it seems like you get the idea.",
                                    "The dance battle's going to start now, so I'll leave you to it."], bottomp = False)])
+
+prettygood = Conversation([Speak(GR["honeyback3"],
+                                 ["Hey, that wasn't bad, for your first song.",
+                                  "I think I'll hire you as my bard. I have a feeling you'll be needed again.",
+                                  "Let's go."])])
+
+letsflee = Conversation([Speak(GR["honeyback3"],
+                               ["O-kay then, let's just run away from this one.",
+                                "You better come with me for the next one though."],
+                               bottomp = False)])
 
 currentconversation = testconversation

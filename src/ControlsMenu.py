@@ -1,42 +1,14 @@
-import graphics, variables, pygame, enemies, pickle, classvar, maps, os, random
-from classvar import player
-
-
-# can't pickle pygame masks, and problems pickeling pygame surfaces
-def save(me):
-    player.mask = 0
-    savelist = [variables.settings, player.xpos, player.ypos, player.lv, player.exp, player.storyprogress,
-                classvar.battle, maps.current_map_name]
-    with open("bdsave0.txt", "wb") as f:
-        pickle.dump(savelist, f)
-    player.scale_by_offset()
-
-
-def load():
-    m = Menu()
-    if (os.path.isfile(os.path.abspath("bdsave0.txt"))):
-        if os.path.getsize(os.path.abspath("bdsave0.txt")) > 0:
-            f = open("bdsave0.txt", "rb")
-            loadedlist = pickle.load(f)
-            variables.settings, player.xpos, player.ypos, player.lv, player.exp, player.storyprogress, classvar.battle, maps.current_map_name = loadedlist
-            maps.change_map(maps.current_map_name, player.xpos, player.ypos)
-
-    if (not isinstance(classvar.battle, str)):
-        classvar.battle.reset_enemy()
-    return m
-
+import pygame, variables
 
 class Menu():
     option = 0
-    options = ["resume", "save", "controls", "exit"]
     optionpics = []
     textxoffset = 0
     textyspace = 0
     # if it is true, it is displaying the main menu
     mainmenup = True
-    
+
     def __init__(self):
-        self.playpic = graphics.sscale_customfactor(variables.font.render("play", 0, variables.WHITE), 1)
         for o in self.options:
             textpic = graphics.sscale_customfactor(variables.font.render(o, 0, variables.WHITE), 1)
             self.optionpics.append(textpic)
@@ -48,7 +20,6 @@ class Menu():
 
     def reset(self):
         self.option = 0
-        self.enemyanimation = random.choice(enemies.animations)
 
     def resume(self):
         self.reset()

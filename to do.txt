@@ -1,11 +1,9 @@
 Bearly Dancing List
 
--field of rocks, one is a sheep
 -expand the map!
 -fix saving over different sized screens
 -more complex asthetic background grass
 -write some tests for once
--make bear be able to eat from stash
 -flying chimney once sophie makes it
 
 Sophie:
@@ -13,3 +11,4 @@ Sophie:
 -flying chimney!
 -nice looking interaction button to replace circle
 -wardrobe open, "why do I even have dis?"
+-rock or sheep!

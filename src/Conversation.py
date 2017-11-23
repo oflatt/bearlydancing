@@ -18,12 +18,17 @@ class Conversation():
     exitteleport = ["same", "same"]
     speaksafter = None
     switchthisrock = None
+    special_battle_story_penalty = None
 
     def __init__(self, speaks, speaksafter=None, switchthisrock=None):
+        self.special_battle = "none"
+        self.special_battle_story_penalty = None
+        
         # a list of Speak
         self.speaks = speaks
+        self.storyrequirement = []
         
-        # a list lists of Speak for after the first time they are talked to
+        # a list of lists of Speak for after the first time they are talked to
         if speaksafter != None:
             if type(speaksafter[0]) == list:
                 self.speaksafter = speaksafter
@@ -91,8 +96,10 @@ class Conversation():
             classvar.player.change_of_state()
             self.special_battle.health = stathandeling.max_health(self.special_battle.lv)
             classvar.battle = Battle(self.special_battle)
+            classvar.battle.storypenalty = self.special_battle_story_penalty
 
         self.timestalkedto += 1
+        self.progress = 0
         if self.speaksafter != None and self.timestalkedto <= len(self.speaksafter):
             self.speaks = self.speaksafter[self.timestalkedto-1]
         if self.exitteleport != ["same", "same"]:

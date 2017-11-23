@@ -11,6 +11,11 @@ from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
 
+STORYORDER = ["letter", "greenie", "good job"]
+
+def getpartofstory(storyname):
+    return STORYORDER.index(storyname)
+
 # Coordinates for maps are based on the base of each map respectively
 honeyw = GR["honeyside0"]["w"]
 honeyh = GR["honeyside0"]["h"]
@@ -98,7 +103,7 @@ dancelionanim = Animation([GR["dancelion0"], GR["dancelion1"]], 3000)
 
 jeremyhome = Map(rgrassland, [hole,
                               jmyman,
-                              Rock(dancelionanim, 0, b * 4, [0, 3 / 4, 1, 1 / 4])])
+                              Rock(dancelionanim, b/2, b * 4, [0, 3 / 4, 1, 1 / 4])])
 jeremyhome.exitareas = [Exit("right", False, 'outside1', "left", "same")]
 conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"] - (honeyw / 2), GR["rabbithole"]["h"]]
@@ -140,9 +145,21 @@ outside1.lvrange = [1, 2]
 outside1c = conversations.secondscene
 outside1c.area = [treerock.x, 0, outsidewidth, outsideheight]
 outside1c.isbutton = False
-outside1c.part_of_story = 2
+outside1c.part_of_story = getpartofstory("greenie")
 outside1c.special_battle = enemies.greenie
-outside1.conversations = [outside1c]
+outside1c.special_battle_story_penalty = 1
+
+goodc = conversations.prettygood
+goodc.area = [0,0,outsidewidth,outsideheight]
+goodc.part_of_story = getpartofstory("good job")
+goodc.isbutton = False
+
+conversations.gotoforest.area = [0,0,b/2,b*20]
+conversations.gotoforest.isbutton = False
+conversations.gotoforest.exitteleport = [b/2 + honeyw/4, "same"]
+conversations.gotoforest.storyrequirement = [getpartofstory("greenie")]
+
+outside1.conversations = [outside1c, conversations.gotoforest, goodc]
 
 # letter########################################################################################
 b = GR['backgroundforpaper']['w'] / 10
@@ -161,7 +178,7 @@ letter = Map(GR["backgroundforpaper"], [bigpaper,
                                         w1,
                                         w2])
 conversations.thatracoon.area = [0, 0, b * 10, b * 10]
-conversations.thatracoon.part_of_story = 1
+conversations.thatracoon.part_of_story = getpartofstory("letter")
 letter.conversations = [conversations.thatracoon]
 letter.exitareas = [Exit([0, 0, b * 10, b * 10], True, 'honeyhome', 'same', 'same')]
 
@@ -192,7 +209,7 @@ doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                 True, 'outside1',
                 GR["honeyhouseoutside"]["w"] * (1 / 5) + houserock.x, GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight)
 doorexit.conversation = conversations.hungry
-doorexit.conversation.storyrequirement = [1]
+doorexit.conversation.storyrequirement = [getpartofstory("letter")]
 honeyhome.exitareas = [doorexit,
                        Exit([p * 65, p * 100, 60, 30],
                             True, 'letter',
@@ -209,8 +226,8 @@ home_map_name = "honeyhome"
 current_map = home_map
 current_map.scale_stuff()
 current_map_name = 'honeyhome'
-classvar.player.teleport(current_map.startpoint[0] * current_map.map_scale_offset,
-                         current_map.startpoint[1] * current_map.map_scale_offset)
+classvar.player.teleport(current_map.startpoint[0],
+                         current_map.startpoint[1])
 
 
 def new_scale_offset():
@@ -307,7 +324,7 @@ def engage_conversation(c):
 
     if conversations.currentconversation.switchthisrock != None:
         current_map.changerock(conversations.currentconversation.switchthisrock)
-    
+
     if len(current.speaks) == 0:
         current.exit_conversation()
 

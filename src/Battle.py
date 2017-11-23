@@ -33,6 +33,9 @@ class Battle():
     # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
     pausetime = 0
 
+    # if this is set, when the lose they lose progress in the story
+    storypenalty = None
+
     def __init__(self, enemy):
         self.starttime = variables.settings.current_time
         self.enemy = enemy
@@ -58,6 +61,7 @@ class Battle():
             b.notes = [Note(0, 1, 1), Note(1, 2, 1)] + b.notes
         
         classvar.player.heal()
+        self.storypenalty = None
 
     def pause(self):
         self.pausetime = variables.settings.current_time
@@ -221,6 +225,20 @@ class Battle():
                     if len(currentb.scores) == 2:
                         if (currentb.scores[0] + currentb.scores[1])/2 >= variables.good_value:
                             self.tutorialp = False
+                            # get rid of the third turorial note
+                            b = self.beatmaps[0]
+                            deletedp = False
+                            i = 0
+                            while not deletedp:
+                                if b.notes[i].time >= 12:
+                                    del b.notes[i]
+                                    deletedp = True
+                                else:
+                                    i += 1
+                            # offset the rest
+                            for note in b.notes:
+                                if note.time >= 24:
+                                    note.time -= 12
                     else:
                         self.tutorialstate = "first note"
                         self.beatmaps[self.current_beatmap].showkeys()
@@ -314,6 +332,15 @@ class Battle():
             self.drumcounter += 1
             play_sound("drum kick heavy")
 
+    def lose(self):
+        # go home
+        classvar.player.heal()
+        variables.settings.state = "world"
+        maps.change_map(maps.home_map_name, 0, 0)
+        classvar.player.teleport(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
+        if self.storypenalty != None:
+            classvar.player.storyprogress -= self.storypenalty
+            
     def onkey(self, key):
         if self.state == 'dance':
             if self.tutorialp:
@@ -327,7 +354,12 @@ class Battle():
                     self.state = "dance"
                     self.beatmaps[self.current_beatmap].reset(self.starttime, True)
                 elif self.option == 1:
-                    variables.settings.state = "world"
+                    if self.tutorialp:
+                        variables.settings.state = "world"
+                        conversations.letsflee.part_of_story = getpartofstory("good job")
+                        maps.engage_conversation(conversations.letsflee)
+                    else:
+                        variables.settings.state = "world"
                 elif self.option == 2:
                     i = soundpackkeys.index(variables.settings.soundpack)
                     variables.settings.soundpack = soundpackkeys[(i+1) % len(soundpackkeys)]
@@ -344,11 +376,7 @@ class Battle():
                     variables.settings.soundpack = soundpackkeys[(i + 1) % len(soundpackkeys)]
 
         elif self.state == "lose" and key in variables.settings.enterkeys:
-            # go home
-            classvar.player.heal()
-            variables.settings.state = "world"
-            maps.change_map(maps.home_map_name, 0, 0)
-            classvar.player.teleport(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
+            self.lose()
         elif self.state == "win" and key in variables.settings.enterkeys:
             self.state = "exp"
             self.newexp = classvar.player.exp + stathandeling.exp_gained(self.enemy.lv)
