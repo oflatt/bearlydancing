@@ -50,12 +50,12 @@ class Battle():
             self.tutorialstate = "starting"
             # if it is the tutorial, add two notes for the player to fail on, and change first note to a
             b = self.beatmaps[0]
-            b.originalnotes[0] = Note(0, b.originalnotes[0].time, 1)
+            b.notes[0] = Note(0, b.notes[0].time, 3)
             # first add ten to give space for the new notes
             for note in b.notes:
-                note.time += 12
-            b.originalnotes = [Note(0, 1, 1), Note(1, 2, 1)] + b.notes
-            print(b.originalnotes[2].value)
+                note.time += 24
+            b.notes[0].time -= 12
+            b.notes = [Note(0, 1, 1), Note(1, 2, 1)] + b.notes
         
         classvar.player.heal()
 
@@ -209,6 +209,7 @@ class Battle():
     # for things like the attack animation
     def ontick(self):
         self.beatmaps[self.current_beatmap].ontick()
+        currentb = self.beatmaps[self.current_beatmap]
 
         dt = variables.settings.current_time - self.animationtime
 
@@ -216,15 +217,30 @@ class Battle():
         if self.tutorialp and self.state == "dance":
             if self.tutorialstate == "starting":
                 if variables.settings.current_time - self.beatmaps[self.current_beatmap].starttime > 11000:
-                    self.tutorialstate = "first note"
-                    self.beatmaps[self.current_beatmap].showkeys()
-                    maps.engage_conversation(conversations.tutorialconversation1)
+                    #exit the tutorial if the got the first two notes perfectly
+                    if len(currentb.scores) == 2:
+                        if (currentb.scores[0] + currentb.scores[1])/2 >= variables.good_value:
+                            self.tutorialp = False
+                    else:
+                        self.tutorialstate = "first note"
+                        self.beatmaps[self.current_beatmap].showkeys()
+                        maps.engage_conversation(conversations.tutorialconversation1)
             elif self.tutorialstate == "first note":
                 fnote = self.beatmaps[self.current_beatmap].notes[0]
                 if fnote.pos[1] > variables.padypos and fnote.time > 10:
                     self.tutorialstate = "release note"
                     maps.engage_conversation(conversations.pressanow)
-                    
+            elif self.tutorialstate == "release note":
+                fnote = self.beatmaps[self.current_beatmap].notes[0]
+                if fnote.pos[1] - fnote.height(self.beatmaps[self.current_beatmap].tempo) > variables.padypos and fnote.time > 10:
+                    self.tutorialstate = "finished first"
+                    maps.engage_conversation(conversations.releaseanow)
+            elif self.tutorialstate == "finished first":
+                fnote = self.beatmaps[self.current_beatmap].notes[0]
+                if fnote.time >= 24:
+                    self.tutorialstate = "done"
+                    self.beatmaps[self.current_beatmap].scores = []
+                    maps.engage_conversation(conversations.endtutorial)
 
         if self.state == "attacking":
             if self.isplayernext == True:
@@ -301,7 +317,7 @@ class Battle():
     def onkey(self, key):
         if self.state == 'dance':
             if self.tutorialp:
-                if not self.tutorialstate == "first note":
+                if not self.tutorialstate == "first note" or not key in variables.settings.note1keys:
                     self.beatmaps[self.current_beatmap].onkey(key)
             else:
                 self.beatmaps[self.current_beatmap].onkey(key)
@@ -342,12 +358,22 @@ class Battle():
             variables.settings.state = "world"  # finally exit Battle
 
     def onrelease(self, key):
+        releasep = False
         if self.state == "dance":
             if self.tutorialp:
-                if not self.tutorialstate == "first note":
-                    self.beatmaps[self.current_beatmap].onrelease(key)
+                if key in variables.settings.note1keys:
+                    if self.tutorialstate == "first note":
+                        pass
+                    elif self.tutorialstate == "release note":
+                        maps.engage_conversation(conversations.releasedearly)
+                    else:
+                        releasep = True
+                else:
+                    releasep = True
             else:
-                self.beatmaps[self.current_beatmap].onrelease(key)
+                releasep = True
+        if releasep:
+            self.beatmaps[self.current_beatmap].onrelease(key)
 
     def trade(self):
         playerlv = classvar.player.lv

@@ -76,6 +76,8 @@ while not done:
                     classvar.player.keyrelease(event.key)
                 elif variables.settings.state == "battle":
                     classvar.battle.onrelease(event.key)
+                elif variables.settings.state == "conversation":
+                    conversations.currentconversation.keyrelease(event.key)
 
     # --- Game Logic
     if (not variables.settings.menuonq):

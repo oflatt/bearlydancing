@@ -50,12 +50,12 @@ monster = ["Greenie Meanie: Who goes there!"]
 ohhoney4 = ["You know who it is, Meanie. TP took my quiche and I want it back."]
 monster2 = ["No one may pass!"]
 ohhoney5 = ["So what...you want to fight?"]
-monster3 = ["No! I want to have a DANCE-OFF with you!"]
-ohhoney6 = ["Ugh... did TP put you up to this? What'd he promise you?"]
-monster4 = ["No... um, nothing!"]
-ohhoney7 = ["This isn't going anywhere..."]
+monster3 = ["No, I'm not suicidal.", "We'll settle this with a DANCE-OFF!"]
+ohhoney6 = ["Ugh... did TP put you up to this?"]
+monster4 = ["No..."]
+ohhoney7 = ["I knew it."]
 ohhoney8 = ["Wait, how long have you been here?", "It looks like you have an instrument there.",
-            "Good thing too, I'm in need of a bard to get me through this dance battle here.",
+            "Good thing too, I'm in need of a bard to get me through this dance battle.",
             "You're going to play the tunes."]
 
 jeremy = Conversation([Speak(GR["jeremy0"], ["Howdey, Honey",
@@ -100,26 +100,41 @@ tutorialconversation1 = Conversation([Speak(GR["honeyback3"],
                                       Speak(GR["honeyback3"], ["*sigh*"], "left", bottomp = False),
                                       Speak(GR["honeyback3"], ["I guess I'll have to teach you."], "left", bottomp = False),
                                       Speak(GR["honeyback3"],
-                                            ["So you only have eight notes.",
-                                             "I know, I know, quit complaining, you'll be glad there are only eight."],
+                                            ["See those keys down there?",
+                                             "There are eight notes, which change octaves automatically."],
+                                            "left",
                                             bottomp = False),
                                       Speak(GR["honeyback3"],
-                                            ["Anyways, where was I...",
-                                             "Right, eight notes, eight keys.",
-                                             "So it's quite simple really, just press and hold the corresponding",
-                                             "key to each note for the duration of the note and we'll be good.",
-                                             "The better you play, the better I can dance and beat this punk.",
-                                             "Oh look, a note, I'll tell you when to play it."],
-                                            "right", bottomp = False)])
-                                             
+                                            ["It's quite simple, just press and hold the corresponding",
+                                             "key to each note for the duration of the note when it lines up.",
+                                             "The better you play, the better I can dance."],
+                                            "left", bottomp = False),
+                                      Speak(GR["honeyback3"],
+                                            ["Oh look, a note. I'll tell you when to play it."],
+                                            "left", bottomp = False)])
 
 holdthis = "Obviously, you'll want to press and hold \"" + pygame.key.name(variables.settings.note1keys[0]) + "\" now."
 pressaspeak = Speak(GR["honeyback3"], [holdthis,
-                                       "Also, you are going to need to release the key at the end of this note,",
-                                       "which is important because notes have length value and you will miss them",
-                                       "if you do not hold them for the corrent amount of time."], bottomp = False)
+                                       "You are going to need to release the key at the end of this note,",
+                                       "important because you will miss them",
+                                       "if you do not hold them for their full value."], bottomp = False)
 pressaspeak.specialexitkeys = variables.settings.note1keys
 
 pressanow = Conversation([pressaspeak])
+
+releaseaspeak = Speak(GR["honeyback3"], ["Alright, release the key now."], bottomp = False)
+releaseaspeak.specialexitkeys = variables.settings.note1keys
+releaseaspeak.releaseexit = True
+
+releaseanow = Conversation([releaseaspeak])
+
+releasedearlyspeak = Speak(GR["honeyback3"], ["You released too early.",
+                                              "Press the note and hold it until the end."], bottomp = False)
+releasedearlyspeak.specialexitkeys = variables.settings.note1keys
+releasedearly = Conversation([releasedearlyspeak])
+
+endtutorial = Conversation([Speak(GR["honeyback3"],
+                                  ["Alright, it seems like you get the idea.",
+                                   "The dance battle's going to start now, so I'll leave you to it."], bottomp = False)])
 
 currentconversation = testconversation

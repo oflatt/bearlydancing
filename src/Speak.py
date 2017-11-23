@@ -8,6 +8,7 @@ class Speak():
     textsize = 0.5
     # can be a list of keys that work to exit the conversation
     specialexitkeys = None
+    releaseexit = False
 
     def __init__(self, pic, dialogue, side = None, bottomp = True):
         #dialogue is a list of strings, one per line. Writer has to make sure they fit
@@ -17,6 +18,7 @@ class Speak():
             self.side = side
         self.specialexitkeys = None
         self.bottomp = bottomp
+        self.releaseexit = False
 
     def lines_in_sceen(self):
         line1 = graphics.sscale_customfactor(variables.font.render(self.dialogue[0], 0, variables.WHITE),
@@ -54,3 +56,6 @@ class Speak():
         elif key in variables.settings.enterkeys:
             self.line = 0
             return "done"
+
+    def keyrelease(self, key):
+        self.keypress(key)

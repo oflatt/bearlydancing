@@ -22,10 +22,10 @@ class Beatmap():
         # scores is a running list of the values for how well each note so far has been played. values for perfect, ect
         self.scores = []
         # held keys is None if the key is not held, and the tone if it is held
-        self.held_keys = [None, None, None, None, None, None, None, None]
-        self.time_key_started = [0, 0, 0, 0, 0, 0, 0, 0]
+        self.held_keys = [None] * 8
+        self.time_key_started = [0] * 8
         # when to stop displaying the text, in milliseconds
-        self.feedback_timers = [0, 0, 0, 0, 0, 0, 0, 0]
+        self.feedback_timers = [None] * 8
         # list of text pics to display for each note (perfect ect.)
         self.feedback = [graphics.Atext, graphics.Stext, graphics.Dtext, graphics.Ftext,
             graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
@@ -38,8 +38,7 @@ class Beatmap():
         self.pausetime = 0
 
     def showkeys(self):
-        fsl = self.starttime + 15000
-        self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
+        self.feedback_timers = [None] * 8
         self.feedback = [graphics.Atext, graphics.Stext, graphics.Dtext, graphics.Ftext,
                          graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
 
@@ -47,9 +46,9 @@ class Beatmap():
         self.scores = []
         synctime = (variables.settings.current_time - battlestarttime) % self.tempo
         self.starttime = variables.settings.current_time - synctime
-        if (beginningq):
-            self.showkeys()
-        self.notes = copy.deepcopy(self.originalnotes)
+        self.showkeys()
+        if not beginningq:
+            self.notes = copy.deepcopy(self.originalnotes)
 
     def draw(self):
         w = variables.width / 20
@@ -85,7 +84,10 @@ class Beatmap():
             xoffset = 0
             if (x > 3):
                 xoffset = middleoffset
-            if variables.settings.current_time < self.feedback_timers[x]:
+            if self.feedback_timers[x] != None:
+                if variables.settings.current_time < self.feedback_timers[x]:
+                    variables.screen.blit(self.feedback[x], [padxspace * (x + 1) - w / 8 + xoffset, padypos - padheight])
+            else:
                 variables.screen.blit(self.feedback[x], [padxspace * (x + 1) - w / 8 + xoffset, padypos - padheight])
 
     def notes_on_screen(self):

@@ -56,13 +56,26 @@ class Conversation():
 
     #returns None or the name of a rock to change the animation of
     def keypress(self, key):
+        if not self.speaks[self.progress].releaseexit:
+            self.keyevent(key)
+
+    def keyevent(self, key):
         if len(self.speaks) > 0:
             r = self.speaks[self.progress].keypress(key)
             if r == "done":
                 if self.progress < len(self.speaks) - 1:
                     self.progress += 1
                 else:
+                    if self.speaks[self.progress].specialexitkeys != None:
+                        if self.speaks[self.progress].releaseexit:
+                            classvar.battle.onrelease(key)
+                        else:
+                            classvar.battle.onkey(key)
                     self.exit_conversation()
+
+    def keyrelease(self, key):
+        if self.speaks[self.progress].releaseexit:
+            self.keyevent(key)
 
     def exit_conversation(self):
         
