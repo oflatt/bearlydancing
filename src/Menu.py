@@ -1,11 +1,11 @@
-import graphics, variables, pygame, enemies, pickle, classvar, maps, os
+import graphics, variables, pygame, enemies, pickle, classvar, maps, os, random
 from classvar import player
 
 
 # can't pickle pygame masks, and problems pickeling pygame surfaces
 def save(me):
     player.mask = 0
-    savelist = [me, variables.settings, player.xpos, player.ypos, player.lv, player.exp, player.storyprogress,
+    savelist = [variables.settings, player.xpos, player.ypos, player.lv, player.exp, player.storyprogress,
                 classvar.battle, maps.current_map_name]
     with open("bdsave0.txt", "wb") as f:
         pickle.dump(savelist, f)
@@ -18,14 +18,11 @@ def load():
         if os.path.getsize(os.path.abspath("bdsave0.txt")) > 0:
             f = open("bdsave0.txt", "rb")
             loadedlist = pickle.load(f)
-            m, variables.settings, player.xpos, player.ypos, player.lv, player.exp, player.storyprogress, classvar.battle, maps.current_map_name = loadedlist
+            variables.settings, player.xpos, player.ypos, player.lv, player.exp, player.storyprogress, classvar.battle, maps.current_map_name = loadedlist
             maps.change_map(maps.current_map_name, player.xpos, player.ypos)
 
     if (not isinstance(classvar.battle, str)):
         classvar.battle.reset_enemy()
-
-    # make the menu not on
-    variables.settings.menuonq = False
     return m
 
 
@@ -51,7 +48,7 @@ class Menu():
 
     def reset(self):
         self.option = 0
-        self.enemyanimation = enemies.random_enemy("woods")
+        self.enemyanimation = random.choice(enemies.animations)
 
     def resume(self):
         self.reset()
@@ -88,6 +85,10 @@ class Menu():
         pygame.draw.rect(variables.screen, variables.WHITE,
                          [dotxoffset - (self.textxoffset * (3/4)), (self.option + 1) * self.textyspace, self.textxoffset * (3 / 4),
                           self.textxoffset * (3 / 4)])
+        if self.mainmenup:
+            enemyframe = self.enemyanimation.current_frame()["img"]
+            variables.screen.blit(enemyframe,
+                                  [int(variables.width/2 - enemyframe.get_width()/2), (len(self.optionpics) + 1) * self.textyspace])
 
     def onkey(self, key):
         if key in variables.settings.upkeys:

@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # Spirit and Jacob work on script
+import variables, pygame
 from graphics import GR
 from Conversation import Conversation
 from Speak import Speak
@@ -93,5 +94,32 @@ sheepconversation = Conversation([Speak(GR["sheepstanding"], ["Woah, how'd you k
                                   Speak(GR["honeyside0"], ["Wait wha-"]),
                                   Speak(GR["sheepstanding"], ["Here we go!", "I'll show you my best moves!"])],
                                  switchthisrock="sheeprock")
+
+tutorialconversation1 = Conversation([Speak(GR["honeyback3"],
+                                            ["Wait...", "You've never done this before, have you."], bottomp=False),
+                                      Speak(GR["honeyback3"], ["*sigh*"], "left", bottomp = False),
+                                      Speak(GR["honeyback3"], ["I guess I'll have to teach you."], "left", bottomp = False),
+                                      Speak(GR["honeyback3"],
+                                            ["So you only have eight notes.",
+                                             "I know, I know, quit complaining, you'll be glad there are only eight."],
+                                            bottomp = False),
+                                      Speak(GR["honeyback3"],
+                                            ["Anyways, where was I...",
+                                             "Right, eight notes, eight keys.",
+                                             "So it's quite simple really, just press and hold the corresponding",
+                                             "key to each note for the duration of the note and we'll be good.",
+                                             "The better you play, the better I can dance and beat this punk.",
+                                             "Oh look, a note, I'll tell you when to play it."],
+                                            "right", bottomp = False)])
+                                             
+
+holdthis = "Obviously, you'll want to press and hold \"" + pygame.key.name(variables.settings.note1keys[0]) + "\" now."
+pressaspeak = Speak(GR["honeyback3"], [holdthis,
+                                       "Also, you are going to need to release the key at the end of this note,",
+                                       "which is important because notes have length value and you will miss them",
+                                       "if you do not hold them for the corrent amount of time."], bottomp = False)
+pressaspeak.specialexitkeys = variables.settings.note1keys
+
+pressanow = Conversation([pressaspeak])
 
 currentconversation = testconversation

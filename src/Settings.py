@@ -18,7 +18,8 @@ class Settings():
 
     # state can be world, battle, or conversation
     state = "world"
-    menuonq = False
+    backgroundstate = "world"
+    menuonq = True
     easymodeq = False
     #possible soundpacks can be seen by listing the keys in all_sounds in play_sound
     soundpack = "sine"

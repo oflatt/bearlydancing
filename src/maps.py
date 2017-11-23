@@ -180,7 +180,7 @@ honeyhome = Map(GR["honeyhouseinside"],
                  Rock(stashlist, p * 130, p * 60, [0, 0.9, 1, 0.1], name="stash")])
 hungryspeak = Speak(GR["honeyside0"],["And... I'm still hungry"])
 eatfromstash = Conversation([],
-                            speaksafter = [[],[],[],[],[],[],[],[],[],
+                            speaksafter = [[],[],[],[],[],[],[],[],
                                            [hungryspeak]],
                             switchthisrock="stash")
 eatfromstashoffset = p*10
@@ -293,6 +293,9 @@ def change_map(name, newx, newy):
 
 def engage_conversation(c):
     classvar.player.change_of_state()
+    variables.settings.backgroundstate = variables.settings.state
+    if variables.settings.backgroundstate == "battle":
+        classvar.battle.pause()
     if c.part_of_story == "none":
         variables.settings.state = "conversation"
         conversations.currentconversation = c

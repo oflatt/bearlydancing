@@ -25,7 +25,7 @@ class Conversation():
         
         # a list lists of Speak for after the first time they are talked to
         if speaksafter != None:
-            if type(speaksafter) == list:
+            if type(speaksafter[0]) == list:
                 self.speaksafter = speaksafter
             else:
                 self.speaksafter = [speaksafter]
@@ -49,6 +49,9 @@ class Conversation():
                 xpos = 0
             else:
                 xpos = variables.width - w
+            ypos = b - h
+            if not self.speaks[self.progress].bottomp:
+                ypos = variables.textbox_height
             variables.screen.blit(currentpic, [xpos, b - h])
 
     #returns None or the name of a rock to change the animation of
@@ -65,7 +68,11 @@ class Conversation():
         
         if self.special_battle == "none":
             self.progress = 0
-            variables.settings.state = "world"
+            if variables.settings.backgroundstate == "world":
+                variables.settings.state = "world"
+            else:
+                variables.settings.state = variables.settings.backgroundstate
+                classvar.battle.unpause()
         else:
             variables.settings.state = "battle"
             classvar.player.change_of_state()
@@ -73,8 +80,8 @@ class Conversation():
             classvar.battle = Battle(self.special_battle)
 
         self.timestalkedto += 1
-        if self.speaksafter != None and self.timestalkedto < len(self.speaksafter):
-            self.speaks = self.speaksafter[self.timestalkedto]
+        if self.speaksafter != None and self.timestalkedto <= len(self.speaksafter):
+            self.speaks = self.speaksafter[self.timestalkedto-1]
         if self.exitteleport != ["same", "same"]:
             classvar.player.teleport(self.exitteleport[0], self.exitteleport[1])
 

@@ -14,7 +14,7 @@ class Beatmap():
         self.tempo = tempo
         self.originalnotes = notes
         # notes is an ordered list of Note, notes with earlier times first
-        self.notes = notes
+        self.notes = copy.deepcopy(self.originalnotes)
         self.scale = [2, 2, 1, 2, 2, 2, 1]  # list of offsets for the scale
         self.speed = 1
         self.starttime = 0
@@ -37,15 +37,18 @@ class Beatmap():
         self.starttime += variables.settings.current_time - self.pausetime
         self.pausetime = 0
 
+    def showkeys(self):
+        fsl = self.starttime + 15000
+        self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
+        self.feedback = [graphics.Atext, graphics.Stext, graphics.Dtext, graphics.Ftext,
+                         graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
+
     def reset(self, battlestarttime, beginningq):
         self.scores = []
         synctime = (variables.settings.current_time - battlestarttime) % self.tempo
         self.starttime = variables.settings.current_time - synctime
         if (beginningq):
-            fsl = self.starttime + 4000
-            self.feedback_timers = [fsl, fsl, fsl, fsl, fsl, fsl, fsl, fsl]
-            self.feedback = [graphics.Atext, graphics.Stext, graphics.Dtext, graphics.Ftext,
-                             graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
+            self.showkeys()
         self.notes = copy.deepcopy(self.originalnotes)
 
     def draw(self):

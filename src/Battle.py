@@ -1,6 +1,7 @@
 #!/usr/bin/python
-import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap, copy
+import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap, copy, conversations
 from Button import Button
+from Note import Note
 from play_sound import play_sound
 from play_sound import soundpackkeys
 
@@ -43,6 +44,19 @@ class Battle():
         specs["rules"].extend(self.enemy.beatmaprules)
         self.beatmaps = [randombeatmap.random_beatmap(specs)]
         self.reset_enemy()
+        # if the enemy's level is 0, it activates the tutorial
+        self.tutorialp = self.enemy.lv == 0
+        if self.tutorialp:
+            self.tutorialstate = "starting"
+            # if it is the tutorial, add two notes for the player to fail on, and change first note to a
+            b = self.beatmaps[0]
+            b.originalnotes[0] = Note(0, b.originalnotes[0].time, 1)
+            # first add ten to give space for the new notes
+            for note in b.notes:
+                note.time += 12
+            b.originalnotes = [Note(0, 1, 1), Note(1, 2, 1)] + b.notes
+            print(b.originalnotes[2].value)
+        
         classvar.player.heal()
 
     def pause(self):
@@ -124,6 +138,7 @@ class Battle():
                 text = "continue"
             continuebutton = Button(w / 2, b, text, 1.5)
             continuebutton.ison = True
+            continuebutton.iscentered = True
             self.buttons = [continuebutton]
             self.draw_buttons()
 
@@ -159,7 +174,7 @@ class Battle():
 
             # level up text
             if self.state == "got exp" and stathandeling.explv(self.oldexp) < stathandeling.explv(self.newexp):
-                text = variables.font.render("LEVEL UP!", 0, variables.GREEN)
+                text = variables.font.render("Honey's dance level increased.", 0, variables.GREEN)
                 textscaled = graphics.sscale(text)
                 variables.screen.blit(textscaled,
                                       [w / 2 - (textscaled.get_width() / 2), h / 3 - textscaled.get_height()])
@@ -195,12 +210,27 @@ class Battle():
     def ontick(self):
         self.beatmaps[self.current_beatmap].ontick()
 
+        dt = variables.settings.current_time - self.animationtime
+
+        
+        if self.tutorialp and self.state == "dance":
+            if self.tutorialstate == "starting":
+                if variables.settings.current_time - self.beatmaps[self.current_beatmap].starttime > 11000:
+                    self.tutorialstate = "first note"
+                    self.beatmaps[self.current_beatmap].showkeys()
+                    maps.engage_conversation(conversations.tutorialconversation1)
+            elif self.tutorialstate == "first note":
+                fnote = self.beatmaps[self.current_beatmap].notes[0]
+                if fnote.pos[1] > variables.padypos and fnote.time > 10:
+                    self.tutorialstate = "release note"
+                    maps.engage_conversation(conversations.pressanow)
+                    
+
         if self.state == "attacking":
             if self.isplayernext == True:
                 damage = self.oldplayerhealth - self.newplayerhealth
-                differenceintime = variables.settings.current_time - self.animationtime
                 hs = variables.healthanimationspeed
-                damagefactor = (hs - differenceintime) / hs
+                damagefactor = (hs - dt) / hs
                 # set player's health to somewhere between the old and new depending on time (damagefactor)
                 classvar.player.health = self.newplayerhealth + damage * damagefactor
                 # if the player's health is now at the end of the animation
@@ -216,9 +246,8 @@ class Battle():
                         self.animationtime = variables.settings.current_time
             elif self.isplayernext == False:
                 damage = self.oldenemyhealth - self.newenemyhealth
-                differenceintime = variables.settings.current_time - self.animationtime
                 hs = variables.healthanimationspeed
-                damagefactor = (hs - differenceintime) / hs
+                damagefactor = (hs - dt) / hs
                 # set enemy's health to somewhere between the old and new depending on time (damagefactor)
                 self.enemy.health = self.newenemyhealth + damage * damagefactor
                 # if the enemy's health is now at the end of the animation
@@ -234,9 +263,8 @@ class Battle():
                         self.animationtime = variables.settings.current_time
 
         elif self.state == "exp":
-            differenceintime = variables.settings.current_time - self.animationtime
             es = variables.expanimationspeed
-            timefactor = differenceintime / es
+            timefactor = dt / es
             expgained = self.newexp - self.oldexp
             classvar.player.exp = self.oldexp + expgained * timefactor
             if classvar.player.exp >= self.newexp:
@@ -258,11 +286,12 @@ class Battle():
                 self.trade()
 
         # drum sounds
+        # now dt is based on starttime
         dt = variables.settings.current_time - self.starttime
         ypos = (dt - (self.drumcounter * self.beatmaps[self.current_beatmap].tempo)) * \
                self.beatmaps[self.current_beatmap].speed * variables.dancespeed
         # offset it so in the beginning drum beats
-        ypos += 7 * self.beatmaps[self.current_beatmap].tempo * self.beatmaps[
+        ypos += 6 * self.beatmaps[self.current_beatmap].tempo * self.beatmaps[
             self.current_beatmap].speed * variables.dancespeed
         # play a drum sound if it is on the beat
         if (ypos >= variables.padypos):
@@ -271,8 +300,12 @@ class Battle():
 
     def onkey(self, key):
         if self.state == 'dance':
-            self.beatmaps[self.current_beatmap].onkey(key)
-        if self.state == "choose":
+            if self.tutorialp:
+                if not self.tutorialstate == "first note":
+                    self.beatmaps[self.current_beatmap].onkey(key)
+            else:
+                self.beatmaps[self.current_beatmap].onkey(key)
+        elif self.state == "choose":
             if key in variables.settings.enterkeys:
                 if self.option == 0:
                     self.state = "dance"
@@ -310,7 +343,11 @@ class Battle():
 
     def onrelease(self, key):
         if self.state == "dance":
-            self.beatmaps[self.current_beatmap].onrelease(key)
+            if self.tutorialp:
+                if not self.tutorialstate == "first note":
+                    self.beatmaps[self.current_beatmap].onrelease(key)
+            else:
+                self.beatmaps[self.current_beatmap].onrelease(key)
 
     def trade(self):
         playerlv = classvar.player.lv

@@ -28,8 +28,6 @@ pygame.event.get()
 
 menu = Menu.load()
 
-variables.settings.menuonq = True
-
 # -------- Main Program Loop -----------
 while not done:
     # add the past tick to the current time
@@ -106,7 +104,11 @@ while not done:
                                   Rect(variables.width-screenxoffset-1, 0, screenxoffset+1, variables.height))
     
     if variables.settings.state == "conversation":
-        draw_world()
+        if variables.settings.backgroundstate == "world":
+            draw_world()
+        else:
+            variables.screen.fill(variables.BLACK)
+            classvar.battle.draw()
         conversations.currentconversation.draw()
     elif variables.settings.state == "world":
         draw_world()
