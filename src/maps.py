@@ -11,7 +11,7 @@ from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
 
-STORYORDER = ["bed","letter", "greenie", "good job"]
+STORYORDER = ["bed","letter", "greenie", "good job", "the end"]
 # a list of story parts that the player should have no control over the bear in and bear is invisible in
 DISABLEPLAYERSTORY = ["bed"]
 
