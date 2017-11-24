@@ -1,5 +1,7 @@
 Bearly Dancing List
 
+-fix saving of rock states- animationnums, places
+-fix loading into a randomly placed rock
 -fix glitching with collisions into other maps
 -adjust dificulty, fix the beatmap generator and add an offset selection
 -expand the map!

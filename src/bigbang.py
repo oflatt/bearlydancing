@@ -19,18 +19,18 @@ variables.save_properties()
 
 pygame.display.set_caption("Bearly Dancing")
 
-# Loop until the user clicks the close button.
-done = False
-
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
 maps.new_scale_offset()
 
+menu = Menu.load()
+
 #clear all the events so it does not mess up the game when it loads
 pygame.event.get()
 
-menu = Menu.load()
+# Loop variable
+done = False
 
 # -------- Main Program Loop -----------
 while not done:
@@ -43,24 +43,20 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
         elif event.type == pygame.KEYDOWN and event.key in variables.settings.enterkeys and variables.settings.menuonq:
-            if menu.options[menu.option] == "exit":
-                done = True
-            elif menu.options[menu.option] == "save":
-                Menu.save(menu)
+            if menu.state == "main":
+                if menu.options[menu.option] == "exit":
+                    done = True
+                elif menu.options[menu.option] == "save":
+                    Menu.save(menu)
 
         # User pressed down on a key
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+            if event.key in variables.settings.escapekeys:
                 #if we are turning on the menu pause the beatmaps
-                if(not variables.settings.menuonq):
-                    if(not isinstance(classvar.battle, str)):
-                        classvar.battle.pause()
+                if not variables.settings.menuonq:
+                    menu.pause()
                 else:
-                    if (not isinstance(classvar.battle, str)):
-                        classvar.battle.unpause()
-                variables.settings.menuonq = not variables.settings.menuonq
-                menu.reset()
-                classvar.player.change_of_state()
+                    menu.resume()
                 
             if (not variables.settings.menuonq):
                 if variables.settings.state == "conversation":
@@ -85,6 +81,8 @@ while not done:
                     classvar.battle.onrelease(event.key)
                 elif variables.settings.state == "conversation":
                     conversations.currentconversation.keyrelease(event.key)
+            else:
+                menu.onrelease(event.key)
 
     # --- Game Logic
     if (not variables.settings.menuonq):
@@ -95,6 +93,8 @@ while not done:
             maps.current_map.on_tick()
         elif variables.settings.state == "battle":
             classvar.battle.ontick()
+    else:
+        menu.ontick()
 
     # --- Drawing Code
 
@@ -121,7 +121,14 @@ while not done:
             classvar.battle.draw()
         conversations.currentconversation.draw()
     elif variables.settings.state == "world":
-        draw_world()
+        drawworldp = True
+        if variables.settings.menuonq:
+            if menu.mainmenup:
+                if menu.state == "main":
+                    variables.screen.fill(variables.BLACK)
+                    drawworldp = False
+        if drawworldp:
+            draw_world()
     elif variables.settings.state == "battle":
         variables.screen.fill(variables.BLACK)
         classvar.battle.draw()

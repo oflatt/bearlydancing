@@ -2,7 +2,7 @@ import pygame
 
 class Settings():
     # keybindings
-    keylist = ["up","down","left","right","action","note1","note2","note3","note4","note5","note6","note7","note8"]
+    keylist = ["up","down","left","right","action","note1","note2","note3","note4","note5","note6","note7","note8", "pause/menu"]
     upkeys = [pygame.K_UP, pygame.K_w]
     downkeys = [pygame.K_DOWN, pygame.K_s]
     leftkeys = [pygame.K_LEFT, pygame.K_a]
@@ -16,6 +16,7 @@ class Settings():
     note6keys = [pygame.K_k]
     note7keys = [pygame.K_l]
     note8keys = [pygame.K_SEMICOLON]
+    escapekeys = [pygame.K_ESCAPE]
 
     # state can be world, battle, or conversation
     state = "world"
@@ -24,6 +25,9 @@ class Settings():
     easymodeq = False
     #possible soundpacks can be seen by listing the keys in all_sounds in play_sound
     soundpack = "sine"
+
+    username = "Greg"
+    bearname = "Honey"
 
     # master clock
     current_time = 0
