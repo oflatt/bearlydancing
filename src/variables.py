@@ -83,7 +83,7 @@ textbox_height = height*1/4
 photo_size = width/6
 
 #world
-playerspeed = height/800 * 0.1 #factor against time
+playerspeed = height/800 * 0.2#height/800 * 0.1 changed for development #factor against time
 #encountering enemies
 encounter_check_rate = 100 #rate of check in milliseconds
 encounter_chance = 0.002#chance per check

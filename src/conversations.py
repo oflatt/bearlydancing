@@ -149,7 +149,6 @@ prettygood = Conversation([Speak(GR["honeyback3"],
 
 letsflee = Conversation([Speak(GR["honeyback3"],
                                ["O-kay then, let's just run away from this one.",
-                                "You better come with me for the next one though."],
-                               bottomp = False)])
+                                "You better come with me for the next one though."])])
 
 currentconversation = testconversation

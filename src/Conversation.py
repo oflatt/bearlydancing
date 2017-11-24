@@ -7,6 +7,7 @@ from Battle import Battle
 class Conversation():
     area = [0, 0, 0, 0]  # x, y, width, height in a list (a Rect)
     isbutton = True  # true if you have to hit a button to enter
+    showbutton = True
     progress = 0
     #the number of the story that it is
     part_of_story = "none"

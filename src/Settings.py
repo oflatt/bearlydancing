@@ -2,6 +2,7 @@ import pygame
 
 class Settings():
     # keybindings
+    keylist = ["up","down","left","right","action","note1","note2","note3","note4","note5","note6","note7","note8"]
     upkeys = [pygame.K_UP, pygame.K_w]
     downkeys = [pygame.K_DOWN, pygame.K_s]
     leftkeys = [pygame.K_LEFT, pygame.K_a]

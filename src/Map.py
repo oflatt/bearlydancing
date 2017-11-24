@@ -181,10 +181,10 @@ class Map():
         buttony = classvar.player.ypos - pw - drawpos[1]
         
         e = self.checkexit()
-        if not e == False:
+        if not e == False and e.showbutton:
             self.draw_interation_button(buttonx, buttony, pw)
         c = self.checkconversation()
-        if not c == False and c.isbutton:
+        if not c == False and c.isbutton and c.showbutton:
             self.draw_interation_button(buttonx, buttony, pw)
 
     def draw_foreground(self, drawpos):

@@ -1,5 +1,7 @@
 Bearly Dancing List
 
+-fix glitching with collisions into other maps
+-adjust dificulty, fix the beatmap generator and add an offset selection
 -expand the map!
 -fix saving over different sized screens
 -more complex asthetic background grass
@@ -7,7 +9,6 @@ Bearly Dancing List
 -flying chimney once sophie makes it
 
 Sophie:
--sleeping bear
 -flying chimney!
 -nice looking interaction button to replace circle
 -wardrobe open, "why do I even have dis?"

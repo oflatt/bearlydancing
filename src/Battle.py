@@ -356,7 +356,7 @@ class Battle():
                 elif self.option == 1:
                     if self.tutorialp:
                         variables.settings.state = "world"
-                        conversations.letsflee.part_of_story = getpartofstory("good job")
+                        conversations.letsflee.part_of_story = maps.getpartofstory("good job")
                         maps.engage_conversation(conversations.letsflee)
                     else:
                         variables.settings.state = "world"

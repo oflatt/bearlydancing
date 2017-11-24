@@ -1,10 +1,14 @@
 #!/usr/bin/python
-import pygame, variables, copy
+import pygame, variables, copy, os
 from pygame import Rect
 
 variables.load_properties()
 variables.draw_loading_text("importing graphics (1/2)")
 pygame.display.flip()
+
+# determine if everything should be re-loaded
+if not os.path.isfile(os.path.abspath("bdsave0.txt")):
+    variables.newworldeachloadq = True
 
 # now go ahead and load everything in
 import maps
@@ -57,14 +61,17 @@ while not done:
                 variables.settings.menuonq = not variables.settings.menuonq
                 menu.reset()
                 classvar.player.change_of_state()
+                
             if (not variables.settings.menuonq):
                 if variables.settings.state == "conversation":
                     conversations.currentconversation.keypress(event.key)
                 elif variables.settings.state == "world":
-                    classvar.player.keypress(event.key)
+                    if maps.playerenabledp():
+                        classvar.player.keypress(event.key)
                     maps.on_key(event.key)
                 elif variables.settings.state == "battle":
                     classvar.battle.onkey(event.key)
+                    
             else:
                 menu.onkey(event.key)
 
@@ -94,7 +101,8 @@ while not done:
     def draw_world():
         classvar.player.update_drawpos()
         maps.current_map.draw([classvar.player.mapdrawx, classvar.player.mapdrawy])
-        classvar.player.draw()
+        if maps.playerenabledp():
+            classvar.player.draw()
         maps.current_map.draw_foreground([classvar.player.mapdrawx, classvar.player.mapdrawy])
 
         #fill edges in with black

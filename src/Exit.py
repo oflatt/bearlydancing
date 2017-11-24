@@ -3,6 +3,7 @@ import variables
 
 class Exit():
     conversation = None
+    showbutton = True
 
     def __init__(self, area, isbutton, name, newx, newy):
         self.area = area #x, y, width, height in a list (a Rect)

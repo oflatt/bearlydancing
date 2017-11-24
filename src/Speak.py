@@ -36,7 +36,7 @@ class Speak():
         h = variables.height
         w = variables.width
         b = h-variables.textbox_height
-        pygame.draw.rect(variables.screen, variables.BLACK, [0, b+yoffset, w, b])
+        pygame.draw.rect(variables.screen, variables.BLACK, [0, b+yoffset, w, variables.textbox_height])
         numoflines = self.lines_in_sceen()
         if numoflines > len(self.dialogue):
             numoflines = len(self.dialogue)

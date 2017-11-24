@@ -11,10 +11,15 @@ from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
 
-STORYORDER = ["letter", "greenie", "good job"]
+STORYORDER = ["bed","letter", "greenie", "good job"]
+# a list of story parts that the player should have no control over the bear in and bear is invisible in
+DISABLEPLAYERSTORY = ["bed"]
 
 def getpartofstory(storyname):
     return STORYORDER.index(storyname)
+
+def playerenabledp():
+    return not STORYORDER[classvar.player.storyprogress] in DISABLEPLAYERSTORY
 
 # Coordinates for maps are based on the base of each map respectively
 honeyw = GR["honeyside0"]["w"]
@@ -28,8 +33,17 @@ p = graphics.viewfactorrounded
 
 treecollidesection = variables.TREECOLLIDESECTION
 
+# outside5 #####################################################################################
+outside5 = Map(graphics.grassland(800, 500, downpath = True), [])
+outside5.populate_with("greyrock", 4)
+outside5.populate_with("pinetree", 15)
+outside5.enemies = enemies.woodsenemies
+outside5.lvrange = [2]
+outside5.exitareas = [Exit("left", False, "outside3", "right", "same"),
+                      Exit("bottom", False, "outside4", "same", "top")]
+
 # outside4/rockorsheep##########################################################################
-rgrassland = graphics.grassland(800, 500)
+rgrassland = graphics.grassland(800, 500, leftpath = False, rightpath = False, uppath = True)
 outside4 = Map(rgrassland, [])
 outside4.populate_with("greyrock", randint(35, 45))
 
@@ -63,9 +77,9 @@ sheepconversation.special_battle.lv = 3
 
 outside4.conversations = [sheepconversation]
 
-outside4.exitareas = [Exit("left", False, "outside3", "right", "same")]
+outside4.exitareas = [Exit("up", False, "outside5", "same", "bottom")]
 outside4.enemies = enemies.woodsenemies
-outside4.lvrange = [2]
+outside4.lvrange = [2,3]
 
 # outside3######################################################################################
 rgrassland = graphics.grassland(600, 500, leftpath = False, downpath = True)
@@ -73,9 +87,9 @@ b = rgrassland["w"] / 10
 outsideheight = rgrassland["h"]
 outside3 = Map(rgrassland, [])
 outside3.populate_with("greyrock", 4)
-outside3.populate_with("pinetree", 8)
+outside3.populate_with("pinetree", 12)
 outside3.exitareas = [Exit("bottom", False, "outside2", "same", "top"),
-                      Exit("right", False, "outside4", "left", "same")]
+                      Exit("right", False, "outside5", "left", "same")]
 outside3.enemies = enemies.woodsenemies
 outside3.lvrange = [1, 2]
 
@@ -124,7 +138,7 @@ treerock = Rock(rpt, 3.5 * b + housewidth, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + rpt["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
 
-houserock = Rock(GR["honeyhouseoutside"], housewidth, 0, None)
+houserock = Rock(GR["honeyhouseoutside"], housewidth, 0, [0,1/2,1,1/2])
 outside1 = Map(rgrassland,
                [houserock,
                 Rock(graphics.greyrock(), 6.5 * b, 7 * b, [0, 0, 1, 1]),
@@ -140,7 +154,6 @@ outside1.exitareas = [Exit("right", False, 'outside2', "left", "same"),
                             househeight * (1 / 5)],
                            True, 'honeyhome',
                            p * 41, insideheight - honeyh)]
-outside1.colliderects = [Rect(houserock.x, houserock.y, housewidth, househeight-(p*20))]
 outside1.lvrange = [1, 2]
 outside1c = conversations.secondscene
 outside1c.area = [treerock.x, 0, outsidewidth, outsideheight]
@@ -187,24 +200,34 @@ b = insidewidth / 10
 table = Rock(GR["table"], p * 75, p * 110, [0, 0.5, 1, 0.5])
 littleletter = Rock(GR['letter'], p * 75, p * 110, None)
 littleletter.background_range = table.background_range.copy()
+bed = Rock([GR["honeywakesup0"], GR["honeywakesup1"], GR["honeywakesup2"], GR["honeywakesup3"], GR["bed"]],
+           p*8, p*38, None, name = "bed")
 stashlist = []
 for x in range(10):
     stashname = "stash0" + str(x)
     stashlist.append(GR[stashname])
 honeyhome = Map(GR["honeyhouseinside"],
-                [table,
+                [bed,
+                 table,
                  littleletter,
                  Rock(stashlist, p * 130, p * 60, [0, 0.9, 1, 0.1], name="stash")])
 hungryspeak = Speak(GR["honeyside0"],["And... I'm still hungry"])
+
+outofbed = Conversation([], speaksafter = [[],[],[]], switchthisrock = "bed")
+outofbed.area = [0, 0, b*20, b*20]
+outofbed.part_of_story = getpartofstory("bed")
+outofbed.showbutton = False
+
 eatfromstash = Conversation([],
                             speaksafter = [[],[],[],[],[],[],[],[],
                                            [hungryspeak]],
                             switchthisrock="stash")
 eatfromstashoffset = p*10
 eatfromstash.area = [p*130+eatfromstashoffset, p*60, GR["stash00"]["w"]-2*eatfromstashoffset, GR["stash00"]["h"]]
-honeyhome.conversations = [eatfromstash]
 
-honeyhome.startpoint = [86 * p, 56 * p]
+honeyhome.conversations = [eatfromstash, outofbed]
+
+honeyhome.startpoint = [32 * p, 39 * p]
 doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                 True, 'outside1',
                 GR["honeyhouseoutside"]["w"] * (1 / 5) + houserock.x, GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight)
@@ -317,6 +340,10 @@ def engage_conversation(c):
         variables.settings.state = "conversation"
         conversations.currentconversation = c
     elif c.part_of_story == classvar.player.storyprogress:
+        # don't progress in story unless all the speaks for that conversation are exhausted
+        if not c.speaksafter == None:
+            if c.timestalkedto < len(c.speaksafter):
+                classvar.player.storyprogress -= 1
         variables.settings.state = "conversation"
         classvar.player.storyprogress += 1
         conversations.currentconversation = c
