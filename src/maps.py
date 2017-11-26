@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import variables, classvar, conversations, enemies, graphics, random
 from Animation import Animation
-from random import randint
 from graphics import scale_pure
 from graphics import GR
 from Map import Map
@@ -45,7 +44,7 @@ outside5.exitareas = [Exit("left", False, "outside3", "right", "same"),
 # outside4/rockorsheep##########################################################################
 rgrassland = graphics.grassland(800, 500, leftpath = False, rightpath = False, uppath = True)
 outside4 = Map(rgrassland, [])
-outside4.populate_with("greyrock", randint(35, 45))
+outside4.populate_with("greyrock", 40)
 
 # this is how many pixels away each dimension of the rock has to be to the sheep to work
 sheeptorocktolerance = 5
@@ -98,8 +97,8 @@ rgrassland = graphics.grassland(600, 500, rightpath = False, uppath = True)
 outsideheight = rgrassland["h"]
 b = rgrassland["w"] / 10
 outside2 = Map(rgrassland, [])
-outside2.populate_with("pinetree", randint(17, 26))
-outside2.populate_with("greyrock", randint(3, 5))
+outside2.populate_with("pinetree", 22)
+outside2.populate_with("greyrock", 3)
 
 outside2.exitareas = [
     Exit("left", False, 'outside1', "right", "same"),
@@ -258,16 +257,18 @@ def new_scale_offset():
     variables.scaleoffset = current_map.map_scale_offset
     classvar.player.scale_by_offset()
 
+def get_map(name):
+    possibles = globals()
+    m = possibles.get(name)
+    if not m:
+        raise NotImplementedError("Map %s not implemented" % name)
+    return m
 
 def change_map_nonteleporting(name):
     global current_map_name
     global current_map
     current_map_name = name
-    possibles = globals()
-    map_picked = possibles.get(name)
-    if not map_picked:
-        raise NotImplementedError("Map %s not implemented" % name)
-    current_map = map_picked
+    current_map = get_map(name)
     if not current_map.isscaled:
         current_map.scale_stuff()
 
