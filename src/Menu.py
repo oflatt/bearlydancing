@@ -1,65 +1,6 @@
 import graphics, variables, pygame, enemies, pickle, classvar, maps, os, random
 from classvar import player
-
-# unused
-def hassurface(listordict):
-    checklist = []
-    if type(listordict) == dict:
-        checklist = list(listordict.values())
-    else:
-        checklist = listordict
-    checkpos = 0
-    hassurfacep = False
-    while checkpos < len(checklist):
-        valtype = type(checklist[checkpos])
-        if valtype == pygame.Surface:
-            hassurfacep = True
-            checkpos = len(checklist)
-        elif valtype == dict:
-            checklist.extend(checklist[checkpos].values())
-            checkpos += 1
-        elif valtype in [list, tuple]:
-            checklist.extend(checklist[checkpos])
-            checkpos += 1
-        else:
-            checkpos += 1
-    return checklist
-
-# takes an object, dict, list, or tuple and returns a new dict or list with pygame surfaces changed to None
-# for objects it returns a dict of attributes
-def surfaces_to_none(o):
-    attributes = []
-    isdict = True
-    dictorlist = o
-    if type(o) == dict:
-        attributes = list(dict.values())
-    elif type(o) in [list, tuple]:
-        attributes = o
-        isdict = False
-    else:
-        dictorlist = o.__dict__
-        attributes = list(dictorlist.values())
-    
-    withoutimages = [None] * len(attributes)
-    loopkeys = range(len(attributes))
-    if isdict:
-        withoutimages = {}
-        loopkeys = dictorlist.keys()
-    
-    for key in loopkeys:
-        value = attributes[key]
-        valtype = type(value)
-        if valtype in (str, bool, float, int, range):
-            withoutimages[key] = value
-        elif valtype in [tuple, list, dict]:
-            
-            if not hassurface(value):
-                withoutimages[key] = value
-        elif not valtype == pygame.Surface:
-            # must be another object
-            withoutimages[key] = attributes_without_images(value)
-
-    return withoutimages
+from attributes_with_donotload import attributes_with_donotload
     
 
 # can't pickle pygame masks, and problems pickeling pygame surfaces
@@ -67,7 +8,7 @@ def save(me):
     player.mask = 0
     savelist = [variables.settings, player.xpos, player.ypos, player.lv, player.exp, player.storyprogress,
                 classvar.battle, maps.current_map_name]
-    print(attributes_without_images(maps.current_map))
+    print(attributes_with_donotload(maps.current_map))
     with open("bdsave0.txt", "wb") as f:
         pickle.dump(savelist, f)
     player.scale_by_offset()
