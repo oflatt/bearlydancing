@@ -2,8 +2,8 @@
 
 import pygame, os, variables, rdrawtree, rdrawland, rdrawrock
 
-viewfactor = variables.height*0.0025
-viewfactorrounded = round(variables.height*0.0025) #the master scaling factor for importing pixel art
+viewfactor = variables.unrounded_displayscale
+viewfactorrounded = variables.displayscale
 
 def sscale(img, rounded = True):
     w = img.get_width()

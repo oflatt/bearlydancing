@@ -3,15 +3,6 @@ import pygame, variables
 from Animation import Animation
 
 class Rock():
-    collidex = None
-    collidey = None
-    collidew = None
-    collideh = None
-    # background range is the range of the player's location that it is drawn behind the player
-    background_range = pygame.Rect(0, 0, variables.width * 100, variables.height * 100)
-    animations = None
-    name = None
-    loopanimationsp = False
 
     def __init__(self, base, x, y, collidesection, name = None):
         # collidesection is a list x y width height all of the arguments are relative to the rock's pos and dimensions
@@ -19,6 +10,10 @@ class Rock():
         self.collidesection = collidesection
         if self.collidesection == None:
             self.collidesection = [0, 0, 0, 0]
+
+        # background range is the range of the player's location that it is drawn behind the player
+        self.background_range = pygame.Rect(0, 0, variables.width * 100, variables.height * 100)
+        self.animations = None
 
         # base can be either an image (dictionary), a list of images, an animation, or a list of animations
         #if it is just a single image, put it in an animation
@@ -34,9 +29,14 @@ class Rock():
                     base[i] = Animation([base[i]], 1)
             self.animations = base
 
-        if name != None:
-            self.name = name
-            self.loopanimationsp = False
+        self.name = name
+        self.loopanimationsp = False
+
+        self.collidex = None
+        self.collidey = None
+        self.collidew = None
+        self.collideh = None
+        
         self.x = x
         self.y = y
         self.w = self.animations[0].pics[0]["w"]

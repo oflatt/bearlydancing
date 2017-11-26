@@ -12,7 +12,8 @@ if not os.path.isfile(os.path.abspath("bdsave0.txt")):
 
 # now go ahead and load everything in
 import maps
-import conversations, classvar, Menu
+import conversations, classvar
+from saveandload import save, load
 
 # save the properties to record how many things needed to be loaded
 variables.save_properties()
@@ -24,7 +25,7 @@ clock = pygame.time.Clock()
 
 maps.new_scale_offset()
 
-menu = Menu.load()
+menu = load()
 
 #clear all the events so it does not mess up the game when it loads
 pygame.event.get()
@@ -47,7 +48,7 @@ while not done:
                 if menu.options[menu.option] == "exit":
                     done = True
                 elif menu.options[menu.option] == "save":
-                    Menu.save(menu)
+                    save(menu)
 
         # User pressed down on a key
         if event.type == pygame.KEYDOWN:

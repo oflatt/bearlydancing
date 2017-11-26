@@ -12,6 +12,7 @@ class Enemy(Dancer):
         self.rarity = rarity
         self.name = name
         self.beatmaprules = beatmaprules
+        self.health = None
 
     def scalepure(self):
         for x in range(len(self.animation.pics)):

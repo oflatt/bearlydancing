@@ -197,6 +197,7 @@ letter.exitareas = [Exit([0, 0, b * 10, b * 10], True, 'honeyhome', 'same', 'sam
 # honeyhome#####################################################################################
 b = insidewidth / 10
 table = Rock(GR["table"], p * 75, p * 110, [0, 0.5, 1, 0.5])
+print(table.x)
 littleletter = Rock(GR['letter'], p * 75, p * 110, None)
 littleletter.background_range = table.background_range.copy()
 bed = Rock([GR["honeywakesup0"], GR["honeywakesup1"], GR["honeywakesup2"], GR["honeywakesup3"], GR["bed"]],
@@ -251,12 +252,6 @@ current_map_name = 'honeyhome'
 classvar.player.teleport(current_map.startpoint[0],
                          current_map.startpoint[1])
 
-
-def new_scale_offset():
-    global current_map
-    variables.scaleoffset = current_map.map_scale_offset
-    classvar.player.scale_by_offset()
-
 def get_map(name):
     possibles = globals()
     m = possibles.get(name)
@@ -264,13 +259,36 @@ def get_map(name):
         raise NotImplementedError("Map %s not implemented" % name)
     return m
 
+def get_maplist():
+    stringlist = [home_map_name]
+    maplist = [home_map]
+    index = 0
+
+    while index < len(stringlist):
+        for e in maplist[index].exitareas:
+            if not e.name in stringlist:
+                stringlist.append(e.name)
+                maplist.append(get_map(e.name))
+        index += 1
+    return maplist
+
+map_list = get_maplist()
+
+# now that everything is loaded, scale everything
+for m in map_list:
+    if not m.isscaled:
+        m.scale_stuff()
+
+def new_scale_offset():
+    global current_map
+    variables.scaleoffset = current_map.map_scale_offset
+    classvar.player.scale_by_offset()
+
 def change_map_nonteleporting(name):
     global current_map_name
     global current_map
     current_map_name = name
     current_map = get_map(name)
-    if not current_map.isscaled:
-        current_map.scale_stuff()
 
 
 def change_map(name, newx, newy):
@@ -317,7 +335,6 @@ def change_map(name, newx, newy):
         if (ypos < 0):
             ypos = 0
         if (ypos > (current_map.base["h"] * current_map.map_scale_offset - (honeyh * current_map.map_scale_offset))):
-            print("changey")
             ypos = current_map.base["h"] * current_map.map_scale_offset - (honeyh * current_map.map_scale_offset)
     else:
         ypos *= current_map.map_scale_offset

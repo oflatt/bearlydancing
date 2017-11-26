@@ -3,21 +3,19 @@
 import variables, pygame, graphics
 
 class Speak():
-    side = None
-    line = 0
-    textsize = 0.5
-    # can be a list of keys that work to exit the conversation
-    specialexitkeys = None
-    releaseexit = False
 
     def __init__(self, pic, dialogue, side = None, bottomp = True):
         #dialogue is a list of strings, one per line. Writer has to make sure they fit
         self.pic = graphics.scale_pure(pic["img"], variables.photo_size)
         self.dialogue = dialogue
-        if side != None:
-            self.side = side
+        self.side = side
+        # can be a list of keys that work to exit the conversation
         self.specialexitkeys = None
         self.bottomp = bottomp
+        self.releaseexit = False
+
+        self.line = 0
+        self.textsize = 0.5
         self.releaseexit = False
 
     def lines_in_sceen(self):

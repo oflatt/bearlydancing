@@ -5,28 +5,18 @@ from Battle import Battle
 
 
 class Conversation():
-    area = [0, 0, 0, 0]  # x, y, width, height in a list (a Rect)
-    isbutton = True  # true if you have to hit a button to enter
-    showbutton = True
-    progress = 0
-    #the number of the story that it is
-    part_of_story = "none"
-    #list of all the story numbers that it would appear in
-    #empty means none
-    storyrequirement = []
-    special_battle = "none"  # none or an enemy object to encounter after the conversation
-    timestalkedto = 0
-    exitteleport = ["same", "same"]
-    speaksafter = None
-    switchthisrock = None
-    special_battle_story_penalty = None
 
     def __init__(self, speaks, speaksafter=None, switchthisrock=None):
+        # none or an enemy object to encounter after the conversation
         self.special_battle = "none"
+        
         self.special_battle_story_penalty = None
+        self.progress = 0
+        self.timestalkedto = 0
         
         # a list of Speak
         self.speaks = speaks
+        #list of all the story numbers that it would appear in
         self.storyrequirement = []
         
         # a list of lists of Speak for after the first time they are talked to
@@ -35,10 +25,19 @@ class Conversation():
                 self.speaksafter = speaksafter
             else:
                 self.speaksafter = [speaksafter]
+        else:
+            self.speaksafter = None
 
         # a string of a name of a rock to switch the animation of
-        if switchthisrock != None:
-            self.switchthisrock = switchthisrock
+        self.switchthisrock = switchthisrock
+
+        self.area = [0, 0, 0, 0]  # x, y, width, height in a list (a Rect)
+        self.isbutton = True  # true if you have to hit a button to enter
+        self.showbutton = True
+        #the number of the story that it is
+        self.part_of_story = "none"
+
+        self.exitteleport = ["same", "same"]
 
     def draw(self):
         if len(self.speaks) > 0:

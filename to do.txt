@@ -1,11 +1,9 @@
 Bearly Dancing List
 
--fix saving of rock states- animationnums, places
--fix loading into a randomly placed rock
 -fix glitching with collisions into other maps
--adjust dificulty, fix the beatmap generator and add an offset selection
+-adjust difficulty, fix the beatmap generator and add an offset selection
 -expand the map!
--fix saving over different sized screens
+-fix scalability to smaller screens- saving and loading, movement
 -more complex asthetic background grass
 -write some tests for once
 -flying chimney once sophie makes it

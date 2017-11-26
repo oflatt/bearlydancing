@@ -14,21 +14,6 @@ TREEMASK.draw(BASEMASK,
               (int(variables.TREEWIDTH)-13, variables.TREEHEIGHT-15))
 
 class Map():
-    startpoint = [10, 10]  # xy coordinates of spawn point
-    exitareas = []  # list of exit
-    colliderects = []  # list of invisible Rect for collision
-    enemies = []  # list of possible enemy encounters
-    lvrange = [1]
-    last_encounter_check = 0
-    #use last pos takes priority over teleportation (with newx and newy in exits)
-    #It means when re-entering a map it teleports the player to the last pos they were when they were last in the map
-    uselastposq = False
-    lastx = None #none until you exit the map for the first time
-    lasty = None
-    encounterchecksnotactivated = 0
-    conversations = []  # list of conversation on the map
-    isscaled = False  # if scale stuff has been called
-    screenxoffset = 0 # this is if the map width is less than the screen width
 
     def __init__(self, base, terrain, leftbound = True, rightbound = True, topbound = True, bottombound = True):
         self.topbound = topbound
@@ -50,6 +35,23 @@ class Map():
             self.map_scale_offset = variables.height / smaller
         else:
             self.map_scale_offset = 1
+
+        self.lastx = None #none until you exit the map for the first time
+        self.lasty = None
+
+        self.startpoint = [10, 10]  # xy coordinates of spawn point
+        self.exitareas = []  # list of exit
+        self.colliderects = []  # list of invisible Rect for collision
+        self.enemies = []  # list of possible enemy encounters
+        self.lvrange = [1]
+        self.last_encounter_check = 0
+        #use last pos takes priority over teleportation (with newx and newy in exits)
+        #It means when re-entering a map it teleports the player to the last pos they were when they were last in the map
+        self.uselastposq = False
+        self.encounterchecksnotactivated = 0
+        self.conversations = []  # list of conversation on the map
+        self.isscaled = False  # if scale stuff has been called
+        self.screenxoffset = 0 # this is if the map width is less than the screen width
 
     # puts a number of one kind of object into the map randomly
     # if the randomly generated coordinates collide with anything, they are skipped

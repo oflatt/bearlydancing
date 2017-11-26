@@ -1,34 +1,5 @@
-import graphics, variables, pygame, enemies, pickle, classvar, maps, os, random
+import graphics, variables, pygame, enemies, classvar, maps, random
 from classvar import player
-from attributes_with_donotload import attributes_with_donotload
-    
-
-# can't pickle pygame masks, and problems pickeling pygame surfaces
-def save(me):
-    player.mask = 0
-    savelist = [variables.settings, player.xpos, player.ypos, player.lv, player.exp, player.storyprogress,
-                classvar.battle, maps.current_map_name]
-    print(attributes_with_donotload(maps.current_map))
-    with open("bdsave0.txt", "wb") as f:
-        pickle.dump(savelist, f)
-    player.scale_by_offset()
-
-def load():
-    m = Menu()
-    if (os.path.isfile(os.path.abspath("bdsave0.txt"))):
-        if os.path.getsize(os.path.abspath("bdsave0.txt")) > 0:
-            f = open("bdsave0.txt", "rb")
-            loadedlist = pickle.load(f)
-            variables.settings, player.xpos, player.ypos, player.lv, player.exp, player.storyprogress, classvar.battle, maps.current_map_name = loadedlist
-            maps.change_map(maps.current_map_name, player.xpos, player.ypos)
-            # don't start at beginning
-            m.firstbootup = False
-
-    if (not isinstance(classvar.battle, str)):
-        classvar.battle.reset_enemy()
-
-    return m
-
 
 class Menu():
     option = 0

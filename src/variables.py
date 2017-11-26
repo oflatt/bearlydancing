@@ -13,13 +13,16 @@ pygame.mixer.set_num_channels(46)
 modes = pygame.display.list_modes()
 ctypes.windll.user32.SetProcessDPIAware()
 mode = modes[0]
-height = mode[1]
-width = mode[0]
+height = int(mode[1]/2)
+width = int(mode[0]/2)
 hh = height/2
 hw = width/2
 flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
 screen = pygame.display.set_mode(mode, flags)
 #screen = pygame.Surface([height, width])
+
+unrounded_displayscale = height*0.0025
+displayscale = round(unrounded_displayscale) #the master scaling factor for importing pixel art
 
 # Define some colors
 BLACK = (0, 0, 0)
