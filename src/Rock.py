@@ -57,10 +57,14 @@ class Rock():
         w = base["img"].get_width()
         h = base["img"].get_height()
         # fill all but the collide section
+        # top
         maskpic.fill(pygame.Color(0, 0, 0, 0), [0, 0, w, cs[1] * h])
+        # left
         maskpic.fill(pygame.Color(0, 0, 0, 0), [0, 0, cs[0] * w, h])
+        # right
         maskpic.fill(pygame.Color(0, 0, 0, 0), [cs[0] * w + cs[2] * w, 0, w - (cs[0] * w + cs[2] * w), h])
-        maskpic.fill(pygame.Color(0, 0, 0, 0), [0, cs[1] * h + cs[3] * h, w, h - (cs[1] * h + cs[3] * h)])
+        # bottom
+        maskpic.fill(pygame.Color(0, 0, 0, 0), [0, cs[1] * h + cs[3] * h, w, h - (cs[1] * h + cs[3] * h) + 1])
         self.mask = pygame.mask.from_surface(maskpic)
 
         h = base["h"]

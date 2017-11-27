@@ -137,7 +137,8 @@ treerock = Rock(rpt, 3.5 * b + housewidth, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + rpt["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
 
-houserock = Rock(GR["honeyhouseoutside"], housewidth, 0, [0,1/2,1,1/2])
+houserock = Rock(GR["honeyhouseoutside"], housewidth, 0,
+                 [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())])
 outside1 = Map(rgrassland,
                [houserock,
                 Rock(graphics.greyrock(), 6.5 * b, 7 * b, [0, 0, 1, 1]),
@@ -205,7 +206,6 @@ letter.exitareas = [Exit([0, 0, b * 10, b * 10], True, 'honeyhome', 'same', 'sam
 # honeyhome#####################################################################################
 b = insidewidth / 10
 table = Rock(GR["table"], p * 75, p * 110, [0, 0.5, 1, 0.5])
-print(table.x)
 littleletter = Rock(GR['letter'], p * 75, p * 110, None)
 littleletter.background_range = table.background_range.copy()
 bed = Rock([GR["honeywakesup0"], GR["honeywakesup1"], GR["honeywakesup2"], GR["honeywakesup3"], GR["bed"]],
@@ -246,8 +246,8 @@ honeyhome.exitareas = [doorexit,
                             True, 'letter',
                             GR["paper"]['w']*(3/10), 0)]
 honeyhome.colliderects = [Rect(0, 0, p * 31, p * 74),  # bed
-                          Rect(0, 0, insidewidth, p * 44),  # wall
-                          Rect(44 * p, 0, 26 * p, 56 * p),  # wardrobe
+                          Rect(0, 0, insidewidth, p * 48),  # wall
+                          Rect(44 * p, 0, 26 * p, 60 * p),  # wardrobe
                           Rect(p * 75, p * 110 + p * 11, p * 44, p * 13)]  # table
 honeyhome.uselastposq = True
 

@@ -13,8 +13,8 @@ pygame.mixer.set_num_channels(46)
 modes = pygame.display.list_modes()
 ctypes.windll.user32.SetProcessDPIAware()
 mode = modes[0]
-height = int(mode[1]/2)
-width = int(mode[0]/2)
+height = int(mode[1])
+width = int(mode[0])
 hh = height/2
 hw = width/2
 flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
@@ -115,6 +115,8 @@ def draw_loading_text(string):
     screen.blit(text, [xpos, ypos])
 
 def draw_progress_bar():
+    #clear all the events so it does not crash
+    pygame.event.get()
     numused = num_of_generated_graphics_used()
     estimated = properties.num_of_generated_graphics
     

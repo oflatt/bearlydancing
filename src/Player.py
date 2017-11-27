@@ -183,6 +183,8 @@ class Player(Dancer):
             else:
                 return True
 
+        playermaskrect = self.mask.get_bounding_rects()[0]
+
 
         if not self.xspeed == 0:
             #first check for edges of map, this is the left
@@ -197,7 +199,8 @@ class Player(Dancer):
                 for x in range(0, len(colliderects)):
                     p = self.normal_height/29
                     #make playerR only the feet
-                    playerR = Rect(movedxpos+p*2, self.ypos+26*p, p*17, p*3)
+                    playerR = Rect(movedxpos+playermaskrect.x, self.ypos+playermaskrect.y,
+                                   playermaskrect.w, playermaskrect.h)
                     if(playerR.colliderect(colliderects[x]) == 1):
                         iscollisionx = True
                         break
@@ -219,7 +222,8 @@ class Player(Dancer):
                 for x in range(0, len(colliderects)):
                     p = self.normal_height/29
                     #make playerR only the feet
-                    playerR = Rect(self.xpos+p*2, movedypos+26*p, p*17, p*3)
+                    playerR = Rect(self.xpos+playermaskrect.x, movedypos+playermaskrect.y,
+                                   playermaskrect.w, playermaskrect.h)
                     if(playerR.colliderect(colliderects[x]) == 1):
                         iscollisiony = True
                         break

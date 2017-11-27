@@ -33,7 +33,6 @@ pygame.event.get()
 # Loop variable
 done = False
 
-print(variables.displayscale)
 
 # -------- Main Program Loop -----------
 while not done:
@@ -115,26 +114,26 @@ while not done:
                                   Rect(0, 0, screenxoffset, variables.height))
             variables.screen.fill(variables.BLACK,
                                   Rect(variables.width-screenxoffset-1, 0, screenxoffset+1, variables.height))
-    
-    if variables.settings.state == "conversation":
-        if variables.settings.backgroundstate == "world":
+
+    drawworldp = True
+    if variables.settings.menuonq:
+        if menu.mainmenup:
+            if menu.state == "main":
+                variables.screen.fill(variables.BLACK)
+                drawworldp = False
+    if drawworldp:
+        if variables.settings.state == "conversation":
+            if variables.settings.backgroundstate == "world":
+                draw_world()
+            else:
+                variables.screen.fill(variables.BLACK)
+                classvar.battle.draw()
+            conversations.currentconversation.draw()
+        elif variables.settings.state == "world":
             draw_world()
-        else:
+        elif variables.settings.state == "battle":
             variables.screen.fill(variables.BLACK)
             classvar.battle.draw()
-        conversations.currentconversation.draw()
-    elif variables.settings.state == "world":
-        drawworldp = True
-        if variables.settings.menuonq:
-            if menu.mainmenup:
-                if menu.state == "main":
-                    variables.screen.fill(variables.BLACK)
-                    drawworldp = False
-        if drawworldp:
-            draw_world()
-    elif variables.settings.state == "battle":
-        variables.screen.fill(variables.BLACK)
-        classvar.battle.draw()
 
     if (variables.settings.menuonq):
         menu.draw()

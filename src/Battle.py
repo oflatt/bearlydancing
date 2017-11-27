@@ -7,36 +7,14 @@ from play_sound import soundpackkeys
 
 
 class Battle():
-    # for attacking animation
-    isplayernext = False  # if the player is currently being damaged
-    oldenemyhealth = 20
-    oldplayerhealth = 20
-    newplayerhealth = 10
-    newenemyhealth = 10
-
-    # animation time is used for all animations
-    animationtime = 0
-
-    # for win animation
-    newexp = 0
-    oldexp = 0
-
-    # drawing buttons
-    buttons = []
-
-    beatmaps = []
-
-    current_beatmap = 0
-    damage_multiplier = 1
-    drumcounter = 0
-
-    # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
-    pausetime = 0
-
-    # if this is set, when the lose they lose progress in the story
-    storypenalty = None
 
     def __init__(self, enemy):
+
+        self.current_beatmap = 0
+        self.damage_multiplier = 1
+        self.drumcounter = 0
+        self.beatmaps = []
+        
         self.starttime = variables.settings.current_time
         self.enemy = enemy
         # state can be choose, dance, or attacking, win, lose, exp, got exp
@@ -61,7 +39,29 @@ class Battle():
             b.notes = [Note(0, 1, 1), Note(1, 2, 1)] + b.notes
         
         classvar.player.heal()
+
+        # if this is set, when the lose they lose progress in the story
         self.storypenalty = None
+
+        # for attacking animation
+        self.isplayernext = False  # if the player is currently being damaged
+        self.oldenemyhealth = 20
+        self.oldplayerhealth = 20
+        self.newplayerhealth = 10
+        self.newenemyhealth = 10
+
+        # animation time is used for all animations
+        self.animationtime = 0
+
+        # for win animation
+        self.newexp = 0
+        self.oldexp = 0
+
+        # drawing buttons
+        self.buttons = []
+
+        # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
+        self.pausetime = 0
 
     def pause(self):
         self.pausetime = variables.settings.current_time

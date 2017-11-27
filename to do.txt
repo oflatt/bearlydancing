@@ -14,6 +14,7 @@ Bearly Dancing List
 -controls in menu
 
 Sophie:
+-make the "bed" file the bed with the covers down, right now it magically gets done
 -flying chimney!
 -nice looking interaction button to replace circle
 -wardrobe open, "why do I even have dis?"
