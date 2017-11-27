@@ -50,6 +50,7 @@ while not done:
                     done = True
                 elif menu.options[menu.option] == "save":
                     save(menu)
+                    menu.saved()
 
         # User pressed down on a key
         if event.type == pygame.KEYDOWN:

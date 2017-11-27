@@ -1,4 +1,5 @@
 import graphics, variables, pygame, enemies, classvar, maps, random
+from pygame import Rect
 from classvar import player
 
 class Menu():
@@ -13,6 +14,9 @@ class Menu():
         self.textxoffset = 0
         self.textyspace = 0
         self.namepics = []
+
+        self.message = None
+        self.messagetime = 0
         
         for o in self.mainmenuoptions:
             textpic = graphics.sscale_customfactor(variables.font.render(o, 0, variables.WHITE), 1)
@@ -38,7 +42,15 @@ class Menu():
         self.backspacetime = 0
         self.firstbootup = True
 
+    def saved(self):
+        self.message = "saved!"
+        self.messagetime = variables.settings.current_time
+
     def ontick(self):
+        if self.message != None:
+            if variables.settings.current_time - self.messagetime > 1000:
+                self.message = None
+        
         if self.state == "name":
             if self.backspaceon:
                 if (variables.settings.current_time - self.backspacetime) > 200:
@@ -66,6 +78,19 @@ class Menu():
                 classvar.battle.unpause()
 
     def drawmain(self):
+        extrabuttonwidth = self.textxoffset / 4
+
+        if self.message != None:
+            mpic = variables.font.render(self.message, 0, variables.WHITE)
+            mpic = graphics.sscale_customfactor(mpic, 1)
+            mx = variables.width/2-mpic.get_width()/2
+            my = variables.height/2-mpic.get_height()/2
+            variables.screen.fill(variables.BLACK, Rect(mx-extrabuttonwidth,
+                                                        my,
+                                                        mpic.get_width()+2*extrabuttonwidth,
+                                                        mpic.get_height()))
+            variables.screen.blit(mpic, [mx, my])
+        
         opics = self.optionpics
         if self.mainmenup:
             opics = self.mainmenuoptionpics
@@ -77,7 +102,6 @@ class Menu():
             
             if self.mainmenup:
                 xoffset = int(variables.width / 2 - (textpic.get_width() / 2))
-            extrabuttonwidth = self.textxoffset / 4
             pygame.draw.rect(variables.screen, variables.BLACK,
                              pygame.Rect(xoffset-extrabuttonwidth,
                                          (x + 1) * self.textyspace,
