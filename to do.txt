@@ -1,5 +1,6 @@
 Bearly Dancing List
 
+-saving in a battle
 -christmas trees
 -make names appear
 -fix glitching with collisions into other maps
@@ -9,6 +10,8 @@ Bearly Dancing List
 -more complex asthetic background grass
 -write some tests for once
 -flying chimney once sophie makes it
+-load own sounds using the bowl pianoputer thing
+-controls in menu
 
 Sophie:
 -flying chimney!
