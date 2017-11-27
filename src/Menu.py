@@ -2,18 +2,21 @@ import graphics, variables, pygame, enemies, classvar, maps, random
 from classvar import player
 
 class Menu():
-    option = 0
-    state = "main"
-    options = ["resume", "save", "controls", "exit"]
-    optionpics = []
-    textxoffset = 0
-    textyspace = 0
-    # if it is true, it is displaying the main menu
-    mainmenup = True
-    namepics = []
     
     def __init__(self):
-        self.playpic = graphics.sscale_customfactor(variables.font.render("play", 0, variables.WHITE), 1)
+        self.option = 0
+        self.state = "main"
+        self.options = ["resume", "save", "controls", "exit"]
+        self.mainmenuoptions = ["play", "controls", "exit"]
+        self.optionpics = []
+        self.mainmenuoptionpics = []
+        self.textxoffset = 0
+        self.textyspace = 0
+        self.namepics = []
+        
+        for o in self.mainmenuoptions:
+            textpic = graphics.sscale_customfactor(variables.font.render(o, 0, variables.WHITE), 1)
+            self.mainmenuoptionpics.append(textpic)
         for o in self.options:
             textpic = graphics.sscale_customfactor(variables.font.render(o, 0, variables.WHITE), 1)
             self.optionpics.append(textpic)
@@ -26,6 +29,8 @@ class Menu():
         self.textyspace = variables.font.get_linesize()*variables.height*0.003
         self.textxoffset = self.optionpics[0].get_width() / 6
         self.reset()
+
+        # if it is true, it is displaying the main menu
         self.mainmenup = True
         self.namestring = ""
         self.shifton = False
@@ -61,14 +66,16 @@ class Menu():
                 classvar.battle.unpause()
 
     def drawmain(self):
+        opics = self.optionpics
+        if self.mainmenup:
+            opics = self.mainmenuoptionpics
+            
         xoffset = self.textxoffset
         
-        for x in range(len(self.optionpics)):
-            textpic = self.optionpics[x]
+        for x in range(len(opics)):
+            textpic = opics[x]
             
             if self.mainmenup:
-                if x == 0:
-                    textpic = self.playpic
                 xoffset = int(variables.width / 2 - (textpic.get_width() / 2))
             extrabuttonwidth = self.textxoffset / 4
             pygame.draw.rect(variables.screen, variables.BLACK,
@@ -80,17 +87,14 @@ class Menu():
                                   [xoffset, (x + 1) * self.textyspace])
         dotxoffset = self.textxoffset
         if self.mainmenup:
-            if self.option == 0:
-                dotxoffset = int(variables.width / 2 - (self.playpic.get_width() / 2))
-            else:
-                dotxoffset = int(variables.width / 2 - (self.optionpics[self.option].get_width() / 2))
+            dotxoffset = int(variables.width / 2 - (opics[self.option].get_width() / 2))
         pygame.draw.rect(variables.screen, variables.WHITE,
                          [dotxoffset - (self.textxoffset * (3/4)), (self.option + 1) * self.textyspace, self.textxoffset * (3 / 4),
                           self.textxoffset * (3 / 4)])
         if self.mainmenup:
             enemyframe = self.enemyanimation.current_frame()["img"]
             variables.screen.blit(enemyframe,
-                                  [int(variables.width/2 - enemyframe.get_width()/2), (len(self.optionpics) + 1) * self.textyspace])
+                                  [int(variables.width/2 - enemyframe.get_width()/2), (len(opics) + 1) * self.textyspace])
 
     # in drawname option is used as how far they have gotten through the process
     def drawname(self):
@@ -122,6 +126,7 @@ class Menu():
         if key in variables.settings.enterkeys and key != pygame.K_SPACE:
             if len(self.namestring) != 0:
                 self.option += 1
+                # self.namestring = self.namestring[:1].upper() + self.namestring[1:]
                 if self.option == 0:
                     variables.settings.username = self.namestring
                 else:

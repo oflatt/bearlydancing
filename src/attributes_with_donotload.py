@@ -59,7 +59,7 @@ def rectdict(pygamerect, keyname = None):
     rectdict = {"x":pygamerect.x,"y":pygamerect.y,"width":pygamerect.width,"height":pygamerect.height}
     if keyname in scalerectnames:
         for key in rectdict.keys():
-            rectdict[key] /= displayscale
+            rectdict[key] = rectdict[key] / displayscale
     return rectdict
 
 
@@ -80,6 +80,7 @@ def surfaces_to_donotload_dict(d):
         elif valuetype in (list, tuple):
             # unscale for saving
             if key in scalelistnames:
+                newdict[key] = d[key].copy()
                 for i in range(len(value)):
                     newdict[key][i] = value[i] / displayscale
             else:
