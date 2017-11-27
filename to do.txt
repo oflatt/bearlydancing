@@ -1,6 +1,5 @@
 Bearly Dancing List
 
--saving in a battle
 -christmas trees
 -make names appear
 -fix glitching with collisions into other maps

@@ -10,7 +10,10 @@ from enemies import greenie
 def save(me):
     player.mask = 0
     mapslist = surfaces_to_donotload_list(maps.get_maplist())
-    battleattributes = attributes_with_donotload(classvar.battle)
+    if type(classvar.battle) == str:
+        battleattributes = classvar.battle
+    else:
+        battleattributes = attributes_with_donotload(classvar.battle)
     savelist = [mapslist,variables.settings, player.xpos/displayscale, player.ypos/displayscale, player.lv, player.exp, player.storyprogress,
                 battleattributes, maps.current_map_name]
     with open("bdsave0.txt", "wb") as f:
@@ -32,7 +35,10 @@ def load():
             mapslist, variables.settings, player.xpos, player.ypos, player.lv, player.exp, player.storyprogress, battleattributes, maps.current_map_name = loadedlist
 
             classvar.battle = Battle(greenie)
-            assign_attributes(classvar.battle, battleattributes)
+            if type(battleattributes) == str:
+                classvar.battle = battleattributes
+            else:
+                assign_attributes(classvar.battle, battleattributes)
             
             player.xpos *= displayscale
             player.ypos *= displayscale

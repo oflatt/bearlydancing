@@ -1,6 +1,12 @@
 #!/usr/bin/python
 
 import pygame, os, variables, rdrawtree, rdrawland, rdrawrock
+from datetime import date
+
+today = date.today()
+christmasp = False
+if today.month == 12 and today.day > 7:
+    christmasp = True
 
 viewfactor = variables.unrounded_displayscale
 viewfactorrounded = variables.displayscale
@@ -93,9 +99,14 @@ def pinetree():
         os.remove(os.path.dirname(os.path.abspath("__file__")) + "/pics/" + filename)
         pygame.image.save(rdrawtree.maketree(), "pics/" + filename)
         addtoGR(filename)
+    nicetreename = nicename(filename)
 
+    # christmas!
+    if christmasp:
+        rdrawtree.makechristmastree(GR[nicetreename]["img"])
+    
     endofgeneration()
-    return GR[nicename(filename)]
+    return GR[nicetreename]
 
 def greyrock():
     variables.greyrocksused += 1

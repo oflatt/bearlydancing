@@ -1,4 +1,4 @@
-import pygame, variables, copy, random
+import pygame, variables, copy, random, math
 from addtexture import addtexture, fillpolygon
 from pygame import draw
 from random import randint
@@ -8,6 +8,10 @@ from variables import TREEWIDTH, TREEHEIGHT
 TREEFILLCOLOR = (33, 52, 27, 255)
 TREEOUTLINECOLOR = (22, 40, 20)
 TRUNKCOLOR = (39, 32, 32, 255)
+TREECOLOR1 = (26, 47, 21)
+TREECOLOR2 = (28, 63, 12)
+TREECOLOR3 = (28, 61, 33)
+TOPTREECOLORLIST = [TREEFILLCOLOR[:3], TREEOUTLINECOLOR, TREECOLOR1, TREECOLOR2, TREECOLOR3]
 
 def addpoints(l, leftbound, rightbound, maxvariation):
     cl = copy.deepcopy(l)
@@ -210,9 +214,9 @@ def maketree():
     p.blit(l4, [0, 0])
 
     # first texturize the green part of the tree
-    moss1 = Texture((26, 47, 21), 1/12, 1/21, 4/7, acceptedcolors = [TREEFILLCOLOR])
-    moss2 = Texture((28, 63, 12), 1/70, 1/21, 4/7, acceptedcolors = [TREEFILLCOLOR])
-    moss3 = Texture((28, 61, 33), 1/70, 0, 0, acceptedcolors = [TREEFILLCOLOR])
+    moss1 = Texture(TREECOLOR1, 1/12, 1/21, 4/7, acceptedcolors = [TREEFILLCOLOR])
+    moss2 = Texture(TREECOLOR2, 1/70, 1/21, 4/7, acceptedcolors = [TREEFILLCOLOR])
+    moss3 = Texture(TREECOLOR3, 1/70, 0, 0, acceptedcolors = [TREEFILLCOLOR])
 
     if randint(1, 3) == 1:
         moss1.color = (randint(22, 28), randint(55, 65), randint(10, 25))
@@ -242,3 +246,44 @@ def maketree():
         addtexture(p, moss3)
 
     return p
+
+
+def makechristmastree(surface):
+    christmascolors = [variables.WHITE, variables.GREEN, variables.RED, variables.BLUE]
+    w = surface.get_width()
+    h = surface.get_height()
+    lightxspacing = 5
+    lightyspacing = 16
+    curvedepth = 8
+    numoflightsperrow = int(w/lightxspacing)
+    numofrows = int(TREEHEIGHT/lightyspacing)-1
+
+    def inboundsp(xpos, ypos):
+        return xpos >= 0 and xpos< surface.get_width() and ypos>=0 and ypos<surface.get_height()
+    
+    def addpixel(xpos, ypos, color):
+        if inboundsp(xpos, ypos):
+            surface.set_at([xpos, ypos], color)
+    
+    def addlight(xpos, ypos):
+        if inboundsp(xpos, ypos):
+            if surface.get_at([xpos, ypos])[:3] in TOPTREECOLORLIST:
+                rcolor = random.choice(christmascolors)
+                #center pixel
+                surface.set_at([xpos, ypos], rcolor)
+                rcolor = rcolor + (100,)
+                addpixel(xpos-1, ypos, rcolor)
+                addpixel(xpos+1, ypos, rcolor)
+                addpixel(xpos, ypos+1, rcolor)
+                addpixel(xpos, ypos-1, rcolor)
+
+    def drawstring(yoffset):
+        for lightindex in range(numoflightsperrow):
+            xpos = lightindex * lightxspacing
+            radians = math.pi * (lightindex/numoflightsperrow)
+            curveoffset = math.sin(radians)
+            curveoffset = curvedepth * curveoffset
+            addlight(int(xpos), int(yoffset+curveoffset-lightindex))
+    
+    for y in range(numofrows):
+        drawstring(y*lightyspacing)
