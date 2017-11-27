@@ -1,5 +1,7 @@
 Bearly Dancing List
 
+-christmas trees
+-make names appear
 -fix glitching with collisions into other maps
 -adjust difficulty, fix the beatmap generator and add an offset selection
 -expand the map!

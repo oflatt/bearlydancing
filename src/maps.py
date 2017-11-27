@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import variables, classvar, conversations, enemies, graphics, random
+import variables, classvar, conversations, enemies, graphics, random, pygame
 from Animation import Animation
 from graphics import scale_pure
 from graphics import GR
@@ -174,16 +174,24 @@ conversations.gotoforest.storyrequirement = [getpartofstory("greenie")]
 outside1.conversations = [outside1c, conversations.gotoforest, goodc]
 
 # letter########################################################################################
+GR["backgroundforpaper"]["img"] = pygame.transform.scale2x(GR["backgroundforpaper"]["img"])
+GR["backgroundforpaper"]["w"] *= 2
+GR["backgroundforpaper"]["h"] *= 2
 b = GR['backgroundforpaper']['w'] / 10
+GR["paper"]["img"] = pygame.transform.scale2x(GR["paper"]["img"])
+GR["paper"]["w"] *= 2
+GR["paper"]["h"] *= 2
 bigpaper = Rock(GR["paper"], (GR["backgroundforpaper"]['w'] - GR["paper"]["w"]) / 2, 0, [0, 0, 1, 1])
 bigpaper.background_range = None  # always in front
 s1 = variables.font.render("I stole your lunch.", 0, variables.BLACK)
 s2 = variables.font.render("-Trash Panda", 0, variables.BLACK)
-s1 = scale_pure(s1, 0.5 * s1.get_height())
-s2 = scale_pure(s2, 0.5 * s2.get_height())
+lettertextscalefactor = (GR["paper"]['w'] * (3/4)) / s1.get_width()
+s1 = pygame.transform.scale(s1, [int(lettertextscalefactor*s1.get_width()), int(lettertextscalefactor*s1.get_height())])
+s2 = pygame.transform.scale(s2, [int(lettertextscalefactor*s2.get_width()), int(lettertextscalefactor*s2.get_height())])
+
 w1 = Rock({"img": s1, "w": s1.get_width(), "h": s1.get_height()}, b * 5 - s1.get_width() / 2, b * 3, None)
 w1.background_range = None
-w2 = Rock({"img": s2, "w": s2.get_width(), "h": s2.get_height()}, b * 5 - s2.get_width() / 2, b * 4, None)
+w2 = Rock({"img": s2, "w": s2.get_width(), "h": s2.get_height()}, b * 5 - s2.get_width() / 2, b * 4.5, None)
 w2.background_range = None
 
 letter = Map(GR["backgroundforpaper"], [bigpaper,

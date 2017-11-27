@@ -33,6 +33,8 @@ pygame.event.get()
 # Loop variable
 done = False
 
+print(variables.displayscale)
+
 # -------- Main Program Loop -----------
 while not done:
     # add the past tick to the current time
