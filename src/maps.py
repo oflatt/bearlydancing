@@ -137,7 +137,7 @@ treerock = Rock(rpt, 3.5 * b + housewidth, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + rpt["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
 
-houserock = Rock(GR["honeyhouseoutside"], 0, 0,
+houserock = Rock(GR["honeyhouseoutside"], housewidth, 0,
                  [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())])
 outside1 = Map(rgrassland,
                [houserock,

@@ -142,6 +142,10 @@ while not done:
 
     # blit fps
     variables.screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [20, 20])
+
+    # blit red boarder for testing
+    variables.screen.fill(variables.RED, Rect(variables.width, 0, 10, variables.height))
+    variables.screen.fill(variables.RED, Rect(0, variables.height, variables.width, 10))
     
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
