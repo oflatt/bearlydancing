@@ -174,6 +174,10 @@ class Menu():
                     variables.settings.username = self.namestring
                     if variables.settings.username.lower() == "tessa":
                         self.setmessage("<3")
+                    elif variables.settings.username.lower() == "oliver":
+                        self.setmessage("hey that's me!")
+                    elif variables.settings.username.lower() == "sophie" or variables.settings.username.lower() == "sophia":
+                        self.setmessage("the best sister there is")
                 else:
                     variables.settings.bearname = self.namestring
 
