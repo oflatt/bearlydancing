@@ -251,6 +251,8 @@ honeyhome.colliderects = [Rect(0, 0, p * 31, p * 74),  # bed
                           Rect(p * 75, p * 110 + p * 11, p * 44, p * 13)]  # table
 honeyhome.uselastposq = True
 
+
+
 # teleportation and stuff#######################################################################
 home_map = honeyhome
 home_map_name = "honeyhome"
@@ -319,7 +321,6 @@ def change_map(name, newx, newy):
     elif newx == "left" or newx == "l":
         xpos = -halfhoneywidth+1
     if newy == "up" or newy == "u" or newy == "top" or newy == "t":
-        print("went to top of next map")
         ypos = -halfhoneyheight+1
     elif newy == "down" or newy == "bottom" or newy == "d" or newy == "b":
         ypos = current_map.base["h"]-halfhoneyheight-1
@@ -411,3 +412,4 @@ def checkconversation():
 
 def changerock(rockname):
     current_map.changerock(rockname)
+

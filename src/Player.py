@@ -159,6 +159,49 @@ class Player(Dancer):
                 self.yspeed = -s
         self.change_animation()
 
+    def collisioncheck(self,xpos, ypos):
+        #checks if the player collides with a rock
+        def rockcollisioncheck(arock, x, y):
+            if(arock.mask.overlap(self.mask, [int(x-arock.collidex), int(y-arock.collidey)]) == None):
+                return False
+            else:
+                return True
+        
+        iscollision = False
+
+        playermaskrect = self.mask.get_bounding_rects()[0]
+        m = maps.current_map
+        t = m.terrain
+        colliderects = m.colliderects
+        numofrocks = len(t)
+        
+        #first check for edges of map, this is the left
+        if xpos < 0 and m.leftbound:
+            iscollision = True
+        elif xpos+self.normal_width>m.finalimage.get_width() and m.rightbound:
+            iscollision = True
+        elif ypos < 0 and m.topbound:
+            iscollision = True
+        elif ypos+self.normal_height>m.finalimage.get_height() and m.bottombound:
+            iscollision = True
+        else:
+            #collision detection for the moved x pos with the unmoved y pos
+            for x in range(0, len(colliderects)):
+                p = self.normal_height/29
+                #make playerR only the feet
+                playerR = Rect(xpos+playermaskrect.x, ypos+playermaskrect.y,
+                               playermaskrect.w, playermaskrect.h)
+                if(playerR.colliderect(colliderects[x]) == 1):
+                    iscollision = True
+                    break
+            if not iscollision:
+                for x in range(0, numofrocks):
+                    r = t[x]
+                    if rockcollisioncheck(r, xpos, ypos):
+                        iscollision = True
+                        break
+        return iscollision
+    
     #moves with collision detection
     def move(self):
         t = variables.settings.current_time
@@ -172,66 +215,13 @@ class Player(Dancer):
         iscollisionx = False
         iscollisiony= False
         m = maps.current_map
-        t = m.terrain
-        colliderects = m.colliderects
-        numofrocks = len(t)
-
-        #checks if the player collides with a rock
-        def collisioncheck(arock, x, y):
-            if(arock.mask.overlap(self.mask, [int(x-arock.collidex), int(y-arock.collidey)]) == None):
-                return False
-            else:
-                return True
-
-        playermaskrect = self.mask.get_bounding_rects()[0]
 
 
         if not self.xspeed == 0:
-            #first check for edges of map, this is the left
-            if movedxpos < 0 and m.leftbound:
-                self.xpos = 0
-                iscollisionx = True
-            elif movedxpos+self.normal_width>m.finalimage.get_width() and m.rightbound:
-                self.xpos = m.finalimage.get_width()-self.normal_width
-                iscollisionx = True
-            else:
-                #collision detection for the moved x pos with the unmoved y pos
-                for x in range(0, len(colliderects)):
-                    p = self.normal_height/29
-                    #make playerR only the feet
-                    playerR = Rect(movedxpos+playermaskrect.x, self.ypos+playermaskrect.y,
-                                   playermaskrect.w, playermaskrect.h)
-                    if(playerR.colliderect(colliderects[x]) == 1):
-                        iscollisionx = True
-                        break
-                for x in range(0, numofrocks):
-                    r = t[x]
-                    if collisioncheck(r, movedxpos, self.ypos):
-                        iscollisionx = True
-                        break
-
+            iscollisionx = self.collisioncheck(movedxpos, self.ypos)
+            
         if not self.yspeed == 0:
-            if movedypos < 0 and m.topbound:
-                self.ypos = 0
-                iscollisiony = True
-            elif movedypos+self.normal_height>m.finalimage.get_height() and m.bottombound:
-                self.ypos = m.finalimage.get_height()-self.normal_height
-                iscollisiony = True
-            else:
-                #collision detection for the moved y pos with the unmoved x pos
-                for x in range(0, len(colliderects)):
-                    p = self.normal_height/29
-                    #make playerR only the feet
-                    playerR = Rect(self.xpos+playermaskrect.x, movedypos+playermaskrect.y,
-                                   playermaskrect.w, playermaskrect.h)
-                    if(playerR.colliderect(colliderects[x]) == 1):
-                        iscollisiony = True
-                        break
-                for x in range(0, numofrocks):
-                    r = t[x]
-                    if collisioncheck(r, self.xpos, movedypos):
-                        iscollisiony = True
-                        break
+            iscollisiony = self.collisioncheck(self.xpos, movedypos)
 
         if not iscollisionx:
             self.xpos = movedxpos
