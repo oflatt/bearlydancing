@@ -65,7 +65,7 @@ while not done:
                 if variables.settings.state == "conversation":
                     conversations.currentconversation.keypress(event.key)
                 elif variables.settings.state == "world":
-                    if maps.playerenabledp():
+                    if maps.playerenabledp() and maps.current_map.playerenabledp:
                         classvar.player.keypress(event.key)
                     maps.on_key(event.key)
                 elif variables.settings.state == "battle":
@@ -104,7 +104,7 @@ while not done:
     def draw_world():
         classvar.player.update_drawpos()
         maps.current_map.draw([classvar.player.mapdrawx, classvar.player.mapdrawy])
-        if maps.playerenabledp():
+        if maps.playerenabledp() and maps.current_map.playerenabledp:
             classvar.player.draw()
         maps.current_map.draw_foreground([classvar.player.mapdrawx, classvar.player.mapdrawy])
 

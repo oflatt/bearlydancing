@@ -53,6 +53,8 @@ class Map():
         self.isscaled = False  # if scale stuff has been called
         self.screenxoffset = 0 # this is if the map width is less than the screen width
 
+        self.playerenabledp = True
+
     # puts a number of one kind of object into the map randomly
     # if the randomly generated coordinates collide with anything, they are skipped
     # can only be used before the scaling happens

@@ -10,9 +10,9 @@ from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
 
-STORYORDER = ["bed","letter", "greenie", "good job", "the end"]
+STORYORDER = ["bed","letter", "that racoon", "greenie", "good job", "the end"]
 # a list of story parts that the player should have no control over the bear in and bear is invisible in
-DISABLEPLAYERSTORY = ["bed"]
+DISABLEPLAYERSTORY = ["bed", "that racoon"]
 
 def getpartofstory(storyname):
     return STORYORDER.index(storyname)
@@ -182,7 +182,7 @@ b = GR['backgroundforpaper']['w'] / 10
 GR["paper"]["img"] = pygame.transform.scale2x(GR["paper"]["img"])
 GR["paper"]["w"] *= 2
 GR["paper"]["h"] *= 2
-bigpaper = Rock(GR["paper"], (GR["backgroundforpaper"]['w'] - GR["paper"]["w"]) / 2, 0, [0, 0, 1, 1])
+bigpaper = Rock(GR["paper"], (GR["backgroundforpaper"]['w'] - GR["paper"]["w"]) / 2, 0, None)
 bigpaper.background_range = None  # always in front
 s1 = variables.font.render("I stole your lunch.", 0, variables.BLACK)
 s2 = variables.font.render("-Trash Panda", 0, variables.BLACK)
@@ -198,8 +198,11 @@ w2.background_range = None
 letter = Map(GR["backgroundforpaper"], [bigpaper,
                                         w1,
                                         w2])
+
+letter.playerenabledp = False
+
 conversations.thatracoon.area = [0, 0, b * 10, b * 10]
-conversations.thatracoon.part_of_story = getpartofstory("letter")
+conversations.thatracoon.part_of_story = getpartofstory("that racoon")
 letter.conversations = [conversations.thatracoon]
 letter.exitareas = [Exit([0, 0, b * 10, b * 10], True, 'honeyhome', 'same', 'same')]
 
@@ -241,10 +244,12 @@ doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                 GR["honeyhouseoutside"]["w"] * (1 / 5) + houserock.x, GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight)
 doorexit.conversation = conversations.hungry
 doorexit.conversation.storyrequirement = [getpartofstory("letter")]
-honeyhome.exitareas = [doorexit,
-                       Exit([p * 65, p * 100, 60, 30],
+letterexit = Exit([p * 65, p * 100, 60, 30],
                             True, 'letter',
-                            GR["paper"]['w']*(3/10), 0)]
+                            GR["paper"]['w']*(3/10), 0)
+letterexit.part_of_story = getpartofstory("letter")
+honeyhome.exitareas = [doorexit,
+                       letterexit]
 honeyhome.colliderects = [Rect(0, 0, p * 31, p * 74),  # bed
                           Rect(0, 0, insidewidth, p * 48),  # wall
                           Rect(44 * p, 0, 26 * p, 60 * p),  # wardrobe
@@ -302,6 +307,10 @@ def change_map_nonteleporting(name):
 
 
 def change_map(name, newx, newy):
+    oldmapname = current_map_name
+    oldplayerx = classvar.player.xpos
+    oldplayery = classvar.player.ypos
+    
     current_map.lastx = classvar.player.xpos
     current_map.lasty = classvar.player.ypos
 
@@ -357,6 +366,10 @@ def change_map(name, newx, newy):
     classvar.player.soft_change_of_state()
     new_scale_offset()
 
+    if classvar.player.collisioncheck(classvar.player.xpos, classvar.player.ypos):
+        print("collide next map")
+        change_map(oldmapname, oldplayerx, oldplayery)
+
 
 def engage_conversation(c):
     classvar.player.change_of_state()
@@ -383,6 +396,12 @@ def engage_conversation(c):
         current.exit_conversation()
 
 
+def engage_exit(e):
+    if not e.part_of_story == "none":
+        classvar.player.storyprogress += 1
+        e.part_of_story = "none"
+    change_map(e.name, e.newx, e.newy)
+        
 def on_key(key):
     if key in variables.settings.enterkeys:
         e = current_map.checkexit()
@@ -394,14 +413,14 @@ def on_key(key):
             if type(e) == Conversation:
                 engage_conversation(e)
             else:
-                change_map(e.name, e.newx, e.newy)
+                engage_exit(e)
 
 
 def checkexit():
     e = current_map.checkexit()
     if not e == False:
         if e.isbutton == False:
-            change_map(e.name, e.newx, e.newy)
+            engage_exit(e)
 
 
 def checkconversation():

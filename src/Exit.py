@@ -11,6 +11,7 @@ class Exit():
         self.name = name #name of map it exits to
         self.newx = newx
         self.newy = newy
+        self.part_of_story = "none"
 
     def scale_by_offset(self, scale):
         s = scale
