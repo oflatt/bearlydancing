@@ -5,14 +5,6 @@ from graphics import GR
 from Conversation import Conversation
 from Speak import Speak
 
-longtestdialogue = ["bla", "bla", "a", "monster", "did", "do", "that", "really", "good", "dancin", "he was honey"]
-shorttestdialoge = ["I talk just a little"]
-
-testconversation = Conversation([Speak(GR["honeyside0"], longtestdialogue),
-                                 Speak(GR["honeyside0"], shorttestdialoge),
-                                 Speak(GR["honeyside0"], longtestdialogue),
-                                 Speak(GR["honeyside0"], shorttestdialoge)])
-
 everyyears = Speak(GR['honeyside0'], ["Every year the same thing. I'm going into hibernation,",
                                       "and TP makes things difficult."])
 everyyears.side = 'l'
@@ -50,13 +42,13 @@ monster = ["Greenie Meanie: Who goes there!"]
 ohhoney4 = ["You know who it is, Meanie. TP took my quiche and I want it back."]
 monster2 = ["No one may pass!"]
 ohhoney5 = ["So what...you want to fight?"]
-monster3 = ["No, I'm not suicidal.", "We'll settle this with a DANCE-OFF!"]
-ohhoney6 = ["Ugh... did TP put you up to this?"]
+monster3 = ["No, Honey, you're a bear.", "We'll settle this with a DANCE-OFF!"]
+ohhoney6 = ["Did TP put you up to this?"]
 monster4 = ["No..."]
 ohhoney7 = ["I knew it."]
-ohhoney8 = ["Wait, how long have you been here?", "It looks like you have an instrument there.",
+ohhoney8 = ["Wait, how long have you been here?", "What's your name? User? Well it seems like you have an instrument.",
             "Good thing too, I'm in need of a bard to get me through this dance battle.",
-            "You're going to play the tunes."]
+            "You'll play the tunes, I'll handle the dancing."]
 
 jeremy = Conversation([Speak(GR["jeremy0"], ["Howdey, Honey",
                                              "Have a random piece of advice.",

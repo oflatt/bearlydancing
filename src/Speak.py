@@ -2,6 +2,8 @@
 #Oliver Flatt works on Classes
 import variables, pygame, graphics
 
+textsize = variables.height/15
+
 class Speak():
 
     def __init__(self, pic, dialogue, side = None, bottomp = True):
@@ -16,13 +18,28 @@ class Speak():
         self.releaseexit = False
 
         self.line = 0
-        self.textsize = 0.5
         self.releaseexit = False
         self.dialogue_initializedp = False
+        self.wraplines()
+
+    def wraplines(self):
+        index = 0
+        while index < len(self.dialogue):
+            linedrawn = self.drawline(index)
+            if linedrawn.get_width() > variables.width:
+                cutpoint = int(len(self.dialogue[index])/2)
+                self.dialogue.insert(index+1, self.dialogue[index][cutpoint:])
+                self.dialogue[index] = self.dialogue[index][:cutpoint] + "-"
+            else:
+                index += 1
+            
+    def drawline(self, index):
+        return graphics.scale_pure(variables.font.render(self.dialogue[index], 0, variables.WHITE),
+                                             textsize, "height")
 
     def lines_in_sceen(self):
-        line1 = graphics.sscale_customfactor(variables.font.render(self.dialogue[0], 0, variables.WHITE),
-                                             self.textsize, False)
+        line1 = self.drawline(0)
+                                
         return int(variables.textbox_height/line1.get_height())
 
     def draw(self):
@@ -33,8 +50,8 @@ class Speak():
         if not self.bottomp:
             yoffset = -variables.height + variables.textbox_height
         #text
-        line1 = graphics.sscale_customfactor(variables.font.render(self.dialogue[0], 0, variables.WHITE),
-                                             self.textsize, False)
+        line1 = self.drawline(0)
+                                
         line_height = line1.get_height()
         h = variables.height
         w = variables.width
@@ -44,8 +61,7 @@ class Speak():
         if numoflines > len(self.dialogue):
             numoflines = len(self.dialogue)
         for x in range(0, numoflines):
-            text = variables.font.render(self.dialogue[self.line+x], 0, variables.WHITE)
-            line = graphics.sscale_customfactor(text, self.textsize)
+            line = self.drawline(x+self.line)
             variables.screen.blit(line, [w/2 - line.get_width()/2, b+(line_height*x)+yoffset])
 
     def keypress(self, key):

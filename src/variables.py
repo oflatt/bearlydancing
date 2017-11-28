@@ -21,7 +21,7 @@ flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
 screen = pygame.display.set_mode(mode, flags)
 #screen = pygame.Surface([height, width])
 
-unrounded_displayscale = height*0.0035
+unrounded_displayscale = height*0.0025
 displayscale = round(unrounded_displayscale) #the master scaling factor for importing pixel art
 
 # Define some colors

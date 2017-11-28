@@ -40,10 +40,14 @@ def sscale_customfactor(img, factor, rounded = True):
     return pygame.transform.scale(img, [int(w*endsize*factor), int(h*endsize*factor)])
 
 #use if you want pictures where the smaller dimension is a set size
-def scale_pure(img, s):
+def scale_pure(img, s, side = None):
     w = img.get_width()
     h = img.get_height()
-    if w > h:
+    if side == "w" or side == "width":
+        smaller = w
+    elif side == "h" or side == "height":
+        smaller = h
+    elif w > h:
         smaller = h
     else:
         smaller = w

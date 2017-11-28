@@ -2,6 +2,8 @@ import graphics, variables, pygame, enemies, classvar, maps, random
 from pygame import Rect
 from classvar import player
 
+textsize = variables.height/10
+
 class Menu():
     
     def __init__(self):
@@ -19,19 +21,20 @@ class Menu():
         self.messagetime = 0
         
         for o in self.mainmenuoptions:
-            textpic = graphics.sscale_customfactor(variables.font.render(o, 0, variables.WHITE), 1)
+            textpic = graphics.scale_pure(variables.font.render(o, 0, variables.WHITE), textsize)
             self.mainmenuoptionpics.append(textpic)
         for o in self.options:
-            textpic = graphics.sscale_customfactor(variables.font.render(o, 0, variables.WHITE), 1)
+            textpic = graphics.scale_pure(variables.font.render(o, 0, variables.WHITE), textsize)
             self.optionpics.append(textpic)
         nameprompts = ["Your name:", "The sleeping bear's name:"]
         self.namepics = []
         for p in nameprompts:
-            textpic = graphics.sscale_customfactor(variables.font.render(p, 0, variables.BLACK), 1)
+            textpic = graphics.scale_pure(variables.font.render(p, 0, variables.BLACK), textsize)
             self.namepics.append(textpic)
 
         self.textyspace = variables.font.get_linesize()*variables.height*0.003
         self.textxoffset = self.optionpics[0].get_width() / 6
+        self.extrabuttonwidth = self.textxoffset / 4
         self.reset()
 
         # if it is true, it is displaying the main menu
@@ -42,9 +45,13 @@ class Menu():
         self.backspacetime = 0
         self.firstbootup = True
 
-    def saved(self):
-        self.message = "saved!"
+
+    def setmessage(self, string):
+        self.message = string
         self.messagetime = variables.settings.current_time
+
+    def saved(self):
+        self.setmessage("saved!")
 
     def ontick(self):
         if self.message != None:
@@ -78,11 +85,11 @@ class Menu():
                 classvar.battle.unpause()
 
     def drawmain(self):
-        extrabuttonwidth = self.textxoffset / 4
+        extrabuttonwidth = self.extrabuttonwidth
 
         if self.message != None:
             mpic = variables.font.render(self.message, 0, variables.WHITE)
-            mpic = graphics.sscale_customfactor(mpic, 1)
+            mpic = graphics.scale_pure(mpic, textsize)
             mx = variables.width/2-mpic.get_width()/2
             my = variables.height/2-mpic.get_height()/2
             variables.screen.fill(variables.BLACK, Rect(mx-extrabuttonwidth,
@@ -122,10 +129,23 @@ class Menu():
 
     # in drawname option is used as how far they have gotten through the process
     def drawname(self):
+        extrabuttonwidth = self.extrabuttonwidth
+        
         textpic = self.namepics[self.option]
-        typepic = graphics.sscale_customfactor(variables.font.render(self.namestring, 0, variables.BLACK), 1)
+        typepic = graphics.scale_pure(variables.font.render(self.namestring, 0, variables.BLACK), textsize, "height")
         variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.height/2 - textpic.get_height()*1.5])
         variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.height/2 - textpic.get_height()/2])
+
+        if self.message != None:
+            mpic = variables.font.render(self.message, 0, variables.WHITE)
+            mpic = graphics.scale_pure(mpic, textsize, "height")
+            mx = variables.width/2-mpic.get_width()/2
+            my = variables.height/2+mpic.get_height()
+            variables.screen.fill(variables.BLACK, Rect(mx-extrabuttonwidth,
+                                                        my,
+                                                        mpic.get_width()+2*extrabuttonwidth,
+                                                        mpic.get_height()))
+            variables.screen.blit(mpic, [mx, my])
             
     def draw(self):
         if self.state == "main":
@@ -149,13 +169,17 @@ class Menu():
     def onkeyname(self, key):
         if key in variables.settings.enterkeys and key != pygame.K_SPACE:
             if len(self.namestring) != 0:
-                self.option += 1
                 # self.namestring = self.namestring[:1].upper() + self.namestring[1:]
                 if self.option == 0:
                     variables.settings.username = self.namestring
+                    if variables.settings.username.lower() == "tessa":
+                        self.setmessage("<3")
                 else:
                     variables.settings.bearname = self.namestring
+
+                    
                 self.namestring = ""
+                self.option += 1
                 if self.option >= len(self.namepics):
                     self.mainmenup = False
                     self.resume()
