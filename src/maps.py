@@ -137,7 +137,7 @@ treerock = Rock(rpt, 3.5 * b + housewidth, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + rpt["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
 
-houserock = Rock(GR["honeyhouseoutside"], housewidth, 0,
+houserock = Rock(GR["honeyhouseoutside"], 0, 0,
                  [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())])
 outside1 = Map(rgrassland,
                [houserock,
@@ -308,8 +308,8 @@ def change_map_nonteleporting(name):
 
 def change_map(name, newx, newy):
     oldmapname = current_map_name
-    oldplayerx = classvar.player.xpos
-    oldplayery = classvar.player.ypos
+    oldplayerx = classvar.player.oldxpos
+    oldplayery = classvar.player.oldypos
     
     current_map.lastx = classvar.player.xpos
     current_map.lasty = classvar.player.ypos
@@ -368,7 +368,10 @@ def change_map(name, newx, newy):
 
     if classvar.player.collisioncheck(classvar.player.xpos, classvar.player.ypos):
         print("collide next map")
-        change_map(oldmapname, oldplayerx, oldplayery)
+        change_map_nonteleporting(oldmapname)
+        classvar.player.soft_change_of_state()
+        new_scale_offset()
+        classvar.player.teleport(oldplayerx, oldplayery)
 
 
 def engage_conversation(c):

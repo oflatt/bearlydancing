@@ -104,7 +104,6 @@ class Player(Dancer):
             self.current_animation.reset()
 
     def keypress(self, k):
-        self.move()
         t = variables.settings.current_time
         s = variables.playerspeed * variables.scaleoffset
         if k in variables.settings.leftkeys:
@@ -126,7 +125,6 @@ class Player(Dancer):
         self.change_animation()
 
     def keyrelease(self, k):
-        self.move()
         s = variables.playerspeed * variables.scaleoffset
         t = variables.settings.current_time
         if k == pygame.K_LEFT or k == pygame.K_a:
@@ -204,6 +202,10 @@ class Player(Dancer):
     
     #moves with collision detection
     def move(self):
+        # save old for use in going back if collide in new map
+        self.oldxpos = self.xpos
+        self.oldypos = self.ypos
+        
         t = variables.settings.current_time
         #calculate moved positions
         xtime_factor = t-self.lastxupdate

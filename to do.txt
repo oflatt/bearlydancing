@@ -1,6 +1,5 @@
 Bearly Dancing List
 
--fix glitching with collisions into other maps
 -adjust difficulty, fix the beatmap generator and add an offset selection
 -expand the map!
 -fix scalability to smaller screens- saving and loading, movement
