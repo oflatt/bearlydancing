@@ -10,120 +10,12 @@ from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
 
-STORYORDER = ["bed","letter", "that racoon", "greenie", "good job", "the end"]
-# a list of story parts that the player should have no control over the bear in and bear is invisible in
-DISABLEPLAYERSTORY = ["bed", "that racoon"]
+fasttestmodep = True
 
-def getpartofstory(storyname):
-    return STORYORDER.index(storyname)
-
-def playerenabledp():
-    return not STORYORDER[classvar.player.storyprogress] in DISABLEPLAYERSTORY
-
-# Coordinates for maps are based on the base of each map respectively
-honeyw = GR["honeyside0"]["w"]
-honeyh = GR["honeyside0"]["h"]
-honeyfeetheight = honeyh * (3 / 29)
-extraarea = 50
-insidewidth = GR["honeyhouseinside"]["w"]
-insideheight = GR["honeyhouseinside"]["h"]
-# p is the width of a pixel
-p = graphics.viewfactorrounded
-
-treecollidesection = variables.TREECOLLIDESECTION
-
-# outside5 #####################################################################################
-outside5 = Map(graphics.grassland(800, 500, downpath = True), [])
-outside5.populate_with("greyrock", 4)
-outside5.populate_with("pinetree", 15)
-outside5.enemies = enemies.woodsenemies
-outside5.lvrange = [2]
-outside5.exitareas = [Exit("left", False, "outside3", "right", "same"),
-                      Exit("bottom", False, "outside4", "same", "top")]
-
-# outside4/rockorsheep##########################################################################
-rgrassland = graphics.grassland(800, 500, leftpath = False, rightpath = False, uppath = True)
-outside4 = Map(rgrassland, [])
-outside4.populate_with("greyrock", 40)
-
-# this is how many pixels away each dimension of the rock has to be to the sheep to work
-sheeptorocktolerance = 5
-def getrandomrock():
-    return random.choice(outside4.terrain)
-randrock = getrandomrock()
-# returns true if the rock is within the sheeptorocktolerance
-def sheepsizep(rrock):
-    # get unscaled pure width and height to compare to the sheep picture
-    rrockw = rrock.animations[0].pics[0]["img"].get_width()
-    rrockh = rrock.animations[0].pics[0]["img"].get_height()
-    sheepw = GR["sheepstanding"]["img"].get_width()
-    sheeph = GR["sheepstanding"]["img"].get_height()
-    return abs(rrockw-sheepw) <= sheeptorocktolerance and abs(rrockh-sheeph) <= sheeptorocktolerance
-for x in range(3):
-    if sheepsizep(randrock):
-        break
-    else:
-        # if it does not fit try again
-        randrock = getrandomrock()
-
-randrock.animations.append(Animation([GR["sheepstanding"]],1))
-randrock.name = "sheeprock"
-
-sheepconversation = conversations.sheepconversation
-sheepconversation.area = [randrock.x, randrock.y, randrock.w, randrock.h]
-sheepconversation.special_battle = enemies.sheep
-sheepconversation.special_battle.lv = 3
-
-outside4.conversations = [sheepconversation]
-
-outside4.exitareas = [Exit("up", False, "outside5", "same", "bottom")]
-outside4.enemies = enemies.woodsenemies
-outside4.lvrange = [2,3]
-
-# outside3######################################################################################
-rgrassland = graphics.grassland(600, 500, leftpath = False, downpath = True)
-b = rgrassland["w"] / 10
-outsideheight = rgrassland["h"]
-outside3 = Map(rgrassland, [])
-outside3.populate_with("greyrock", 4)
-outside3.populate_with("pinetree", 12)
-outside3.exitareas = [Exit("bottom", False, "outside2", "same", "top"),
-                      Exit("right", False, "outside5", "left", "same")]
-outside3.enemies = enemies.woodsenemies
-outside3.lvrange = [1, 2]
-
-# outside2######################################################################################
-rgrassland = graphics.grassland(600, 500, rightpath = False, uppath = True)
-outsideheight = rgrassland["h"]
-b = rgrassland["w"] / 10
-outside2 = Map(rgrassland, [])
-outside2.populate_with("pinetree", 22)
-outside2.populate_with("greyrock", 3)
-
-outside2.exitareas = [
-    Exit("left", False, 'outside1', "right", "same"),
-    Exit("top", False, 'outside3', "same", "bottom")]
-outside2.enemies = enemies.woodsenemies
-outside2.lvrange = [1]
-
-# jeremyhome####################################################################################
-rgrassland = graphics.grassland(800, 500)
-b = rgrassland["w"]/10
-hole = Rock(GR["rabbithole"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 1 / 2, 1, 1 / 2])
-jmyman = Rock(GR["jeremy0"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 3 / 4, 1, 1 / 4])
-jmyman.background_range = hole.background_range.copy()
-dancelionanim = Animation([GR["dancelion0"], GR["dancelion1"]], 3000)
-
-jeremyhome = Map(rgrassland, [hole,
-                              jmyman,
-                              Rock(dancelionanim, b/2, b * 4, [0, 3 / 4, 1, 1 / 4])])
-jeremyhome.exitareas = [Exit("right", False, 'outside1', "left", "same")]
-conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
-                             GR["rabbithole"]["w"] - (honeyw / 2), GR["rabbithole"]["h"]]
-conversations.dancelionpass.area = [0, 0, b, b * 10]
-conversations.dancelionpass.isbutton = False
-conversations.dancelionpass.exitteleport = [b + honeyw / 4, "same"]
-jeremyhome.conversations = [conversations.jeremy, conversations.dancelionpass]
+if fasttestmodep:
+    from mapsvars import *
+else:
+    from forestmaps import *
 
 # outside1######################################################################################
 b = GR["horizontal"]["w"] / 10
@@ -233,20 +125,23 @@ eatfromstash = Conversation([],
                             speaksafter = [[],[],[],[],[],[],[],[],
                                            [hungryspeak]],
                             switchthisrock="stash")
+
 eatfromstashoffset = p*10
 eatfromstash.area = [p*130+eatfromstashoffset, p*60, GR["stash00"]["w"]-2*eatfromstashoffset, GR["stash00"]["h"]]
 
 honeyhome.conversations = [eatfromstash, outofbed]
 
-honeyhome.startpoint = [32 * p, 39 * p]
+honeyhome.startpoint = [55 * p, 80 * p]
 doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                 True, 'outside1',
                 GR["honeyhouseoutside"]["w"] * (1 / 5) + houserock.x, GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight)
 doorexit.conversation = conversations.hungry
 doorexit.conversation.storyrequirement = [getpartofstory("letter")]
+
 letterexit = Exit([p * 65, p * 100, 60, 30],
-                            True, 'letter',
-                            GR["paper"]['w']*(3/10), 0)
+                  True, 'letter',
+                  GR["paper"]['w']*(3/10), 0)
+
 letterexit.part_of_story = getpartofstory("letter")
 honeyhome.exitareas = [doorexit,
                        letterexit]
@@ -257,12 +152,10 @@ honeyhome.colliderects = [Rect(0, 0, p * 31, p * 74),  # bed
 honeyhome.uselastposq = True
 
 
-
 # teleportation and stuff#######################################################################
 home_map = honeyhome
 home_map_name = "honeyhome"
 current_map = home_map
-current_map.scale_stuff()
 current_map_name = 'honeyhome'
 classvar.player.teleport(current_map.startpoint[0],
                          current_map.startpoint[1])
@@ -274,7 +167,7 @@ def get_map(name):
         raise NotImplementedError("Map %s not implemented" % name)
     return m
 
-def get_maplist():
+def get_maplist_full():
     stringlist = [home_map_name]
     maplist = [home_map]
     index = 0
@@ -287,6 +180,12 @@ def get_maplist():
         index += 1
     return maplist
 
+def get_maplist():
+    if fasttestmodep:
+        return [honeyhome, letter, outside1]
+    else:
+        return get_maplist_full()
+
 map_list = get_maplist()
 
 # now that everything is loaded, scale everything
@@ -294,6 +193,8 @@ for m in map_list:
     if not m.isscaled:
         m.scale_stuff()
 
+
+        
 def new_scale_offset():
     global current_map
     variables.scaleoffset = current_map.map_scale_offset

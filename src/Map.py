@@ -25,16 +25,8 @@ class Map():
         self.terrain = terrain
         # final image is an actual image, not a dict
         self.finalimage = pygame.Surface([10, 10])
-        mapw = base["w"]
-        maph = base["h"]
-        if mapw < maph:
-            smaller = mapw
-        else:
-            smaller = maph
-        if maph < variables.height:
-            self.map_scale_offset = variables.height / smaller
-        else:
-            self.map_scale_offset = 1
+
+        self.set_map_scale_offset()
 
         self.lastx = None #none until you exit the map for the first time
         self.lasty = None
@@ -54,6 +46,18 @@ class Map():
         self.screenxoffset = 0 # this is if the map width is less than the screen width
 
         self.playerenabledp = True
+
+    def set_map_scale_offset(self):
+        mapw = self.base["w"]
+        maph = self.base["h"]
+        if mapw < maph:
+            smaller = mapw
+        else:
+            smaller = maph
+        if maph < variables.height:
+            self.map_scale_offset = variables.height / smaller
+        else:
+            self.map_scale_offset = 1
 
     # puts a number of one kind of object into the map randomly
     # if the randomly generated coordinates collide with anything, they are skipped

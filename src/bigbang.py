@@ -23,9 +23,9 @@ pygame.display.set_caption("Bearly Dancing")
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
-maps.new_scale_offset()
-
 menu = load()
+
+maps.new_scale_offset()
 
 #clear all the events so it does not mess up the game when it loads
 pygame.event.get()
@@ -46,9 +46,9 @@ while not done:
             done = True
         elif event.type == pygame.KEYDOWN and event.key in variables.settings.enterkeys and variables.settings.menuonq:
             if menu.state == "main":
-                if menu.options[menu.option] == "exit":
+                if menu.getoption() == "exit":
                     done = True
-                elif menu.options[menu.option] == "save":
+                elif menu.getoption() == "save":
                     save(menu)
                     menu.saved()
 
@@ -70,7 +70,6 @@ while not done:
                     maps.on_key(event.key)
                 elif variables.settings.state == "battle":
                     classvar.battle.onkey(event.key)
-                    
             else:
                 menu.onkey(event.key)
 
@@ -79,7 +78,8 @@ while not done:
         elif event.type == pygame.KEYUP:
             if (not variables.settings.menuonq):
                 if variables.settings.state == "world":
-                    classvar.player.keyrelease(event.key)
+                    if maps.playerenabledp() and maps.current_map.playerenabledp:
+                        classvar.player.keyrelease(event.key)
                 elif variables.settings.state == "battle":
                     classvar.battle.onrelease(event.key)
                 elif variables.settings.state == "conversation":

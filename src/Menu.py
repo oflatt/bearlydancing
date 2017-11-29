@@ -203,15 +203,24 @@ class Menu():
         
 
     def onkeymain(self, key):
+        optionslength = len(self.options)
+        if self.mainmenup:
+            optionslength = len(self.mainmenuoptions)
         if key in variables.settings.upkeys:
-            self.option = (self.option - 1) % len(self.options)
+            self.option = (self.option - 1) % optionslength
         elif key in variables.settings.downkeys:
-            self.option = (self.option + 1) % len(self.options)
+            self.option = (self.option + 1) % optionslength
         elif key in variables.settings.enterkeys:
-            if self.options[self.option] == "resume":
+            if self.getoption() in ["resume", "play"]:
                 if self.mainmenup and self.firstbootup:
                     self.state = "name"
                     self.option = 0
                 else:
                     self.mainmenup = False
                     self.resume()
+
+    def getoption(self):
+        if self.mainmenup:
+            return self.mainmenuoptions[self.option]
+        else:
+            return self.options[self.option]

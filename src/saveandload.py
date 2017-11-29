@@ -24,6 +24,8 @@ def save(me):
 def loadmaps(savedmaps):
     for i in range(len(savedmaps)):
         assign_attributes(maps.map_list[i], savedmaps[i])
+        # reset the map scale offsets
+        maps.map_list[i].set_map_scale_offset
         
     
 def load():
@@ -44,10 +46,8 @@ def load():
             player.ypos *= displayscale
             loadmaps(mapslist)
             maps.change_map_nonteleporting(maps.current_map_name)
-            maps.new_scale_offset()
             # don't start at beginning
             m.firstbootup = False
-            print(maps.table.x)
 
     if (not isinstance(classvar.battle, str)):
         classvar.battle.reset_enemy()
