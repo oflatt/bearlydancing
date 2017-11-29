@@ -131,7 +131,7 @@ eatfromstash.area = [p*130+eatfromstashoffset, p*60, GR["stash00"]["w"]-2*eatfro
 
 honeyhome.conversations = [eatfromstash, outofbed]
 
-honeyhome.startpoint = [55 * p, 80 * p]
+honeyhome.startpoint = [25 * p, 39 * p]
 doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                 True, 'outside1',
                 GR["honeyhouseoutside"]["w"] * (1 / 5) + houserock.x, GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight)
@@ -157,8 +157,8 @@ home_map = honeyhome
 home_map_name = "honeyhome"
 current_map = home_map
 current_map_name = 'honeyhome'
-classvar.player.teleport(current_map.startpoint[0],
-                         current_map.startpoint[1])
+classvar.player.teleport(current_map.startpoint[0]*displayscale,
+                         current_map.startpoint[1]*displayscale)
 
 def get_map(name):
     possibles = globals()
