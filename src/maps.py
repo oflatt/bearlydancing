@@ -9,6 +9,7 @@ from Exit import Exit
 from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
+from variables import displayscale
 
 fasttestmodep = True
 
@@ -192,8 +193,6 @@ map_list = get_maplist()
 for m in map_list:
     if not m.isscaled:
         m.scale_stuff()
-
-
         
 def new_scale_offset():
     global current_map

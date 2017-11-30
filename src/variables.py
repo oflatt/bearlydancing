@@ -3,6 +3,8 @@ from pygame import Rect
 from Settings import Settings
 from Properties import Properties
 
+testsmallp = True
+
 # Setup
 pygame.mixer.pre_init(22050, -16, 2, 128)
 pygame.mixer.init()
@@ -13,8 +15,14 @@ pygame.mixer.set_num_channels(46)
 modes = pygame.display.list_modes()
 ctypes.windll.user32.SetProcessDPIAware()
 mode = modes[0]
-height = int(mode[1]/2)
-width = int(mode[0]/2)
+
+height = mode[1]
+width = mode[0]
+
+if testsmallp:
+    height = int(height/2)
+    width = int(width/2)
+    
 hh = height/2
 hw = width/2
 flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
@@ -23,6 +31,7 @@ screen = pygame.display.set_mode(mode, flags)
 
 unrounded_displayscale = height*0.0025
 displayscale = round(unrounded_displayscale+0.25) #the master scaling factor for importing pixel art
+savescalefactor = unrounded_displayscale
 
 # Define some colors
 BLACK = (0, 0, 0)

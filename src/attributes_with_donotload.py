@@ -1,5 +1,5 @@
 import pygame
-from variables import displayscale
+from variables import savescalefactor
 
 # this class acts as a dummy value for things values not to be loaded back in, like pygame Surfaces
 class DoNotLoad:
@@ -45,8 +45,11 @@ def hassurfaceonelayer(listordict):
 
 plaindatalist = (str, bool, float, int, range, type(None))
 donotloadtypes = (type(pygame.mask.Mask((10,10))), pygame.Surface)
+
+# the following data items are simply skipped in loading so that loading with different screen sizes works
 poskeynames = ["xpos", "x-pos", "x_pos", "x", "lastx", "ypos", "y-pos", "y_pos", "y", "lasty", "collidex", "collidey",
-               "w", "width", "height", "h", "screenxoffset", "screenyoffset", "mapdrawx", "mapdrawy", "drawx", "drawy"]
+               "w", "width", "height", "h", "screenxoffset", "screenyoffset", "mapdrawx", "mapdrawy", "drawx", "drawy",
+               "newx", "newy", "map_scale_offset"]
 scalerectnames = ["background_range"]
 scalelistnames = ["area", "pos", "startpoint"]
 scalelistofrectnames = ["colliderects"]
@@ -58,9 +61,6 @@ def attributes_with_donotload(objecttoconvert):
 # this is basically the same as a call to a pygame rect __dict__ function
 def rectdict(pygamerect, keyname = None):
     rectdict = {"x":pygamerect.x,"y":pygamerect.y,"width":pygamerect.width,"height":pygamerect.height}
-    if keyname in scalerectnames:
-        for key in rectdict.keys():
-            rectdict[key] = rectdict[key] / displayscale
     return rectdict
 
 
@@ -70,32 +70,21 @@ def surfaces_to_donotload_dict(d):
     for key in newdict.keys():
         value = newdict[key]
         valuetype = type(value)
-
-        # unscale for saving
-        if key in poskeynames:
-            if valuetype in [int, float]:
-                newdict[key] = value / displayscale
         
         if valuetype in donotloadtypes:
             newdict[key] = donotload
         elif valuetype in (list, tuple):
             # unscale for saving
-            if key in scalelistnames:
-                newdict[key] = d[key].copy()
-                for i in range(len(value)):
-                    newdict[key][i] = value[i] / displayscale
-            # a list of rects to be scaled
-            elif key in scalelistofrectnames:
-                newdict[key] = d[key].copy()
-                for i in range(len(value)):
-                    newdict[key][i] = rectdict(d[key][i], scalerectnames[0])
+            if key in scalelistnames or key in scalelistofrectnames:
+                pass
             else:
                 newdict[key] = surfaces_to_donotload_list(value)
         elif valuetype == dict:
             newdict[key] = surfaces_to_donotload_dict(value)
         elif not valuetype in plaindatalist:
             if valuetype == pygame.Rect:
-                newdict[key] = rectdict(value, key)
+                if not key in scalerectnames:
+                    newdict[key] = rectdict(value, key)
             else:
                 # then it must be another object
                 newdict[key] = surfaces_to_donotload_dict(value.__dict__)
@@ -123,10 +112,9 @@ def surfaces_to_donotload_list(l):
 def assign_attributes(o, attributes, varname = None):
     if type(o) == pygame.Rect:
         scalefactor = 1
-        if varname in scalerectnames:
-            scalefactor = displayscale
-        for key in attributes.keys():
-            setattr(o, key, attributes[key]*scalefactor)
+        if not varname in scalerectnames:
+            for key in attributes.keys():
+                setattr(o, key, attributes[key]*scalefactor)
     else:
         assign_attributes_dict(o.__dict__, attributes)
     
@@ -135,22 +123,18 @@ def assign_attributes_dict(o, attributes):
         oldval = o[varname]
         val = attributes[varname]
         valtype = type(val)
-        # scale back up for saving
-        if varname in poskeynames:
-            if valtype in [int, float]:
-                val *= displayscale
         
         if valtype == DoNotLoad:
             pass
         elif valtype in plaindatalist:
-            o[varname] = val
+            if not varname in poskeynames:
+                o[varname] = val
         elif valtype in [list, tuple]:
             if varname in scalelistnames:
-                for i in range(len(val)):
-                    val[i] *= displayscale
+                pass
             # for lists of rect to be scaled
-            if varname in scalelistofrectnames:
-                assign_attributes_lists(o[varname], val, scalerectlistp = True)
+            elif varname in scalelistofrectnames:
+                pass
             else:
                 assign_attributes_lists(o[varname], val)
         elif valtype == dict:
@@ -183,7 +167,7 @@ def assign_attributes_lists(objectlist, savedlist, scalerectlistp = False):
                 else:
                     # must be object
                     if scalerectlistp:
-                        assign_attributes(oldval, val, scalerectnames[0])
+                        pass
                     else:
                         assign_attributes(oldval, val)
         
