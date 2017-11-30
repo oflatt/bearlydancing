@@ -16,7 +16,8 @@ animations = [Animation([GR["sheep0"], GR["sheep1"], GR["sheep2"], GR["sheep3"]]
 counter = 0
 sheep = Enemy(counter, 1, "sheep", ["cheapending"])
 counter += 1
-greenie = Enemy(counter, 1, "mean greenie", ["melodic", "skippy", "cheapending", "repeat"])
+# just tutorial enemy
+greenie = Enemy(counter, 1, "mean greenie", ["melodic", "skippy", "cheapending", "repeat", "rests"])
 counter += 1
 perp = Enemy(counter, 1, "perp", ["alternating", "cheapending"])
 counter += 1

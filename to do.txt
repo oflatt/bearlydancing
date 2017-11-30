@@ -9,6 +9,11 @@ Bearly Dancing List
 -load own sounds using the bowl pianoputer thing
 -controls in menu
 
+beatmap
+-repeatwithvariation, switch notes, offset by a beat
+-triplet chord mode
+-octaves rule
+
 Sophie:
 -make the "bed" file the bed with the covers down, right now it magically gets done
 -flying chimney!

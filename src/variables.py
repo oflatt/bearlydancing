@@ -3,7 +3,7 @@ from pygame import Rect
 from Settings import Settings
 from Properties import Properties
 
-testsmallp = True
+testsmallp = False
 
 # Setup
 pygame.mixer.pre_init(22050, -16, 2, 128)
@@ -72,6 +72,7 @@ expanimationspeed = 3000
 dancespeed = height/8 * 0.001# factor for displaying notes
 padypos = height*(13/16)
 
+# lv and rules are added later
 generic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : []}
 melodic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : ['melodic']}
 maxvalue = 14

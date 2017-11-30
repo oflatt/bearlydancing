@@ -7,7 +7,7 @@ import variables
 
 '''rule types for beatmaps
 melodic- higher chance of notes being in a row in one direction
-skippy- high chance of note being 2 away, with continuing direction chance, only with melodic
+skippy- high chance of note value being 2 away, with continuing direction chance, only melodic
 alternating- high chance to go back to a note or be near the previous note, and if not further away, uses melodic chords
 rests- high chance of shorter notes and rests in between notes
 
@@ -468,7 +468,7 @@ def rand_duration(time, list, specs):
             d = 1 - (time % 1)
 
     # good chance of making it half as long for the rests rule
-    if ("rests" in specs["rules"]):
+    if "rests" in specs["rules"] and not specs["lv"] in [0,1]:
         if (myrand(4)):
             d = d / 2
 

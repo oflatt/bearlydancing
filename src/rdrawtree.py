@@ -250,6 +250,8 @@ def maketree():
 
 def makechristmastree(surface):
     christmascolors = [variables.WHITE, variables.GREEN, variables.RED, variables.BLUE]
+    if randint(0, 3) == 0:
+        christmascolors = [random.choice(christmascolors)]
     w = surface.get_width()
     h = surface.get_height()
     lightxspacing = 5

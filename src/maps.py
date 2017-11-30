@@ -11,7 +11,7 @@ from Conversation import Conversation
 from Speak import Speak
 from variables import displayscale
 
-fasttestmodep = True
+fasttestmodep = False
 
 if fasttestmodep:
     from mapsvars import *
@@ -132,10 +132,10 @@ eatfromstash.area = [p*130+eatfromstashoffset, p*60, GR["stash00"]["w"]-2*eatfro
 
 honeyhome.conversations = [eatfromstash, outofbed]
 
-honeyhome.startpoint = [25 * p, 39 * p]
+honeyhome.startpoint = [26 * p, 39 * p]
 doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                 True, 'outside1',
-                GR["honeyhouseoutside"]["w"] * (1 / 5) + houserock.x, GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight)
+                GR["honeyhouseoutside"]["w"] * 0.3 + houserock.x, GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight-20*p)
 doorexit.conversation = conversations.hungry
 doorexit.conversation.storyrequirement = [getpartofstory("letter")]
 
@@ -158,8 +158,6 @@ home_map = honeyhome
 home_map_name = "honeyhome"
 current_map = home_map
 current_map_name = 'honeyhome'
-classvar.player.teleport(current_map.startpoint[0]*displayscale,
-                         current_map.startpoint[1]*displayscale)
 
 def get_map(name):
     possibles = globals()
@@ -205,14 +203,17 @@ def change_map_nonteleporting(name):
     current_map_name = name
     current_map = get_map(name)
 
+# put player in correct place
+classvar.player.teleport(current_map.startpoint[0],
+                         current_map.startpoint[1])
 
 def change_map(name, newx, newy):
     oldmapname = current_map_name
     oldplayerx = classvar.player.oldxpos
     oldplayery = classvar.player.oldypos
     
-    current_map.lastx = classvar.player.xpos
-    current_map.lasty = classvar.player.ypos
+    current_map.lastx = oldplayerx
+    current_map.lasty = oldplayery
 
     xpos = newx
     ypos = newy
@@ -263,7 +264,10 @@ def change_map(name, newx, newy):
         ypos = current_map.lasty
 
     classvar.player.teleport(xpos, ypos)
-    classvar.player.soft_change_of_state()
+    if not current_map.playerenabledp:
+        classvar.player.change_of_state()
+    else:
+        classvar.player.soft_change_of_state()
     new_scale_offset()
 
     if classvar.player.collisioncheck(classvar.player.xpos, classvar.player.ypos):

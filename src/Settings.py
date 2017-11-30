@@ -31,3 +31,6 @@ class Settings():
 
     # master clock
     current_time = 0
+
+    # this is an offset for all enemy levels
+    difficulty = 0
