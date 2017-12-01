@@ -1,8 +1,8 @@
 Bearly Dancing List
 
+-saving rock x and y positions
 -adjust difficulty, fix the beatmap generator and add an offset selection
 -expand the map!
--fix scalability to smaller screens- saving and loading, movement
 -more complex asthetic background grass
 -write some tests for once
 -flying chimney once sophie makes it
