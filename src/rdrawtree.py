@@ -249,7 +249,7 @@ def maketree():
 
 
 def makechristmastree(surface):
-    christmascolors = [variables.WHITE, variables.GREEN, variables.RED, variables.BLUE]
+    christmascolors = [variables.LIGHTYELLOW, variables.GREEN, variables.RED, variables.LIGHTBLUE]
     if randint(0, 3) == 0:
         christmascolors = [random.choice(christmascolors)]
     w = surface.get_width()
@@ -268,12 +268,13 @@ def makechristmastree(surface):
             surface.set_at([xpos, ypos], color)
     
     def addlight(xpos, ypos):
+        ypos += random.choice([0,-1,1])
         if inboundsp(xpos, ypos):
             if surface.get_at([xpos, ypos])[:3] in TOPTREECOLORLIST:
                 rcolor = random.choice(christmascolors)
                 #center pixel
                 surface.set_at([xpos, ypos], rcolor)
-                rcolor = rcolor + (100,)
+                rcolor = rcolor + (150,)
                 addpixel(xpos-1, ypos, rcolor)
                 addpixel(xpos+1, ypos, rcolor)
                 addpixel(xpos, ypos+1, rcolor)

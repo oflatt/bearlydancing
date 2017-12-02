@@ -114,7 +114,7 @@ honeyhome = Map(GR["honeyhouseinside"],
                 [bed,
                  table,
                  littleletter,
-                 Rock(stashlist, p * 130, p * 60, [0, 0.9, 1, 0.1], name="stash")])
+                 Rock(stashlist, p * 130, p * 58, [0, 0.9, 1, 0.1], name="stash")])
 hungryspeak = Speak(GR["honeyside0"],["And... I'm still hungry"])
 
 outofbed = Conversation([], speaksafter = [[],[],[]], switchthisrock = "bed")
@@ -132,7 +132,7 @@ eatfromstash.area = [p*130+eatfromstashoffset, p*60, GR["stash00"]["w"]-2*eatfro
 
 honeyhome.conversations = [eatfromstash, outofbed]
 
-honeyhome.startpoint = [26 * p, 39 * p]
+honeyhome.startpoint = [28 * p, 39 * p]
 doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                 True, 'outside1',
                 GR["honeyhouseoutside"]["w"] * 0.3 + houserock.x, GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight-20*p)

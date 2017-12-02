@@ -5,7 +5,7 @@ from datetime import date
 
 today = date.today()
 christmasp = False
-if today.month == 12 and today.day > 7:
+if today.month == 12:
     christmasp = True
 
 viewfactor = variables.unrounded_displayscale
