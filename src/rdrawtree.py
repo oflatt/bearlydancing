@@ -274,7 +274,7 @@ def makechristmastree(surface):
                 rcolor = random.choice(christmascolors)
                 #center pixel
                 surface.set_at([xpos, ypos], rcolor)
-                rcolor = rcolor + (150,)
+                rcolor = (abs(rcolor[0]-10), abs(rcolor[1]-10), abs(rcolor[2]-10),150)
                 addpixel(xpos-1, ypos, rcolor)
                 addpixel(xpos+1, ypos, rcolor)
                 addpixel(xpos, ypos+1, rcolor)

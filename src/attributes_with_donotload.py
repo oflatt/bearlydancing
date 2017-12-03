@@ -47,12 +47,9 @@ plaindatalist = (str, bool, float, int, range, type(None))
 donotloadtypes = (type(pygame.mask.Mask((10,10))), pygame.Surface)
 
 # the following data items are simply skipped in loading so that loading with different screen sizes works
-poskeynames = ["xpos", "x-pos", "x_pos", "x", "lastx", "ypos", "y-pos", "y_pos", "y", "lasty", "collidex", "collidey",
+donotloadkeynames = ["xpos", "x-pos", "x_pos", "x", "lastx", "ypos", "y-pos", "y_pos", "y", "lasty", "collidex", "collidey",
                "w", "width", "height", "h", "screenxoffset", "screenyoffset", "mapdrawx", "mapdrawy", "drawx", "drawy",
-               "newx", "newy", "map_scale_offset"]
-scalerectnames = ["background_range"]
-scalelistnames = ["area", "pos", "startpoint"]
-scalelistofrectnames = ["colliderects"]
+                     "newx", "newy", "map_scale_offset", "area", "pos", "startpoint","colliderects", "background_range"]
 
 # takes an object, and returns a new dict of attributes with any pygame surfaces changed to DoNotLoad
 def attributes_with_donotload(objecttoconvert):
@@ -71,19 +68,14 @@ def surfaces_to_donotload_dict(d):
         value = newdict[key]
         valuetype = type(value)
         
-        if valuetype in donotloadtypes:
+        if valuetype in donotloadtypes or key in donotloadkeynames:
             newdict[key] = donotload
         elif valuetype in (list, tuple):
-            # unscale for saving
-            if key in scalelistnames or key in scalelistofrectnames:
-                pass
-            else:
-                newdict[key] = surfaces_to_donotload_list(value)
+            newdict[key] = surfaces_to_donotload_list(value)
         elif valuetype == dict:
             newdict[key] = surfaces_to_donotload_dict(value)
         elif not valuetype in plaindatalist:
             if valuetype == pygame.Rect:
-                if not key in scalerectnames:
                     newdict[key] = rectdict(value, key)
             else:
                 # then it must be another object
@@ -95,6 +87,7 @@ def surfaces_to_donotload_list(l):
     for i in range(len(l)):
         item = newlist[i]
         itemtype = type(item)
+        
         if itemtype in donotloadtypes:
             newlist[i] = donotload
         elif itemtype in (list, tuple):
@@ -109,12 +102,10 @@ def surfaces_to_donotload_list(l):
     return newlist
 
 # takes an object and re-assigns the attributes to it, skipping donotloads
-def assign_attributes(o, attributes, varname = None):
+def assign_attributes(o, attributes):
     if type(o) == pygame.Rect:
-        scalefactor = 1
-        if not varname in scalerectnames:
-            for key in attributes.keys():
-                setattr(o, key, attributes[key]*scalefactor)
+        for key in attributes.keys():
+            setattr(o, key, attributes[key])
     else:
         assign_attributes_dict(o.__dict__, attributes)
     
@@ -127,23 +118,16 @@ def assign_attributes_dict(o, attributes):
         if valtype == DoNotLoad:
             pass
         elif valtype in plaindatalist:
-            if not varname in poskeynames:
-                o[varname] = val
+            o[varname] = val
         elif valtype in [list, tuple]:
-            if varname in scalelistnames:
-                pass
-            # for lists of rect to be scaled
-            elif varname in scalelistofrectnames:
-                pass
-            else:
-                assign_attributes_lists(o[varname], val)
+            assign_attributes_lists(o[varname], val)
         elif valtype == dict:
             # either a normal dict or object attributes, forces checking of type of oldval
             if type(oldval) == dict:
                 assign_attributes_dict(oldval, val)
             else:
                 #it is another object
-                assign_attributes(oldval, val, varname)
+                assign_attributes(oldval, val)
 
 def assign_attributes_lists(objectlist, savedlist, scalerectlistp = False):
     if len(savedlist) > len(objectlist):
@@ -155,6 +139,7 @@ def assign_attributes_lists(objectlist, savedlist, scalerectlistp = False):
             oldval = objectlist[i]
             val = savedlist[i]
             valtype = type(val)
+            
             if valtype == DoNotLoad:
                 pass
             elif valtype in plaindatalist:
