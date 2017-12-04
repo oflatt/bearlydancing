@@ -50,6 +50,16 @@ class Rock():
     def draw(self, offset = [0,0]):
         variables.screen.blit(self.animations[self.animationnum].current_frame()["img"], [self.x + offset[0], self.y + offset[1]])
 
+    def set_backgroundrange(self):
+        cs = self.collidesection
+        h = self.animations[0].pics[0]["h"]
+        if cs == [0, 0, 1, 1]:
+            self.background_range = pygame.Rect(0, self.y, variables.width*100, variables.height*100)
+        else:
+            self.background_range = pygame.Rect(0, self.y + cs[1] * h + cs[3] * (1 / 3) * h,
+                                                variables.width * 100,
+                                                variables.height * 100)
+        
     def make_mask(self, isresetbackgroundrange):
         cs = self.collidesection
         base = self.animations[0].pics[0]
@@ -67,17 +77,11 @@ class Rock():
         maskpic.fill(pygame.Color(0, 0, 0, 0), [0, cs[1] * h + cs[3] * h, w, h - (cs[1] * h + cs[3] * h) + 1])
         self.mask = pygame.mask.from_surface(maskpic)
 
-        h = base["h"]
         # by default background range is by the top of the mask, the collision box
         if isresetbackgroundrange:
-            if cs == [0, 0, 1, 1]:
-                self.background_range = pygame.Rect(0, self.y, variables.width*100, variables.height*100)
-            else:
-                self.background_range = pygame.Rect(0, self.y + cs[1] * h + cs[3] * (1 / 3) * h,
-                                                    variables.width * 100,
-                                                    variables.height * 100)
+            self.set_backgroundrange()
 
-    def scale_by_offset(self, scale):
+    def scale_by_offset(self, scale, scaleimagep = True):
         s = scale
         self.x *= s
         self.y *= s
@@ -85,10 +89,11 @@ class Rock():
         self.y = int(self.y)
         
         # scale base pics to right size
-        for anim in self.animations:
-            for pic in anim.pics:
-                pic["img"] = pygame.transform.scale(pic["img"], [int(pic["w"] * s),
-                                                                   int(pic["h"] * s)])
+        if scaleimagep:
+            for anim in self.animations:
+                for pic in anim.pics:
+                    pic["img"] = pygame.transform.scale(pic["img"], [int(pic["w"] * s),
+                                                                     int(pic["h"] * s)])
         base = self.animations[0].pics[0]
         
         self.w = base["img"].get_width()
@@ -112,6 +117,7 @@ class Rock():
             self.collideh = self.h
         else:
             self.collideh *= s
+            
         if self.background_range == None:
             self.background_range = pygame.Rect(-1000, -1000, 0, 0)
 
