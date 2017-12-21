@@ -15,7 +15,7 @@ class Rock():
         self.background_range = pygame.Rect(0, 0, variables.width * 100, variables.height * 100)
         self.animations = None
 
-        # base can be either an image (dictionary), a list of images, an animation, or a list of animations
+        # base can be either an imagenane, a list of imagenames, an animation, or a list of animations
         #if it is just a single image, put it in an animation
         self.animationnum = 0
         if type(base) == Animation:

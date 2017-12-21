@@ -76,7 +76,12 @@ OKtext = pygame.transform.rotate(sscale_customfactor(variables.font.render("OK",
 GOODtext = pygame.transform.rotate(sscale_customfactor(variables.font.render("GOOD", 0, variables.WHITE), feedback_factor), -45)
 MISStext = pygame.transform.rotate(sscale_customfactor(variables.font.render("MISS", 0, variables.WHITE), feedback_factor), -45)
 
+# GR is the master dictionary of all image assets
 GR = {}
+# SGR is a dictionary of dictionaries. The inner dictionaries contain scales as the keys and images as the values
+# the purpose of SGR is to keep a list of all the scaled pictures for use
+SGR = {}
+
 picnames = os.listdir(os.path.dirname(os.path.abspath("__file__")) + "/pics")
 
 def nicename(filename):
@@ -88,6 +93,27 @@ def addtoGR(filename):
 
 for x in picnames:
     addtoGR(x)
+
+
+# this function returns a surface. If no scale is provided, it takes from GR.
+# if a scale is provided, it takes the scaled picture from SGR or scales the picture, adds it to SGR, and returns the pic
+# scale is multiplied by the displayscale by default, this means for rocks scale is the map scale
+def getpic(picname, scale = None):
+    if scale == None:
+        return GR[picname]
+    else:
+        picexistsp = picname in SGR
+        if picexistsp and scale in SGR[picname]:
+            return SGR[picname][scale]
+        else:
+            scaledimage = GR[picname]
+            scaledimage = pygame.transform.scale(scaledimage["img"], [scaledimage["w"]*scale, scaledimage["h"]*scale])
+            if picexistsp:
+                SGR[picname] = {scale:scaledimage}
+            else:
+                SGR[picname][scale] = scaledimage
+            return scaledimage
+
 
 def endofgeneration():
     variables.draw_progress_bar()
