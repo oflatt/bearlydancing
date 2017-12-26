@@ -2,7 +2,7 @@
 # Oliver Flatt works on Classes
 import variables, pygame, classvar, random, stathandeling, math, graphics
 from Battle import Battle
-from graphics import viewfactorrounded
+from graphics import viewfactorrounded, getpic, GR
 from Rock import Rock
 from pygame import Mask
 
@@ -20,11 +20,12 @@ class Map():
         self.rightbound = rightbound
         self.bottombound = bottombound
         self.leftbound = leftbound
+        # base is a string for a pic in GR
         self.base = base
         # terrain is a list of Rock
         self.terrain = terrain
         # final image is an actual image, not a dict
-        self.finalimage = pygame.Surface([10, 10])
+        self.finalimage = base
 
         self.set_map_scale_offset()
 
@@ -44,12 +45,15 @@ class Map():
         self.conversations = []  # list of conversation on the map
         self.isscaled = False  # if scale stuff has been called
         self.screenxoffset = 0 # this is if the map width is less than the screen width
+        self.finalimagescale = 1
+        self.map_width = GR[base]["w"]
+        self.map_height = GR[base]["h"]
 
         self.playerenabledp = True
 
     def set_map_scale_offset(self):
-        mapw = self.base["w"]
-        maph = self.base["h"]
+        mapw = GR[self.base]["w"]
+        maph = GR[self.base]["h"]
         if mapw < maph:
             smaller = mapw
         else:
@@ -120,12 +124,13 @@ class Map():
         
             
     def scale_stuff(self):
-        honeywidth = classvar.player.left_animation.pics[0]["w"]
-        honeyheight = classvar.player.left_animation.pics[0]["h"]
+        honeywidth = GR[classvar.player.left_animation.pics[0]]["w"]
+        honeyheight = GR[classvar.player.left_animation.pics[0]]["h"]
         halfhoneyw = int(honeywidth/2)*self.map_scale_offset
         halfhoneyh = int(honeyheight/2)*self.map_scale_offset
-        mapw = self.base["w"]
-        maph = self.base["h"]
+        mapw = self.map_width
+        maph = self.map_height
+        
         for e in self.exitareas:
             if e.area == "left" or e.area == "l":
                 self.leftbound = False
@@ -139,12 +144,12 @@ class Map():
             elif e.area == "down" or e.area == "d" or e.area == "bottom" or e.area == "b":
                 self.bottombound = False
                 e.area = [0, maph+halfhoneyh, mapw, extraarea]
+                
         for x in range(len(self.terrain)):
             self.terrain[x].scale_by_offset(self.map_scale_offset)
-        newwidth = int(self.base["w"] * self.map_scale_offset)
-        newheight = int(self.base["h"] * self.map_scale_offset)
-        self.finalimage = pygame.transform.scale(self.base["img"], [newwidth,
-                                                                    newheight])
+
+        self.finalimagescale *= self.map_scale_offset
+        
         for x in range(0, len(self.exitareas)):
             self.exitareas[x].scale_by_offset(self.map_scale_offset)
         for x in range(0, len(self.conversations)):
@@ -158,6 +163,9 @@ class Map():
         self.startpoint[1] *= self.map_scale_offset
         self.isscaled = True
 
+        newwidth = mapw * self.finalimagescale
+        self.map_width = newwidth
+        self.map_height = maph * self.finalimagescale
         # compute screenxoffset if needed
         if newwidth < variables.width:
             self.screenxoffset = int((variables.width-newwidth)/2)
@@ -169,7 +177,7 @@ class Map():
 
     def draw_background(self, drawpos):
         offset = [-drawpos[0], -drawpos[1]]
-        variables.screen.blit(self.finalimage, offset)
+        variables.screen.blit(getpic(self.finalimage, self.finalimagescale), offset)
 
         # detect if within the foreground range
         playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,

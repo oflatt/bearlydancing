@@ -36,6 +36,7 @@ done = False
 
 # -------- Main Program Loop -----------
 while not done:
+    
     # add the past tick to the current time
     variables.settings.current_time += clock.get_time()
     

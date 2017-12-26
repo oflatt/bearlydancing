@@ -91,6 +91,11 @@ def addtoGR(filename):
     p = simport(filename)
     GR[nicename(filename)] = p
 
+def addsurfaceGR(s, name, dimensions = None):
+    if dimensions == None:
+        dimensions = sscale_dimensions(s)
+    GR[name] = {"img":s,"w":dimensions[0],"h":dimensions[1]}
+
 for x in picnames:
     addtoGR(x)
 
@@ -100,19 +105,28 @@ for x in picnames:
 # scale is multiplied by the displayscale by default, this means for rocks scale is the map scale
 def getpic(picname, scale = None):
     if scale == None:
-        return GR[picname]
+        return GR[picname]["img"]
     else:
         picexistsp = picname in SGR
         if picexistsp and scale in SGR[picname]:
             return SGR[picname][scale]
         else:
             scaledimage = GR[picname]
-            scaledimage = pygame.transform.scale(scaledimage["img"], [scaledimage["w"]*scale, scaledimage["h"]*scale])
+            scaledimage = pygame.transform.scale(scaledimage["img"], [int(scaledimage["w"]*scale), int(scaledimage["h"]*scale)])
             if picexistsp:
                 SGR[picname] = {scale:scaledimage}
             else:
+                SGR[picname] = {}
                 SGR[picname][scale] = scaledimage
             return scaledimage
+
+def getpicbyheight(picname, height):
+    scale = height/GR[picname]["h"]
+    return getpic(picname, scale)
+
+def getpicbywidth(picname, width):
+    scale = width/GR[picname]["w"]
+    return getpic(picname, scale)
 
 
 def endofgeneration():
@@ -136,7 +150,7 @@ def pinetree():
         rdrawtree.makechristmastree(GR[nicetreename]["img"])
     
     endofgeneration()
-    return GR[nicetreename]
+    return nicetreename
 
 def greyrock():
     variables.greyrocksused += 1
@@ -151,7 +165,7 @@ def greyrock():
         addtoGR(filename)
 
     endofgeneration()
-    return GR[nicename(filename)]
+    return nicename(filename)
 
 def grassland(width, height, leftpath = True, rightpath = True, uppath = False, downpath = False):
     variables.grasslandsused += 1
@@ -168,4 +182,4 @@ def grassland(width, height, leftpath = True, rightpath = True, uppath = False, 
         addtoGR(filename)
 
     endofgeneration()
-    return GR[nicename(filename)]
+    return nicename(filename)

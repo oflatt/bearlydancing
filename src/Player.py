@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import pygame, variables, maps, stathandeling
-from graphics import GR
+from graphics import GR, getpic
 from Dancer import Dancer
 from Animation import Animation
 from pygame import Rect
@@ -25,13 +25,13 @@ class Player(Dancer):
     storyprogress = 0
 
     #animation
-    left_animation = Animation([GR["honeyside3"], GR["honeyside4"], GR["honeyside3"], GR["honeyside4"]], 200)
-    right_animation = Animation([GR["honeyside0"], GR["honeyside1"],
-                                 GR["honeyside0"], GR["honeyside2"]], 200)
-    down_animation = Animation([GR["honeyback3"], GR["honeyback4"],
-                                GR["honeyback3"], GR["honeyback5"]], 200)
-    up_animation = Animation([GR["honeyback0"], GR["honeyback1"],
-                              GR["honeyback0"], GR["honeyback2"]], 200)
+    left_animation = Animation(["honeyside3", "honeyside4", "honeyside3", "honeyside4"], 200)
+    right_animation = Animation(["honeyside0", "honeyside1",
+                                 "honeyside0", "honeyside2"], 200)
+    down_animation = Animation(["honeyback3", "honeyback4",
+                                "honeyback3", "honeyback5"], 200)
+    up_animation = Animation(["honeyback0", "honeyback1",
+                              "honeyback0", "honeyback2"], 200)
     current_animation = right_animation
 
     def teleport(self, x, y):
@@ -44,8 +44,8 @@ class Player(Dancer):
         x = self.xpos
         y = self.ypos
         m = maps.current_map
-        w = m.finalimage.get_width()
-        h = m.finalimage.get_height()
+        w = m.map_width
+        h = m.map_height
         pwidth = self.normal_width
         pheight = self.normal_height
         hpheight = pheight/2
@@ -176,11 +176,11 @@ class Player(Dancer):
         #first check for edges of map, this is the left
         if xpos < 0 and m.leftbound:
             iscollision = True
-        elif xpos+self.normal_width>m.finalimage.get_width() and m.rightbound:
+        elif xpos+self.normal_width>m.map_width and m.rightbound:
             iscollision = True
         elif ypos < 0 and m.topbound:
             iscollision = True
-        elif ypos+self.normal_height>m.finalimage.get_height() and m.bottombound:
+        elif ypos+self.normal_height>m.map_height and m.bottombound:
             iscollision = True
         else:
             #collision detection for the moved x pos with the unmoved y pos
@@ -241,16 +241,13 @@ class Player(Dancer):
             c = self.current_animation.pics[0]
         else:
             c = self.current_animation.current_frame()
-        c = pygame.transform.scale(c["img"],
-                                    [int(c["w"]*variables.scaleoffset),
-                                     int(c["h"]*variables.scaleoffset)])
-        self.current_display = c
+        
+        self.current_display = getpic(c, variables.scaleoffset)
 
     def scale_by_offset(self):
         c = self.right_animation.pics[1]
-        maskpic = pygame.transform.scale(c["img"],
-                                    [int(c["w"]*variables.scaleoffset),
-                                     int(c["h"]*variables.scaleoffset)])
+        maskpic = getpic(c, variables.scaleoffset).copy()
+        
         #this is to chop off the collision box for only the bottom of honey
         maskpic.fill(pygame.Color(0,0,0,0), [0, 0, maskpic.get_width(), maskpic.get_height()*(26/29)])
         self.mask = pygame.mask.from_surface(maskpic)

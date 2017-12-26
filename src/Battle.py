@@ -1,9 +1,10 @@
 #!/usr/bin/python
-import variables, pygame, stathandeling, classvar, random, graphics, maps, randombeatmap, copy, conversations
+import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, copy, conversations
 from Button import Button
 from Note import Note
 from play_sound import play_sound
 from play_sound import soundpackkeys
+from graphics import getpic, sscale, sscale_customfactor, getpicbyheight
 
 
 class Battle():
@@ -101,7 +102,8 @@ class Battle():
         pygame.draw.rect(variables.screen, variables.BLACK, [0, 0, w, h])
 
         # draw enemy first
-        epic = self.enemy.animation.current_frame()["img"]
+        epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
+        
         variables.screen.blit(epic, [w - epic.get_width(), 0])
 
         # draw beatmap
@@ -114,7 +116,7 @@ class Battle():
             # enemy name
             enemyname = variables.font.render("LV " + str(self.enemy.lv) + " " + self.enemy.name + " appears!", 0,
                                               variables.WHITE)
-            enemynamescaled = graphics.sscale(enemyname)
+            enemynamescaled = sscale(enemyname)
             variables.screen.blit(enemynamescaled, [w / 2 - (enemynamescaled.get_width() / 2), h / 2])
 
             # buttons
@@ -151,7 +153,7 @@ class Battle():
                 text = variables.font.render("you can't go on...", 0, variables.WHITE)
             else:
                 text = variables.font.render("you win!", 0, variables.WHITE)
-            textscaled = graphics.sscale(text)
+            textscaled = sscale(text)
             variables.screen.blit(textscaled, [w / 2 - (textscaled.get_width() / 2), h / 2])
 
         elif self.state == "exp" or self.state == "got exp":
@@ -163,10 +165,10 @@ class Battle():
 
             # text
             text = variables.font.render("EXP", 0, variables.WHITE)
-            textscaled = graphics.sscale(text)
+            textscaled = sscale(text)
             variables.screen.blit(textscaled, [w / 2 - (textscaled.get_width() / 2), h / 3])
             text = variables.font.render("Lv " + str(classvar.player.lv), 0, variables.WHITE)
-            textscaled = graphics.sscale(text)
+            textscaled = sscale(text)
             variables.screen.blit(textscaled, [0, h / 3 - textscaled.get_height()])
 
             # exp bar
@@ -179,7 +181,7 @@ class Battle():
             # level up text
             if self.state == "got exp" and stathandeling.explv(self.oldexp) < stathandeling.explv(self.newexp):
                 text = variables.font.render("Honey's dance level increased.", 0, variables.GREEN)
-                textscaled = graphics.sscale(text)
+                textscaled = sscale(text)
                 variables.screen.blit(textscaled,
                                       [w / 2 - (textscaled.get_width() / 2), h / 3 - textscaled.get_height()])
 
@@ -206,7 +208,7 @@ class Battle():
         # if they did not miss any in the last beatmap
         if (self.damage_multiplier > variables.perfect_value and self.state == "attacking"):
             punscaled = variables.font.render("PERFECT!", 0, variables.WHITE)
-            ptext = graphics.sscale_customfactor(punscaled, 1.5)
+            ptext = sscale_customfactor(punscaled, 1.5)
             variables.screen.blit(ptext, [(variables.width / 2) - (ptext.get_width() / 2) - epicw,
                                           variables.padypos - ptext.get_height() - 10])
 

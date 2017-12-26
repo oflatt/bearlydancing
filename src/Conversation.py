@@ -2,6 +2,7 @@
 # Oliver Flatt works on Classes
 import variables, classvar, stathandeling
 from Battle import Battle
+from graphics import getpicbywidth
 
 
 class Conversation():
@@ -45,7 +46,7 @@ class Conversation():
             self.speaks[self.progress].draw()
 
             # draw picture
-            currentpic = self.speaks[self.progress].pic
+            currentpic = getpicbywidth(self.speaks[self.progress].pic, variables.photo_size)
             w = currentpic.get_width()
             h = currentpic.get_height()
             b = variables.height - variables.textbox_height

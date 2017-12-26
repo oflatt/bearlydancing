@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import pygame, variables
 from Animation import Animation
+from graphics import GR, getpic
 
 class Rock():
 
@@ -15,16 +16,16 @@ class Rock():
         self.background_range = pygame.Rect(0, 0, variables.width * 100, variables.height * 100)
         self.animations = None
 
-        # base can be either an imagenane, a list of imagenames, an animation, or a list of animations
+        # base can be either an imagename, a list of imagenames, an animation, or a list of animations
         #if it is just a single image, put it in an animation
         self.animationnum = 0
         if type(base) == Animation:
             self.animations = [base]
-        elif type(base) == dict:
+        elif type(base) == str:
             self.animations = [Animation([base], 1)]
         else:
             #if it's a list of images, wrap them all in animations
-            if type(base[0]) == dict:
+            if type(base[0]) == str:
                 for i in range(len(base)):
                     base[i] = Animation([base[i]], 1)
             self.animations = base
@@ -39,8 +40,9 @@ class Rock():
         
         self.x = x
         self.y = y
-        self.w = self.animations[0].pics[0]["w"]
-        self.h = self.animations[0].pics[0]["h"]
+        self.w = GR[self.animations[0].pics[0]]["w"]
+        self.h = GR[self.animations[0].pics[0]]["h"]
+        self.draw_scale = 1
         self.make_mask(True)
 
     def nextanimation(self):
@@ -48,11 +50,12 @@ class Rock():
             self.animationnum = (self.animationnum + 1) % len(self.animations)
 
     def draw(self, offset = [0,0]):
-        variables.screen.blit(self.animations[self.animationnum].current_frame()["img"], [self.x + offset[0], self.y + offset[1]])
+        p = getpic(self.animations[self.animationnum].current_frame(), self.draw_scale)
+        variables.screen.blit(p, [self.x + offset[0], self.y + offset[1]])
 
     def set_backgroundrange(self):
         cs = self.collidesection
-        h = self.animations[0].pics[0]["h"]
+        h = GR[self.animations[0].pics[0]]["h"]
         if cs == [0, 0, 1, 1]:
             self.background_range = pygame.Rect(0, self.y, variables.width*100, variables.height*100)
         else:
@@ -62,10 +65,10 @@ class Rock():
         
     def make_mask(self, isresetbackgroundrange):
         cs = self.collidesection
-        base = self.animations[0].pics[0]
-        maskpic = base["img"].copy()
-        w = base["img"].get_width()
-        h = base["img"].get_height()
+        base = getpic(self.animations[0].pics[0], self.draw_scale)
+        maskpic = base.copy()
+        w = base.get_width()
+        h = base.get_height()
         # fill all but the collide section
         # top
         maskpic.fill(pygame.Color(0, 0, 0, 0), [0, 0, w, cs[1] * h])
@@ -90,14 +93,12 @@ class Rock():
         
         # scale base pics to right size
         if scaleimagep:
-            for anim in self.animations:
-                for pic in anim.pics:
-                    pic["img"] = pygame.transform.scale(pic["img"], [int(pic["w"] * s),
-                                                                     int(pic["h"] * s)])
-        base = self.animations[0].pics[0]
+            self.draw_scale *= s
+
+        base = GR[self.animations[0].pics[0]]
         
-        self.w = base["img"].get_width()
-        self.h = base["img"].get_height()
+        self.w = base["w"] * self.draw_scale
+        self.h = base["h"] * self.draw_scale
 
         if self.collidex == None:
             self.collidex = self.x

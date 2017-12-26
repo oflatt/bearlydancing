@@ -5,11 +5,11 @@ import random
 
 defaultanimspeed = 1000
 
-animations = [Animation([GR["sheep0"], GR["sheep1"], GR["sheep2"], GR["sheep3"]], defaultanimspeed/2),
-              Animation([GR["meangreen0"], GR["meangreen1"]], defaultanimspeed),
-              Animation([GR["purpleperp0"], GR["purpleperp1"], GR["purpleperp2"], GR["purpleperp3"]], defaultanimspeed),
-              Animation([GR["spoe0"], GR['spoe1']], defaultanimspeed),
-              Animation([GR["croc0"], GR['croc1']], defaultanimspeed)]
+animations = [Animation(["sheep0", "sheep1", "sheep2", "sheep3"], defaultanimspeed/2),
+              Animation(["meangreen0", "meangreen1"], defaultanimspeed),
+              Animation(["purpleperp0", "purpleperp1", "purpleperp2", "purpleperp3"], defaultanimspeed),
+              Animation(["spoe0", "spoe1"], defaultanimspeed),
+              Animation(["croc0", "croc1"], defaultanimspeed)]
 
 # refer to randombeatmap for the definitions for beatmap rules
 # we use an animation number because the actual animation cannot be saved

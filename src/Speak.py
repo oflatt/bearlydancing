@@ -1,13 +1,14 @@
 #!/usr/bin/python
 #Oliver Flatt works on Classes
-import variables, pygame, graphics
+import variables, pygame
+from graphics import scale_pure
 
 textsize = variables.height/15
 
 class Speak():
 
     def __init__(self, pic, dialogue, side = None, bottomp = True):
-        self.pic = graphics.scale_pure(pic["img"], variables.photo_size)
+        self.pic = pic
 
         # dialogue is a list of strings, one per line. Writer has to make sure they fit
         self.dialogue = dialogue
@@ -34,7 +35,7 @@ class Speak():
                 index += 1
             
     def drawline(self, index):
-        return graphics.scale_pure(variables.font.render(self.dialogue[index], 0, variables.WHITE),
+        return scale_pure(variables.font.render(self.dialogue[index], 0, variables.WHITE),
                                              textsize, "height")
 
     def lines_in_sceen(self):

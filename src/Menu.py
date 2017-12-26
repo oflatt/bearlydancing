@@ -1,6 +1,7 @@
 import graphics, variables, pygame, enemies, classvar, maps, random
 from pygame import Rect
 from classvar import player
+from graphics import getpicbyheight
 
 textsize = variables.height/10
 
@@ -123,7 +124,7 @@ class Menu():
                          [dotxoffset - (self.textxoffset * (3/4)), (self.option + 1) * self.textyspace, self.textxoffset * (3 / 4),
                           self.textxoffset * (3 / 4)])
         if self.mainmenup:
-            enemyframe = self.enemyanimation.current_frame()["img"]
+            enemyframe = getpicbyheight(self.enemyanimation.current_frame(), variables.height/5)
             variables.screen.blit(enemyframe,
                                   [int(variables.width/2 - enemyframe.get_width()/2), (len(opics) + 1) * self.textyspace])
 

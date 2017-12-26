@@ -11,7 +11,7 @@ from Conversation import Conversation
 from Speak import Speak
 from variables import displayscale
 
-fasttestmodep = False
+fasttestmodep = True
 
 if fasttestmodep:
     from mapsvars import *
@@ -27,18 +27,18 @@ househeight = GR["honeyhouseoutside"]["h"]
 rpt = graphics.pinetree()
 rgrassland = graphics.grassland(700, 500)
 treerock = Rock(rpt, 3.5 * b + housewidth, 1.5 * b, treecollidesection)
-meangreeny = treerock.y + rpt["h"] - GR["meangreen0"]["h"]
-meangreenrock = Rock(GR["meangreen0"].copy(), treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
+meangreeny = treerock.y + GR[rpt]["h"] - GR["meangreen0"]["h"]
+meangreenrock = Rock("meangreen0", treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
 
-houserock = Rock(GR["honeyhouseoutside"], housewidth, 0,
+houserock = Rock("honeyhouseoutside", housewidth, 0,
                  [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())])
 outside1 = Map(rgrassland,
                [houserock,
                 Rock(graphics.greyrock(), 6.5 * b, 7 * b, [0, 0, 1, 1]),
                 treerock,
                 meangreenrock])
-outsidewidth = rgrassland["w"]
-outsideheight = rgrassland["h"]
+outsidewidth = GR[rgrassland]["w"]
+outsideheight = GR[rgrassland]["h"]
 outside1.startpoint = [b * 8, b * 4]
 outside1.exitareas = [Exit("right", False, 'outside2', "left", "same"),
                       Exit("left", False, 'jeremyhome', "right",
@@ -75,20 +75,22 @@ b = GR['backgroundforpaper']['w'] / 10
 GR["paper"]["img"] = pygame.transform.scale2x(GR["paper"]["img"])
 GR["paper"]["w"] *= 2
 GR["paper"]["h"] *= 2
-bigpaper = Rock(GR["paper"], (GR["backgroundforpaper"]['w'] - GR["paper"]["w"]) / 2, 0, None)
+bigpaper = Rock("paper", (GR["backgroundforpaper"]['w'] - GR["paper"]["w"]) / 2, 0, None)
 bigpaper.background_range = None  # always in front
 s1 = variables.font.render("I stole your lunch.", 0, variables.BLACK)
 s2 = variables.font.render("-Trash Panda", 0, variables.BLACK)
 lettertextscalefactor = (GR["paper"]['w'] * (3/4)) / s1.get_width()
 s1 = pygame.transform.scale(s1, [int(lettertextscalefactor*s1.get_width()), int(lettertextscalefactor*s1.get_height())])
 s2 = pygame.transform.scale(s2, [int(lettertextscalefactor*s2.get_width()), int(lettertextscalefactor*s2.get_height())])
+graphics.addsurfaceGR(s1, "stolelunchtext", [s1.get_width(), s1.get_height()])
+graphics.addsurfaceGR(s2, "tplunchtext", [s2.get_width(), s2.get_height()])
 
-w1 = Rock({"img": s1, "w": s1.get_width(), "h": s1.get_height()}, b * 5 - s1.get_width() / 2, b * 3, None)
+w1 = Rock("stolelunchtext", b * 5 - s1.get_width() / 2, b * 3, None)
 w1.background_range = None
-w2 = Rock({"img": s2, "w": s2.get_width(), "h": s2.get_height()}, b * 5 - s2.get_width() / 2, b * 4.5, None)
+w2 = Rock("tplunchtext", b * 5 - s2.get_width() / 2, b * 4.5, None)
 w2.background_range = None
 
-letter = Map(GR["backgroundforpaper"], [bigpaper,
+letter = Map("backgroundforpaper", [bigpaper,
                                         w1,
                                         w2])
 
@@ -101,16 +103,16 @@ letter.exitareas = [Exit([0, 0, b * 10, b * 10], True, 'honeyhome', 'same', 'sam
 
 # honeyhome#####################################################################################
 b = insidewidth / 10
-table = Rock(GR["table"], p * 75, p * 110, [0, 0.5, 1, 0.5])
-littleletter = Rock(GR['letter'], p * 75, p * 110, None)
+table = Rock("table", p * 75, p * 110, [0, 0.5, 1, 0.5])
+littleletter = Rock('letter', p * 75, p * 110, None)
 littleletter.background_range = table.background_range.copy()
-bed = Rock([GR["honeywakesup0"], GR["honeywakesup1"], GR["honeywakesup2"], GR["honeywakesup3"], GR["bed"]],
+bed = Rock(["honeywakesup0", "honeywakesup1", "honeywakesup2", "honeywakesup3", "bed"],
            p*8, p*38, None, name = "bed")
 stashlist = []
 for x in range(10):
     stashname = "stash0" + str(x)
-    stashlist.append(GR[stashname])
-honeyhome = Map(GR["honeyhouseinside"],
+    stashlist.append(stashname)
+honeyhome = Map("honeyhouseinside",
                 [bed,
                  table,
                  littleletter,
@@ -242,8 +244,8 @@ def change_map(name, newx, newy):
         xpos *= current_map.map_scale_offset
         if (xpos < 0):
             xpos = 0
-        if (xpos > (current_map.base["w"] * current_map.map_scale_offset - (honeyw * current_map.map_scale_offset))):
-            xpos = current_map.base["w"] * current_map.map_scale_offset - (honeyw * current_map.map_scale_offset)
+        if (xpos > (GR[current_map.base]["w"] * current_map.map_scale_offset - (honeyw * current_map.map_scale_offset))):
+            xpos = GR[current_map.base]["w"] * current_map.map_scale_offset - (honeyw * current_map.map_scale_offset)
     else:
         xpos *= current_map.map_scale_offset
 
@@ -253,8 +255,8 @@ def change_map(name, newx, newy):
         ypos *= current_map.map_scale_offset
         if (ypos < 0):
             ypos = 0
-        if (ypos > (current_map.base["h"] * current_map.map_scale_offset - (honeyh * current_map.map_scale_offset))):
-            ypos = current_map.base["h"] * current_map.map_scale_offset - (honeyh * current_map.map_scale_offset)
+        if (ypos > (GR[current_map.base]["h"] * current_map.map_scale_offset - (honeyh * current_map.map_scale_offset))):
+            ypos = GR[current_map.base]["h"] * current_map.map_scale_offset - (honeyh * current_map.map_scale_offset)
     else:
         ypos *= current_map.map_scale_offset
 
@@ -271,7 +273,6 @@ def change_map(name, newx, newy):
     new_scale_offset()
 
     if classvar.player.collisioncheck(classvar.player.xpos, classvar.player.ypos):
-        print("collide next map")
         change_map_nonteleporting(oldmapname)
         classvar.player.soft_change_of_state()
         new_scale_offset()
