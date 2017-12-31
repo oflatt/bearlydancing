@@ -6,34 +6,37 @@ from Animation import Animation
 from pygame import Rect
 
 class Player(Dancer):
-    xspeed = 0
-    yspeed = 0
-    leftpresstime = 0
-    rightpresstime = 0
-    uppresstime = 0
-    downpresstime = 0
-    xpos = 0
-    ypos = 0
-    drawx = 0
-    drawy = 0
-    mapdrawx = 0
-    mapdrawy = 0
-    lastxupdate = 0
-    lastyupdate = 0
-    storyprogress = 0
 
-    #animation
-    left_animation = Animation(["honeyside3", "honeyside4", "honeyside3", "honeyside4"], 200)
-    right_animation = Animation(["honeyside0", "honeyside1",
-                                 "honeyside0", "honeyside2"], 200)
-    down_animation = Animation(["honeyback3", "honeyback4",
-                                "honeyback3", "honeyback5"], 200)
-    up_animation = Animation(["honeyback0", "honeyback1",
-                              "honeyback0", "honeyback2"], 200)
-    current_animation = right_animation
+    def __init__(self):
+        self.xspeed = 0
+        self.yspeed = 0
+        self.leftpresstime = 0
+        self.rightpresstime = 0
+        self.uppresstime = 0
+        self.downpresstime = 0
+        self.xpos = 0
+        self.ypos = 0
+        self.drawx = 0
+        self.drawy = 0
+        self.mapdrawx = 0
+        self.mapdrawy = 0
+        self.lastxupdate = 0
+        self.lastyupdate = 0
+        self.storyprogress = 0
 
-    normal_width = GR[right_animation.pics[1]]["w"]
-    normal_height = GR[right_animation.pics[1]]["h"]
+        #animation
+        self.left_animation = Animation(["honeyside3", "honeyside4", "honeyside3", "honeyside4"], 200)
+        self.right_animation = Animation(["honeyside0", "honeyside1",
+                                     "honeyside0", "honeyside2"], 200)
+        self.down_animation = Animation(["honeyback3", "honeyback4",
+                                    "honeyback3", "honeyback5"], 200)
+        self.up_animation = Animation(["honeyback0", "honeyback1",
+                                  "honeyback0", "honeyback2"], 200)
+        self.current_animation = self.right_animation
+
+        self.normal_width = GR[self.right_animation.pics[1]]["w"]
+        self.normal_height = GR[self.right_animation.pics[1]]["h"]
+        
 
     def teleport(self, x, y):
         if not x == "same":

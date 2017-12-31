@@ -10,33 +10,18 @@ everyyears = Speak("honeyside0", ["Every year the same thing. I'm going into hib
 everyyears.side = 'l'
 
 hungry = Conversation([Speak("honeyside0", ["I'm hungry...",
-                                                "And I have no reason to go outside.",
-                                                "Quick lunch, and back to sleep.",
-                                                "I'll eat the quiche I made yesterday."])])
+                                            "And I have no reason to go outside.",
+                                            "Quick lunch, and back to sleep.",
+                                            "I'll eat the quiche I made yesterday."])])
 
-thatracoon = Conversation([Speak("honeyside0", ["That raccoon...", "I knew he was up to no good yesterday.",
-                                                    "Now I have to track him down."]),
+hungryspeak = Speak("honeyside0",["And... I'm still hungry"])
+
+thatracoon = Conversation([Speak("honeyside0", ["That raccoon...",
+                                                "I knew he was up to no good yesterday.",
+                                                "Now I have to track him down."]),
                            everyyears])
 
 honeydotspeak = Speak("honeyside3", ["..."])
-
-ohhoney = ["Honey: Oh goody its lunch, I'm STARVING!",
-           "Oh no, I left my glorious spinach-mushroom-provalone-",
-           "bacon-broccoli quiche in the forest!",
-           "I'll have to go get it."]
-ohtp = ["Trash Panda: But Honey, those forests are infested with monsters!",
-        "You shouldn't fight all of them just for a quiche!", ]
-ohhoney2 = ["It is no ordinary quiche, Trash Panda.",
-            "It is my glorious spinach-mushroom-provalone-bacon-broccoli quiche!",
-            "Lunch is the most important meal of the day, I need to do this."]
-ohtp2 = ["I thought breakfast was the-"]
-ohhoney3 = ["Shush, I'm leaving now. Time for adventure!"]
-
-firstscene = Conversation([Speak("honeyside0", ohhoney),
-                           Speak("tp", ohtp),
-                           Speak("honeyside0", ohhoney2),
-                           Speak("tp", ohtp2),
-                           Speak("honeyside0", ohhoney3)])
 
 monster = ["Greenie Meanie: Who goes there!"]
 ohhoney4 = ["You know who it is, Meanie. TP took my quiche and I want it back."]

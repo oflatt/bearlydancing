@@ -1,9 +1,8 @@
 #!/usr/bin/python
 #Oliver Flatt works on Classes
 import variables, pygame
-from graphics import scale_pure
-
-textsize = variables.height/15
+from graphics import scale_pure, getpic
+from variables import displayscale, textsize
 
 class Speak():
 
@@ -38,11 +37,6 @@ class Speak():
         return scale_pure(variables.font.render(self.dialogue[index], 0, variables.WHITE),
                                              textsize, "height")
 
-    def lines_in_sceen(self):
-        line1 = self.drawline(0)
-                                
-        return int(variables.textbox_height/line1.get_height())
-
     def draw(self):
         if not self.dialogue_initializedp:
             self.initialize_dialogue()
@@ -58,15 +52,23 @@ class Speak():
         w = variables.width
         b = h-variables.textbox_height
         pygame.draw.rect(variables.screen, variables.BLACK, [0, b+yoffset, w, variables.textbox_height])
-        numoflines = self.lines_in_sceen()
+        numoflines = variables.lines_in_screen
         if numoflines > len(self.dialogue):
             numoflines = len(self.dialogue)
         for x in range(0, numoflines):
             line = self.drawline(x+self.line)
             variables.screen.blit(line, [w/2 - line.get_width()/2, b+(line_height*x)+yoffset])
 
+        if self.line < len(self.dialogue) - variables.lines_in_screen:
+            arrowpic = getpic("downarrow", displayscale*2)
+        else:
+            arrowpic = getpic("rightarrow", displayscale*2)
+        variables.screen.blit(arrowpic,
+                              [variables.width-2*displayscale*2-arrowpic.get_width(),
+                               variables.height-2*displayscale*2-arrowpic.get_height()])
+
     def keypress(self, key):
-        if self.line < len(self.dialogue) - self.lines_in_sceen():
+        if self.line < len(self.dialogue) - variables.lines_in_screen:
             self.line += 1
             return "talking"
         elif self.specialexitkeys != None:

@@ -4,6 +4,7 @@ from Settings import Settings
 from Properties import Properties
 
 testsmallp = False
+devmode = True
 
 # Setup
 pygame.mixer.pre_init(22050, -16, 2, 128)
@@ -98,11 +99,15 @@ battle_volume = 0.1
 notes_colors = [ORANGE, BLUE, RED, GREEN, GREEN, RED, BLUE, ORANGE]
 
 #conversation
+textsize = height/15
 textbox_height = height*1/4
+lines_in_screen = int(textbox_height/textsize)
 photo_size = width/6
 
 #world
 playerspeed = 0.05
+if devmode:
+    playerspeed *= 2
 #encountering enemies
 encounter_check_rate = 100 #rate of check in milliseconds
 encounter_chance = 0.002#chance per check

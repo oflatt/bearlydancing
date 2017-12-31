@@ -62,6 +62,7 @@ def simport(filename):
     dimensions = [p.get_width(), p.get_height()]
     return {"img":p, "w":dimensions[0], "h":dimensions[1]}
 
+# some text used for battles
 feedback_factor = 0.75
 Atext = sscale_customfactor(variables.font.render("A", 0, variables.WHITE), feedback_factor)
 Stext = sscale_customfactor(variables.font.render("S", 0, variables.WHITE), feedback_factor)
@@ -100,6 +101,14 @@ def addsurfaceGR(s, name, dimensions = None):
 
 for x in picnames:
     addtoGR(x)
+
+# down arrow used for conversations
+DOWNARROW = pygame.Surface([5, 8], pygame.SRCALPHA)
+pygame.draw.polygon(DOWNARROW, variables.WHITE, [[0, 4], [4, 4], [2, 7]])
+DOWNARROW.fill(variables.WHITE, pygame.Rect(1, 0, 3, 3))
+RIGHTARROW = pygame.transform.rotate(DOWNARROW, 90)
+addsurfaceGR(DOWNARROW, "downarrow")
+addsurfaceGR(RIGHTARROW, "rightarrow")
 
 
 # this function returns a surface. If no scale is provided, it takes from GR.

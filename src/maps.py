@@ -68,13 +68,21 @@ conversations.gotoforest.storyrequirement = [getpartofstory("greenie")]
 outside1.conversations = [outside1c, conversations.gotoforest, goodc]
 
 # letter########################################################################################
-GR["backgroundforpaper"]["img"] = pygame.transform.scale2x(GR["backgroundforpaper"]["img"])
-GR["backgroundforpaper"]["w"] *= 3
-GR["backgroundforpaper"]["h"] *= 3
+paperscale = int((variables.height/GR["paper"]["h"])/(variables.displayscale))
+
+GR["backgroundforpaper"]["img"] = pygame.transform.scale(GR["backgroundforpaper"]["img"],
+                                                         [GR["backgroundforpaper"]["w"]*paperscale,
+                                                          GR["backgroundforpaper"]["h"]*paperscale])
+                                                          
+GR["backgroundforpaper"]["w"] *= paperscale
+GR["backgroundforpaper"]["h"] *= paperscale
 b = GR['backgroundforpaper']['w'] / 10
-GR["paper"]["img"] = pygame.transform.scale2x(GR["paper"]["img"])
-GR["paper"]["w"] *= 3
-GR["paper"]["h"] *= 3
+
+GR["paper"]["img"] = pygame.transform.scale(GR["paper"]["img"],
+                                            [GR["paper"]["w"]*paperscale,
+                                             GR["paper"]["h"]*paperscale])
+GR["paper"]["w"] *= paperscale
+GR["paper"]["h"] *= paperscale
 bigpaper = Rock("paper", (GR["backgroundforpaper"]['w'] - GR["paper"]["w"]) / 2, 0, None)
 bigpaper.background_range = None  # always in front
 s1 = variables.font.render("I stole your lunch.", 0, variables.BLACK)
@@ -118,7 +126,6 @@ honeyhome = Map("honeyhouseinside",
                  table,
                  littleletter,
                  Rock(stashlist, p * 130, p * 58, [0, 0.9, 1, 0.1], name="stash")])
-hungryspeak = Speak(GR["honeyside0"],["And... I'm still hungry"])
 
 outofbed = Conversation([], speaksafter = [[],[],[]], switchthisrock = "bed")
 outofbed.area = [0, 0, b*20, b*20]
@@ -127,7 +134,7 @@ outofbed.showbutton = False
 
 eatfromstash = Conversation([],
                             speaksafter = [[],[],[],[],[],[],[],[],
-                                           [hungryspeak]],
+                                           [conversations.hungryspeak]],
                             switchthisrock="stash")
 
 eatfromstashoffset = p*10
