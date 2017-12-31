@@ -12,8 +12,6 @@ class Rock():
         if self.collidesection == None:
             self.collidesection = [0, 0, 0, 0]
 
-        # background range is the range of the player's location that it is drawn behind the player
-        self.background_range = pygame.Rect(0, 0, variables.width * 100, variables.height * 100)
         self.animations = None
 
         # base can be either an imagename, a list of imagenames, an animation, or a list of animations
@@ -33,42 +31,47 @@ class Rock():
         self.name = name
         self.loopanimationsp = False
 
-        self.collidex = None
-        self.collidey = None
-        self.collidew = None
-        self.collideh = None
+        self.collidex = x
+        self.collidey = y
         
         self.x = x
         self.y = y
         self.w = GR[self.animations[0].pics[0]]["w"]
         self.h = GR[self.animations[0].pics[0]]["h"]
         self.draw_scale = 1
-        self.make_mask(True)
+        self.make_mask()
+        self.set_backgroundrange()
+
+        # used to keep track of if it was drawn for backgroundrange
+        self.drawnp = False
 
     def nextanimation(self):
         if self.animationnum+1 < len(self.animations) or self.loopanimationsp:
             self.animationnum = (self.animationnum + 1) % len(self.animations)
 
     def draw(self, offset = [0,0]):
-        p = getpic(self.animations[self.animationnum].current_frame(), self.draw_scale)
-        variables.screen.blit(p, [self.x + offset[0], self.y + offset[1]])
+        p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale)
+        drawx = self.x * variables.compscale + offset[0]
+        drawy = self.y * variables.compscale + offset[1]
+        variables.screen.blit(p, [drawx, drawy])
 
+    # background range is the range of the player's location that it is drawn behind the player
     def set_backgroundrange(self):
         cs = self.collidesection
         h = GR[self.animations[0].pics[0]]["h"]
         if cs == [0, 0, 1, 1]:
-            self.background_range = pygame.Rect(0, self.y, variables.width*100, variables.height*100)
+            self.background_range = pygame.Rect(0, self.y, 9999999, 9999999)
         else:
             self.background_range = pygame.Rect(0, self.y + cs[1] * h + cs[3] * (1 / 3) * h,
                                                 variables.width * 100,
                                                 variables.height * 100)
 
     def get_mask(self):
-        return getmask(self.animations[0].pics[0], self.draw_scale)
+        return getmask(self.animations[0].pics[0])
             
-    def make_mask(self, isresetbackgroundrange):
+    def make_mask(self):
         cs = self.collidesection
-        base = getpic(self.animations[0].pics[0], self.draw_scale)
+        base = getpic(self.animations[0].pics[0])
         maskpic = base.copy()
         w = base.get_width()
         h = base.get_height()
@@ -81,53 +84,4 @@ class Rock():
         maskpic.fill(pygame.Color(0, 0, 0, 0), [cs[0] * w + cs[2] * w, 0, w - (cs[0] * w + cs[2] * w), h])
         # bottom
         maskpic.fill(pygame.Color(0, 0, 0, 0), [0, cs[1] * h + cs[3] * h, w, h - (cs[1] * h + cs[3] * h) + 1])
-        addmask(pygame.mask.from_surface(maskpic), self.animations[0].pics[0], self.draw_scale)
-
-        # by default background range is by the top of the mask, the collision box
-        if isresetbackgroundrange:
-            self.set_backgroundrange()
-
-    def scale_by_offset(self, scale, scaleimagep = True):
-        s = scale
-        self.x *= s
-        self.y *= s
-        self.x = int(self.x)
-        self.y = int(self.y)
-        
-        # scale base pics to right size
-        if scaleimagep:
-            self.draw_scale *= s
-
-        base = GR[self.animations[0].pics[0]]
-        
-        self.w = base["w"] * self.draw_scale
-        self.h = base["h"] * self.draw_scale
-
-        if self.collidex == None:
-            self.collidex = self.x
-        else:
-            self.collidex *= s
-
-        if self.collidey == None:
-            self.collidey = self.y
-        else:
-            self.collidey *= s
-        if self.collidew == None:
-            self.collidew = self.w
-        else:
-            self.collidew *= s
-
-        if self.collideh == None:
-            self.collideh = self.h
-        else:
-            self.collideh *= s
-            
-        if self.background_range == None:
-            self.background_range = pygame.Rect(-1000, -1000, 0, 0)
-
-        self.background_range.x *= s
-        self.background_range.y *= s
-        self.background_range.width *= s
-        self.background_range.height *= s
-
-        self.make_mask(False)
+        addmask(pygame.mask.from_surface(maskpic), self.animations[0].pics[0])

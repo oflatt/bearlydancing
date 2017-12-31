@@ -20,6 +20,6 @@ extraarea = 50
 insidewidth = GR["honeyhouseinside"]["w"]
 insideheight = GR["honeyhouseinside"]["h"]
 # p is the width of a pixel
-p = variables.displayscale
+p = 1
 
 treecollidesection = variables.TREECOLLIDESECTION

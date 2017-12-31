@@ -2,7 +2,6 @@ import graphics, variables, pygame, enemies, pickle, classvar, maps, os
 from copy import deepcopy
 from classvar import player
 from Menu import Menu
-from variables import savescalefactor
 from Battle import Battle
 from enemies import greenie
 
@@ -10,7 +9,6 @@ def loadmaps(maplist):
     for i in range(len(maplist)):
         m = maplist[i]
         m.set_map_scale_offset()
-        m.scale_stuff(m.map_scale_offset*variables.displayscale)
     
     maps.set_new_maps(maplist)
 

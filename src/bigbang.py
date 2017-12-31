@@ -103,6 +103,7 @@ while not done:
     # --- Drawing Code
     def draw_world():
         classvar.player.update_drawpos()
+        
         maps.current_map.draw([classvar.player.mapdrawx, classvar.player.mapdrawy])
         if maps.playerenabledp() and maps.current_map.playerenabledp:
             classvar.player.draw()

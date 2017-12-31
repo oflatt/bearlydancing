@@ -11,7 +11,7 @@ from Conversation import Conversation
 from Speak import Speak
 from variables import displayscale
 
-fasttestmodep = False
+fasttestmodep = True
 
 if fasttestmodep:
     from mapsvars import *
@@ -69,12 +69,12 @@ outside1.conversations = [outside1c, conversations.gotoforest, goodc]
 
 # letter########################################################################################
 GR["backgroundforpaper"]["img"] = pygame.transform.scale2x(GR["backgroundforpaper"]["img"])
-GR["backgroundforpaper"]["w"] *= 2
-GR["backgroundforpaper"]["h"] *= 2
+GR["backgroundforpaper"]["w"] *= 3
+GR["backgroundforpaper"]["h"] *= 3
 b = GR['backgroundforpaper']['w'] / 10
 GR["paper"]["img"] = pygame.transform.scale2x(GR["paper"]["img"])
-GR["paper"]["w"] *= 2
-GR["paper"]["h"] *= 2
+GR["paper"]["w"] *= 3
+GR["paper"]["h"] *= 3
 bigpaper = Rock("paper", (GR["backgroundforpaper"]['w'] - GR["paper"]["w"]) / 2, 0, None)
 bigpaper.background_range = None  # always in front
 s1 = variables.font.render("I stole your lunch.", 0, variables.BLACK)
@@ -103,7 +103,8 @@ letter.exitareas = [Exit([0, 0, b * 10, b * 10], True, 'honeyhome', 'same', 'sam
 
 # honeyhome#####################################################################################
 b = insidewidth / 10
-table = Rock("table", p * 75, p * 110, [0, 0.5, 1, 0.5])
+table = Rock("table", p * 75, p * 110, None)
+table.background_range = Rect(0, 110 + int(table.h / 2), 9999999, 9999999)
 littleletter = Rock('letter', p * 75, p * 110, None)
 littleletter.background_range = table.background_range.copy()
 bed = Rock(["honeywakesup0", "honeywakesup1", "honeywakesup2", "honeywakesup3", "bed"],
@@ -141,7 +142,7 @@ doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
 doorexit.conversation = conversations.hungry
 doorexit.conversation.storyrequirement = [getpartofstory("letter")]
 
-letterexit = Exit([p * 65, p * 100, 60, 30],
+letterexit = Exit([p * 65, p * 100, 20, 30],
                   True, 'letter',
                   GR["paper"]['w']*(3/10), 0)
 
@@ -203,7 +204,7 @@ def set_new_maps(maplist):
     for i in range(len(maplist)):
         g[map_name_list[i]] = maplist[i]
 
-# now that everything is loaded, scale everything
+# now that everything is loaded, sort rocks ect
 for m in map_list:
     if not m.isscaled:
         m.scale_stuff()
@@ -211,7 +212,9 @@ for m in map_list:
 def new_scale_offset():
     global current_map
     variables.scaleoffset = current_map.map_scale_offset
-    classvar.player.scale_by_offset()
+    variables.compscale = variables.scaleoffset * variables.displayscale
+    variables.compscaleunrounded = variables.scaleoffset * variables.unrounded_displayscale
+    classvar.player.new_scale_offset()
 
 def change_map_nonteleporting(name):
     global current_map_name

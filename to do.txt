@@ -1,5 +1,7 @@
 Bearly Dancing List
 
+-tutorial second try
+-add arrow to speak
 -saving rock x and y positions
 -adjust difficulty, fix the beatmap generator and add an offset selection
 -expand the map!

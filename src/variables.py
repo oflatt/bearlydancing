@@ -30,8 +30,13 @@ screen = pygame.display.set_mode(mode, flags)
 #screen = pygame.Surface([height, width])
 
 unrounded_displayscale = height*0.0025
-displayscale = round(unrounded_displayscale+0.25) #the master scaling factor for importing pixel art
-savescalefactor = unrounded_displayscale
+# factor for the dimensions of a pixel on a given screen
+displayscale = round(unrounded_displayscale+0.25)
+# factor for scaling up a map to a screen
+scaleoffset = 1
+# the product of scaleoffset and displayscale
+compscale = displayscale
+compscaleunrounded = unrounded_displayscale
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -45,7 +50,6 @@ LIGHTYELLOW = (235,227, 92)
 LIGHTBLUE = (66, 206, 244)
 
 #general
-scaleoffset = 1
 fontlist = pygame.font.get_fonts()
 fontname = "use default"
 if "orangekidregular" in fontlist:
@@ -98,7 +102,7 @@ textbox_height = height*1/4
 photo_size = width/6
 
 #world
-playerspeed = height/800 * 0.2#height/800 * 0.1 changed for development #factor against time
+playerspeed = 0.05
 #encountering enemies
 encounter_check_rate = 100 #rate of check in milliseconds
 encounter_chance = 0.002#chance per check

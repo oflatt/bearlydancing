@@ -48,12 +48,12 @@ class Map():
         self.finalimagescale = 1
         self.map_width = GR[base]["w"]
         self.map_height = GR[base]["h"]
-
+        self.reset_screenxoffset()
         self.playerenabledp = True
 
     def set_map_scale_offset(self):
-        mapw = GR[self.base]["w"]
-        maph = GR[self.base]["h"]
+        mapw = GR[self.base]["w"] * variables.displayscale
+        maph = GR[self.base]["h"] * variables.displayscale
         if mapw < maph:
             smaller = mapw
         else:
@@ -69,13 +69,13 @@ class Map():
     def populate_with(self, rocktype, number):
         width = GR[self.base]["w"]
         height = GR[self.base]["h"]
-        pwidth = viewfactorrounded
-        treewscaled = variables.TREEWIDTH*pwidth
-        treehscaled = variables.TREEHEIGHT*pwidth
+        
+        treewscaled = variables.TREEWIDTH
+        treehscaled = variables.TREEHEIGHT
         yconstraints = [-int(treehscaled/2), height-int(treehscaled/2)]
         xconstraints = [0, width-treewscaled]
-        x_min_distance = 6*pwidth
-        y_min_distance = 8*pwidth
+        x_min_distance = 6
+        y_min_distance = 8
         rockp = rocktype == "greyrock" or rocktype == "grey rock" or rocktype == "rock"
 
         if rockp:
@@ -124,17 +124,14 @@ class Map():
         
     # this scales everything by the mapscale
     # if inversep is on, it unscales everything for saving
-    def scale_stuff(self, customscale = None):
-        sscale = self.map_scale_offset
-        if not customscale == None:
-            sscale = customscale
+    def scale_stuff(self):
         
         honeywidth = GR[classvar.player.left_animation.pics[0]]["w"]
         honeyheight = GR[classvar.player.left_animation.pics[0]]["h"]
-        halfhoneyw = int(honeywidth/2)*sscale
-        halfhoneyh = int(honeyheight/2)*sscale
-        mapw = GR[self.base]["img"].get_width() * sscale
-        maph = GR[self.base]["img"].get_height() * sscale
+        halfhoneyw = int(honeywidth/2)
+        halfhoneyh = int(honeyheight/2)
+        mapw = self.map_width
+        maph = self.map_height
         
         for e in self.exitareas:
             if e.area == "left" or e.area == "l":
@@ -150,60 +147,48 @@ class Map():
                 self.bottombound = False
                 e.area = [0, maph+halfhoneyh, mapw, extraarea]
                 
-        for x in range(len(self.terrain)):
-            self.terrain[x].scale_by_offset(sscale)
-
-        self.finalimagescale *= sscale
-        
-        for x in range(0, len(self.exitareas)):
-            self.exitareas[x].scale_by_offset(sscale)
-            
-        for x in range(0, len(self.conversations)):
-            self.conversations[x].scale_by_offset(sscale)
-            
-        for x in self.colliderects:
-            x.x *= sscale
-            x.y *= sscale
-            x.width *= sscale
-            x.height *= sscale
-            
-        self.startpoint[0] *= sscale
-        self.startpoint[1] *= sscale
         self.isscaled = True
-        
-        newwidth = mapw * self.finalimagescale
-        self.map_width = newwidth
-        self.map_height = maph * self.finalimagescale
-        
-        # compute screenxoffset if needed
-        if newwidth < variables.width:
-            self.screenxoffset = int((variables.width-newwidth)/2)
 
+                        
+            
         #also sort the rocks by the y-position of the top of their background range
         def getbaseypos(rock):
-            return rock.background_range.y
+            if rock.background_range == None:
+                return 0
+            else:
+                return rock.background_range.y
+        
         self.terrain.sort(key=getbaseypos)
 
     def draw_background(self, drawpos):
         offset = [-drawpos[0], -drawpos[1]]
-        variables.screen.blit(getpic(self.finalimage, self.finalimagescale), offset)
+        variables.screen.blit(getpic(self.finalimage, variables.compscale), offset)
 
         # detect if within the foreground range
         playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
                                  classvar.player.normal_height)
 
         for r in self.terrain:
-            if r.background_range.colliderect(playerrect):
-                r.draw(offset)
+            if r.background_range != None:
+                if r.background_range.colliderect(playerrect):
+                    r.draw(offset)
+                    r.drawnp = True
+                else:
+                    r.drawnp = False
+            else:
+                r.drawnp = False
         
     # x and y are the player's x and y pos
     def draw(self, drawpos):
+        
         self.draw_background(drawpos)
 
         # draw button above exits and conversations
-        pw = classvar.player.normal_width / 2
-        buttonx = classvar.player.xpos + classvar.player.normal_width / 2 - pw / 2 - drawpos[0]
-        buttony = classvar.player.ypos - pw - drawpos[1]
+        pw = (classvar.player.normal_width / 2) * variables.compscale
+        buttonx = classvar.player.xpos + classvar.player.normal_width / 2
+        buttony = classvar.player.ypos
+        buttonx = buttonx * variables.compscale - drawpos[0] - pw/2
+        buttony = buttony * variables.compscale - drawpos[1] - pw
         
         e = self.checkexit()
         if not e == False and e.showbutton:
@@ -218,7 +203,7 @@ class Map():
         playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
                                  classvar.player.normal_height)
         for r in self.terrain:
-            if (not r.background_range.colliderect(playerrect)):
+            if not r.drawnp:
                 r.draw(rockoffset)
 
     def draw_interation_button(self, xpos, ypos, width):
@@ -251,7 +236,15 @@ class Map():
 
         return currentexit
 
+    def reset_screenxoffset(self):
+        drawwidth = self.map_width * variables.displayscale * self.map_scale_offset
+        
+        if drawwidth < variables.width:
+            self.screenxoffset = int((variables.width-drawwidth)/2)
+    
     def on_tick(self):
+        self.reset_screenxoffset()
+        
         if len(self.enemies) > 0:
             if variables.settings.current_time - self.last_encounter_check >= variables.encounter_check_rate and classvar.player.ismoving():
                 self.checkenemy()

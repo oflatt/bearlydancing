@@ -59,7 +59,7 @@ def importpic(filename):
 #simport returns a dictionary with an image and what its new dimensions would be if scaled
 def simport(filename):
     p = importpic(filename)
-    dimensions = sscale_dimensions(p)
+    dimensions = [p.get_width(), p.get_height()]
     return {"img":p, "w":dimensions[0], "h":dimensions[1]}
 
 feedback_factor = 0.75
@@ -95,7 +95,7 @@ def addtoGR(filename):
 
 def addsurfaceGR(s, name, dimensions = None):
     if dimensions == None:
-        dimensions = sscale_dimensions(s)
+        dimensions = [s.get_width(), s.get_height()]
     GR[name] = {"img":s,"w":dimensions[0],"h":dimensions[1]}
 
 for x in picnames:
@@ -130,12 +130,12 @@ def getpicbywidth(picname, width):
     scale = width/GR[picname]["w"]
     return getpic(picname, scale)
 
-def addmask(newmask, maskname, scale):
+def addmask(newmask, maskname, scale = 1):
     if not maskname in MGR:
         MGR[maskname] = {}
     MGR[maskname][scale] = newmask
 
-def getmask(maskname, scale):
+def getmask(maskname, scale=1):
     maskexistsp = maskname in MGR
     if maskexistsp:
         maskexistsp = scale in MGR[maskname]

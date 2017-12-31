@@ -12,8 +12,6 @@ class Player(Dancer):
     rightpresstime = 0
     uppresstime = 0
     downpresstime = 0
-    normal_width = 10
-    normal_height = 10
     xpos = 0
     ypos = 0
     drawx = 0
@@ -34,6 +32,9 @@ class Player(Dancer):
                               "honeyback0", "honeyback2"], 200)
     current_animation = right_animation
 
+    normal_width = GR[right_animation.pics[1]]["w"]
+    normal_height = GR[right_animation.pics[1]]["h"]
+
     def teleport(self, x, y):
         if not x == "same":
             self.xpos = x
@@ -41,15 +42,17 @@ class Player(Dancer):
             self.ypos = y
 
     def update_drawpos(self):
-        x = self.xpos
-        y = self.ypos
+        x = self.xpos * variables.compscale
+        y = self.ypos * variables.compscale
         m = maps.current_map
-        w = m.map_width
-        h = m.map_height
-        pwidth = self.normal_width
-        pheight = self.normal_height
+        w = m.map_width * variables.compscale
+        h = m.map_height * variables.compscale
+        
+        pwidth = self.normal_width * variables.compscale
+        pheight = self.normal_height * variables.compscale
         hpheight = pheight/2
         hpwidth = pwidth/2
+        
         if w <= variables.width:
             # if the map fits in the screen, no scrolling needed
             self.drawx = x
@@ -81,13 +84,13 @@ class Player(Dancer):
         # then add the map's x offset for drawing small maps in the middle
         self.drawx += m.screenxoffset
         self.mapdrawx -= m.screenxoffset
+
         #round to nearest pixel
         self.mapdrawx = int(self.mapdrawx)
         self.mapdrawy = int(self.mapdrawy)
 
     def draw(self): #movement is combination of top down scrolling and free range
-        self.current_pic_scaled()
-        variables.screen.blit(self.current_display, [self.drawx, self.drawy])
+        variables.screen.blit(self.current_pic_scaled(), [self.drawx, self.drawy])
 
     def change_animation(self):
         oldanimation = self.current_animation
@@ -105,7 +108,7 @@ class Player(Dancer):
 
     def keypress(self, k):
         t = variables.settings.current_time
-        s = variables.playerspeed * variables.scaleoffset
+        s = variables.playerspeed
         if k in variables.settings.leftkeys:
             self.leftpresstime = variables.settings.current_time
             self.xspeed = -s
@@ -125,7 +128,7 @@ class Player(Dancer):
         self.change_animation()
 
     def keyrelease(self, k):
-        s = variables.playerspeed * variables.scaleoffset
+        s = variables.playerspeed
         t = variables.settings.current_time
         if k == pygame.K_LEFT or k == pygame.K_a:
             self.leftpresstime = 0
@@ -158,7 +161,7 @@ class Player(Dancer):
         self.change_animation()
 
     def collisioncheck(self,xpos, ypos):
-        cmask = getmask("playermask", variables.scaleoffset)
+        cmask = getmask("playermask")
         #checks if the player collides with a rock
         def rockcollisioncheck(arock, x, y):
             rockmask = arock.get_mask()
@@ -244,27 +247,17 @@ class Player(Dancer):
         else:
             c = self.current_animation.current_frame()
         
-        self.current_display = getpic(c, variables.scaleoffset)
+        return getpic(c, variables.compscale)
 
-    def scale_by_offset(self):
+    def new_scale_offset(self):
         c = self.right_animation.pics[1]
-        maskpic = getpic(c, variables.scaleoffset).copy()
+        maskpic = getpic(c).copy()
         
         #this is to chop off the collision box for only the bottom of honey
         maskpic.fill(pygame.Color(0,0,0,0), [0, 0, maskpic.get_width(), maskpic.get_height()*(26/29)])
-        addmask(pygame.mask.from_surface(maskpic), "playermask", variables.scaleoffset)
-        self.normal_width = maskpic.get_width()
-        self.normal_height = maskpic.get_height()
-        s = variables.playerspeed * variables.scaleoffset
-        if(self.xspeed>0):
-            self.xspeed = s
-        if(self.xspeed<0):
-            self.xspeed = -s
-        if(self.yspeed<0):
-            self.yspeed = -s
-        if(self.yspeed>0):
-            self.yspeed = s
+        addmask(pygame.mask.from_surface(maskpic), "playermask")
 
+        
     def ismoving(self):
         return not (self.xspeed==0 and self.yspeed==0)
 
