@@ -11,7 +11,7 @@ from Conversation import Conversation
 from Speak import Speak
 from variables import displayscale
 
-fasttestmodep = True
+fasttestmodep = False
 
 if fasttestmodep:
     from mapsvars import *
@@ -161,6 +161,9 @@ home_map_name = "honeyhome"
 current_map = home_map
 current_map_name = 'honeyhome'
 
+map_list = []
+map_name_list = []
+
 def get_map(name):
     possibles = globals()
     m = possibles.get(name)
@@ -168,7 +171,7 @@ def get_map(name):
         raise NotImplementedError("Map %s not implemented" % name)
     return m
 
-def get_maplist_full():
+def set_maplist_full():
     stringlist = [home_map_name]
     maplist = [home_map]
     index = 0
@@ -179,15 +182,26 @@ def get_maplist_full():
                 stringlist.append(e.name)
                 maplist.append(get_map(e.name))
         index += 1
-    return maplist
+    global map_name_list
+    global map_list
+    map_name_list = stringlist
+    map_list = maplist
 
-def get_maplist():
+def set_maplist():
     if fasttestmodep:
-        return [honeyhome, letter, outside1]
+        global map_name_list
+        global map_list
+        map_list = [honeyhome, letter, outside1]
+        map_name_list = ["honeyhome", "letter", "outside1"]
     else:
-        return get_maplist_full()
+        return set_maplist_full()
 
-map_list = get_maplist()
+set_maplist()
+    
+def set_new_maps(maplist):
+    g = globals()
+    for i in range(len(maplist)):
+        g[map_name_list[i]] = maplist[i]
 
 # now that everything is loaded, scale everything
 for m in map_list:
@@ -229,13 +243,13 @@ def change_map(name, newx, newy):
     halfhoneyheight = int(honeyh/2) * current_map.map_scale_offset
     # now handle newx and newy if they are a string
     if newx == "right" or newx == "r":
-        xpos = current_map.base["w"] - halfhoneywidth-1
+        xpos = GR[current_map.base]["w"] - halfhoneywidth-1
     elif newx == "left" or newx == "l":
         xpos = -halfhoneywidth+1
     if newy == "up" or newy == "u" or newy == "top" or newy == "t":
         ypos = -halfhoneyheight+1
     elif newy == "down" or newy == "bottom" or newy == "d" or newy == "b":
-        ypos = current_map.base["h"]-halfhoneyheight-1
+        ypos = GR[current_map.base]["h"]-halfhoneyheight-1
 
     #if the new pos is the same
     if newx == "same" or newx == "s":

@@ -38,7 +38,7 @@ class Map():
         self.enemies = []  # list of possible enemy encounters
         self.lvrange = [1]
         self.last_encounter_check = 0
-        #use last pos takes priority over teleportation (with newx and newy in exits)
+        # use last pos takes priority over teleportation (with newx and newy in exits)
         #It means when re-entering a map it teleports the player to the last pos they were when they were last in the map
         self.uselastposq = False
         self.encounterchecksnotactivated = 0
@@ -67,8 +67,8 @@ class Map():
     # if the randomly generated coordinates collide with anything, they are skipped
     # can only be used before the scaling happens
     def populate_with(self, rocktype, number):
-        width = self.base["w"]
-        height = self.base["h"]
+        width = GR[self.base]["w"]
+        height = GR[self.base]["h"]
         pwidth = viewfactorrounded
         treewscaled = variables.TREEWIDTH*pwidth
         treehscaled = variables.TREEHEIGHT*pwidth
@@ -87,7 +87,8 @@ class Map():
             #don't do collision with placing rocks
             if not rockp:
                 rmask = TREEMASK
-                overlapp = rmask.overlap(rock.mask, (int((xpos-rock.x)/pwidth), int((ypos-rock.y)/pwidth)))
+                currentmask = rock.get_mask()
+                overlapp = rmask.overlap(currentmask, (int((xpos-rock.x)/pwidth), int((ypos-rock.y)/pwidth)))
             else:
                 overlapp = False
             #if overlapp:
@@ -121,15 +122,19 @@ class Map():
                     
         self.terrain.extend(newrocks)
         
+    # this scales everything by the mapscale
+    # if inversep is on, it unscales everything for saving
+    def scale_stuff(self, customscale = None):
+        sscale = self.map_scale_offset
+        if not customscale == None:
+            sscale = customscale
         
-            
-    def scale_stuff(self):
         honeywidth = GR[classvar.player.left_animation.pics[0]]["w"]
         honeyheight = GR[classvar.player.left_animation.pics[0]]["h"]
-        halfhoneyw = int(honeywidth/2)*self.map_scale_offset
-        halfhoneyh = int(honeyheight/2)*self.map_scale_offset
-        mapw = self.map_width
-        maph = self.map_height
+        halfhoneyw = int(honeywidth/2)*sscale
+        halfhoneyh = int(honeyheight/2)*sscale
+        mapw = GR[self.base]["img"].get_width() * sscale
+        maph = GR[self.base]["img"].get_height() * sscale
         
         for e in self.exitareas:
             if e.area == "left" or e.area == "l":
@@ -146,26 +151,30 @@ class Map():
                 e.area = [0, maph+halfhoneyh, mapw, extraarea]
                 
         for x in range(len(self.terrain)):
-            self.terrain[x].scale_by_offset(self.map_scale_offset)
+            self.terrain[x].scale_by_offset(sscale)
 
-        self.finalimagescale *= self.map_scale_offset
+        self.finalimagescale *= sscale
         
         for x in range(0, len(self.exitareas)):
-            self.exitareas[x].scale_by_offset(self.map_scale_offset)
+            self.exitareas[x].scale_by_offset(sscale)
+            
         for x in range(0, len(self.conversations)):
-            self.conversations[x].scale_by_offset(self.map_scale_offset)
+            self.conversations[x].scale_by_offset(sscale)
+            
         for x in self.colliderects:
-            x.x *= self.map_scale_offset
-            x.y *= self.map_scale_offset
-            x.width *= self.map_scale_offset
-            x.height *= self.map_scale_offset
-        self.startpoint[0] *= self.map_scale_offset
-        self.startpoint[1] *= self.map_scale_offset
+            x.x *= sscale
+            x.y *= sscale
+            x.width *= sscale
+            x.height *= sscale
+            
+        self.startpoint[0] *= sscale
+        self.startpoint[1] *= sscale
         self.isscaled = True
-
+        
         newwidth = mapw * self.finalimagescale
         self.map_width = newwidth
         self.map_height = maph * self.finalimagescale
+        
         # compute screenxoffset if needed
         if newwidth < variables.width:
             self.screenxoffset = int((variables.width-newwidth)/2)

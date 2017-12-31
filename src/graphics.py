@@ -81,6 +81,8 @@ GR = {}
 # SGR is a dictionary of dictionaries. The inner dictionaries contain scales as the keys and images as the values
 # the purpose of SGR is to keep a list of all the scaled pictures for use
 SGR = {}
+# an SGR for masks
+MGR = {}
 
 picnames = os.listdir(os.path.dirname(os.path.abspath("__file__")) + "/pics")
 
@@ -127,6 +129,20 @@ def getpicbyheight(picname, height):
 def getpicbywidth(picname, width):
     scale = width/GR[picname]["w"]
     return getpic(picname, scale)
+
+def addmask(newmask, maskname, scale):
+    if not maskname in MGR:
+        MGR[maskname] = {}
+    MGR[maskname][scale] = newmask
+
+def getmask(maskname, scale):
+    maskexistsp = maskname in MGR
+    if maskexistsp:
+        maskexistsp = scale in MGR[maskname]
+    if maskexistsp:
+        return MGR[maskname][scale]
+    else:
+        raise NotImplementedError("Mask %s not created" % maskname)
 
 
 def endofgeneration():

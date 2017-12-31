@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import pygame, variables
 from Animation import Animation
-from graphics import GR, getpic
+from graphics import GR, getpic, addmask, getmask
 
 class Rock():
 
@@ -62,7 +62,10 @@ class Rock():
             self.background_range = pygame.Rect(0, self.y + cs[1] * h + cs[3] * (1 / 3) * h,
                                                 variables.width * 100,
                                                 variables.height * 100)
-        
+
+    def get_mask(self):
+        return getmask(self.animations[0].pics[0], self.draw_scale)
+            
     def make_mask(self, isresetbackgroundrange):
         cs = self.collidesection
         base = getpic(self.animations[0].pics[0], self.draw_scale)
@@ -78,7 +81,7 @@ class Rock():
         maskpic.fill(pygame.Color(0, 0, 0, 0), [cs[0] * w + cs[2] * w, 0, w - (cs[0] * w + cs[2] * w), h])
         # bottom
         maskpic.fill(pygame.Color(0, 0, 0, 0), [0, cs[1] * h + cs[3] * h, w, h - (cs[1] * h + cs[3] * h) + 1])
-        self.mask = pygame.mask.from_surface(maskpic)
+        addmask(pygame.mask.from_surface(maskpic), self.animations[0].pics[0], self.draw_scale)
 
         # by default background range is by the top of the mask, the collision box
         if isresetbackgroundrange:

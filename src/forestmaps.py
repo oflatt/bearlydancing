@@ -29,15 +29,18 @@ outside4.populate_with("greyrock", 40)
 sheeptorocktolerance = 5
 def getrandomrock():
     return random.choice(outside4.terrain)
+
 randrock = getrandomrock()
+
 # returns true if the rock is within the sheeptorocktolerance
 def sheepsizep(rrock):
     # get unscaled pure width and height to compare to the sheep picture
-    rrockw = rrock.animations[0].pics[0]["img"].get_width()
-    rrockh = rrock.animations[0].pics[0]["img"].get_height()
+    rrockw = GR[rrock.animations[0].pics[0]]["img"].get_width()
+    rrockh = GR[rrock.animations[0].pics[0]]["img"].get_height()
     sheepw = GR["sheepstanding"]["img"].get_width()
     sheeph = GR["sheepstanding"]["img"].get_height()
     return abs(rrockw-sheepw) <= sheeptorocktolerance and abs(rrockh-sheeph) <= sheeptorocktolerance
+
 for x in range(3):
     if sheepsizep(randrock):
         break
@@ -45,7 +48,7 @@ for x in range(3):
         # if it does not fit try again
         randrock = getrandomrock()
 
-randrock.animations.append(Animation([GR["sheepstanding"]],1))
+randrock.animations.append(Animation(["sheepstanding"],1))
 randrock.name = "sheeprock"
 
 sheepconversation = conversations.sheepconversation
@@ -61,8 +64,8 @@ outside4.lvrange = [2,3]
 
 # outside3######################################################################################
 rgrassland = graphics.grassland(600, 500, leftpath = False, downpath = True)
-b = rgrassland["w"] / 10
-outsideheight = rgrassland["h"]
+b = GR[rgrassland]["w"] / 10
+outsideheight = GR[rgrassland]["h"]
 outside3 = Map(rgrassland, [])
 outside3.populate_with("greyrock", 4)
 outside3.populate_with("pinetree", 12)
@@ -73,8 +76,8 @@ outside3.lvrange = [1, 2]
 
 # outside2######################################################################################
 rgrassland = graphics.grassland(600, 500, rightpath = False, uppath = True)
-outsideheight = rgrassland["h"]
-b = rgrassland["w"] / 10
+outsideheight = GR[rgrassland]["h"]
+b = GR[rgrassland]["w"] / 10
 outside2 = Map(rgrassland, [])
 outside2.populate_with("pinetree", 22)
 outside2.populate_with("greyrock", 3)
@@ -87,11 +90,11 @@ outside2.lvrange = [1]
 
 # jeremyhome####################################################################################
 rgrassland = graphics.grassland(800, 500)
-b = rgrassland["w"]/10
-hole = Rock(GR["rabbithole"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 1 / 2, 1, 1 / 2])
-jmyman = Rock(GR["jeremy0"], b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 3 / 4, 1, 1 / 4])
+b = GR[rgrassland]["w"]/10
+hole = Rock("rabbithole", b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 1 / 2, 1, 1 / 2])
+jmyman = Rock("jeremy0", b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 3 / 4, 1, 1 / 4])
 jmyman.background_range = hole.background_range.copy()
-dancelionanim = Animation([GR["dancelion0"], GR["dancelion1"]], 3000)
+dancelionanim = Animation(["dancelion0", "dancelion1"], 3000)
 
 jeremyhome = Map(rgrassland, [hole,
                               jmyman,

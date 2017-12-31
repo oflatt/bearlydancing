@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import pygame, variables, maps, stathandeling
-from graphics import GR, getpic
+from graphics import GR, getpic, addmask, getmask
 from Dancer import Dancer
 from Animation import Animation
 from pygame import Rect
@@ -158,16 +158,18 @@ class Player(Dancer):
         self.change_animation()
 
     def collisioncheck(self,xpos, ypos):
+        cmask = getmask("playermask", variables.scaleoffset)
         #checks if the player collides with a rock
         def rockcollisioncheck(arock, x, y):
-            if(arock.mask.overlap(self.mask, [int(x-arock.collidex), int(y-arock.collidey)]) == None):
+            rockmask = arock.get_mask()
+            if(rockmask.overlap(cmask, [int(x-arock.collidex), int(y-arock.collidey)]) == None):
                 return False
             else:
                 return True
         
         iscollision = False
 
-        playermaskrect = self.mask.get_bounding_rects()[0]
+        playermaskrect = cmask.get_bounding_rects()[0]
         m = maps.current_map
         t = m.terrain
         colliderects = m.colliderects
@@ -250,7 +252,7 @@ class Player(Dancer):
         
         #this is to chop off the collision box for only the bottom of honey
         maskpic.fill(pygame.Color(0,0,0,0), [0, 0, maskpic.get_width(), maskpic.get_height()*(26/29)])
-        self.mask = pygame.mask.from_surface(maskpic)
+        addmask(pygame.mask.from_surface(maskpic), "playermask", variables.scaleoffset)
         self.normal_width = maskpic.get_width()
         self.normal_height = maskpic.get_height()
         s = variables.playerspeed * variables.scaleoffset

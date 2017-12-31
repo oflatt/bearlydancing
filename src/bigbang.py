@@ -87,7 +87,7 @@ while not done:
                     conversations.currentconversation.keyrelease(event.key)
             else:
                 menu.onrelease(event.key)
-
+    
     # --- Game Logic
     if (not variables.settings.menuonq):
         if variables.settings.state == "world":
@@ -101,7 +101,6 @@ while not done:
         menu.ontick()
 
     # --- Drawing Code
-
     def draw_world():
         classvar.player.update_drawpos()
         maps.current_map.draw([classvar.player.mapdrawx, classvar.player.mapdrawy])
