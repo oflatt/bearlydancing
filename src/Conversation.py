@@ -35,8 +35,11 @@ class Conversation():
         self.area = [0, 0, 0, 0]  # x, y, width, height in a list (a Rect)
         self.isbutton = True  # true if you have to hit a button to enter
         self.showbutton = True
-        #the number of the story that it is
-        self.part_of_story = "none"
+
+        # conditions for increasing the story
+        # none on both means never
+        self.storytimestalkedtolessthan = None
+        self.storytimestalkedtogreaterthan = None
 
         self.exitteleport = ["same", "same"]
 

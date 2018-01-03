@@ -18,6 +18,7 @@ class Battle():
         
         self.starttime = variables.settings.current_time
         self.enemy = enemy
+        
         # state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
         self.option = 0
@@ -26,8 +27,9 @@ class Battle():
         specs["rules"].extend(self.enemy.beatmaprules)
         self.beatmaps = [randombeatmap.random_beatmap(specs)]
         self.reset_enemy()
-        # if the enemy's level is 0, it activates the tutorial
-        self.tutorialp = self.enemy.lv == 0
+        
+        # if the enemy's level is 0 and there have been no battles, the tutorial is triggered
+        self.tutorialp = self.enemy.lv == 0 and classvar.player.totalbattles == 0
         if self.tutorialp:
             self.tutorialstate = "starting"
             # if it is the tutorial, add two notes for the player to fail on, and change first note to a
@@ -73,6 +75,7 @@ class Battle():
         self.starttime += variables.settings.current_time - self.pausetime
         self.pausetime = 0
         self.beatmaps[self.current_beatmap].unpause()
+        self.reset_enemy()
 
     def new_beatmaps(self):
         self.beatmaps = [randombeatmap.variation_of(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo)]
@@ -85,8 +88,7 @@ class Battle():
             print("should only have one beatmap in the list!")
             self.current_beatmap += 1
         self.beatmaps[self.current_beatmap].reset(self.starttime, False)
-        self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
-        self.enemy.animation.beginning_time = self.starttime
+        self.reset_enemy()
 
     def reset_enemy(self):
         self.enemy.reset()
@@ -122,7 +124,7 @@ class Battle():
             # buttons
             buttontextsize = 1.25
             dancebutton = Button(0, b, "DANCE!", buttontextsize)
-            fleebutton = Button(w, b, "Flee..", buttontextsize)
+            fleebutton = Button(w, b, "Flee", buttontextsize)
             soundbutton = Button(w, b, variables.settings.soundpack, buttontextsize)
             fleebutton.x = w/2 - (fleebutton.tw / 2)
             soundbutton.x = w - soundbutton.tw
@@ -180,7 +182,7 @@ class Battle():
 
             # level up text
             if self.state == "got exp" and stathandeling.explv(self.oldexp) < stathandeling.explv(self.newexp):
-                text = variables.font.render("Honey's dance level increased.", 0, variables.GREEN)
+                text = variables.font.render(variables.settings.bearname + "'s dance level increased.", 0, variables.GREEN)
                 textscaled = sscale(text)
                 variables.screen.blit(textscaled,
                                       [w / 2 - (textscaled.get_width() / 2), h / 3 - textscaled.get_height()])
@@ -342,8 +344,17 @@ class Battle():
         classvar.player.teleport(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
         if self.storypenalty != None:
             classvar.player.storyprogress -= self.storypenalty
+        classvar.player.timeslost += 1
+        classvar.player.totalbattles += 1
+
+    def win(self):
+        classvar.player.totalbattles += 1
+        variables.settings.state = "world"  # finally exit Battle
             
     def onkey(self, key):
+        if(variables.devmode):
+            if(key == pygame.K_DELETE):
+                self.lose()
         if self.state == 'dance':
             if self.tutorialp:
                 if not self.tutorialstate == "first note" or not key in variables.settings.note1keys:
@@ -358,7 +369,7 @@ class Battle():
                 elif self.option == 1:
                     if self.tutorialp:
                         variables.settings.state = "world"
-                        conversations.letsflee.part_of_story = maps.getpartofstory("good job")
+                        conversations.letsflee.storytimestalkedtogreaterthan = -1
                         maps.engage_conversation(conversations.letsflee)
                     else:
                         variables.settings.state = "world"
@@ -385,7 +396,7 @@ class Battle():
             self.animationtime = variables.settings.current_time
             self.oldexp = classvar.player.exp
         elif self.state == "got exp" and key in variables.settings.enterkeys:
-            variables.settings.state = "world"  # finally exit Battle
+            self.win()
 
     def onrelease(self, key):
         releasep = False
@@ -411,8 +422,7 @@ class Battle():
         self.state = "attacking"
         self.oldenemyhealth = self.enemy.health
         self.oldplayerhealth = classvar.player.health
-        self.animationtime = variables.settings \
-            .current_time
+        self.animationtime = variables.settings.current_time
 
         def damageplayer():
             self.newplayerhealth = classvar.player.health - stathandeling.damage(enemylv)

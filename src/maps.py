@@ -11,7 +11,7 @@ from Conversation import Conversation
 from Speak import Speak
 from variables import displayscale
 
-fasttestmodep = True
+fasttestmodep = False
 
 if fasttestmodep:
     from mapsvars import *
@@ -51,13 +51,15 @@ outside1.lvrange = [1, 2]
 outside1c = conversations.secondscene
 outside1c.area = [treerock.x, 0, outsidewidth, outsideheight]
 outside1c.isbutton = False
-outside1c.part_of_story = getpartofstory("greenie")
+outside1c.storyrequirement = [getpartofstory("greenie")]
+outside1c.storytimestalkedtogreaterthan = -1
 outside1c.special_battle = enemies.greenie
 outside1c.special_battle_story_penalty = 1
 
 goodc = conversations.prettygood
 goodc.area = [0,0,outsidewidth,outsideheight]
-goodc.part_of_story = getpartofstory("good job")
+goodc.storyrequirement = [getpartofstory("good job")]
+goodc.storytimestalkedtogreaterthan = -1
 goodc.isbutton = False
 
 conversations.gotoforest.area = [0,0,b/2,b*20]
@@ -105,7 +107,8 @@ letter = Map("backgroundforpaper", [bigpaper,
 letter.playerenabledp = False
 
 conversations.thatracoon.area = [0, 0, b * 10, b * 10]
-conversations.thatracoon.part_of_story = getpartofstory("that racoon")
+conversations.thatracoon.storyrequirement = [getpartofstory("that racoon")]
+conversations.thatracoon.storytimestalkedtogreaterthan = -1
 letter.conversations = [conversations.thatracoon]
 letter.exitareas = [Exit([0, 0, b * 10, b * 10], True, 'honeyhome', 'same', 'same')]
 
@@ -129,7 +132,8 @@ honeyhome = Map("honeyhouseinside",
 
 outofbed = Conversation([], speaksafter = [[],[],[]], switchthisrock = "bed")
 outofbed.area = [0, 0, b*20, b*20]
-outofbed.part_of_story = getpartofstory("bed")
+outofbed.storyrequirement = [getpartofstory("bed")]
+outofbed.storytimestalkedtogreaterthan = len(bed.animations)-3
 outofbed.showbutton = False
 
 eatfromstash = Conversation([],
@@ -308,17 +312,28 @@ def engage_conversation(c):
     variables.settings.backgroundstate = variables.settings.state
     if variables.settings.backgroundstate == "battle":
         classvar.battle.pause()
-    if c.part_of_story == "none":
-        variables.settings.state = "conversation"
-        conversations.currentconversation = c
-    elif c.part_of_story == classvar.player.storyprogress:
-        # don't progress in story unless all the speaks for that conversation are exhausted
-        if not c.speaksafter == None:
-            if c.timestalkedto < len(c.speaksafter):
-                classvar.player.storyprogress -= 1
-        variables.settings.state = "conversation"
-        classvar.player.storyprogress += 1
-        conversations.currentconversation = c
+
+
+    if not (c.storytimestalkedtogreaterthan == None and c.storytimestalkedtolessthan == None):
+        lessthanp = False
+        if c.storytimestalkedtolessthan == None:
+            lessthanp = True
+        else:
+            if c.timestalkedto < c.storytimestalkedtolessthan:
+                lessthanp = True
+
+        greaterthanp = False
+        if c.storytimestalkedtogreaterthan == None:
+            greaterthanp = True
+        else:
+            if c.timestalkedto > c.storytimestalkedtogreaterthan:
+                greaterthanp = True
+
+        if lessthanp and greaterthanp:
+            classvar.player.storyprogress += 1
+        
+    variables.settings.state = "conversation"
+    conversations.currentconversation = c
     current = conversations.currentconversation
 
     if conversations.currentconversation.switchthisrock != None:

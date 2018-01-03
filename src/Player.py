@@ -23,6 +23,8 @@ class Player(Dancer):
         self.lastxupdate = 0
         self.lastyupdate = 0
         self.storyprogress = 0
+        self.timeslost = 0
+        self.totalbattles = 0
 
         #animation
         self.left_animation = Animation(["honeyside3", "honeyside4", "honeyside3", "honeyside4"], 200)

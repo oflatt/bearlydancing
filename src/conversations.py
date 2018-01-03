@@ -31,14 +31,15 @@ monster3 = ["No, Honey, you're a bear.", "We'll settle this with a DANCE-OFF!"]
 ohhoney6 = ["Did TP put you up to this?"]
 monster4 = ["No..."]
 ohhoney7 = ["I knew it."]
-ohhoney8 = ["Wait, how long have you been here?", "What's your name? User? Well it seems like you have an instrument.",
-            "Good thing too, I'm in need of a bard to get me through this dance battle.",
-            "You'll play the tunes, I'll handle the dancing."]
+ohhoney8 = ["Hey, who are you? You've been here the whole time.",
+            "User, is it? You have an instrument.",
+            "Good thing too, because I'm in need of a bard to get me through this dance battle.",
+            "Play the tunes, will you?"]
 
 jeremy = Conversation([Speak("jeremy0", ["Howdey, Honey",
-                                             "Have a random piece of advice.",
-                                             "Better dancers live further away from your home for whatever reason.",
-                                             "If you don't feel ready to continue, just stick around in one area for a while."])],
+                                         "Have a random piece of advice.",
+                                         "Better dancers live further away from your home for whatever reason.",
+                                         "If you don't feel ready to continue, just stick around in one area for a while."])],
                       [Speak("jeremy0", ["Your bard is bad, and you might have to make up for it with your dance level",
                                              "... or give your bard a bit of practice.",
                                              "Now bug off."])])
@@ -51,7 +52,8 @@ secondscene = Conversation([Speak("meangreen0", monster),
                             Speak("honeyside3", ohhoney6),
                             Speak("meangreen0", monster4),
                             Speak("honeyside3", ohhoney7),
-                            Speak("honeyback3", ohhoney8, side="right")])
+                            Speak("honeyback3", ohhoney8, side="right")],
+                           [Speak("honeyback3", ["Here we go again..."])])
 
 dancelionpass = Conversation([Speak("dancelion0",
                                     ["Hey, I'll only let you through if you beat me in a dance battle.",
@@ -125,7 +127,10 @@ prettygood = Conversation([Speak("honeyback3",
                                   "Let's go."])])
 
 letsflee = Conversation([Speak("honeyback3",
-                               ["O-kay then, let's just run away from this one.",
-                                "You better come with me for the next one though."])])
+                               ["We're just going to run?"]),
+                         Speak("honeyback3",
+                               ["Fine, but you better stick around... who knows who will challenge me to a dance battle next."],
+                               "left"),
+                         Speak("meangreen0", ["Coward! I'd chase you but I'm stuck to this tree."], "right")])
 
 currentconversation = letsflee

@@ -79,8 +79,8 @@ class Map():
         rockp = rocktype == "greyrock" or rocktype == "grey rock" or rocktype == "rock"
 
         if rockp:
-            xconstraints = [0, width-(20*pwidth)]
-            yconstraints = [0, height-(30*pwidth)]
+            xconstraints = [0, width-20]
+            yconstraints = [0, height-30]
 
         # this compares unscaled coordinates
         def collidewithonep(xpos, ypos, rock):
@@ -88,7 +88,7 @@ class Map():
             if not rockp:
                 rmask = TREEMASK
                 currentmask = rock.get_mask()
-                overlapp = rmask.overlap(currentmask, (int((xpos-rock.x)/pwidth), int((ypos-rock.y)/pwidth)))
+                overlapp = rmask.overlap(currentmask, [int(xpos-rock.x), int(ypos-rock.y)])
             else:
                 overlapp = False
             #if overlapp:
@@ -230,9 +230,8 @@ class Map():
         if currentexit:
             if currentexit.conversation != None:
                 e = currentexit.conversation
-                if e.part_of_story == "none" or e.part_of_story == classvar.player.storyprogress:
-                    if classvar.player.storyprogress in e.storyrequirement or len(e.storyrequirement) == 0:
-                        currentexit = e
+                if classvar.player.storyprogress in e.storyrequirement or len(e.storyrequirement) == 0:
+                    currentexit = e
 
         return currentexit
 
@@ -257,11 +256,10 @@ class Map():
             p = classvar.player
             if (p.xpos + p.normal_width) >= e.area[0] and p.xpos <= (e.area[0] + e.area[2]) \
                     and (p.ypos + p.normal_height) >= e.area[1] and p.ypos <= (e.area[1] + e.area[3]):
-                # then check if it is part of main storyline
-                if e.part_of_story == "none" or e.part_of_story == classvar.player.storyprogress:
-                    if classvar.player.storyprogress in e.storyrequirement or len(e.storyrequirement) == 0:
-                        currentconversation = e
-                        break
+                # check the storyrequirement
+                if classvar.player.storyprogress in e.storyrequirement or len(e.storyrequirement) == 0:
+                    currentconversation = e
+                    break
         return currentconversation
 
     def checkenemy(self):
