@@ -6,7 +6,7 @@ from variables import displayscale, textsize
 
 class Speak():
 
-    def __init__(self, pic, dialogue, side = None, bottomp = True):
+    def __init__(self, pic, dialogue, side = None, bottomp = True, options = [], special_battle = "none"):
         self.pic = pic
 
         # dialogue is a list of strings, one per line. Writer has to make sure they fit
@@ -21,6 +21,11 @@ class Speak():
         self.releaseexit = False
         self.dialogue_initializedp = False
         self.wraplines()
+
+        # options is a list of text for buttons to be displayed at the end of the speak
+        self.options = options
+        self.current_option = 0
+        self.special_battle = special_battle
 
     def wraplines(self):
         index = 0

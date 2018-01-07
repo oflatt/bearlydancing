@@ -15,8 +15,7 @@ beatmap
 -octaves rule
 
 Sophie:
--make the "bed" file the bed with the covers down, right now it magically gets done
+-rock or sheep!
 -flying chimney!
 -nice looking interaction button to replace circle
 -wardrobe open, "why do I even have dis?"
--rock or sheep!

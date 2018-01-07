@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import variables, classvar, conversations, enemies, graphics, random, pygame
+import variables, classvar, conversations, enemies, graphics, pygame
 from Animation import Animation
 from graphics import scale_pure
 from graphics import GR

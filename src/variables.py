@@ -5,6 +5,7 @@ from Properties import Properties
 
 testsmallp = False
 devmode = True
+newworldeachloadq = False
 
 # Setup
 pygame.mixer.pre_init(22050, -16, 2, 128)
@@ -50,13 +51,12 @@ ORANGE = (255, 255, 0)
 LIGHTYELLOW = (235,227, 92)
 LIGHTBLUE = (66, 206, 244)
 
-#general
+# font
 fontlist = pygame.font.get_fonts()
 fontname = "use default"
 if "orangekidregular" in fontlist:
     fontname = "orangekidregular"
 font = pygame.font.SysFont(fontname, 30)
-newworldeachloadq = False
 
 # map stuff
 # pinetreesused is used to keep track of how many random trees are used
@@ -103,6 +103,7 @@ textsize = height/15
 textbox_height = height*1/4
 lines_in_screen = int(textbox_height/textsize)
 photo_size = width/6
+buttonpadding = int(width/70)
 
 #world
 playerspeed = 0.05

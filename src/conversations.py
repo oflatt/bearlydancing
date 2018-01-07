@@ -133,4 +133,6 @@ letsflee = Conversation([Speak("honeyback3",
                                "left"),
                          Speak("meangreen0", ["Coward! I'd chase you but I'm stuck to this tree."], "right")])
 
+#want2go = Conversation([Speak("meangreen0", ["Want to go again?
+
 currentconversation = letsflee

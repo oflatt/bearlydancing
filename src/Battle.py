@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, copy, conversations
+from ChoiceButtons import ChoiceButtons
 from Button import Button
 from Note import Note
 from play_sound import play_sound
@@ -21,7 +22,6 @@ class Battle():
         
         # state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
-        self.option = 0
         specs = copy.deepcopy(variables.generic_specs)
         specs["lv"] = self.enemy.lv
         specs["rules"].extend(self.enemy.beatmaprules)
@@ -61,7 +61,8 @@ class Battle():
         self.oldexp = 0
 
         # drawing buttons
-        self.buttons = []
+        # extra space around dance to leave space for synth options
+        self.battlechoice = ChoiceButtons(["   DANCE!   ", "Flee", variables.settings.soundpack], variables.height * 13 / 16)
 
         # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
         self.pausetime = 0
@@ -121,22 +122,7 @@ class Battle():
             enemynamescaled = sscale(enemyname)
             variables.screen.blit(enemynamescaled, [w / 2 - (enemynamescaled.get_width() / 2), h / 2])
 
-            # buttons
-            buttontextsize = 1.25
-            dancebutton = Button(0, b, "DANCE!", buttontextsize)
-            fleebutton = Button(w, b, "Flee", buttontextsize)
-            soundbutton = Button(w, b, variables.settings.soundpack, buttontextsize)
-            fleebutton.x = w/2 - (fleebutton.tw / 2)
-            soundbutton.x = w - soundbutton.tw
-
-            if self.option == 0:
-                dancebutton.ison = True
-            elif self.option == 1:
-                fleebutton.ison = True
-            else:
-                soundbutton.ison = True
-            self.buttons = [dancebutton, fleebutton, soundbutton]
-            self.draw_buttons()
+            self.battlechoice.draw()
 
         elif self.state == "lose" or self.state == "win":
             # button
@@ -145,10 +131,8 @@ class Battle():
             else:
                 text = "continue"
             continuebutton = Button(w / 2, b, text, 1.5)
-            continuebutton.ison = True
             continuebutton.iscentered = True
-            self.buttons = [continuebutton]
-            self.draw_buttons()
+            continuebutton.draw(True)
 
             # text
             if self.state == "lose":
@@ -160,10 +144,9 @@ class Battle():
 
         elif self.state == "exp" or self.state == "got exp":
             # continue button
-            continuebutton = Button(w / 2, b, "continue", 1.5)
-            continuebutton.ison = True
-            self.buttons = [continuebutton]
-            self.draw_buttons()
+            continuebutton = Button(w / 2, b, text, 1.5)
+            continuebutton.iscentered = True
+            continuebutton.draw(True)
 
             # text
             text = variables.font.render("EXP", 0, variables.WHITE)
@@ -352,6 +335,11 @@ class Battle():
         variables.settings.state = "world"  # finally exit Battle
             
     def onkey(self, key):
+        def change_soundpack(offset):
+            i = soundpackkeys.index(variables.settings.soundpack)
+            variables.settings.soundpack = soundpackkeys[(i + offset) % len(soundpackkeys)]
+            self.battlechoice.buttons[-1].assign_text(variables.settings.soundpack)
+        
         if(variables.devmode):
             if(key == pygame.K_DELETE):
                 self.lose()
@@ -363,30 +351,27 @@ class Battle():
                 self.beatmaps[self.current_beatmap].onkey(key)
         elif self.state == "choose":
             if key in variables.settings.enterkeys:
-                if self.option == 0:
+                if self.battlechoice.current_option == 0:
                     self.state = "dance"
                     self.beatmaps[self.current_beatmap].reset(self.starttime, True)
-                elif self.option == 1:
-                    if self.tutorialp:
+                elif self.battlechoice.current_option == 1:
+                    if self.enemy.lv == 0:
                         variables.settings.state = "world"
                         conversations.letsflee.storytimestalkedtogreaterthan = -1
                         maps.engage_conversation(conversations.letsflee)
                     else:
                         variables.settings.state = "world"
-                elif self.option == 2:
-                    i = soundpackkeys.index(variables.settings.soundpack)
-                    variables.settings.soundpack = soundpackkeys[(i+1) % len(soundpackkeys)]
+                elif self.battlechoice.current_option == 2:
+                    change_soundpack(1)
             else:
                 if key in variables.settings.leftkeys:
-                    self.option = (self.option - 1) % 3
+                    self.battlechoice.previousoption()
                 elif key in variables.settings.rightkeys:
-                    self.option = (self.option +1) %3
-                elif key in variables.settings.upkeys and self.option == 2:
-                    i = soundpackkeys.index(variables.settings.soundpack)
-                    variables.settings.soundpack = soundpackkeys[(i - 1) % len(soundpackkeys)]
-                elif key in variables.settings.downkeys and self.option == 2:
-                    i = soundpackkeys.index(variables.settings.soundpack)
-                    variables.settings.soundpack = soundpackkeys[(i + 1) % len(soundpackkeys)]
+                    self.battlechoice.nextoption()
+                elif key in variables.settings.upkeys and self.battlechoice.current_option == 2:
+                    change_soundpack(-1)
+                elif key in variables.settings.downkeys and self.battlechoice.current_option == 2:
+                    change_soundpack(1)
 
         elif self.state == "lose" and key in variables.settings.enterkeys:
             self.lose()
@@ -441,7 +426,3 @@ class Battle():
             self.isplayernext = True
         damageenemy()
         damageplayer()
-
-    def draw_buttons(self):
-        for x in range(0, len(self.buttons)):
-            self.buttons[x].draw()
