@@ -1,5 +1,6 @@
 #Oliver Flatt
-import variables, pygame, graphics
+import variables, pygame
+from graphics import scale_pure, getTextPic
 
 class Button:
     iscentered = False
@@ -7,16 +8,16 @@ class Button:
     def __init__(self, x, y, text, size):
         self.x = x
         self.y = y
-        self.size = size  # size multiplies the default size
+        self.size = size  # size is a height of the text
 
         self.assign_text(text)
+        textpic = getTextPic(self.text, size)
         
-        self.width = self.textpic.get_width() + variables.buttonpadding
-        self.height = self.textpic.get_height()
+        self.width = textpic.get_width() + variables.buttonpadding
+        self.height = textpic.get_height()
 
     def assign_text(self, text):
         self.text = text
-        self.textpic = graphics.sscale_customfactor(variables.font.render(self.text, 0, variables.BLACK), self.size)
         
 
     def draw(self, ison = False):
@@ -30,9 +31,10 @@ class Button:
         else:
             xpos = self.x
             ypos = self.y
+        textpic = getTextPic(self.text, self.size)
 
-        textpadding = (self.width - self.textpic.get_width()) / 2
+        textpadding = (self.width - textpic.get_width()) / 2
         
         pygame.draw.rect(variables.screen, rectcolor, [xpos, ypos, self.width, self.height])
         
-        variables.screen.blit(self.textpic, [xpos + textpadding, ypos])
+        variables.screen.blit(textpic, [xpos + textpadding, ypos])

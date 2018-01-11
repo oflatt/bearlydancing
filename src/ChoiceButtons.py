@@ -2,7 +2,7 @@ import variables
 from Button import Button
 
 class ChoiceButtons():
-    def __init__(self, options, ypos, buttontextsize = 1.25):
+    def __init__(self, options, ypos, buttontextsize = variables.battlebuttontextheight):
         # a list of strings
         self.options = options
         self.current_option = 0
@@ -10,7 +10,7 @@ class ChoiceButtons():
         self.maxwidth = 0
 
         for s in options:
-            newb = Button(0, ypos, s, buttontextsize)
+            newb = Button(0, ypos, s, variables.height/15)
             self.buttons.append(newb)
             if newb.width > self.maxwidth:
                 self.maxwidth = newb.width

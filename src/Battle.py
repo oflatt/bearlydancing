@@ -62,7 +62,9 @@ class Battle():
 
         # drawing buttons
         # extra space around dance to leave space for synth options
-        self.battlechoice = ChoiceButtons(["   DANCE!   ", "Flee", variables.settings.soundpack], variables.height * 13 / 16)
+        self.battlechoice = ChoiceButtons(["   DANCE!   ", "Flee", variables.settings.soundpack],
+                                          variables.height * 13 / 16,
+                                          variables.battlebuttontextheight)
 
         # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
         self.pausetime = 0
@@ -130,7 +132,7 @@ class Battle():
                 text = "go home..."
             else:
                 text = "continue"
-            continuebutton = Button(w / 2, b, text, 1.5)
+            continuebutton = Button(w / 2, b, text, variables.battlebuttontextheight)
             continuebutton.iscentered = True
             continuebutton.draw(True)
 
@@ -144,7 +146,7 @@ class Battle():
 
         elif self.state == "exp" or self.state == "got exp":
             # continue button
-            continuebutton = Button(w / 2, b, text, 1.5)
+            continuebutton = Button(w / 2, b, text, variables.battlebuttontextheight)
             continuebutton.iscentered = True
             continuebutton.draw(True)
 

@@ -6,6 +6,7 @@ from Properties import Properties
 testsmallp = False
 devmode = True
 newworldeachloadq = False
+fasttestmodep = True
 
 # Setup
 pygame.mixer.pre_init(22050, -16, 2, 128)
@@ -74,6 +75,7 @@ TREEHEIGHT = 200
 TREECOLLIDESECTION = [0, 18.5 / 20, 1, 1.5 / 20]
 
 # battle
+battlebuttontextheight = height/10
 healthanimationspeed = 2000# time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
 dancespeed = height/8 * 0.001# factor for displaying notes

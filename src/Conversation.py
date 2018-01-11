@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # Oliver Flatt works on Classes
-import variables, classvar, stathandeling
-from Battle import Battle
+import variables, classvar
+from Speak import initiatebattle
 from graphics import getpicbywidth
 
 
@@ -96,11 +96,7 @@ class Conversation():
                 variables.settings.state = variables.settings.backgroundstate
                 classvar.battle.unpause()
         else:
-            variables.settings.state = "battle"
-            classvar.player.change_of_state()
-            self.special_battle.health = stathandeling.max_health(self.special_battle.lv)
-            classvar.battle = Battle(self.special_battle)
-            classvar.battle.storypenalty = self.special_battle_story_penalty
+            initiatebattle(self.special_battle, self.special_battle_story_penalty)
 
         self.timestalkedto += 1
         self.progress = 0

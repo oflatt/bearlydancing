@@ -79,6 +79,8 @@ MISStext = pygame.transform.rotate(sscale_customfactor(variables.font.render("MI
 
 # GR is the master dictionary of all image assets
 GR = {}
+# TextGR is a dictionary of dictionaries for scaled text images and also has another dictionary layer for color
+TextGR = {}
 # SGR is a dictionary of dictionaries. The inner dictionaries contain scales as the keys and images as the values
 # the purpose of SGR is to keep a list of all the scaled pictures for use
 SGR = {}
@@ -98,6 +100,16 @@ def addsurfaceGR(s, name, dimensions = None):
     if dimensions == None:
         dimensions = [s.get_width(), s.get_height()]
     GR[name] = {"img":s,"w":dimensions[0],"h":dimensions[1]}
+
+def getTextPic(text, textheight, color = variables.BLACK):
+    if not text in TextGR:
+        TextGR[text] = {}
+    if not textheight in TextGR[text]:
+        TextGR[text][textheight] = {}
+    if not color in TextGR[text][textheight]:
+        TextGR[text][textheight][color] = scale_pure(variables.font.render(text, 0, color), textheight, "height")
+        
+    return TextGR[text][textheight][color]
 
 for x in picnames:
     addtoGR(x)
@@ -125,7 +137,7 @@ def getpic(picname, scale = None):
             scaledimage = GR[picname]
             scaledimage = pygame.transform.scale(scaledimage["img"], [int(scaledimage["w"]*scale), int(scaledimage["h"]*scale)])
             if picexistsp:
-                SGR[picname] = {scale:scaledimage}
+                SGR[picname][scale] = scaledimage
             else:
                 SGR[picname] = {}
                 SGR[picname][scale] = scaledimage

@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # Spirit and Jacob work on script
 import variables, pygame
-from graphics import GR
 from Conversation import Conversation
 from Speak import Speak
 
@@ -41,8 +40,8 @@ jeremy = Conversation([Speak("jeremy0", ["Howdey, Honey",
                                          "Better dancers live further away from your home for whatever reason.",
                                          "If you don't feel ready to continue, just stick around in one area for a while."])],
                       [Speak("jeremy0", ["Your bard is bad, and you might have to make up for it with your dance level",
-                                             "... or give your bard a bit of practice.",
-                                             "Now bug off."])])
+                                         "... or give your bard a bit of practice.",
+                                         "Now bug off."])])
 
 secondscene = Conversation([Speak("meangreen0", monster),
                             Speak("honeyside3", ohhoney4),
@@ -133,6 +132,7 @@ letsflee = Conversation([Speak("honeyback3",
                                "left"),
                          Speak("meangreen0", ["Coward! I'd chase you but I'm stuck to this tree."], "right")])
 
-#want2go = Conversation([Speak("meangreen0", ["Want to go again?
+want2gospeak = Speak("meangreen0", ["Want to have a go?"], options = ["yes", "no"])
+want2go = Conversation([want2gospeak])
 
 currentconversation = letsflee

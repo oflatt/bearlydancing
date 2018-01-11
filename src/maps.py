@@ -9,9 +9,7 @@ from Exit import Exit
 from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
-from variables import displayscale
-
-fasttestmodep = False
+from variables import displayscale, fasttestmodep
 
 if fasttestmodep:
     from mapsvars import *
@@ -53,6 +51,8 @@ outside1c.area = [treerock.x, 0, outsidewidth, outsideheight]
 outside1c.isbutton = False
 outside1c.storyrequirement = [getpartofstory("greenie")]
 outside1c.storytimestalkedtogreaterthan = -1
+# for tutorial, 0
+enemies.greenie.lv = 0
 outside1c.special_battle = enemies.greenie
 outside1c.special_battle_story_penalty = 1
 
@@ -67,7 +67,12 @@ conversations.gotoforest.isbutton = False
 conversations.gotoforest.exitteleport = [b/2 + honeyw/4, "same"]
 conversations.gotoforest.storyrequirement = [getpartofstory("greenie")]
 
-outside1.conversations = [outside1c, conversations.gotoforest, goodc]
+conversations.want2go.area = [meangreenrock.x - 5, meangreenrock.y - 5, meangreenrock.w+10, meangreenrock.h+10]
+enemies.greenie.lv = 1
+conversations.want2gospeak.special_battle = enemies.greenie
+conversations.want2go.storyrequirement = [getpartofstory("forest")]
+
+outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversations.want2go]
 
 # letter########################################################################################
 paperscale = int((variables.height/GR["paper"]["h"])/(variables.displayscale))
