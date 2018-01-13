@@ -28,7 +28,7 @@ if testsmallp:
     
 hh = height/2
 hw = width/2
-flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
+flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
 screen = pygame.display.set_mode(mode, flags)
 #screen = pygame.Surface([height, width])
 
@@ -132,7 +132,7 @@ def save_properties():
         pickle.dump(properties, f)
 
 def draw_loading_text(string):
-    text = pygame.transform.scale2x(font.render(string, 0, WHITE))
+    text = pygame.transform.scale2x(font.render(string, 0, WHITE).convert())
     xpos = int((width / 2) - (text.get_width() / 2))
     ypos = int((height / 2) - text.get_height() - height/10)
     screen.fill(BLACK, Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height()*2))
@@ -152,7 +152,7 @@ def draw_progress_bar():
     if not estimated == None:
         percent_complete = numused / estimated
 
-        progresstext = pygame.transform.scale2x(font.render(str(numused) + "/" + str(estimated), 0, WHITE))
+        progresstext = pygame.transform.scale2x(font.render(str(numused) + "/" + str(estimated), 0, WHITE).convert())
 
         texty = int(height/2 + height/5)
         

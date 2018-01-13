@@ -2,8 +2,8 @@ Bearly Dancing List
 
 -not load all maps when loading in maps from save, merge getmask and makemask so that error does not occur
      - make conversations constants that are deepcopied, store somewhere else
+-dirtyrects
 -make saving conversations work- save things like timestalkedto separately from the conversations
--can talk to meanie and play him again
 -adjust difficulty, fix the beatmap generator and add an offset selection
 -expand the map!
 -more complex asthetic background grass

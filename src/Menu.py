@@ -1,7 +1,7 @@
 import graphics, variables, pygame, enemies, classvar, maps, random
 from pygame import Rect
 from classvar import player
-from graphics import getpicbyheight
+from graphics import getpicbyheight, getTextPic
 
 textsize = variables.height/10
 
@@ -12,29 +12,16 @@ class Menu():
         self.state = "main"
         self.options = ["resume", "save", "controls", "exit"]
         self.mainmenuoptions = ["play", "controls", "exit"]
-        self.optionpics = []
-        self.mainmenuoptionpics = []
         self.textxoffset = 0
         self.textyspace = 0
-        self.namepics = []
 
         self.message = None
         self.messagetime = 0
         
-        for o in self.mainmenuoptions:
-            textpic = graphics.scale_pure(variables.font.render(o, 0, variables.WHITE), textsize)
-            self.mainmenuoptionpics.append(textpic)
-        for o in self.options:
-            textpic = graphics.scale_pure(variables.font.render(o, 0, variables.WHITE), textsize)
-            self.optionpics.append(textpic)
-        nameprompts = ["Your name:", "The sleeping bear's name:"]
-        self.namepics = []
-        for p in nameprompts:
-            textpic = graphics.scale_pure(variables.font.render(p, 0, variables.BLACK), textsize)
-            self.namepics.append(textpic)
-
+        self.nameprompts = ["Your name:", "The sleeping bear's name:"]
+        
         self.textyspace = variables.font.get_linesize()*variables.height*0.003
-        self.textxoffset = self.optionpics[0].get_width() / 6
+        self.textxoffset = getTextPic(self.options[0], textsize, variables.WHITE).get_width() / 6
         self.extrabuttonwidth = self.textxoffset / 4
         self.reset()
 
@@ -89,7 +76,7 @@ class Menu():
         extrabuttonwidth = self.extrabuttonwidth
 
         if self.message != None:
-            mpic = variables.font.render(self.message, 0, variables.WHITE)
+            mpic = variables.font.render(self.message, 0, variables.WHITE).convert()
             mpic = graphics.scale_pure(mpic, textsize)
             mx = variables.width/2-mpic.get_width()/2
             my = variables.height/2-mpic.get_height()/2
@@ -99,9 +86,16 @@ class Menu():
                                                         mpic.get_height()))
             variables.screen.blit(mpic, [mx, my])
         
-        opics = self.optionpics
+        opics = []
+        
         if self.mainmenup:
-            opics = self.mainmenuoptionpics
+            for o in self.mainmenuoptions:
+                textpic = getTextPic(o, textsize, variables.WHITE)
+                opics.append(textpic)
+        else:
+            for o in self.options:
+                textpic = getTextPic(o, textsize, variables.WHITE)
+                opics.append(textpic)
             
         xoffset = self.textxoffset
         
@@ -132,13 +126,13 @@ class Menu():
     def drawname(self):
         extrabuttonwidth = self.extrabuttonwidth
         
-        textpic = self.namepics[self.option]
-        typepic = graphics.scale_pure(variables.font.render(self.namestring, 0, variables.BLACK), textsize, "height")
+        textpic = getTextPic(self.nameprompts[self.option], textsize, variables.WHITE)
+        typepic = graphics.scale_pure(variables.font.render(self.namestring, 0, variables.BLACK).convert(), textsize, "height")
         variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.height/2 - textpic.get_height()*1.5])
         variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.height/2 - textpic.get_height()/2])
 
         if self.message != None:
-            mpic = variables.font.render(self.message, 0, variables.WHITE)
+            mpic = variables.font.render(self.message, 0, variables.WHITE).convert()
             mpic = graphics.scale_pure(mpic, textsize, "height")
             mx = variables.width/2-mpic.get_width()/2
             my = variables.height/2+mpic.get_height()
@@ -185,7 +179,7 @@ class Menu():
                     
                 self.namestring = ""
                 self.option += 1
-                if self.option >= len(self.namepics):
+                if self.option >= len(self.nameprompts):
                     self.mainmenup = False
                     self.resume()
         elif key in [pygame.K_LSHIFT, pygame.K_RSHIFT]:
