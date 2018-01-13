@@ -1,18 +1,18 @@
-Bearly Dancing List
+Bearly Dancing To-Do List
 
--not load all maps when loading in maps from save, merge getmask and makemask so that error does not occur
-     - make conversations constants that are deepcopied, store somewhere else
--dirtyrects
+-make conversations constants that are deepcopied, store somewhere else, current_conversation should be a string
+-dirtyrects for battle
 -make saving conversations work- save things like timestalkedto separately from the conversations
 -adjust difficulty, fix the beatmap generator and add an offset selection
 -expand the map!
 -more complex asthetic background grass
 -write some tests for once
 -flying chimney once sophie makes it
--load own sounds using the bowl pianoputer thing
+-load own sounds using the bowl pianoputer as example
 -controls in menu
+-map objects and loading more safely, versioning
 
-beatmap
+beatmap generator
 -repeatwithvariation, switch notes, offset by a beat
 -triplet chord mode
 -octaves rule

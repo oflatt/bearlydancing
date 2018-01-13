@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import pygame, variables, maps, stathandeling
-from graphics import GR, getpic, addmask, getmask
+from graphics import GR, getpic, getmask
 from Dancer import Dancer
 from Animation import Animation
 from pygame import Rect
@@ -38,6 +38,8 @@ class Player(Dancer):
 
         self.normal_width = GR[self.right_animation.pics[1]]["w"]
         self.normal_height = GR[self.right_animation.pics[1]]["h"]
+        self.collidesection = (0, self.normal_height * (26/29), self.normal_width, self.normal_height/2)
+        
         
 
     def teleport(self, x, y):
@@ -166,7 +168,7 @@ class Player(Dancer):
         self.change_animation()
 
     def collisioncheck(self,xpos, ypos):
-        cmask = getmask("playermask")
+        cmask = getmask(self.right_animation.pics[1], self.collidesection)
         #checks if the player collides with a rock
         def rockcollisioncheck(arock, x, y):
             rockmask = arock.get_mask()
@@ -255,12 +257,7 @@ class Player(Dancer):
         return getpic(c, variables.compscale)
 
     def new_scale_offset(self):
-        c = self.right_animation.pics[1]
-        maskpic = getpic(c).copy()
-        
-        #this is to chop off the collision box for only the bottom of honey
-        maskpic.fill(pygame.Color(0,0,0,0), [0, 0, maskpic.get_width(), maskpic.get_height()*(26/29)])
-        addmask(pygame.mask.from_surface(maskpic), "playermask")
+        pass
 
         
     def ismoving(self):

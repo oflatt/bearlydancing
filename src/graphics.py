@@ -151,19 +151,31 @@ def getpicbywidth(picname, width):
     scale = width/GR[picname]["w"]
     return getpic(picname, scale)
 
-def addmask(newmask, maskname, scale = 1):
+# maskname refers to a pic in GR and collidesection is a tuple x y width height coordinates for where the mask is taken from
+def getmask(maskname, collidesection = None):
     if not maskname in MGR:
         MGR[maskname] = {}
-    MGR[maskname][scale] = newmask
+    # if we need to make a new mask
+    if not collidesection in MGR[maskname]:
+        maskpic = getpic(maskname).copy()
+        w = maskpic.get_width()
+        h = maskpic.get_height()
+        cs = collidesection
+        if cs != None:
+            # fill all but the collide section
+            # top
+            maskpic.fill(pygame.Color(0, 0, 0, 0), [0, 0, w, cs[1]])
+            # left
+            maskpic.fill(pygame.Color(0, 0, 0, 0), [0, 0, cs[0], h])
+            # right
+            maskpic.fill(pygame.Color(0, 0, 0, 0), [cs[0] + cs[2], 0, w - (cs[0] + cs[2]), h])
+            # bottom
+            maskpic.fill(pygame.Color(0, 0, 0, 0), [0, cs[1] + cs[3], w, h - (cs[1] + cs[3]) + 1])
 
-def getmask(maskname, scale=1):
-    maskexistsp = maskname in MGR
-    if maskexistsp:
-        maskexistsp = scale in MGR[maskname]
-    if maskexistsp:
-        return MGR[maskname][scale]
-    else:
-        raise NotImplementedError("Mask %s not created" % maskname)
+        MGR[maskname][collidesection] = pygame.mask.from_surface(maskpic)
+
+    
+    return MGR[maskname][collidesection]
 
 
 def endofgeneration():
