@@ -19,6 +19,8 @@ class Battle():
         
         self.starttime = variables.settings.current_time
         self.enemy = enemy
+        # offset enemy lv by difficulty
+        self.enemy.lv += variables.settings.difficulty
         
         # state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
@@ -29,7 +31,7 @@ class Battle():
         self.reset_enemy()
         
         # if the enemy's level is 0 and there have been no battles, the tutorial is triggered
-        self.tutorialp = self.enemy.lv == 0 and classvar.player.totalbattles == 0
+        self.tutorialp = self.enemy.lv - variables.settings.difficulty == 0 and classvar.player.totalbattles == 0
         if self.tutorialp:
             self.tutorialstate = "starting"
             # if it is the tutorial, add two notes for the player to fail on, and change first note to a
@@ -95,6 +97,7 @@ class Battle():
 
     def reset_enemy(self):
         self.enemy.reset()
+        self.enemy.sethealth()
         self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
         self.enemy.animation.beginning_time = self.starttime
 
@@ -127,6 +130,7 @@ class Battle():
             self.battlechoice.draw()
 
         elif self.state == "lose" or self.state == "win":
+            text = None
             # button
             if self.state == "lose":
                 text = "go home..."
@@ -357,7 +361,7 @@ class Battle():
                     self.state = "dance"
                     self.beatmaps[self.current_beatmap].reset(self.starttime, True)
                 elif self.battlechoice.current_option == 1:
-                    if self.enemy.lv == 0:
+                    if self.enemy.lv - variables.settings.difficulty == 0:
                         variables.settings.state = "world"
                         conversations.letsflee.storytimestalkedtogreaterthan = -1
                         maps.engage_conversation(conversations.letsflee)

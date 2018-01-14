@@ -63,7 +63,6 @@ def shorten_doubles(l):
 
 
 def movednotes(old_notes, movelength):
-    print("moveem")
     l = copy.deepcopy(old_notes)
 
     # find the max and min values
@@ -75,7 +74,7 @@ def movednotes(old_notes, movelength):
         if n.value < minval:
             minval = n.value
 
-    print(str(maxval) + "  " + str(minval) + "  " + str(movelength))
+    #print(str(maxval) + "  " + str(minval) + "  " + str(movelength))
     if outsiderangeq(maxval + 1) and outsiderangeq(minval - 1):
         return l
     elif outsiderangeq(maxval + movelength) or outsiderangeq(minval + movelength):
@@ -89,7 +88,7 @@ def movednotes(old_notes, movelength):
 # returns a dictionary with timetoadd and
 def repitition(timetoadd, movelength, listofnotes, repeatlength, specs):
     l = listofnotes
-    print("timetoadd: " + str(timetoadd) + " movelength: " + str(movelength))
+    #print("timetoadd: " + str(timetoadd) + " movelength: " + str(movelength))
     # add on the last repeatlength notes again, varied
     notestoadd = l[-repeatlength:len(l)]
     # with certain rules we want to call variation of notes on the list
@@ -188,9 +187,10 @@ def random_beatmap(specs):
     tempo = (1200 * 3) / ((lv / 3) + 3.5)
     l = shorten_doubles(l)
 
-    print("output of:")
-    print(specs["rules"])
-    printnotelist(l)
+    if variables.devmode:
+        print("output of:")
+        print(specs["rules"])
+        printnotelist(l)
     return Beatmap(tempo, l)
 
 
@@ -323,14 +323,14 @@ def alternating_value(rv, depth, specs, l):
     lastv = random_last(0, l).value
 
     def not_alternating():
-        print("non")
+        #print("non")
         distance_away = 0
         if myrand(1):
             distance_away = randint(3, 5)
         elif myrand(1):
             distance_away = randint(4, 6)
         elif myrand(1):
-            print('far')
+         #   print('far')
             distance_away = randint(1, 7)
 
         if myrand(1):
@@ -342,7 +342,6 @@ def alternating_value(rv, depth, specs, l):
             else:
                 return rv + distance_away
         else:
-            print('lerandom')
             return rv
 
     if depth > 1:
@@ -351,17 +350,14 @@ def alternating_value(rv, depth, specs, l):
         if myrand(4) and lastv != secondv:
             # half chance to pick same secondv note
             if myrand(1):
-                print('same')
                 value = secondv
             # otherwise pick a note close to it
             else:
                 # within one
                 if myrand(3):
-                    print("within 1")
                     value = secondv + random.choice([1, -1])
                 # otherwise within 2
                 else:
-                    print('within 2')
                     value = secondv + random.choice([1, 2, -1, -2])
         else:
             value = not_alternating()

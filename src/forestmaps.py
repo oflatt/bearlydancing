@@ -8,6 +8,7 @@ from Exit import Exit
 from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
+from random import randint
 
 from mapsvars import *
 
@@ -21,8 +22,37 @@ outside5.exitareas = [Exit("left", False, "outside3", "right", "same"),
                       Exit("bottom", False, "outside4", "same", "top")]
 
 # outside4/rockorsheep##########################################################################
-rgrassland = graphics.grassland(800, 500, leftpath = False, rightpath = False, uppath = True)
-outside4 = Map(rgrassland, [])
+outside4width = 500
+outside4height = 800
+rgrassland = graphics.grassland(outside4height, outside4width, leftpath = False, rightpath = False, uppath = True)
+
+def make_rock_or_sheep_rocks():
+    bigx = int(outside4width/2) - randint(20, 40)
+    rocklist = []
+    def addgroup(number, offset, xpos):
+        y = outside4height - 50 + randint(0, 10)
+        x = xpos
+        for i in range(number):
+            sheepnum = i + offset
+            rockname = "rockorsheep"
+            if sheepnum < 10:
+                rockname = rockname + "0" + str(sheepnum)
+            else:
+                rockname = rockname + str(sheepnum)
+                
+            rocklist.append(Rock(rockname, xpos, y, [0,0,1,1]))
+            x += randint(30, 40)
+            y += randint(-3, 3)
+
+    addgroup(4, 0, bigx)
+    bigx += 30
+    addgroup(2, 4, bigx)
+    bigx += 30
+    addgroup(6, 6, bigx)
+    return rocklist
+    
+        
+outside4 = Map(rgrassland, [Rock("rockorsheep00", 220, 700, [0,0,1,1])])
 outside4.populate_with("greyrock", 40)
 
 # this is how many pixels away each dimension of the rock has to be to the sheep to work
@@ -50,6 +80,8 @@ for x in range(3):
 
 randrock.animations.append(Animation(["sheepstanding"],1))
 randrock.name = "sheeprock"
+
+outside4.terrain.extend(make_rock_or_sheep_rocks())
 
 sheepconversation = conversations.sheepconversation
 sheepconversation.area = [randrock.x, randrock.y, randrock.w, randrock.h]

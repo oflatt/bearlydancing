@@ -1,9 +1,33 @@
-import graphics, variables, pygame, enemies, classvar, maps, random
+import graphics, variables, pygame, enemies, classvar, maps, random, stathandeling
 from pygame import Rect
 from classvar import player
 from graphics import getpicbyheight, getTextPic
 
 textsize = variables.height/10
+
+def keytonum(key):
+    numentered = None
+    if key == pygame.K_0 or key == pygame.K_KP0:
+        numentered = 0
+    elif key == pygame.K_1 or key == pygame.K_KP1:
+        numentered = 1
+    elif key == pygame.K_2 or key == pygame.K_KP2:
+        numentered = 2
+    elif key == pygame.K_3 or key == pygame.K_KP3:
+        numentered = 3
+    elif key == pygame.K_4 or key == pygame.K_KP4:
+        numentered = 4
+    elif key == pygame.K_5 or key == pygame.K_KP5:
+        numentered = 5
+    elif key == pygame.K_6 or key == pygame.K_KP6:
+        numentered = 6
+    elif key == pygame.K_7 or key == pygame.K_KP7:
+        numentered = 7
+    elif key == pygame.K_8 or key == pygame.K_KP8:
+        numentered = 8
+    elif key == pygame.K_9 or key == pygame.K_KP9:
+        numentered = 9
+    return numentered
 
 class Menu():
     
@@ -18,7 +42,8 @@ class Menu():
         self.message = None
         self.messagetime = 0
         
-        self.nameprompts = ["Your name:", "The sleeping bear's name:"]
+        self.nameprompts = ["Your name:", "The sleeping bear's name:", "Increase difficulty of game by:"]
+        self.tempdifficulty = 0
         
         self.textyspace = variables.font.get_linesize()*variables.height*0.003
         self.textxoffset = getTextPic(self.options[0], textsize, variables.WHITE).get_width() / 6
@@ -127,7 +152,12 @@ class Menu():
         extrabuttonwidth = self.extrabuttonwidth
         
         textpic = getTextPic(self.nameprompts[self.option], textsize, variables.WHITE)
-        typepic = graphics.scale_pure(variables.font.render(self.namestring, 0, variables.BLACK).convert(), textsize, "height")
+        
+        typestring = self.namestring
+        if self.option == 2:
+            typestring = str(self.tempdifficulty)
+            
+        typepic = graphics.scale_pure(variables.font.render(typestring, 0, variables.BLACK).convert(), textsize, "height")
         variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.height/2 - textpic.get_height()*1.5])
         variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.height/2 - textpic.get_height()/2])
 
@@ -163,7 +193,7 @@ class Menu():
 
     def onkeyname(self, key):
         if key in variables.settings.enterkeys and key != pygame.K_SPACE:
-            if len(self.namestring) != 0:
+            if len(self.namestring) != 0 or self.option>1:
                 # self.namestring = self.namestring[:1].upper() + self.namestring[1:]
                 if self.option == 0:
                     variables.settings.username = self.namestring
@@ -173,8 +203,11 @@ class Menu():
                         self.setmessage("hey that's me!")
                     elif variables.settings.username.lower() == "sophie" or variables.settings.username.lower() == "sophia":
                         self.setmessage("the best sister there is")
-                else:
+                elif self.option == 1:
                     variables.settings.bearname = self.namestring
+                else:
+                    variables.settings.difficulty = self.tempdifficulty
+                    classvar.player.lv = stathandeling.lvexp(self.tempdifficulty)
 
                     
                 self.namestring = ""
@@ -182,19 +215,35 @@ class Menu():
                 if self.option >= len(self.nameprompts):
                     self.mainmenup = False
                     self.resume()
+                    
         elif key in [pygame.K_LSHIFT, pygame.K_RSHIFT]:
             self.shifton = True
+            
         elif key in [pygame.K_BACKSPACE]:
             self.namestring = self.namestring[:-1]
+            self.tempdifficulty = int(self.tempdifficulty/10)
             self.backspaceon = True
             self.backspacetime = variables.settings.current_time
-        elif len(self.namestring) < 20 and not key in variables.settings.escapekeys:
+        elif len(self.namestring) < 20 and not key in variables.settings.escapekeys and self.option <2:
             toadd = pygame.key.name(key)
             if toadd == "space":
                 toadd = " "
             elif self.shifton:
                 toadd = toadd.upper()
             self.namestring = self.namestring + toadd
+        elif self.option == 2:
+            numentered = keytonum(key)
+            if not numentered == None:
+                if self.tempdifficulty == 0:
+                    self.tempdifficulty = numentered
+                else:
+                    self.tempdifficulty = self.tempdifficulty * 10 + numentered
+            elif key in variables.settings.upkeys:
+                self.tempdifficulty += 1
+            elif key in variables.settings.downkeys and self.tempdifficulty > 0:
+                self.tempdifficulty -= 1
+            if self.tempdifficulty > variables.maxdifficulty:
+                self.tempdifficulty = variables.maxdifficulty
         
 
     def onkeymain(self, key):

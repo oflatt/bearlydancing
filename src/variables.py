@@ -83,6 +83,7 @@ dancespeed = height/8 * 0.001# factor for displaying notes
 padypos = height*(13/16)
 
 # lv and rules are added later
+maxdifficulty = 200
 generic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : []}
 melodic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : ['melodic']}
 maxvalue = 14

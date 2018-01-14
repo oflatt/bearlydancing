@@ -1,7 +1,8 @@
 Bearly Dancing To-Do List
 
 -dirtyrects for battle
--adjust difficulty, fix the beatmap generator and add an offset selection
+-adjust difficulty, fix the beatmap generator
+-notes should come down faster at higher speeds
 -make animations sync up with beat again
 -expand the map!
 -more complex asthetic background grass

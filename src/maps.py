@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import variables, classvar, conversations, enemies, graphics, pygame
+import variables, classvar, conversations, enemies, graphics, pygame, copy
 from Animation import Animation
 from graphics import scale_pure
 from graphics import GR
@@ -53,7 +53,7 @@ outside1c.storyrequirement = [getpartofstory("greenie")]
 outside1c.storytimestalkedtogreaterthan = -1
 # for tutorial, 0
 enemies.greenie.lv = 0
-outside1c.special_battle = enemies.greenie
+outside1c.special_battle = copy.copy(enemies.greenie)
 outside1c.special_battle_story_penalty = 1
 
 goodc = conversations.prettygood
