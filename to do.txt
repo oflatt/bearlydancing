@@ -1,9 +1,8 @@
 Bearly Dancing To-Do List
 
--make conversations constants that are deepcopied, store somewhere else, current_conversation should be a string
 -dirtyrects for battle
--make saving conversations work- save things like timestalkedto separately from the conversations
 -adjust difficulty, fix the beatmap generator and add an offset selection
+-make animations sync up with beat again
 -expand the map!
 -more complex asthetic background grass
 -write some tests for once

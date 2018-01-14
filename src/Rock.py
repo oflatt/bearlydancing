@@ -44,10 +44,13 @@ class Rock():
         if self.collidesection == None:
             self.collidesection = [0, 0, 0, 0]
         else:
+            self.collidesection = self.collidesection.copy()
             self.collidesection[0] *= self.w
             self.collidesection[1] *= self.h
             self.collidesection[2] *= self.w
             self.collidesection[3] *= self.h
+        for i in range(len(self.collidesection)):
+            self.collidesection[i] = int(self.collidesection[i])
         self.collidesection = tuple(self.collidesection)
         self.set_backgroundrange()
 
@@ -66,12 +69,10 @@ class Rock():
     def set_backgroundrange(self):
         cs = self.collidesection
         h = GR[self.animations[0].pics[0]]["h"]
-        if cs == [0, 0, 1, 1]:
+        if cs == (0, 0, self.w, self.h):
             self.background_range = pygame.Rect(0, self.y, 9999999, 9999999)
         else:
-            self.background_range = pygame.Rect(0, self.y + cs[1] + cs[3] * (1 / 3),
-                                                variables.width * 100,
-                                                variables.height * 100)
+            self.background_range = pygame.Rect(0, int(self.y + cs[1] + cs[3] * (1 / 3)), 9999999, 9999999)
 
     def get_mask(self):
         return getmask(self.animations[0].pics[0], self.collidesection)

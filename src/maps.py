@@ -32,7 +32,7 @@ houserock = Rock("honeyhouseoutside", housewidth, 0,
                  [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())])
 outside1 = Map(rgrassland,
                [houserock,
-                Rock(graphics.greyrock(), 6.5 * b, 7 * b, [0, 0, 1, 1]),
+                Rock(graphics.greyrock(), 6.5 * b, 7.5 * b, variables.ROCKCOLLIDESECTION),
                 treerock,
                 meangreenrock])
 outsidewidth = GR[rgrassland]["w"]
@@ -178,50 +178,47 @@ home_map_name = "honeyhome"
 current_map = home_map
 current_map_name = 'honeyhome'
 
-map_list = []
-map_name_list = []
-
-def get_map(name):
+# used for making the mapdict
+def get_map_coded(name):
     possibles = globals()
     m = possibles.get(name)
     if not m:
         raise NotImplementedError("Map %s not implemented" % name)
     return m
 
-def set_maplist_full():
-    stringlist = [home_map_name]
-    maplist = [home_map]
-    index = 0
-
-    while index < len(stringlist):
-        for e in maplist[index].exitareas:
-            if not e.name in stringlist:
-                stringlist.append(e.name)
-                maplist.append(get_map(e.name))
-        index += 1
-    global map_name_list
-    global map_list
-    map_name_list = stringlist
-    map_list = maplist
-
-def set_maplist():
+def get_mapdict():
     if fasttestmodep:
-        global map_name_list
-        global map_list
-        map_list = [honeyhome, letter, outside1]
-        map_name_list = ["honeyhome", "letter", "outside1"]
+        return {"honeyhome": honeyhome,"letter":letter,"outside1":outside1}
     else:
-        return set_maplist_full()
+        stringlist = [home_map_name]
+        maplist = [home_map]
+        index = 0
 
-set_maplist()
+        while index < len(stringlist):
+            for e in maplist[index].exitareas:
+                if not e.name in stringlist:
+                    stringlist.append(e.name)
+                    maplist.append(get_map_coded(e.name))
+            index += 1
+        newmapdict = {}
+        
+        for i in range(len(stringlist)):
+            newmapdict[stringlist[i]] = maplist[i]
+            
+        return newmapdict
+
+map_dict = get_mapdict()
+
+def get_map(name):
+    return map_dict[name]
     
-def set_new_maps(maplist):
-    g = globals()
-    for i in range(len(maplist)):
-        g[map_name_list[i]] = maplist[i]
+def set_new_maps(new_mapdict):
+    for key in new_mapdict:
+        map_dict[key] = new_mapdict[key]
 
 # now that everything is loaded, sort rocks ect
-for m in map_list:
+for key in map_dict:
+    m = map_dict[key]
     if not m.isscaled:
         m.scale_stuff()
         

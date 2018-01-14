@@ -118,7 +118,7 @@ class Map():
                 if rocktype == "pinetree" or rocktype == "pine tree":
                     newrocks.append(Rock(graphics.pinetree(), randx, randy, variables.TREECOLLIDESECTION))
                 if rockp:
-                    newrocks.append(Rock(graphics.greyrock(), randx, randy, [0,0,1,1]))
+                    newrocks.append(Rock(graphics.greyrock(), randx, randy, variables.ROCKCOLLIDESECTION))
                     
         self.terrain.extend(newrocks)
         

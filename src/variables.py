@@ -6,7 +6,7 @@ from Properties import Properties
 testsmallp = False
 devmode = True
 newworldeachloadq = False
-fasttestmodep = True
+fasttestmodep = False
 
 # Setup
 pygame.mixer.pre_init(22050, -16, 2, 128)
@@ -73,6 +73,7 @@ basemapsize = 360
 TREEWIDTH = 100
 TREEHEIGHT = 200
 TREECOLLIDESECTION = [0, 18.5 / 20, 1, 1.5 / 20]
+ROCKCOLLIDESECTION = [0, 1/10, 1, 9/10]
 
 # battle
 battlebuttontextheight = height/10
