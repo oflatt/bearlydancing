@@ -22,15 +22,15 @@ outside5.exitareas = [Exit("left", False, "outside3", "right", "same"),
                       Exit("bottom", False, "outside4", "same", "top")]
 
 # outside4/rockorsheep##########################################################################
-outside4width = 500
-outside4height = 800
-rgrassland = graphics.grassland(outside4height, outside4width, leftpath = False, rightpath = False, uppath = True)
+outside4width = 800
+outside4height = 500
+rgrassland = graphics.grassland(outside4width, outside4height, leftpath = False, rightpath = False, uppath = True)
 
 def make_rock_or_sheep_rocks():
-    bigx = int(outside4width/2) - randint(20, 40)
+    bigx = int(outside4width/2) - randint(int(outside4width/20), int(outside4width/4))
     rocklist = []
     def addgroup(number, offset, xpos):
-        y = outside4height - 50 + randint(0, 10)
+        y = outside4height - 100 + randint(0, 20)
         x = xpos
         for i in range(number):
             sheepnum = i + offset
@@ -40,19 +40,20 @@ def make_rock_or_sheep_rocks():
             else:
                 rockname = rockname + str(sheepnum)
                 
-            rocklist.append(Rock(rockname, xpos, y, [0,0,1,1]))
+            rocklist.append(Rock(rockname, x, y, [0,0,1,1]))
             x += randint(30, 40)
-            y += randint(-3, 3)
+            y += randint(-4, 4)
+        return x
 
-    addgroup(4, 0, bigx)
+    bigx = addgroup(4, 0, bigx)
     bigx += 30
-    addgroup(2, 4, bigx)
+    bigx = addgroup(2, 4, bigx)
     bigx += 30
     addgroup(6, 6, bigx)
     return rocklist
     
         
-outside4 = Map(rgrassland, [Rock("rockorsheep00", 220, 700, [0,0,1,1])])
+outside4 = Map(rgrassland, [])
 outside4.populate_with("greyrock", 40)
 
 # this is how many pixels away each dimension of the rock has to be to the sheep to work
