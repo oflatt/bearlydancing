@@ -8,17 +8,23 @@ Bearly Dancing To-Do List
 -more complex asthetic background grass
 -write some tests for once
 -flying chimney once sophie makes it
--load own sounds using the bowl pianoputer as example
 -controls in menu
 -map objects and loading more safely, versioning
 
-beatmap generator
+-add music
+-load own sounds using the bowl pianoputer as example
+-chimney wing sounds
+
+battle
+-crocodile too long, meangrean too hard at higher levels
 -repeatwithvariation, switch notes, offset by a beat
 -triplet chord mode
 -octaves rule
+-better drum machine
+-shape different for ones on offbeats
+
 
 Sophie:
--rock or sheep!
 -flying chimney!
 -nice looking interaction button to replace circle
 -wardrobe open, "why do I even have dis?"

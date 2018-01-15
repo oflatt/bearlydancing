@@ -70,6 +70,7 @@ class Battle():
 
         # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
         self.pausetime = 0
+        self.enemy.sethealth()
 
     def pause(self):
         self.pausetime = variables.settings.current_time
@@ -97,7 +98,6 @@ class Battle():
 
     def reset_enemy(self):
         self.enemy.reset()
-        self.enemy.sethealth()
         self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
         self.enemy.animation.beginning_time = self.starttime
 
@@ -149,6 +149,7 @@ class Battle():
             variables.screen.blit(textscaled, [w / 2 - (textscaled.get_width() / 2), h / 2])
 
         elif self.state == "exp" or self.state == "got exp":
+            text = "continue"
             # continue button
             continuebutton = Button(w / 2, b, text, variables.battlebuttontextheight)
             continuebutton.iscentered = True

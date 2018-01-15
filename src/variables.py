@@ -4,8 +4,9 @@ from Settings import Settings
 from Properties import Properties
 
 testsmallp = False
-devmode = True
+devmode = False
 newworldeachloadq = False
+# only loads first couple of maps
 fasttestmodep = False
 
 # Setup

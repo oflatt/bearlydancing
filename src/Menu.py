@@ -154,10 +154,25 @@ class Menu():
         textpic = getTextPic(self.nameprompts[self.option], textsize, variables.WHITE)
         
         typestring = self.namestring
+        typecolor = variables.BLACK
         if self.option == 2:
             typestring = str(self.tempdifficulty)
+            if self.tempdifficulty == 0:
+                typecolor = (0, 255, 0)
+            elif self.tempdifficulty == 1:
+                typecolor = (150, 255, 0)
+            elif self.tempdifficulty == 2:
+                typecolor = (255, 255, 0)
+            elif self.tempdifficulty < 8:
+                typecolor = (255, 255-(self.tempdifficulty - 2)*50, 0)
+            elif self.tempdifficulty < 13:
+                typecolor = (255, 0, 50*(self.tempdifficulty-7))
+            elif self.tempdifficulty < 16:
+                typecolor = (255-(self.tempdifficulty-13)*70, 0, 255-(self.tempdifficulty-13)*70)
+            else:
+                typecolor = (0,0,0)
             
-        typepic = graphics.scale_pure(variables.font.render(typestring, 0, variables.BLACK).convert(), textsize, "height")
+        typepic = graphics.scale_pure(variables.font.render(typestring, 0, typecolor).convert(), textsize, "height")
         variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.height/2 - textpic.get_height()*1.5])
         variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.height/2 - textpic.get_height()/2])
 
