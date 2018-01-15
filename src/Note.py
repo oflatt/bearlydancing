@@ -36,8 +36,9 @@ class Note:
         self.screenvalue = value_to_screenvalue(self.value)
 
     def height(self, tempo):
-        return self.duration * tempo * variables.dancespeed
+        return self.duration * (variables.padypos / variables.settings.notes_per_screen)
 
+    # the ends of the notes are included in the height, and do not go out of it.
     def draw(self, tempo):
         width = variables.width / 20
         height = self.height(tempo)
@@ -70,9 +71,12 @@ class Note:
 
         # third case is if it has either been missed or has not been played yet (normal draw)
         elif self.beginning_score == None or self.beginning_score == variables.miss_value or self.end_score == variables.miss_value:
+            #top of note
             pygame.draw.rect(variables.screen, color, [p[0], p[1] - height - end_height / 2, width, height])
+            #middle
             pygame.draw.rect(variables.screen, color,
                              [p[0] - width / 8, p[1] - height - end_height, width * 1.25, end_height])
+            #bottom of note
             pygame.draw.rect(variables.screen, color,
                              [p[0] - width / 8, p[1] - end_height, width * 1.25, end_height])
 

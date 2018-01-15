@@ -11,13 +11,11 @@ from graphics import getpic, sscale, sscale_customfactor, getpicbyheight
 class Battle():
 
     def __init__(self, enemy):
-
         self.current_beatmap = 0
         self.damage_multiplier = 1
         self.drumcounter = 0
         self.beatmaps = []
         
-        self.starttime = variables.settings.current_time
         self.enemy = enemy
         # offset enemy lv by difficulty
         self.enemy.lv += variables.settings.difficulty
@@ -28,6 +26,7 @@ class Battle():
         specs["lv"] = self.enemy.lv
         specs["rules"].extend(self.enemy.beatmaprules)
         self.beatmaps = [randombeatmap.random_beatmap(specs)]
+        self.reset_time()
         self.reset_enemy()
         
         # if the enemy's level is 0 and there have been no battles, the tutorial is triggered
@@ -43,17 +42,16 @@ class Battle():
             b.notes[0].time -= 12
             b.notes = [Note(0, 1, 1), Note(1, 2, 1)] + b.notes
         
-        classvar.player.heal()
 
         # if this is set, when the lose they lose progress in the story
         self.storypenalty = None
 
         # for attacking animation
         self.isplayernext = False  # if the player is currently being damaged
-        self.oldenemyhealth = 20
-        self.oldplayerhealth = 20
-        self.newplayerhealth = 10
-        self.newenemyhealth = 10
+        self.oldenemyhealth = 0
+        self.oldplayerhealth = 0
+        self.newplayerhealth = 0
+        self.newenemyhealth = 0
 
         # animation time is used for all animations
         self.animationtime = 0
@@ -71,6 +69,12 @@ class Battle():
         # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
         self.pausetime = 0
         self.enemy.sethealth()
+
+    def reset_time(self):
+        self.starttime = variables.settings.current_time
+        self.beatmaps[self.current_beatmap].reset(self.starttime, True)
+        self.drumcounter = 0
+        
 
     def pause(self):
         self.pausetime = variables.settings.current_time
@@ -94,6 +98,7 @@ class Battle():
             print("should only have one beatmap in the list!")
             self.current_beatmap += 1
         self.beatmaps[self.current_beatmap].reset(self.starttime, False)
+        self.drumcounter = 0
         self.reset_enemy()
 
     def reset_enemy(self):
@@ -206,18 +211,18 @@ class Battle():
 
     # for things like the attack animation
     def ontick(self):
-        self.beatmaps[self.current_beatmap].ontick()
         currentb = self.beatmaps[self.current_beatmap]
-
+        currentb.ontick()
+        
         dt = variables.settings.current_time - self.animationtime
 
         
         if self.tutorialp and self.state == "dance":
             if self.tutorialstate == "starting":
-                if variables.settings.current_time - self.beatmaps[self.current_beatmap].starttime > 11000:
+                if currentb.notetime() > 4:
                     #exit the tutorial if the got the first two notes perfectly
                     if len(currentb.scores) == 2:
-                        if (currentb.scores[0] + currentb.scores[1])/2 >= variables.good_value:
+                        if (currentb.scores[0] + currentb.scores[1])/2 >= variables.ok_value:
                             self.tutorialp = False
                             # get rid of the third turorial note
                             b = self.beatmaps[0]
@@ -235,23 +240,23 @@ class Battle():
                                     note.time -= 12
                     else:
                         self.tutorialstate = "first note"
-                        self.beatmaps[self.current_beatmap].showkeys()
+                        currentb.showkeys()
                         maps.engage_conversation(conversations.tutorialconversation1)
             elif self.tutorialstate == "first note":
-                fnote = self.beatmaps[self.current_beatmap].notes[0]
-                if fnote.pos[1] > variables.padypos and fnote.time > 10:
+                fnote = currentb.notes[0]
+                if fnote.pos[1] > variables.padypos and fnote.time > variables.settings.notes_per_screen + 2:
                     self.tutorialstate = "release note"
                     maps.engage_conversation(conversations.pressanow)
             elif self.tutorialstate == "release note":
-                fnote = self.beatmaps[self.current_beatmap].notes[0]
-                if fnote.pos[1] - fnote.height(self.beatmaps[self.current_beatmap].tempo) > variables.padypos and fnote.time > 10:
+                fnote = currentb.notes[0]
+                if fnote.pos[1] - fnote.height(currentb.tempo) > variables.padypos and fnote.time > 10:
                     self.tutorialstate = "finished first"
                     maps.engage_conversation(conversations.releaseanow)
             elif self.tutorialstate == "finished first":
-                fnote = self.beatmaps[self.current_beatmap].notes[0]
+                fnote = currentb.notes[0]
                 if fnote.time >= 24:
                     self.tutorialstate = "done"
-                    self.beatmaps[self.current_beatmap].scores = []
+                    currentb.scores = []
                     maps.engage_conversation(conversations.endtutorial)
 
         if self.state == "attacking":
@@ -304,25 +309,20 @@ class Battle():
 
         # check for end of beatmap
         elif self.state == "dance":
-            if len(self.beatmaps[self.current_beatmap].notes) == 0:
-                scores = self.beatmaps[self.current_beatmap].scores
+            if len(currentb.notes) == 0:
+                scores = currentb.scores
                 self.damage_multiplier = sum(scores) / len(scores)
                 # if they did not miss any
                 if (not (variables.miss_value in scores)):
                     self.damage_multiplier += variables.perfect_value
-                self.beatmaps[self.current_beatmap].reset_buttons()
+                currentb.reset_buttons()
                 self.trade()
 
         # drum sounds
         # now dt is based on starttime
-        dt = variables.settings.current_time - self.starttime
-        ypos = (dt - (self.drumcounter * self.beatmaps[self.current_beatmap].tempo)) * \
-               self.beatmaps[self.current_beatmap].speed * variables.dancespeed
-        # offset it so in the beginning drum beats
-        ypos += 6 * self.beatmaps[self.current_beatmap].tempo * self.beatmaps[
-            self.current_beatmap].speed * variables.dancespeed
+        notetime = currentb.notetime() + variables.settings.notes_per_screen
         # play a drum sound if it is on the beat
-        if (ypos >= variables.padypos):
+        if (notetime >= self.drumcounter):
             self.drumcounter += 1
             play_sound("drum kick heavy")
 
@@ -361,6 +361,7 @@ class Battle():
                 if self.battlechoice.current_option == 0:
                     self.state = "dance"
                     self.beatmaps[self.current_beatmap].reset(self.starttime, True)
+                    self.drumcounter = 0
                 elif self.battlechoice.current_option == 1:
                     if self.enemy.lv - variables.settings.difficulty == 0:
                         variables.settings.state = "world"

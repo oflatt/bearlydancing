@@ -4,10 +4,10 @@ from Settings import Settings
 from Properties import Properties
 
 testsmallp = False
-devmode = False
+devmode = True
 newworldeachloadq = False
 # only loads first couple of maps
-fasttestmodep = False
+fasttestmodep = True
 
 # Setup
 pygame.mixer.pre_init(22050, -16, 2, 128)
@@ -80,7 +80,6 @@ ROCKCOLLIDESECTION = [0, 1/10, 1, 9/10]
 battlebuttontextheight = height/10
 healthanimationspeed = 2000# time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
-dancespeed = height/8 * 0.001# factor for displaying notes
 padypos = height*(13/16)
 
 # lv and rules are added later
@@ -99,7 +98,7 @@ good_range = height/60
 ok_range = height/25
 miss_range = height/15
 
-battle_volume = 0.1
+battle_volume = 0.05
 
 notes_colors = [ORANGE, BLUE, RED, GREEN, GREEN, RED, BLUE, ORANGE]
 

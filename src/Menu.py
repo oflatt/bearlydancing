@@ -83,8 +83,9 @@ class Menu():
         self.enemyanimation = random.choice(enemies.animations)
 
     def pause(self):
-        if (not isinstance(classvar.battle, str)):
-            classvar.battle.pause()
+        if variables.settings.state == "battle":
+            if (not isinstance(classvar.battle, str)):
+                classvar.battle.pause()
         variables.settings.menuonq = not variables.settings.menuonq
         self.reset()
         classvar.player.change_of_state()
@@ -94,8 +95,9 @@ class Menu():
             self.reset()
             variables.settings.menuonq = False
             classvar.player.change_of_state()
-            if not isinstance(classvar.battle, str):
-                classvar.battle.unpause()
+            if variables.settings.state == "battle":
+                if not isinstance(classvar.battle, str):
+                    classvar.battle.unpause()
 
     def drawmain(self):
         extrabuttonwidth = self.extrabuttonwidth

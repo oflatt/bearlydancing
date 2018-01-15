@@ -286,15 +286,16 @@ class Map():
                     if random_factor < collect_encounter_chances(x):
                         currentenemy = e
                         break
-
+            
             if currentenemy:
                 variables.settings.state = "battle"
                 classvar.player.change_of_state()
+                classvar.player.heal()
                 if (len(self.lvrange) > 1):
                     currentenemy.lv = random.randint(self.lvrange[0], self.lvrange[1])
                 else:
                     currentenemy.lv = self.lvrange[0]
-                currentenemy.health = stathandeling.max_health(currentenemy.lv)
+                currentenemy.sethealth()
                 classvar.battle = Battle(currentenemy)
         else:
             self.encounterchecksnotactivated += 1

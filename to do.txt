@@ -2,8 +2,6 @@ Bearly Dancing To-Do List
 
 -dirtyrects for battle
 -adjust difficulty, fix the beatmap generator
--notes should come down faster at higher speeds
--make animations sync up with beat again
 -expand the map!
 -more complex asthetic background grass
 -write some tests for once
@@ -11,6 +9,7 @@ Bearly Dancing To-Do List
 -controls in menu
 -map objects and loading more safely, versioning
 
+-fix volume
 -add music
 -load own sounds using the bowl pianoputer as example
 -chimney wing sounds
@@ -23,6 +22,7 @@ battle
 -better drum machine
 -shape different for ones on offbeats
 
+-battle code is ugly and convoluted with all the resetting
 
 Sophie:
 -flying chimney!

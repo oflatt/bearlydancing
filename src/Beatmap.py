@@ -16,7 +16,7 @@ class Beatmap():
         # notes is an ordered list of Note, notes with earlier times first
         self.notes = copy.deepcopy(self.originalnotes)
         self.scale = [2, 2, 1, 2, 2, 2, 1]  # list of offsets for the scale
-        self.speed = 1
+        self.speed = 1 # unused currently
         self.starttime = 0
         self.pausetime = 0
         # scores is a running list of the values for how well each note so far has been played. values for perfect, ect
@@ -44,8 +44,8 @@ class Beatmap():
 
     def reset(self, battlestarttime, beginningq):
         self.scores = []
-        synctime = (variables.settings.current_time - battlestarttime) % self.tempo
-        self.starttime = variables.settings.current_time - synctime
+        synctime = self.tempo - ((variables.settings.current_time - battlestarttime) % self.tempo)
+        self.starttime = variables.settings.current_time + synctime
         self.showkeys()
         if not beginningq:
             self.notes = copy.deepcopy(self.originalnotes)
@@ -102,13 +102,18 @@ class Beatmap():
                 break
         return n
 
-    def notepos(self, note):
-        # returns the pos of the bottom of the note
+    # returns number of notes that should have passed the pad by now
+    def notetime(self):
         dt = variables.settings.current_time - self.starttime
         if (self.pausetime):
             dt -= variables.settings.current_time - self.pausetime
+        notetime = (dt/self.tempo) - variables.settings.notes_per_screen
+        return notetime
 
-        ypos = (dt - (note.time * self.tempo)) * self.speed * variables.dancespeed
+    # returns the pos of the bottom of the note
+    def notepos(self, note):
+        notetime = self.notetime()
+        ypos = (notetime - note.time) * (variables.padypos / variables.settings.notes_per_screen) + padypos
         if (note.screenvalue > 3):
             xpos = note.screenvalue * padxspace + middleoffset + padxspace
         else:

@@ -23,8 +23,11 @@ class Settings():
     backgroundstate = "world"
     menuonq = True
     easymodeq = False
+    
     #possible soundpacks can be seen by listing the keys in all_sounds in play_sound
     soundpack = "sine"
+    # the number of (length 1) notes that can be shown on screen at once before the pad
+    notes_per_screen = 6
 
     username = "Greg"
     bearname = "Honey"
