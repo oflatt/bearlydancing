@@ -29,6 +29,13 @@ class Note:
         self.newvalue(value)
         self.time = time
         self.duration = duration
+        beatplace = time%1
+        if beatplace == 0:
+            self.shape = "square"
+        elif beatplace == 0.5:
+            self.shape = "triangle"
+        else:
+            self.shape = "round"
 
     def newvalue(self, v):
         self.value = v
@@ -38,7 +45,8 @@ class Note:
     def height(self, tempo):
         return self.duration * (variables.padypos / variables.settings.notes_per_screen)
 
-    # the ends of the notes are included in the height, and do not go out of it.
+    # bottom end of note included, top of note goes over height
+    # detection is by the bottom of each end of the note
     def draw(self, tempo):
         width = variables.width / 20
         height = self.height(tempo)
@@ -47,37 +55,73 @@ class Note:
         if self.ison:
             color = variables.notes_colors[self.screenvalue]
         else:
-            color = variables.GRAY
+            color = variables.GREY
+
+        darkercolor = []
+        for rgbval in color:
+            if rgbval -50 < 0:
+                darkercolor.append(0)
+            else:
+                darkercolor.append(rgbval-50)
 
         end_height = variables.height / 80
 
         p = self.pos
 
+        topendy = p[1] - height - end_height
+        endx = p[0] - width/8
+        endwidth = width * 1.25
+
+        def drawend(x, y, color):
+            if self.shape == "square":
+                pygame.draw.rect(variables.screen, color,
+                                 [x, y, endwidth, end_height])
+            elif self.shape == "triangle":
+                fourthx = endwidth/4
+                centery = y + end_height/2
+                pygame.draw.polygon(variables.screen, color,
+                                    [[x, centery], [x+fourthx, y], [x+3*fourthx, y],
+                                     [x+endwidth, centery], [x+3*fourthx, y+end_height], [x+fourthx, y+end_height]])
+            elif self.shape == "round":
+                pygame.draw.ellipse(variables.screen, color,
+                                    [x, y, endwidth, end_height])
+
+        def drawmid(y, mheight, color):
+            if mheight > 0:
+                if self.shape == "square":
+                    pygame.draw.rect(variables.screen, color, [p[0], y, width, mheight])
+                elif self.shape == "triangle":
+                    fourthx = width/4
+                    pygame.draw.polygon(variables.screen, color,
+                                        [[p[0]+3*fourthx, y], [p[0]+fourthx, y], [p[0], y + mheight/2],
+                                         [p[0]+fourthx, y+mheight], [p[0]+3*fourthx, y+mheight], [p[0]+width, y + mheight/2]])
+                elif self.shape == "round":
+                    print((width, mheight))
+                    ellipsesurface = pygame.Surface((width, mheight), pygame.SRCALPHA)
+                    pygame.draw.ellipse(ellipsesurface, color,
+                                        [0, -20, width, mheight+40])
+                    variables.screen.blit(ellipsesurface, [p[0], y])
+                
+
         # subtract height from y because the pos is the bottom of the rectangle
         # the first case is if the note is currently being played
         if self.ison and variables.padypos > p[1] - height and self.beginning_score != None and self.end_score == None:
-            pygame.draw.rect(variables.screen, color,
-                             [p[0] - width / 8, p[1] - height - end_height, width * 1.25, end_height])
-            pygame.draw.rect(variables.screen, color, [p[0], p[1] - height - end_height, width,
-                                                       height + end_height - (p[1] - variables.padypos)])
+            drawmid(p[1]-height-1, height+1 - (p[1]-variables.padypos), darkercolor)
+            drawend(endx, topendy, color)
 
         # second case is if the note was interrupted in the middle and counted as a miss
         elif not self.height_offset == 0:
             if (height - self.height_offset > 1):
-                pygame.draw.rect(variables.screen, color,
-                                 [p[0] - width / 8, p[1] - height - end_height, width * 1.25, end_height])
-                pygame.draw.rect(variables.screen, color,
-                                 [p[0], p[1] - height - end_height, width, height + end_height - self.height_offset])
+                drawmid(p[1]-height-1, height+1-self.height_offset, darkercolor)
+                drawend(endx, topendy, color)
 
         # third case is if it has either been missed or has not been played yet (normal draw)
         elif self.beginning_score == None or self.beginning_score == variables.miss_value or self.end_score == variables.miss_value:
-            #top of note
-            pygame.draw.rect(variables.screen, color, [p[0], p[1] - height - end_height / 2, width, height])
-            #middle
-            pygame.draw.rect(variables.screen, color,
-                             [p[0] - width / 8, p[1] - height - end_height, width * 1.25, end_height])
+            #middle of note
+            drawmid(p[1]-height-1, height+2-end_height, darkercolor)
+            #top
+            drawend(endx, topendy, color)
             #bottom of note
-            pygame.draw.rect(variables.screen, color,
-                             [p[0] - width / 8, p[1] - end_height, width * 1.25, end_height])
+            drawend(endx, p[1]-end_height, color)
 
         #don't draw it if it has been played

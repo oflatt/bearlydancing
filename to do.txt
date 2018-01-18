@@ -1,6 +1,6 @@
 Bearly Dancing To-Do List
 
--dirtyrects for battle
+-dirtyrects for battle, save notes in a dict as well
 -adjust difficulty, fix the beatmap generator
 -expand the map!
 -more complex asthetic background grass
@@ -22,7 +22,7 @@ battle
 -better drum machine
 -shape different for ones on offbeats
 
--battle code is ugly and convoluted with all the resetting
+-battle code is ugly and convoluted with all the time/health variables
 
 Sophie:
 -flying chimney!

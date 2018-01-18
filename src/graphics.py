@@ -147,7 +147,7 @@ def getpicbyheight(picname, height):
     scale = height/GR[picname]["h"]
     return getpic(picname, scale)
 
-def getpicbywidth(picname, width):
+def getpicbywidth(picname, width):                 
     scale = width/GR[picname]["w"]
     return getpic(picname, scale)
 

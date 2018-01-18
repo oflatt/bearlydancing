@@ -208,7 +208,7 @@ class Map():
 
     def draw_interation_button(self, xpos, ypos, width):
         pygame.draw.ellipse(variables.screen, variables.WHITE, [xpos, ypos, width, width])
-        pygame.draw.ellipse(variables.screen, variables.GRAY,
+        pygame.draw.ellipse(variables.screen, variables.GREY,
                             [xpos + width / 4, ypos + width / 4, width / 2, width / 2])
 
     def changerock(self,rockname):
