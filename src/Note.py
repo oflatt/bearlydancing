@@ -48,6 +48,7 @@ class Note:
     # bottom end of note included, top of note goes over height
     # detection is by the bottom of each end of the note
     def draw(self, tempo):
+        
         width = variables.width / 20
         height = self.height(tempo)
 
@@ -96,7 +97,6 @@ class Note:
                                         [[p[0]+3*fourthx, y], [p[0]+fourthx, y], [p[0], y + mheight/2],
                                          [p[0]+fourthx, y+mheight], [p[0]+3*fourthx, y+mheight], [p[0]+width, y + mheight/2]])
                 elif self.shape == "round":
-                    print((width, mheight))
                     ellipsesurface = pygame.Surface((width, mheight), pygame.SRCALPHA)
                     pygame.draw.ellipse(ellipsesurface, color,
                                         [0, -20, width, mheight+40])
@@ -106,14 +106,17 @@ class Note:
         # subtract height from y because the pos is the bottom of the rectangle
         # the first case is if the note is currently being played
         if self.ison and variables.padypos > p[1] - height and self.beginning_score != None and self.end_score == None:
-            drawmid(p[1]-height-1, height+1 - (p[1]-variables.padypos), darkercolor)
+            mheight = height+1 - (p[1]-variables.padypos)
+            drawmid(p[1]-height-1, mheight, darkercolor)
             drawend(endx, topendy, color)
+            variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, mheight+end_height))
 
         # second case is if the note was interrupted in the middle and counted as a miss
         elif not self.height_offset == 0:
             if (height - self.height_offset > 1):
                 drawmid(p[1]-height-1, height+1-self.height_offset, darkercolor)
                 drawend(endx, topendy, color)
+                variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, height+end_height+1+self.height_offset))
 
         # third case is if it has either been missed or has not been played yet (normal draw)
         elif self.beginning_score == None or self.beginning_score == variables.miss_value or self.end_score == variables.miss_value:
@@ -123,5 +126,6 @@ class Note:
             drawend(endx, topendy, color)
             #bottom of note
             drawend(endx, p[1]-end_height, color)
+            variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, height+end_height+2))
 
         #don't draw it if it has been played
