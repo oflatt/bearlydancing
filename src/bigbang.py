@@ -134,29 +134,15 @@ while not done:
         elif variables.settings.state == "world":
             draw_world()
         elif variables.settings.state == "battle":
-            # first fill in old rects
-            for dr in variables.dirtyrects:
-                variables.screen.fill(variables.BLACK, dr)
-            # update these parts
-            pygame.display.update(variables.dirtyrects)
-            variables.dirtyrects = []
-            
+            variables.screen.fill(variables.BLACK)
             classvar.battle.draw()
-
-            
 
     if (variables.settings.menuonq):
         menu.draw()
 
 
     # blit fps
-    fpspic = variables.font.render(str(int(clock.get_fps())))
-    if variables.settings.state == "battle":
-        frect = pygame.Rect(20,20,fpspic.get_width()*2,fpspic.get_height())
-        variables.screen.fill(variables.BLACK, fpsrect)
-        variables.dirtyrects.append(frect)
-    variables.screen.blit(fpspic, 0, variables.WHITE), [20, 20])
-        
+    variables.screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [20, 20])
 
     if variables.testsmallp:
         # blit red boarder for testing
@@ -164,12 +150,7 @@ while not done:
         variables.screen.fill(variables.RED, Rect(0, variables.height, variables.width, 10))
     
     # Go ahead and update the screen with what we've drawn.
-    if variables.settings.state != "battle":
-        pygame.display.flip()
-    else:
-        # just update dirtyrects
-        pygame.display.update(variables.dirtyrects)
-            
+    pygame.display.flip()
 
     # Limit frames per second
     clock.tick(60)

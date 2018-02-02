@@ -5,7 +5,16 @@ from Battle import Battle
 from ChoiceButtons import ChoiceButtons
 from graphics import scale_pure, getpic, getTextPic
 from variables import displayscale, textsize
-from initiatestate import initiatebattle
+
+# the other entrance into battles is in map
+def initiatebattle(enemy, storypenalty):
+    variables.settings.state = "battle"
+    classvar.player.change_of_state()
+    enemy.sethealth()
+    classvar.player.heal()
+    classvar.battle = Battle(enemy)
+    classvar.battle.storypenalty = storypenalty
+    classvar.battle.reset_time()
 
 class Speak():
 
@@ -119,7 +128,7 @@ class Speak():
         if self.state == "done":
             if choice in [None, "y", "yes"]:
                 if self.special_battle != "none":
-                    classvar.initiatebattle(self.special_battle, self.special_battle_story_penalty)
+                    initiatebattle(self.special_battle, self.special_battle_story_penalty)
                     returnstate = "specialbattle"
 
             self.reset()
