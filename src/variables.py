@@ -31,8 +31,6 @@ hh = height/2
 hw = width/2
 flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
 screen = pygame.display.set_mode(mode, flags)
-# dirtyrects are used for updating the screen in Battle. First used to clear the screen of old stuff, then added to by draw function
-dirtyrects = []
 #screen = pygame.Surface([height, width])
 
 unrounded_displayscale = height*0.0025
