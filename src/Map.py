@@ -5,6 +5,7 @@ from Battle import Battle
 from graphics import viewfactorrounded, getpic, GR
 from Rock import Rock
 from pygame import Mask
+from initiatestate import initiatebattle
 
 extraarea = 50
 TREEMASK = Mask((variables.TREEWIDTH, variables.TREEHEIGHT))
@@ -288,14 +289,10 @@ class Map():
                         break
             
             if currentenemy:
-                variables.settings.state = "battle"
-                classvar.player.change_of_state()
-                classvar.player.heal()
                 if (len(self.lvrange) > 1):
                     currentenemy.lv = random.randint(self.lvrange[0], self.lvrange[1])
                 else:
                     currentenemy.lv = self.lvrange[0]
-                currentenemy.sethealth()
-                classvar.battle = Battle(currentenemy)
+                initiatebattle(currentenemy)
         else:
             self.encounterchecksnotactivated += 1

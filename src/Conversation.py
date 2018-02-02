@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # Oliver Flatt works on Classes
 import variables, classvar
-from Speak import initiatebattle
+from initiatestate import initiatebattle
 from graphics import getpicbywidth
 
 

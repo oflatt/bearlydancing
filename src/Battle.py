@@ -86,6 +86,8 @@ class Battle():
         self.pausetime = 0
         self.beatmaps[self.current_beatmap].unpause()
         self.reset_enemy()
+        variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
+        variables.screen.fill(variables.BLACK)
 
     def new_beatmaps(self):
         self.beatmaps = [randombeatmap.variation_of(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo)]
@@ -111,9 +113,7 @@ class Battle():
         w = variables.width
         b = h * 13 / 16
         p = classvar.player
-        # background
-        pygame.draw.rect(variables.screen, variables.BLACK, [0, 0, w, h])
-
+        
         # draw enemy first
         epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
         
