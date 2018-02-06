@@ -15,4 +15,4 @@ Copy the pics folder over to the folder with the exe file in it,
 which is a pain but will be fixed in the future.
 
 
-https://github.com/oflatt/portfolio-gifs/blob/master/bearly-dancing-demo.gif
+![Alt Text](https://github.com/oflatt/portfolio-gifs/blob/master/bearly-dancing-demo.gif)
