@@ -16,6 +16,7 @@ def initiatebattle(enemy, storypenalty):
     classvar.battle.storypenalty = storypenalty
     classvar.battle.reset_time()
 
+
 class Speak():
 
     def __init__(self, pic, dialogue, side = None, bottomp = True, options = [], special_battle = "none"):

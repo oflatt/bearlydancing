@@ -1,6 +1,5 @@
 Bearly Dancing To-Do List
 
--dirtyrects for battle, save notes in a dict as well
 -adjust difficulty, fix the beatmap generator
 -expand the map!
 -more complex asthetic background grass
