@@ -137,6 +137,9 @@ def random_beatmap(specs):
     lv = specs["lv"]
     maxtime = specs["maxtime"]
     maxtime = maxtime + lv * 2
+    time = 1
+    # repeatlength used in repeat rule for how many notes back to copy
+    repeatlength = randint(3, 7 + lv)
 
     def addnote(time, ischord):
         duration = rand_duration(time, l, specs)
@@ -148,10 +151,6 @@ def random_beatmap(specs):
             else:
                 l.append(Note(rv, time, duration))
         return duration
-
-    time = 1
-    # repeatlength used in repeat rule for how many notes back to copy
-    repeatlength = randint(3, 7 + lv)
 
     def normalloop():
         oldt = time
@@ -191,6 +190,7 @@ def random_beatmap(specs):
         print("output of:")
         print(specs["rules"])
         printnotelist(l)
+
     return Beatmap(tempo, l)
 
 
@@ -384,8 +384,8 @@ def random_value(t, ischord, unflippedlist, specs):
             if (myrand(4)):
                 rv = "rest"
     # 8/9 a rest if not rests rule
-    elif not myrand(8):
-        rv = "rest"
+        elif not myrand(8):
+            rv = "rest"
 
     def melodicchord(rv):
         value = rv
@@ -431,7 +431,7 @@ def random_value(t, ischord, unflippedlist, specs):
         return rv
 
 
-def rand_duration(time, list, specs):
+def rand_duration(time, notelist, specs):
     lv = specs["lv"]
 
     d = 1
@@ -446,27 +446,29 @@ def rand_duration(time, list, specs):
                     d = 4
 
     # so that usually it is the inverse, short notes
-    if (randint(1, 3) > 1):
+    if (myrand(2) > 1):
         d = 1 / d
 
     # additional chance at lower levels to be slow
     if (randint(0, 5) > lv):
         d = 2
 
+    # rests rule
+    if "rests" in specs["rules"] and not specs["lv"] in [0,1]:
+        # good chance of making it half as long
+        if (myrand(4)):
+            d = d / 2
+        
     # if it is on an offbeat
     if (time % 1 == 0.5):
         if (randint(0, 100) > lv ** 2):
             if (randint(1, 2) == 1):
-                d = 0.5
+                d = round(d-0.5)+0.5
     elif ((time % 1) > 0):
+        remainder = time%1
         # want to fix offbeats less that 0.5 quickly
         if (randint(0, 1000) > lv ** 2):
-            d = 1 - (time % 1)
-
-    # good chance of making it half as long for the rests rule
-    if "rests" in specs["rules"] and not specs["lv"] in [0,1]:
-        if (myrand(4)):
-            d = d / 2
+            d = round(d-remainder)+remainder
 
     return d
 
