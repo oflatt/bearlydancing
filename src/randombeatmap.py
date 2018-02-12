@@ -52,7 +52,7 @@ def shorten_doubles(l):
         y = 1
         while x + y < len(l):
             if l[x + y].time <= l[x].time + l[x].duration:
-                if l[x].screenvalue == l[x + y].screenvalue:
+                if l[x].screenvalue() == l[x + y].screenvalue():
                     newl[x].duration -= 0.1
                     break
             else:
@@ -103,9 +103,11 @@ def repitition(timetoadd, movelength, listofnotes, repeatlength, specs, maxtimet
     if "repeatmove" in specs["rules"] or "repeatmovevariation" in specs["rules"]:
         notestoadd = movednotes(notestoadd, movelength)
 
-    timedifference = notestoadd[-1].time + notestoadd[-1].duration - notestoadd[0].time
-    # finds how to restart repitition so that first note starts of same part of beat
-    offsetfactor = timedifference + (notestoadd[0].time%1 - timedifference%1)
+    oldendtime = notestoadd[-1].time + notestoadd[-1].duration
+    
+    # calculate when to start next note so that the first note is on the same part of the beat as it was
+    newstarttime = oldendtime + abs(oldendtime%1 - notestoadd[0].time%1)
+    offsetfactor = newstarttime- notestoadd[0].time
 
     # offset the notestoadd by the offsetfactor
     for n in notestoadd:
@@ -181,15 +183,11 @@ def random_beatmap(specs):
 
     if ("cheapending" in specs["rules"]):
         lastvalue = random.choice([variables.minvalue, variables.maxvalue, 0])
-        startt = l[-1].time + l[-1].duration
-        l.append(Note(lastvalue, startt, 1 + (1 - startt % 1)))
+        startt = round(l[-1].time + l[-1].duration + 0.5)
+        l.append(Note(lastvalue, startt, randint(1,2)))
 
     tempo = (1200 * 3) / ((lv / 3) + 3.5)
     l = shorten_doubles(l)
-
-    # finally, initialize all the notes
-    for n in l:
-        n.initialize()
 
     if variables.devmode:
         print("output of:")
@@ -424,7 +422,7 @@ def random_value(t, ischord, unflippedlist, specs):
         # make sure the value does not overlap another one
         x = 0
         while (x < len(l)):
-            if (l[x].time + l[x].duration > t and l[x].screenvalue == value_to_screenvalue(rv)):
+            if (l[x].time + l[x].duration > t and l[x].screenvalue() == value_to_screenvalue(rv)):
                 iscopy = True
                 break
             x += 1
@@ -481,8 +479,6 @@ def rand_duration(time, notelist, specs):
 # used to get a variation for the next round of a dance
 def variation_of(old_notes, tempo):
     newnotes = variation_of_notes(old_notes)
-    for n in newnotes:
-        n.initialize()
     newb = Beatmap(tempo, newnotes)
     return newb
 
@@ -516,13 +512,12 @@ def variation_of_notes(old_notes):
                 elif (c == p):
                     pass
                 elif (l[c].time + l[c].duration > oldnote.time and l[c].time < oldnote.time + oldnote.duration and l[
-                    c].screenvalue == value_to_screenvalue(newvalue)):
+                    c].screenvalue() == value_to_screenvalue(newvalue)):
                     iscopy = True
                     break
                 c += 1
                 
             if not iscopy:
-                # newvalue does not set screenvalue, so the notes still need to be initialized
                 l[p].newvalue(newvalue)
 
     l = shorten_doubles(l)

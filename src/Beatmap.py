@@ -119,10 +119,10 @@ class Beatmap():
     def notepos(self, note):
         notetime = self.notetime()
         ypos = (notetime - note.time) * (variables.padypos / variables.settings.notes_per_screen) + padypos
-        if (note.screenvalue > 3):
-            xpos = note.screenvalue * padxspace + middleoffset + padxspace
+        if (note.screenvalue() > 3):
+            xpos = note.screenvalue() * padxspace + middleoffset + padxspace
         else:
-            xpos = note.screenvalue * padxspace + padxspace
+            xpos = note.screenvalue() * padxspace + padxspace
         return [xpos, ypos]
 
     def pos_to_score(self, ypos):
@@ -142,7 +142,7 @@ class Beatmap():
         np = None
         notevalue = v
         for x in range(0, len(self.notes)):
-            if self.notes[x].screenvalue == v and self.notes[x].ison and self.notes[x].beginning_score == None:
+            if self.notes[x].screenvalue() == v and self.notes[x].ison and self.notes[x].beginning_score == None:
                 np = x
                 notevalue = self.notes[x].value
                 break
@@ -151,7 +151,7 @@ class Beatmap():
     def get_note_place_from_value_end(self, v):
         np = None
         for x in range(0, len(self.notes)):
-            if self.notes[x].screenvalue == v and self.notes[x].ison and self.notes[x].end_score == None:
+            if self.notes[x].screenvalue() == v and self.notes[x].ison and self.notes[x].end_score == None:
                 np = x
                 break
         return np
@@ -164,8 +164,8 @@ class Beatmap():
                     self.notes[np].beginning_score = s
                     if self.notes[np].beginning_score == variables.miss_value:
                         self.notes[np].ison = False
-                        self.feedback[self.notes[np].screenvalue] = graphics.MISStext
-                        self.feedback_timers[self.notes[np].screenvalue] = variables.settings.current_time + self.tempo
+                        self.feedback[self.notes[np].screenvalue()] = graphics.MISStext
+                        self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
 
         # returns the value for the sound produced
         def check_place(v):
@@ -236,22 +236,22 @@ class Beatmap():
                     self.scores.append(final_note_score)
 
                     if final_note_score == variables.miss_value:
-                        self.feedback[self.notes[np].screenvalue] = graphics.MISStext
-                        self.feedback_timers[self.notes[np].screenvalue] = variables.settings.current_time + self.tempo
+                        self.feedback[self.notes[np].screenvalue()] = graphics.MISStext
+                        self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
                     elif final_note_score == variables.good_value:
-                        self.feedback[self.notes[np].screenvalue] = graphics.GOODtext
-                        self.feedback_timers[self.notes[np].screenvalue] = variables.settings.current_time + self.tempo
+                        self.feedback[self.notes[np].screenvalue()] = graphics.GOODtext
+                        self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
                     elif final_note_score == variables.ok_value:
-                        self.feedback[self.notes[np].screenvalue] = graphics.OKtext
-                        self.feedback_timers[self.notes[np].screenvalue] = variables.settings.current_time + self.tempo
+                        self.feedback[self.notes[np].screenvalue()] = graphics.OKtext
+                        self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
                     elif final_note_score == variables.perfect_value:
-                        self.feedback[self.notes[np].screenvalue] = graphics.PERFECTtext
-                        self.feedback_timers[self.notes[np].screenvalue] = variables.settings.current_time + self.tempo
+                        self.feedback[self.notes[np].screenvalue()] = graphics.PERFECTtext
+                        self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
             # released before a note, penalty for randomly playing notes not written
             else:
                 self.scores.append(variables.miss_value)
-                self.feedback[self.notes[np].screenvalue] = graphics.MISStext
-                self.feedback_timers[self.notes[np].screenvalue] = variables.settings.current_time + self.tempo
+                self.feedback[self.notes[np].screenvalue()] = graphics.MISStext
+                self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
 
         def check_place(v):
             np = self.get_note_place_from_value_end(v)
@@ -312,8 +312,8 @@ class Beatmap():
 
             if self.notes[x].pos[1] - smaller > padypos and self.notes[x].beginning_score == None:
                 if self.notes[x].ison:
-                    self.feedback[self.notes[x].screenvalue] = graphics.MISStext
-                    self.feedback_timers[self.notes[x].screenvalue] = variables.settings.current_time + self.tempo
+                    self.feedback[self.notes[x].screenvalue()] = graphics.MISStext
+                    self.feedback_timers[self.notes[x].screenvalue()] = variables.settings.current_time + self.tempo
                     self.notes[x].ison = False
                     self.scores.append(variables.miss_value)
                 elif self.notes[x].pos[1] < 0:
