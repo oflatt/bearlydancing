@@ -85,12 +85,17 @@ def movednotes(old_notes, movelength):
         return l
 
 
-# returns a dictionary with timetoadd and
-def repitition(timetoadd, movelength, listofnotes, repeatlength, specs):
-    l = listofnotes
-    #print("timetoadd: " + str(timetoadd) + " movelength: " + str(movelength))
+# returns a dictionary with timetoadd and the list
+# timetoadd is an extra offset that is used for recursive calls
+# repeatlength is the number of notes to repeat
+# movelength is an offset for values of notes
+def repitition(timetoadd, movelength, listofnotes, repeatlength, specs, maxtimetaken):
+    print("repitition: time to add: " + str(timetoadd) + " repeatlength: " + str(repeatlength) + " last note time: " + str(listofnotes[-1].time))
+    l = listofnotes.copy()
+
     # add on the last repeatlength notes again, varied
     notestoadd = l[-repeatlength:len(l)]
+    
     # with certain rules we want to call variation of notes on the list
     if "repeat" in specs["rules"] or "repeatmovevariation" in specs["rules"]:
         notestoadd = variation_of_notes(notestoadd)
@@ -98,32 +103,28 @@ def repitition(timetoadd, movelength, listofnotes, repeatlength, specs):
     if "repeatmove" in specs["rules"] or "repeatmovevariation" in specs["rules"]:
         notestoadd = movednotes(notestoadd, movelength)
 
-    timedifference = notestoadd[-1].time - notestoadd[0].time
+    timedifference = notestoadd[-1].time + notestoadd[-1].duration - notestoadd[0].time
+    # finds how to restart repitition so that first note starts of same part of beat
+    offsetfactor = timedifference + (notestoadd[0].time%1 - timedifference%1)
 
-    maxduration = notestoadd[-1].duration
-
-    for g in notestoadd:
-        if (g.time >= notestoadd[-1].time and g.duration > maxduration):
-            maxduration = g.duration
-
-    timetakensofar = timedifference + maxduration + timetoadd
-
-    # offset the notestoadd by the timetakensofar
+    # offset the notestoadd by the offsetfactor
     for n in notestoadd:
-        n.time += timetakensofar
+        n.time += offsetfactor
+
+    timetakensofar = timetoadd+offsetfactor
 
     l.extend(notestoadd)
 
     # chance to repeat section moved again
-    if "repeatmove" in specs["rules"] or "repeatmovevariation" in specs["rules"]:
+    if "repeatmove" in specs["rules"] or "repeatmovevariation" in specs["rules"] and timetakensofar<maxtimetaken:
         # if we have already added an extra
         returnval = {"timetaken": timetakensofar, "list": l}
         if timetoadd > 0:
             if myrand(1):
-                returnval = repitition(timetakensofar, movelength, l, repeatlength, specs)
+                returnval = repitition(timetakensofar, movelength, l, repeatlength, specs, maxtimetaken)
         else:
             if myrand(2):
-                returnval = repitition(timetakensofar, movelength, l, repeatlength, specs)
+                returnval = repitition(timetakensofar, movelength, l, repeatlength, specs, maxtimetaken)
         return returnval
     else:
         return {"timetaken": timetakensofar, "list": l}
@@ -170,7 +171,7 @@ def random_beatmap(specs):
             # if we do a repitition
             if (randint(-1, len(l) % repeatlength) == 0 and len(l) >= repeatlength):
                 # add on the last repeatlength notes again, varied
-                r = repitition(0, randint(-4, 4), l, repeatlength, specs)
+                r = repitition(0, randint(-4, 4), l, repeatlength, specs, maxtime-time)
                 l = r["list"]
                 time += r["timetaken"]
             else:
@@ -185,6 +186,10 @@ def random_beatmap(specs):
 
     tempo = (1200 * 3) / ((lv / 3) + 3.5)
     l = shorten_doubles(l)
+
+    # finally, initialize all the notes
+    for n in l:
+        n.initialize()
 
     if variables.devmode:
         print("output of:")
@@ -473,8 +478,13 @@ def rand_duration(time, notelist, specs):
     return d
 
 
+# used to get a variation for the next round of a dance
 def variation_of(old_notes, tempo):
-    return Beatmap(tempo, variation_of_notes(old_notes))
+    newnotes = variation_of_notes(old_notes)
+    for n in newnotes:
+        n.initialize()
+    newb = Beatmap(tempo, newnotes)
+    return newb
 
 
 # future work: add the addition of chords to variation of notes
@@ -510,9 +520,6 @@ def variation_of_notes(old_notes):
                     iscopy = True
                     break
                 c += 1
-
-            if not iscopy:
-                l[p].newvalue(newvalue)
 
     l = shorten_doubles(l)
     return (l)

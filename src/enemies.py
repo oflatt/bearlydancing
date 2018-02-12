@@ -17,7 +17,7 @@ counter = 0
 sheep = Enemy(counter, 1, "sheep", ["cheapending"])
 counter += 1
 # just tutorial enemy
-greenie = Enemy(counter, 1, "mean greenie", ["melodic", "skippy", "cheapending", "rests"])
+greenie = Enemy(counter, 1, "mean greenie", ["melodic", "skippy", "cheapending", "repeatmovevariation", "rests"])
 counter += 1
 perp = Enemy(counter, 1, "perp", ["alternating", "cheapending"])
 counter += 1

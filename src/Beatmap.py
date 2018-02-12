@@ -69,6 +69,11 @@ class Beatmap():
         
         self.draw_pads()
 
+        # also draw notetime to top left
+        if variables.devmode:
+            notetimetext = variables.font.render(str(self.notetime()), 0, variables.WHITE)
+            variables.screen.blit(notetimetext, [10, 2*variables.font.get_linesize()])
+
     def draw_pads(self):
         w = variables.width / 20
         # draw bottom rectangles

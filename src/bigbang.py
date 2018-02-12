@@ -142,7 +142,8 @@ while not done:
 
 
     # blit fps
-    variables.screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [20, 20])
+    if variables.devmode:
+        variables.screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [10, variables.font.get_linesize()])
 
     if variables.testsmallp:
         # blit red boarder for testing

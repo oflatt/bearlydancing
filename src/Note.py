@@ -25,22 +25,31 @@ class Note:
 
     def __init__(self, value, time, duration):
         # value is the placement in the current scale (instrument) that the note is, 0 is the first note, can go neg
-        # time is time in the whole song it is
-        self.newvalue(value)
+        self.value = value
+        self.screenvalue = None # until initialized
+    
+        # time is the value in number of beats from beginning
         self.time = time
         self.duration = duration
-        beatplace = time%1
-        if beatplace == 0:
-            self.shape = "square"
-        elif beatplace == 0.5:
-            self.shape = "triangle"
-        else:
-            self.shape = "round"
 
-    def newvalue(self, v):
-        self.value = v
-        # from 0-7 even if it is out of those bounds so it can be played on the screen
+        # set in initialization
+        self.shape = None
+        self.secondshape = None
+
+    # needs to be called after beatmap is created or changed
+    def initialize(self):
+        def beatshape(beatplace):
+            if beatplace == 0:
+                return "square"
+            elif beatplace == 0.5:
+                return "triangle"
+            else:
+                return "round"
+
         self.screenvalue = value_to_screenvalue(self.value)
+        self.shape = beatshape(time%1)
+        self.secondshape = beatshape((time+duration)%1)
+        
 
     def height(self, tempo):
         return self.duration * (variables.padypos / variables.settings.notes_per_screen)
@@ -73,17 +82,17 @@ class Note:
         endx = p[0] - width/8
         endwidth = width * 1.25
 
-        def drawend(x, y, color):
-            if self.shape == "square":
+        def drawend(x, y, color, endshape):
+            if endshape == "square":
                 pygame.draw.rect(variables.screen, color,
                                  [x, y, endwidth, end_height])
-            elif self.shape == "triangle":
+            elif endshape == "triangle":
                 fourthx = endwidth/4
                 centery = y + end_height/2
                 pygame.draw.polygon(variables.screen, color,
                                     [[x, centery], [x+fourthx, y], [x+3*fourthx, y],
                                      [x+endwidth, centery], [x+3*fourthx, y+end_height], [x+fourthx, y+end_height]])
-            elif self.shape == "round":
+            elif endshape == "round":
                 pygame.draw.ellipse(variables.screen, color,
                                     [x, y, endwidth, end_height])
 
@@ -108,14 +117,14 @@ class Note:
         if self.ison and variables.padypos > p[1] - height and self.beginning_score != None and self.end_score == None:
             mheight = height+1 - (p[1]-variables.padypos)
             drawmid(p[1]-height-1, mheight, darkercolor)
-            drawend(endx, topendy, color)
+            drawend(endx, topendy, color, self.secondshape)
             #variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, mheight+end_height))
 
         # second case is if the note was interrupted in the middle and counted as a miss
         elif not self.height_offset == 0:
             if (height - self.height_offset > 1):
                 drawmid(p[1]-height-1, height+1-self.height_offset, darkercolor)
-                drawend(endx, topendy, color)
+                drawend(endx, topendy, color, self.secondshape)
              #   variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, height+end_height+1+self.height_offset))
 
         # third case is if it has either been missed or has not been played yet (normal draw)
@@ -123,9 +132,9 @@ class Note:
             #middle of note
             drawmid(p[1]-height-1, height+2-end_height, darkercolor)
             #top
-            drawend(endx, topendy, color)
+            drawend(endx, topendy, color, self.secondshape)
             #bottom of note
-            drawend(endx, p[1]-end_height, color)
+            drawend(endx, p[1]-end_height, color, self.shape)
             #variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, height+end_height+2))
 
         #don't draw it if it has been played
