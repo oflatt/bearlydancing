@@ -49,6 +49,10 @@ class Note:
         self.screenvalue = value_to_screenvalue(self.value)
         self.shape = beatshape(time%1)
         self.secondshape = beatshape((time+duration)%1)
+
+    # still needs to be initialized after
+    def newvalue(newval):
+        self.value = newval
         
 
     def height(self, tempo):

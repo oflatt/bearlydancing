@@ -520,6 +520,10 @@ def variation_of_notes(old_notes):
                     iscopy = True
                     break
                 c += 1
+                
+            if not iscopy:
+                # newvalue does not set screenvalue, so the notes still need to be initialized
+                l[p].newvalue(newvalue)
 
     l = shorten_doubles(l)
     return (l)
