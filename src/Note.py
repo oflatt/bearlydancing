@@ -10,10 +10,25 @@ def value_to_screenvalue(v):
         sv += 7
     return sv
 
-def beatshape(beatplace):
-    if beatplace == 0:
+# compare_within is inclusive, and adds a little on for floating point error
+def compare_around(num, comparedto, within, modulus):
+    left = comparedto-(within + 0.000001)
+    right = comparedto+(within + 0.000001)
+    if left<0 or right>modulus:
+        return num%1 >= left%1 or num%1 <= right%1
+    else:
+        return left%1 <= num%1 <= right%1
+
+# tests
+if not compare_around(28.1, 0, 0.1, 1):
+    print("compare_around test 1 failed")
+if not compare_around(28.5, 0.4, 0.2, 1):
+    print("compare_around test 2 failed")
+    
+def beatshape(time):
+    if compare_around(time, 0, 0.005, 1):
         return "square"
-    elif beatplace == 0.5:
+    elif compare_around(time, 0.5, 0.005, 1):
         return "triangle"
     else:
         return "round"
@@ -42,10 +57,10 @@ class Note:
         return value_to_screenvalue(self.value)
 
     def shape(self):
-        return beatshape(self.time%1)
+        return beatshape(self.time)
 
     def secondshape(self):
-        return beatshape((self.time+self.duration)%1)
+        return beatshape(self.time+self.duration)
     
     def newvalue(self, newval):
         self.value = newval
