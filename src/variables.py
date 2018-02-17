@@ -25,8 +25,9 @@ pygame.init()
 pygame.mixer.set_num_channels(46)
 
 # Set the width and height of the screen [width,height]
-#ctypes.windll.user32.SetProcessDPIAware()
-mode = (ctypes.windll.user32.GetSystemMetrics(0),ctypes.windll.user32.GetSystemMetrics(1))
+ctypes.windll.user32.SetProcessDPIAware()
+modes = pygame.display.list_modes()
+mode = modes[0]#(ctypes.windll.user32.GetSystemMetrics(0),ctypes.windll.user32.GetSystemMetrics(1))
 height = mode[1]
 width = mode[0]
 
