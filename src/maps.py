@@ -133,7 +133,7 @@ honeyhome = Map("honeyhouseinside",
                 [bed,
                  table,
                  littleletter,
-                 Rock(stashlist, p * 130, p * 58, [0, 0.9, 1, 0.1], name="stash")])
+                 Rock(stashlist, p * 130, p * 54, [0, 0.9, 1, 0.1], name="stash")])
 
 outofbed = Conversation([], speaksafter = [[],[],[]], switchthisrock = "bed")
 outofbed.area = [0, 0, b*20, b*20]

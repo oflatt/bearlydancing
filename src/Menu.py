@@ -2,6 +2,7 @@ import graphics, variables, pygame, enemies, classvar, maps, random, stathandeli
 from pygame import Rect
 from classvar import player
 from graphics import getpicbyheight, getTextPic
+from ChoiceButtons import ChoiceButtons
 
 textsize = variables.height/10
 
@@ -29,6 +30,7 @@ def keytonum(key):
         numentered = 9
     return numentered
 
+# self.state can be main or name
 class Menu():
     
     def __init__(self):
@@ -42,7 +44,11 @@ class Menu():
         self.message = None
         self.messagetime = 0
         
-        self.nameprompts = ["Your name:", "The sleeping bear's name:", "Increase difficulty of game by:"]
+        self.nameprompts = ["Your name:", "The sleeping bear's name:", "Increase difficulty of game by:",
+                            "Confirm difficulty level "]
+        self.yesno = ChoiceButtons(["yes","no"], variables.height/2 + variables.textsize)
+        # so that it starts on "no"
+        self.yesno.nextoption()
         self.tempdifficulty = 0
         
         self.textyspace = variables.font.get_linesize()*variables.height*0.003
@@ -151,9 +157,16 @@ class Menu():
 
     # in drawname option is used as how far they have gotten through the process
     def drawname(self):
+        promptstring = self.nameprompts[self.option]
         extrabuttonwidth = self.extrabuttonwidth
+        if self.option == len(self.nameprompts)-1:
+            reccomendedtext = getTextPic("The reccomended difficulty for new players is 0.", textsize, variables.beginningprompttextcolor)
+            variables.screen.blit(reccomendedtext, [variables.width/2 - reccomendedtext.get_width()/2,
+                                                    variables.height/2 - textsize*3.5])
+            self.yesno.draw()
+            promptstring = promptstring + str(self.tempdifficulty) + "?"
         
-        textpic = getTextPic(self.nameprompts[self.option], textsize, variables.WHITE)
+        textpic = getTextPic(promptstring, textsize, variables.beginningprompttextcolor)
         
         typestring = self.namestring
         typecolor = variables.BLACK
@@ -173,10 +186,10 @@ class Menu():
                 typecolor = (255-(self.tempdifficulty-13)*70, 0, 255-(self.tempdifficulty-13)*70)
             else:
                 typecolor = (0,0,0)
-            
+                
         typepic = graphics.scale_pure(variables.font.render(typestring, 0, typecolor).convert(), textsize, "height")
-        variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.height/2 - textpic.get_height()*1.5])
-        variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.height/2 - textpic.get_height()/2])
+        variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.height/2 - textsize*1.5])
+        variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.height/2 - textsize/2])
 
         if self.message != None:
             mpic = variables.font.render(self.message, 0, variables.WHITE).convert()
@@ -228,10 +241,16 @@ class Menu():
 
                     
                 self.namestring = ""
-                self.option += 1
-                if self.option >= len(self.nameprompts):
-                    self.mainmenup = False
-                    self.resume()
+                
+                if self.option == len(self.nameprompts)-1:
+                    if self.yesno.getoption() in ["n","no","NO"]:
+                        self.option -= 1
+                    else:
+                        self.mainmenup = False
+                        self.resume()
+                else:
+                    self.option += 1
+                    
                     
         elif key in [pygame.K_LSHIFT, pygame.K_RSHIFT]:
             self.shifton = True
@@ -261,6 +280,8 @@ class Menu():
                 self.tempdifficulty -= 1
             if self.tempdifficulty > variables.maxdifficulty:
                 self.tempdifficulty = variables.maxdifficulty
+        elif self.option == len(self.nameprompts)-1:
+            self.yesno.leftrightonkey(key)
         
 
     def onkeymain(self, key):

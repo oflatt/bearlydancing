@@ -44,6 +44,8 @@ class Speak():
             self.choicebuttons = ChoiceButtons(self.options,
                                                variables.height- variables.textsize - variables.height/20,
                                                variables.textsize)
+            # start on second option
+            self.choicebuttons.nextoption()
             
         self.special_battle = special_battle
         self.special_battle_story_penalty = None
@@ -109,11 +111,8 @@ class Speak():
             if self.state == "talking":
                 self.state = "choosing"
             elif self.state == "choosing":
-                if key in variables.settings.leftkeys:
-                    self.choicebuttons.previousoption()
-                elif key in variables.settings.rightkeys:
-                    self.choicebuttons.nextoption()
-                elif key in variables.settings.enterkeys:
+                self.choicebuttons.leftrightonkey(key)
+                if key in variables.settings.enterkeys:
                     choice = self.choicebuttons.getoption()
                     self.state = "done"
             

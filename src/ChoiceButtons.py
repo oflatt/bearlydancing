@@ -32,6 +32,12 @@ class ChoiceButtons():
 
     def getoption(self):
         return self.options[self.current_option]
+
+    def leftrightonkey(self, key):
+        if key in variables.settings.leftkeys:
+            self.previousoption()
+        elif key in variables.settings.rightkeys:
+            self.nextoption()
             
     def draw(self):
         for i in range(self.length):

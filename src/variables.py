@@ -121,6 +121,9 @@ lines_in_screen = int(textbox_height/textsize)
 photo_size = width/6
 buttonpadding = int(width/70)
 
+# menu
+beginningprompttextcolor = BLUE
+
 #world
 playerspeed = 0.05
 if devmode:

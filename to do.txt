@@ -1,5 +1,6 @@
 Bearly Dancing To-Do List
 
+-auto-save
 -adjust difficulty, fix the beatmap generator
 -expand the map!
 -more complex asthetic background grass
