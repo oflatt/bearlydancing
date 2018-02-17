@@ -14,7 +14,7 @@ Bearly Dancing To-Do List
 -chimney wing sounds
 
 battle
--crocodile too long, meangrean too hard at higher levels
+-melodicvalue uses randomlast, maybe it should use the melody line instead using front of each layer (chords added behind)
 -repeatwithvariation, switch notes, offset by a beat
 -triplet chord mode
 -octaves rule

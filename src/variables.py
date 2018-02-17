@@ -7,7 +7,7 @@ testsmallp = False
 devmode = True
 newworldeachloadq = False
 # only loads first couple of maps
-fasttestmodep = False
+fasttestmodep = True
 
 # this is the mode for the finished product- it just turns off all other development modes
 exportmode = False

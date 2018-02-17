@@ -246,7 +246,7 @@ class Battle():
                         maps.engage_conversation(conversations.tutorialconversation1)
             elif self.tutorialstate == "first note":
                 fnote = currentb.notes[0]
-                if fnote.pos[1] > variables.padypos and fnote.time > variables.settings.notes_per_screen + 2:
+                if fnote.pos[1] >= variables.padypos and fnote.time > variables.settings.notes_per_screen + 2:
                     self.tutorialstate = "release note"
                     maps.engage_conversation(conversations.pressanow)
             elif self.tutorialstate == "release note":
@@ -312,6 +312,7 @@ class Battle():
         elif self.state == "dance":
             if len(currentb.notes) == 0:
                 self.trade(currentb.scores)
+                currentb.reset_buttons()
 
         # drum sounds
         # now dt is based on starttime
@@ -414,7 +415,6 @@ class Battle():
 
         self.damage_multiplier *= variables.player_advantage_multiplier
 
-        currentb.reset_buttons()
         
         playerlv = classvar.player.lv()
         enemylv = self.enemy.lv
