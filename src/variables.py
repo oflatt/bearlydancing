@@ -18,16 +18,15 @@ if exportmode:
     fasttestmodep = False
 
 # Setup
+
 pygame.mixer.pre_init(22050, -16, 2, 128)
 pygame.mixer.init()
 pygame.init()
 pygame.mixer.set_num_channels(46)
 
 # Set the width and height of the screen [width,height]
-modes = pygame.display.list_modes()
-ctypes.windll.user32.SetProcessDPIAware()
-mode = modes[0]
-
+#ctypes.windll.user32.SetProcessDPIAware()
+mode = (ctypes.windll.user32.GetSystemMetrics(0),ctypes.windll.user32.GetSystemMetrics(1))
 height = mode[1]
 width = mode[0]
 

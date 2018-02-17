@@ -165,7 +165,7 @@ letterexit = Exit([p * 65, p * 100, 20, 30],
 letterexit.part_of_story = getpartofstory("letter")
 honeyhome.exitareas = [doorexit,
                        letterexit]
-honeyhome.colliderects = [Rect(0, 0, p * 31, p * 74),  # bed
+honeyhome.colliderects = [Rect(0, 0, p * 30, p * 74),  # bed
                           Rect(0, 0, insidewidth, p * 48),  # wall
                           Rect(44 * p, 0, 26 * p, 60 * p),  # wardrobe
                           Rect(p * 75, p * 110 + p * 11, p * 44, p * 13)]  # table

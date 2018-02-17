@@ -40,6 +40,9 @@ class Player(Dancer):
         self.normal_height = GR[self.right_animation.pics[1]]["h"]
         self.collidesection = (0, self.normal_height * (26/29), self.normal_width, self.normal_height/2)
         self.exp = 0
+
+    def lv(self):
+        return stathandeling.explv(self.exp)
         
 
     def teleport(self, x, y):
@@ -264,7 +267,7 @@ class Player(Dancer):
         return not (self.xspeed==0 and self.yspeed==0)
 
     def heal(self):
-        self.health = stathandeling.max_health(self.lv)
+        self.health = stathandeling.max_health(self.lv())
 
     def change_of_state(self):
         self.downpresstime = 0

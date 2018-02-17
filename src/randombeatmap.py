@@ -159,6 +159,7 @@ def random_beatmap(specs):
         oldt = time
         notedurations = []
         notedurations.append(addnote(oldt, False))
+        
         # chance to add more notes at the same time
         if (randint(0, 100) < (lv + 2) ** 2):
             if randint(1, 2) == 1:
@@ -438,7 +439,7 @@ def rand_duration(time, notelist, specs):
     lv = specs["lv"]
 
     d = 1
-    if (randint(0, 50) < (lv + 2) ** 2):
+    if randint(0, 50) < (lv + 2) ** 2:
         if (randint(1, 2) == 1):
             d = 2
         if (randint(0, 500) < (lv + 2) ** 2):

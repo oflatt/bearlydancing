@@ -71,7 +71,11 @@ class Note:
     # bottom end of note included, top of note goes over height
     # detection is by the bottom of each end of the note
     def draw(self, tempo):
-        
+        # only draw if it is on screen
+        if self.pos[1]>0:
+            self.drawhelper(tempo)
+
+    def drawhelper(self, tempo):
         width = variables.width / 20
         height = self.height(tempo)
 

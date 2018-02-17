@@ -15,8 +15,9 @@ class Battle():
         self.damage_multiplier = 1
         self.drumcounter = 0
         self.beatmaps = []
-        
-        self.enemy = enemy
+
+        # copy the enemy first
+        self.enemy = copy.copy(enemy)
         # offset enemy lv by difficulty
         self.enemy.lv += variables.settings.difficulty
         
@@ -164,12 +165,12 @@ class Battle():
             text = variables.font.render("EXP", 0, variables.WHITE)
             textscaled = sscale(text)
             variables.screen.blit(textscaled, [w / 2 - (textscaled.get_width() / 2), h / 3])
-            text = variables.font.render("Lv " + str(classvar.player.lv), 0, variables.WHITE)
+            text = variables.font.render("Lv " + str(classvar.player.lv()), 0, variables.WHITE)
             textscaled = sscale(text)
             variables.screen.blit(textscaled, [0, h / 3 - textscaled.get_height()])
 
             # exp bar
-            percentofbar = (p.exp - stathandeling.lvexp(p.lv)) / stathandeling.exp_needed(p.lv)
+            percentofbar = (p.exp - stathandeling.lvexp(p.exp)) / stathandeling.exp_needed(p.lv())
             pygame.draw.rect(variables.screen, variables.BLUE, [0,
                                                                 h / 2,
                                                                 w * percentofbar,
@@ -183,7 +184,7 @@ class Battle():
                                       [w / 2 - (textscaled.get_width() / 2), h / 3 - textscaled.get_height()])
 
         # player health bar
-        playermaxh = stathandeling.max_health(p.lv)
+        playermaxh = stathandeling.max_health(p.lv())
         healthh = h * (1 / 18)
         enemyhealthh = h * (1 / 50)
         e = self.enemy
@@ -305,7 +306,6 @@ class Battle():
                 if stathandeling.explv(self.oldexp) < stathandeling.explv(self.newexp):
                     classvar.player.heal()
                 self.state = "got exp"
-            classvar.player.lv = stathandeling.explv(classvar.player.exp)
 
         # check for end of beatmap
         elif self.state == "dance":
@@ -410,7 +410,7 @@ class Battle():
             self.beatmaps[self.current_beatmap].onrelease(key)
 
     def trade(self):
-        playerlv = classvar.player.lv
+        playerlv = classvar.player.lv()
         enemylv = self.enemy.lv
         self.state = "attacking"
         self.oldenemyhealth = self.enemy.health

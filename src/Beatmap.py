@@ -63,9 +63,8 @@ class Beatmap():
                                                                         padypos - padheight + padheight / 2 - ew / 4,
                                                                         ew, ew / 2])
         # draw the notes that are on the screen
-        n = self.notes_on_screen()
-        for x in range(0, len(n)):
-            n[x].draw(self.tempo)
+        for n in self.notes:
+            n.draw(self.tempo)
         
         self.draw_pads()
 
@@ -94,18 +93,6 @@ class Beatmap():
                     variables.screen.blit(self.feedback[x], [padxspace * (x + 1) - w / 8 + xoffset, padypos - padheight])
             else:
                 variables.screen.blit(self.feedback[x], [padxspace * (x + 1) - w / 8 + xoffset, padypos - padheight])
-
-    def notes_on_screen(self):
-        n = []
-        for x in range(0, len(self.notes)):
-            # update the pos of the note
-            self.notes[x].pos = self.notepos(self.notes[x])
-            checkednote = self.notes[x]
-            if checkednote.pos[1] >= 0:
-                n.insert(0, checkednote)
-            else:
-                break
-        return n
 
     # returns number of notes that should have passed the pad by now
     def notetime(self):
@@ -296,6 +283,9 @@ class Beatmap():
             self.held_keys[7] = None
 
     def ontick(self):
+        # update positions of notes
+        for n in self.notes:
+            n.pos = self.notepos(n)
         # remove notes that are off the screen
         np = 0
         while np < len(self.notes):

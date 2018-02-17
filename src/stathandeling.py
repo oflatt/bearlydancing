@@ -7,6 +7,7 @@ def max_health(lv):
 def lvexp(lv):
     return int(lv**3)
 
+# converts exp to lv
 def explv(exp):
     return int(exp**(1./3.))
 
