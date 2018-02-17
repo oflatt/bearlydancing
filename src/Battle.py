@@ -213,7 +213,8 @@ class Battle():
     # for things like the attack animation
     def ontick(self):
         currentb = self.beatmaps[self.current_beatmap]
-        currentb.ontick()
+        if self.state == "dance":
+            currentb.ontick()
         
         dt = variables.settings.current_time - self.animationtime
 
@@ -310,13 +311,7 @@ class Battle():
         # check for end of beatmap
         elif self.state == "dance":
             if len(currentb.notes) == 0:
-                scores = currentb.scores
-                self.damage_multiplier = sum(scores) / len(scores)
-                # if they did not miss any
-                if (not (variables.miss_value in scores)):
-                    self.damage_multiplier += variables.perfect_value
-                currentb.reset_buttons()
-                self.trade()
+                self.trade(currentb.scores)
 
         # drum sounds
         # now dt is based on starttime
@@ -409,7 +404,18 @@ class Battle():
         if releasep:
             self.beatmaps[self.current_beatmap].onrelease(key)
 
-    def trade(self):
+    # "damages" player and enemy after a round and before the animation
+    def trade(self, scores):
+        self.damage_multiplier = sum(scores) / len(scores)
+
+        # if they did not miss any
+        if (not (variables.miss_value in scores)):
+            self.damage_multiplier += variables.all_perfect_bonus
+
+        self.damage_multiplier *= variables.player_advantage_multiplier
+
+        currentb.reset_buttons()
+        
         playerlv = classvar.player.lv()
         enemylv = self.enemy.lv
         self.state = "attacking"
@@ -432,5 +438,6 @@ class Battle():
             self.isplayernext = False
         else:
             self.isplayernext = True
+            
         damageenemy()
         damageplayer()

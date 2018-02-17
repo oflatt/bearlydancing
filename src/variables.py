@@ -7,7 +7,7 @@ testsmallp = False
 devmode = True
 newworldeachloadq = False
 # only loads first couple of maps
-fasttestmodep = True
+fasttestmodep = False
 
 # this is the mode for the finished product- it just turns off all other development modes
 exportmode = False
@@ -97,10 +97,14 @@ melodic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : ['melodic']}
 maxvalue = 14
 minvalue = -7
 
-perfect_value = 2
+perfect_value = 1.75
 good_value = 1
-ok_value = 0.6
+ok_value = 0.7
 miss_value = 0
+
+all_perfect_bonus = 0.75
+player_advantage_multiplier = 1.25
+
 perfect_range = height/100
 good_range = height/60
 ok_range = height/25
@@ -172,10 +176,4 @@ def draw_progress_bar():
         
         screen.blit(progresstext, [int(width/2 - progresstext.get_width()/2), texty])
         pygame.display.flip()
-
-#helpful functions
-def smaller(a, b):
-    if a<b:
-        return a
-    else:
-        return b
+        

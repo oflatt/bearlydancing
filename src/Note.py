@@ -11,7 +11,7 @@ def value_to_screenvalue(v):
     return sv
 
 # compare_within is inclusive, and adds a little on for floating point error
-def compare_around(num, comparedto, within, modulus):
+def compare_around(num, comparedto, within = 0, modulus = 1):
     left = comparedto-(within + 0.000001)
     right = comparedto+(within + 0.000001)
     if left<0 or right>modulus:
@@ -21,9 +21,9 @@ def compare_around(num, comparedto, within, modulus):
 
 # tests
 if not compare_around(28.1, 0, 0.1, 1):
-    print("compare_around test 1 failed")
+    print("Note: compare_around test 1 failed")
 if not compare_around(28.5, 0.4, 0.2, 1):
-    print("compare_around test 2 failed")
+    print("Note: compare_around test 2 failed")
     
 def beatshape(time):
     if compare_around(time, 0, 0.005, 1):
@@ -35,7 +35,7 @@ def beatshape(time):
 
 class Note:
 
-    def __init__(self, value, time, duration):
+    def __init__(self, value, time, duration, chordadditionp = False):
         # value is the placement in the current scale (instrument) that the note is, 0 is the first note, can go neg
         self.value = value
         
@@ -52,6 +52,9 @@ class Note:
 
         # drawing
         self.height_offset = 0
+
+        # this is for printing out notes and debugging
+        self.chordadditionp = chordadditionp
 
     def screenvalue(self):
         return value_to_screenvalue(self.value)

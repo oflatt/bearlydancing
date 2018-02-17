@@ -9,16 +9,17 @@ middleoffset = padxspace / 2
 class Beatmap():
 
     def __init__(self, tempo, notes):
-        self.starttime = variables.settings.current_time
         # tempo in how many milliseconds per beat.
         self.tempo = tempo
         self.originalnotes = notes
+        
         # notes is an ordered list of Note, notes with earlier times first
         self.notes = copy.deepcopy(self.originalnotes)
         self.scale = [2, 2, 1, 2, 2, 2, 1]  # list of offsets for the scale
         self.speed = 1 # unused currently
         self.starttime = 0
         self.pausetime = 0
+
         # scores is a running list of the values for how well each note so far has been played. values for perfect, ect
         self.scores = []
         # held keys is None if the key is not held, and the tone if it is held
@@ -298,7 +299,7 @@ class Beatmap():
         for x in range(len(self.notes)):
             # find whether the miss range or the distance to middle of note is smaller
             h = self.notes[x].height(self.tempo)
-            smaller = variables.smaller(h / 2, variables.miss_range)
+            smaller = min(h / 2, variables.miss_range)
 
             if self.notes[x].pos[1] - smaller > padypos and self.notes[x].beginning_score == None:
                 if self.notes[x].ison:

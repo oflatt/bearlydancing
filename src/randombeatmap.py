@@ -1,9 +1,10 @@
 from Beatmap import Beatmap
 from Note import Note
 from Note import value_to_screenvalue
+from Note import compare_around
 import random, copy
 from random import randint
-import variables
+import variables, math
 
 '''rule types for beatmaps
 melodic- higher chance of notes being in a row in one direction
@@ -22,7 +23,10 @@ cheapending- pick a random tonic and throw it on the end
 
 def printnotelist(l):
     for x in l:
-        print("value: " + str(x.value) + " time: " + str(x.time) + " duration " + str(x.duration))
+        isc = ""
+        if x.chordadditionp:
+            isc = " +chordaddition"
+        print("value: " + str(x.value) + " time: " + str(x.time) + " duration: " + str(x.duration) + isc)
 
 
 testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
@@ -44,6 +48,17 @@ def myrand(n):
 def outsiderangeq(value):
     return value < variables.minvalue or value > variables.maxvalue
 
+# checks if a a note collides with a list of notes
+def notecollidep(ntime, nvalue, nduration, l):
+    iscopy = False
+    x = 0
+    while (x < len(l)):
+        if l[x].screenvalue() == value_to_screenvalue(nvalue):
+            if l[x].time+l[x].duration > ntime and l[x].time < ntime+nduration:
+                iscopy = True
+                break
+        x += 1
+    return iscopy
 
 def shorten_doubles(l):
     newl = l
@@ -145,14 +160,17 @@ def random_beatmap(specs):
     repeatlength = randint(3, 7 + lv)
 
     def addnote(time, ischord):
-        duration = rand_duration(time, l, specs)
-        rv = random_value(time, ischord, l, specs)
-        # if it is not a rest
-        if (not rv == "rest"):
+        isr = restp(time, l, specs)
+        duration = rand_duration(time, l, specs, isr)
+        
+        if not isr:
+            rv = random_value(time, ischord, l, specs)
+            # chord notes added before the main note to make it easier to compare to the melody
             if (ischord):
-                l.insert(len(l) - 1, Note(rv, time, duration))
+                l.insert(len(l) - 1, Note(rv, time, duration, True))
             else:
                 l.append(Note(rv, time, duration))
+                
         return duration
 
     def normalloop():
@@ -160,12 +178,13 @@ def random_beatmap(specs):
         notedurations = []
         notedurations.append(addnote(oldt, False))
         
-        # chance to add more notes at the same time
+        # chance to add chord notes
         if (randint(0, 100) < (lv + 2) ** 2):
             if randint(1, 2) == 1:
                 notedurations.append(addnote(oldt, True))
             if randint(0, 1000) < (lv + 2) ** 2:
                 notedurations.append(addnote(oldt, True))
+                
         return max(notedurations)
 
     # masterloop for adding on notes
@@ -373,6 +392,19 @@ def alternating_value(rv, depth, specs, l):
     else:
         return value
 
+def restp(t, l, specs):
+    isr = False
+    # handeling rests
+    if (len(l) > 0):
+        if ("rests" in specs["rules"] and l[-1].time + l[-1].duration >= t):
+            # high chance of a rest if the last note was not a rest
+            if (myrand(4)):
+                isr = True
+    # 8/9 a rest if not rests rule
+        elif not myrand(8):
+            isr = True
+
+    return isr
 
 def random_value(t, ischord, unflippedlist, specs):
     # flip l because it's easier to look at it that way
@@ -380,16 +412,6 @@ def random_value(t, ischord, unflippedlist, specs):
 
     rv = randint(variables.minvalue, variables.maxvalue)
     depth = notedepth(l)
-
-    # handeling rests
-    if (len(l) > 0):
-        if ("rests" in specs["rules"] and l[0].time + l[0].duration >= t):
-            # high chance of a rest if the last note was not a rest
-            if (myrand(4)):
-                rv = "rest"
-    # 8/9 a rest if not rests rule
-        elif not myrand(8):
-            rv = "rest"
 
     def melodicchord(rv):
         value = rv
@@ -408,25 +430,16 @@ def random_value(t, ischord, unflippedlist, specs):
         else:
             return value
 
-    if not rv == "rest":
-        if ('melodic' in specs['rules']) and not (ischord) and depth > 0:
-            rv = melodic_value(rv, depth, specs, l)
-        elif ('melodic' in specs['rules']) and ischord and not rv == "rest" and depth>0:
-            rv = melodicchord(rv)
-        elif ('alternating' in specs['rules']) and not (ischord) and depth > 0:
-            rv = alternating_value(rv, depth, specs, l)
-        elif ('alternating' in specs['rules']) and ischord and depth>0:
-            rv = melodicchord(rv)
+    if ('melodic' in specs['rules']) and not (ischord) and depth > 0:
+        rv = melodic_value(rv, depth, specs, l)
+    elif ('melodic' in specs['rules']) and ischord and not rv == "rest" and depth>0:
+        rv = melodicchord(rv)
+    elif ('alternating' in specs['rules']) and not (ischord) and depth > 0:
+        rv = alternating_value(rv, depth, specs, l)
+    elif ('alternating' in specs['rules']) and ischord and depth>0:
+        rv = melodicchord(rv)
 
-    iscopy = False
-    if (not rv == "rest"):
-        # make sure the value does not overlap another one
-        x = 0
-        while (x < len(l)):
-            if (l[x].time + l[x].duration > t and l[x].screenvalue() == value_to_screenvalue(rv)):
-                iscopy = True
-                break
-            x += 1
+    iscopy = notecollidep(t, rv, 1, l)
 
     if (iscopy):
         # try again if it is a copy
@@ -434,8 +447,7 @@ def random_value(t, ischord, unflippedlist, specs):
     else:
         return rv
 
-
-def rand_duration(time, notelist, specs):
+def rand_duration(time, notelist, specs, isr):
     lv = specs["lv"]
 
     d = 1
@@ -464,15 +476,22 @@ def rand_duration(time, notelist, specs):
             d = d / 2
         
     # if it is on an offbeat
-    if (time % 1 == 0.5):
+    if compare_around(time, 0.5):
         if (randint(0, 100) > lv ** 2):
             if (randint(1, 2) == 1):
-                d = round(d-0.5)+0.5
-    elif ((time % 1) > 0):
+                d = round(d-0.49)+0.5
+                
+    elif not compare_around(time, 0):
         remainder = time%1
         # want to fix offbeats less that 0.5 quickly
         if (randint(0, 1000) > lv ** 2):
-            d = round(d-remainder)+remainder
+            d = round(d-remainder+0.01)+remainder
+
+    else:
+        # if it is on the beat and it is a rest, additional chance to round it up
+        if isr:
+            if myrand(1):
+                d = math.ceil(d-0.01)
 
     return d
 

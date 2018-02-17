@@ -24,6 +24,8 @@ battle
 -battle code is ugly and convoluted with all the time/health variables
 
 Sophie:
+-choose different colors for floor inside house- blends in with honey
+-forest boss
 -flying chimney!
 -nice looking interaction button to replace circle
--wardrobe open, "why do I even have dis?"
+-wardrobe open, "why do I even have this?"
