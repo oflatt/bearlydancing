@@ -12,6 +12,15 @@ from random import randint
 
 from mapsvars import *
 
+# outside6 #####################################################################################
+
+outside6 = Map(graphics.grassland(1200, 500), [])
+outside6.populate_with("greyrock", 6)
+outside6.populate_with("pinetree", 20)
+outside6.enemies = enemies.woodsenemies
+outside6.lvrange = [3, 4]
+outside6.exitareas = [Exit("left", False, "outside5", "right", "same")]
+
 # outside5 #####################################################################################
 outside5 = Map(graphics.grassland(800, 500, downpath = True), [])
 outside5.populate_with("greyrock", 4)
@@ -19,15 +28,16 @@ outside5.populate_with("pinetree", 15)
 outside5.enemies = enemies.woodsenemies
 outside5.lvrange = [2]
 outside5.exitareas = [Exit("left", False, "outside3", "right", "same"),
-                      Exit("bottom", False, "outside4", "same", "top")]
+                      Exit("bottom", False, "outside4", "same", "top"),
+                      Exit("right", False, "outside6", "left", "same")]
 
-# outside4/rockorsheep##########################################################################
+# outside4/rockorsheep#########################################################################
 outside4width = 800
 outside4height = 500
 rgrassland = graphics.grassland(outside4width, outside4height, leftpath = False, rightpath = False, uppath = True)
 
 def make_rock_or_sheep_rocks():
-    bigx = int(outside4width/2) - randint(int(outside4width/20), int(outside4width/4))
+    bigx = int(outside4width/2) - randint(int(outside4width/10), int(outside4width/3))
     rocklist = []
     def addgroup(number, offset, xpos):
         y = outside4height - 100 + randint(0, 20)

@@ -17,11 +17,11 @@ counter = 0
 sheep = Enemy(counter, 1, "sheep", ["cheapending"])
 counter += 1
 # just tutorial enemy
-greenie = Enemy(counter, 1, "mean greenie", ["melodic", "skippy", "cheapending", "repeatmovevariation", "rests"])
+greenie = Enemy(counter, 1, "mean greenie", ["melodic", "cheapending", "repeatmovevariation", "rests"])
 counter += 1
 perp = Enemy(counter, 1, "perp", ["alternating", "cheapending"])
 counter += 1
-spoe = Enemy(counter, 1, "spoe", ["rests", "melodic", "cheapending", "repeat"])
+spoe = Enemy(counter, 1, "spoe", ["rests", "skippy", "melodic", "cheapending", "repeat"])
 counter += 1
 croc = Enemy(counter, 1, "croc", ["melodic", "cheapending", "repeatmove"])
 

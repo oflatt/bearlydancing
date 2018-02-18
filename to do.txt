@@ -3,11 +3,10 @@ Bearly Dancing To-Do List
 -auto-save
 -adjust difficulty, fix the beatmap generator
 -expand the map!
--more complex asthetic background grass
 -write some tests for once
 -flying chimney once sophie makes it
 -controls in menu
--map objects and loading more safely, versioning
+-map objects and loading more safely, versioning, safely load with new content
 
 -fix volume
 -add music
@@ -24,8 +23,13 @@ battle
 
 -battle code is ugly and convoluted with all the time/health variables
 
+graphics
+-more complex asthetic background grass
+-bush
+-flower
+
 Sophie:
--choose different colors for floor inside house- blends in with honey
+-animations for tp
 -forest boss
 -flying chimney!
 -nice looking interaction button to replace circle
