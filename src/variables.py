@@ -7,7 +7,10 @@ testsmallp = False
 devmode = True
 newworldeachloadq = False
 # only loads first couple of maps
-fasttestmodep = True
+fasttestmodep = False
+
+# if None it does nothing, if it is a dictionary for "specs" it goes directly into a battle with those specs
+testspecs = None #{'maxtime' : 20, 'lv' : 7, 'rules' : ["repeatvalues", "highrepeatchance", "cheapending"]}
 
 # this is the mode for the finished product- it just turns off all other development modes
 exportmode = False

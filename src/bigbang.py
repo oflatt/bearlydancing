@@ -33,6 +33,18 @@ pygame.event.get()
 # Loop variable
 done = False
 
+# if the testspecs are set, use it and initiate a battle
+from initiatestate import initiatebattle
+from enemies import random_enemy
+import copy
+if variables.testspecs != None:
+    testenemy = copy.copy(random_enemy("woods"))
+    testenemy.lv = variables.testspecs['lv']
+    testenemy.beatmaprules = variables.testspecs['rules']
+    initiatebattle(testenemy)
+    menu.firstbootup = False
+    variables.menuonq = False
+
 
 # -------- Main Program Loop -----------
 while not done:
