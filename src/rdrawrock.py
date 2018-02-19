@@ -27,7 +27,7 @@ def makerock():
     texture2color = (texture2grey, texture2grey, texture2grey)
 
     pointlist = []
-    radius = randint(9, 12)
+    radius = randint(9, variables.ROCKMAXRADIUS)
 
     #chance for small rock
     if random.randint(0, 5) < 1:

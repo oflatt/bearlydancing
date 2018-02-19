@@ -65,49 +65,70 @@ class Map():
             self.map_scale_offset = 1
 
     # puts a number of one kind of object into the map randomly
+    # call with greyrocks before trees
     # if the randomly generated coordinates collide with anything, they are skipped
-    # can only be used before the scaling happens
-    def populate_with(self, rocktype, number):
+    # colliderects is a list of rects in which rocks cannot be spawned- no part of it can be displayed in it
+    def populate_with(self, rocktype, number, colliderects = []):
         width = GR[self.base]["w"]
         height = GR[self.base]["h"]
         
-        treewscaled = variables.TREEWIDTH
-        treehscaled = variables.TREEHEIGHT
-        yconstraints = [-int(treehscaled/2), height-int(treehscaled/2)]
-        xconstraints = [0, width-treewscaled]
+        treew = variables.TREEWIDTH
+        treeh = variables.TREEHEIGHT
         x_min_distance = 6
         y_min_distance = 8
-        rockp = rocktype == "greyrock" or rocktype == "grey rock" or rocktype == "rock"
+        
+        greyrockp = rocktype == "greyrock" or rocktype == "grey rock" or rocktype == "rock"
+        pinetreep = rocktype == "pinetree" or rocktype == "pine tree"
 
-        if rockp:
-            xconstraints = [0, width-20]
-            yconstraints = [0, height-30]
+        yconstraints = [-int(treeh/2), height-int(treeh/2)]
+        xconstraints = [0, width-treew]
+        if greyrockp:
+            xconstraints = [0, width-variables.ROCKMAXRADIUS*2]
+            yconstraints = [0, height-variables.ROCKMAXRADIUS*2]
 
         # this compares unscaled coordinates
         def collidewithonep(xpos, ypos, rock):
             #don't do collision with placing rocks
-            if not rockp:
+            if not greyrockp:
                 rmask = TREEMASK
                 currentmask = rock.get_mask()
                 overlapp = rmask.overlap(currentmask, [int(xpos-rock.x), int(ypos-rock.y)])
+                
+            # else it is a grey rock
             else:
                 overlapp = False
-            #if overlapp:
-            #    print("got collision")
+                
             return overlapp
         
         def collidesp(xpos, ypos, rocklist):
             collisiontracker = False
+
+            # check if it collides with the colliderects given to the populate function
+            if greyrockp:
+                testrect = pygame.Rect(xpos, ypos, variables.ROCKMAXRADIUS, variables.ROCKMAXRADIUS)
+            elif pinetreep:
+                testrect = pygame.Rect(xpos, ypos, variables.TREEWIDTH, variables.TREEHEIGHT)
+            else:
+                raise NotImplementedError("Unknown type of rock %s for populate_with in Map.py" % rocktype)
+            for crect in colliderects:
+                if crect.colliderect(testrect):
+                    collisiontracker = True
+                    break
+
+            # check against the terrain
             if not collisiontracker:
                 for r in self.terrain:
                     if collidewithonep(xpos, ypos, r):
                         collisiontracker = True
                         break
+
+            # check against the rocklist given (new rocks)
             if not collisiontracker:
                 for r in rocklist:
                     if collidewithonep(xpos, ypos, r):
                         collisiontracker = True
                         break
+                    
             return collisiontracker
 
         # first generate the y-values for the rocks
@@ -116,15 +137,14 @@ class Map():
         for randy in ypositions:
             randx = random.randint(xconstraints[0], xconstraints[1])
             if not collidesp(randx, randy, newrocks):
-                if rocktype == "pinetree" or rocktype == "pine tree":
+                if pinetreep:
                     newrocks.append(Rock(graphics.pinetree(), randx, randy, variables.TREECOLLIDESECTION))
-                if rockp:
+                if greyrockp:
                     newrocks.append(Rock(graphics.greyrock(), randx, randy, variables.ROCKCOLLIDESECTION))
                     
         self.terrain.extend(newrocks)
-        
-    # this scales everything by the mapscale
-    # if inversep is on, it unscales everything for saving
+
+    # now used to set the exitareas, for shorthand
     def scale_stuff(self):
         
         honeywidth = GR[classvar.player.left_animation.pics[0]]["w"]

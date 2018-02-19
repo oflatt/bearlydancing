@@ -139,10 +139,10 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
         # if we have already added an extra
         if iterations > 0:
             if myrand(1):
-                returnval = repetition(newtime, movelength, l, repeatlength, specs, maxtime, iterations+1)
+                returnval = normalrepetition(newtime, movelength, l, repeatlength, specs, maxtime, iterations+1)
         else:
             if myrand(2):
-                returnval = repetition(newtime, movelength, l, repeatlength, specs, maxtime, iterations+1)
+                returnval = normalrepetition(newtime, movelength, l, repeatlength, specs, maxtime, iterations+1)
                 
         return returnval
     else:
@@ -407,11 +407,15 @@ def restp(t, l, specs):
     isr = False
     # handeling rests
     if (len(l) > 0):
-        if ('rests' in specs['rules'] and l[-1].time + l[-1].duration >= t):
-            # high chance of a rest if the last note was not a rest
-            if (myrand(4)):
-                isr = True
-    # 8/9 a rest if not rests rule
+        if ('rests' in specs['rules'] and l[-1].time + l[-1].duration >= t-0.05):
+            if compare_around(t, 0):
+                if myrand(1):
+                    isr = True
+            else:
+                # if not on the beat very high chance of a rest if the last note was not a rest
+                if (myrand(5)):
+                    isr = True
+        # 1/9 is a rest if not rests rule
         elif not myrand(8):
             isr = True
 
@@ -468,46 +472,56 @@ def random_duration(time, notelist, specs, isr):
         if (randint(0, 1000) < (lv + 2) ** 2):
             if (randint(1, 2) == 1):
                 if (randint(1, 3) == 1):
+                    print("triplet duration")
                     d = 3
                 else:
                     d = 4
 
     # so that usually it is the inverse, short notes
-    if isr:
-        if myrand(9):
-            d = 1/d
-    else:
-        if myrand(2):
-            d = 1 / d
+    if myrand(2):
+        d = 1 / d
 
     # additional chance at lower levels to be slow
     if (randint(0, 5) > lv):
         d = 2
 
-    # rests rule
+      # rests rule
     if 'rests' in specs['rules'] and not specs['lv'] in [0,1]:
-        # good chance of making it half as long when bigger than 1/4
+        # good chance to make it half as long
         if myrand(4) and d>0.25:
             d = d / 2
         
     # if it is on an offbeat
     if compare_around(time, 0.5):
-        if (randint(0, 100) > lv ** 2):
-            if (randint(1, 2) == 1):
-                d = round(d-0.49)+0.5
-                
+        if (randint(0, 200) > lv ** 2):
+            if myrand(3):
+                d = round(d-0.52)+0.5
+
     elif not compare_around(time, 0):
         remainder = time%1
-        # want to fix offbeats less that 0.5 quickly
-        if (randint(0, 1000) > lv ** 2):
+        # high chance of making the duration of the next note another of the same kind of unit
+        if myrand(3):
+            d = min(remainder, 1-remainder)
+        # otherwise we want to fix offbeats less that 0.5 quickly
+        elif (randint(0, 1000) > lv ** 2):
             d = round(d-remainder+0.01)+remainder
 
+    # else it is on the beat
     else:
         # if it is on the beat and it is a rest, additional chance to round it up
         if isr:
             if myrand(1):
                 d = math.ceil(d-0.01)
 
+    # rests rule and it is a rest
+    if 'rests' in specs['rules'] and isr:
+        if compare_around(time, 0):
+            if not myrand(2):
+                d = notelist[-1].duration
+        # if off beat, good chance of the same length as the previous note
+        elif myrand(5):
+            d = notelist[-1].duration
+        
     return d
 
 

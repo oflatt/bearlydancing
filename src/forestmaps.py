@@ -13,16 +13,22 @@ from random import randint
 from mapsvars import *
 
 # outside6 #####################################################################################
-
-outside6 = Map(graphics.grassland(1200, 500), [])
-outside6.populate_with("greyrock", 6)
-outside6.populate_with("pinetree", 20)
+outside6width = 1200
+outside6height = 600
+groveheight = variables.TREEHEIGHT*1.5
+grovewidth = variables.TREEWIDTH*4
+outside6 = Map(graphics.grassland(outside6width, outside6height), [])
+# make a cleared area for the one tree
+groverect = Rect(outside6width/2-grovewidth/2, outside6height-groveheight,
+                 grovewidth, groveheight)
+outside6.populate_with("greyrock", 6, [groverect])
+outside6.populate_with("pinetree", 28, [groverect])
 outside6.enemies = enemies.woodsenemies
 outside6.lvrange = [3, 4]
 outside6.exitareas = [Exit("left", False, "outside5", "right", "same")]
 
 # outside5 #####################################################################################
-outside5 = Map(graphics.grassland(800, 500, downpath = True), [])
+outside5 = Map(graphics.grassland(800, outside6height, downpath = True), [])
 outside5.populate_with("greyrock", 4)
 outside5.populate_with("pinetree", 15)
 outside5.enemies = enemies.woodsenemies
@@ -33,7 +39,7 @@ outside5.exitareas = [Exit("left", False, "outside3", "right", "same"),
 
 # outside4/rockorsheep#########################################################################
 outside4width = 800
-outside4height = 500
+outside4height = outside6height
 rgrassland = graphics.grassland(outside4width, outside4height, leftpath = False, rightpath = False, uppath = True)
 
 def make_rock_or_sheep_rocks():
@@ -134,14 +140,23 @@ outside2.lvrange = [1]
 # jeremyhome####################################################################################
 rgrassland = graphics.grassland(800, 500)
 b = GR[rgrassland]["w"]/10
+
 hole = Rock("rabbithole", b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 1 / 2, 1, 1 / 2])
+
 jmyman = Rock("jeremy0", b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 3 / 4, 1, 1 / 4])
 jmyman.background_range = hole.background_range.copy()
+
 dancelionanim = Animation(["dancelion0", "dancelion1"], 3000)
+dancelion = Rock(dancelionanim, b/2, b * 4, [0, 3 / 4, 1, 1 / 4])
 
 jeremyhome = Map(rgrassland, [hole,
                               jmyman,
-                              Rock(dancelionanim, b/2, b * 4, [0, 3 / 4, 1, 1 / 4])])
+                              dancelion])
+
+dontputrockslist = [dancelion.getrect(), jmyman.getrect()]
+jeremyhome.populate_with("greyrock", randint(0, 2), dontputrockslist)
+jeremyhome.populate_with("pinetree", randint(3, 8), dontputrockslist)
+
 jeremyhome.exitareas = [Exit("right", False, 'outside1', "left", "same")]
 conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"] - (honeyw / 2), GR["rabbithole"]["h"]]

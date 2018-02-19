@@ -76,4 +76,7 @@ class Rock():
 
     def get_mask(self):
         return getmask(self.animations[0].pics[0], self.collidesection)
+
+    def getrect(self):
+        return pygame.Rect(self.x, self.y, self.w, self.h)
         

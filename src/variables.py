@@ -84,6 +84,7 @@ basemapsize = 360
 
 TREEWIDTH = 100
 TREEHEIGHT = 200
+ROCKMAXRADIUS = 12
 TREECOLLIDESECTION = [0, 18.5 / 20, 1, 1.5 / 20]
 ROCKCOLLIDESECTION = [0, 1/10, 1, 9/10]
 
@@ -106,7 +107,7 @@ ok_value = 0.7
 miss_value = 0
 
 all_perfect_bonus = 0.75
-player_advantage_multiplier = 1.25
+player_advantage_multiplier = 1.3
 
 perfect_range = height/100
 good_range = height/60

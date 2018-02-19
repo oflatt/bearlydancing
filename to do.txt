@@ -14,10 +14,14 @@ Bearly Dancing To-Do List
 -chimney wing sounds
 
 battle
--melodicvalue uses randomlast, maybe it should use the melody line instead using front of each layer (chords added behind)
+-melodicmode:
+	-sync up durations of melodic notes, ones in a line should be shorter
+	-melodicvalue uses randomlast, maybe it should use the melody line instead, the front of each layer (chords added behind)
+	-better restp function, currently just a 1/9 chance of a rest
 -repeatwithvariation, switch notes, offset by a beat
 -triplet chord mode
 -octaves rule
+-dual notes rule- every note doubled, 2 notes apart
 -better drum machine
 -shape different for ones on offbeats
 
@@ -27,9 +31,10 @@ graphics
 -more complex asthetic background grass
 -bush
 -flower
+-collide with path maybe for placing objects
+-shift pixels for wind?
 
 Sophie:
--animations for tp
 -forest boss
 -flying chimney!
 -nice looking interaction button to replace circle

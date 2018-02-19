@@ -30,11 +30,17 @@ meangreenrock = Rock("meangreen0", treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1
 
 houserock = Rock("honeyhouseoutside", housewidth, 0,
                  [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())])
+
+houseandtreerect = Rect(houserock.x, houserock.y, treerock.x+treerock.w-houserock.x, treerock.y+treerock.h-houserock.y)
+
 outside1 = Map(rgrassland,
                [houserock,
                 Rock(graphics.greyrock(), 6.5 * b, 7.5 * b, variables.ROCKCOLLIDESECTION),
                 treerock,
                 meangreenrock])
+
+outside1.populate_with("pinetree", 3, [houseandtreerect])
+
 outsidewidth = GR[rgrassland]["w"]
 outsideheight = GR[rgrassland]["h"]
 outside1.startpoint = [b * 8, b * 4]
@@ -45,15 +51,17 @@ outside1.exitareas = [Exit("right", False, 'outside2', "left", "same"),
                             househeight * (1 / 5)],
                            True, 'honeyhome',
                            p * 41, insideheight - honeyh)]
+
 outside1.lvrange = [1, 2]
 outside1c = conversations.secondscene
 outside1c.area = [treerock.x, 0, outsidewidth, outsideheight]
 outside1c.isbutton = False
 outside1c.storyrequirement = [getpartofstory("greenie")]
 outside1c.storytimestalkedtogreaterthan = -1
-# for tutorial, 0
-enemies.greenie.lv = 0
+
 outside1c.special_battle = copy.copy(enemies.greenie)
+# lv of 0 triggers tutorial
+outside1c.special_battle.lv = 0
 outside1c.special_battle_story_penalty = 1
 
 goodc = conversations.prettygood
