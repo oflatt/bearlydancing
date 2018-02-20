@@ -201,7 +201,7 @@ def addlayer(notelist, time, specs, valuestouse = []):
         notedurations.append(addn[1])
 
         # chance to add chord notes, if it is not a rest
-        if (randint(0, 100) < ((lv/2) + 2) ** 2):
+        if (randint(0, 150) < ((lv/2) + 2) ** 2):
             if randint(1, 2) == 1:
                 addn = addnote(l, oldt, True, specs, valuestouse)
                 l = addn[0]
@@ -482,7 +482,7 @@ def random_duration(time, notelist, specs, isr):
         d = 1 / d
 
     # additional chance at lower levels to be slow
-    if (randint(0, 5) > lv):
+    if (randint(0, 7) > lv):
         d = 2
 
       # rests rule

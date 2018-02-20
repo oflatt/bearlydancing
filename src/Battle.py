@@ -170,7 +170,7 @@ class Battle():
             variables.screen.blit(textscaled, [0, h / 3 - textscaled.get_height()])
 
             # exp bar
-            percentofbar = (p.exp - stathandeling.lvexp(p.exp)) / stathandeling.exp_needed(p.lv())
+            percentofbar = stathandeling.percentoflevel(p.exp)
             pygame.draw.rect(variables.screen, variables.BLUE, [0,
                                                                 h / 2,
                                                                 w * percentofbar,

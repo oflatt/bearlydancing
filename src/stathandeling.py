@@ -1,4 +1,4 @@
-
+import math
 
 def max_health(lv):
     return lv * 5 + 20
@@ -17,8 +17,12 @@ def exp_needed(lv):
 
 #lv is the lv of the enemy
 def exp_gained(lv):
-    return exp_needed(lv)/(1+lv)
+    return exp_needed(lv)/(1+math.sqrt(lv))
 
 #amount of damage done to enemy
 def damage(lv):
     return max_health(lv)/4
+
+def percentoflevel(exp):
+    expforlevel = exp - lvexp(explv(exp))
+    return expforlevel / exp_needed(explv(exp))
