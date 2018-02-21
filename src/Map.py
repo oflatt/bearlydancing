@@ -190,14 +190,17 @@ class Map():
                                  classvar.player.normal_height)
 
         for r in self.terrain:
-            if r.background_range != None:
-                if r.background_range.colliderect(playerrect):
-                    r.draw(offset)
-                    r.drawnp = True
+            if r.hiddenp:
+                r.drawnp = True
+            else:
+                if r.background_range != None:
+                    if r.background_range.colliderect(playerrect):
+                        r.draw(offset)
+                        r.drawnp = True
+                    else:
+                        r.drawnp = False
                 else:
                     r.drawnp = False
-            else:
-                r.drawnp = False
         
     # x and y are the player's x and y pos
     def draw(self, drawpos):

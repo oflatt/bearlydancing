@@ -132,6 +132,8 @@ beginningprompttextcolor = BLUE
 playerspeed = 0.05
 if devmode:
     playerspeed *= 2
+accelpixelpermillisecond = 170/1000
+    
 #encountering enemies
 encounter_check_rate = 100 #rate of check in milliseconds
 encounter_chance = 0.002#chance per check

@@ -28,7 +28,10 @@ class Rock():
 
         self.collidex = x
         self.collidey = y
-        
+
+        # these are used for movement animations
+        self.originalx = x
+        self.originaly = y
         self.x = x
         self.y = y
         self.w = GR[self.animations[0].pics[0]]["w"]
@@ -54,6 +57,8 @@ class Rock():
         self.collidesection = tuple(self.collidesection)
         self.set_backgroundrange()
 
+        self.hiddenp = False
+        self.unhiddentime = 0
 
     def nextanimation(self):
         if self.animationnum+1 < len(self.animations) or self.loopanimationsp:
@@ -79,4 +84,19 @@ class Rock():
 
     def getrect(self):
         return pygame.Rect(self.x, self.y, self.w, self.h)
-        
+
+    def hide(self):
+        self.hiddenp = True
+
+    def unhide(self):
+        self.hiddenp = False
+        self.unhiddentime = variables.settings.current_time
+
+    # this is used for moving stuff, checks the name of the rock.
+    def ontick(self):
+        if self.name == "kewlcorn":
+            maxy = self.originaly + variables.TREEHEIGHT-self.h
+            if not hiddenp and self.y<maxy:
+                # length in milliseconds the animation should last
+                dt = variables.settings.current_time - self.unhiddentime
+                self.y = self.originaly + (variables.accelpixelpermillisecond/2)*dt**2

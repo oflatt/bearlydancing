@@ -32,7 +32,7 @@ graphics
 -bush
 -flower
 -collide with path maybe for placing objects
--shift pixels for wind?
+-shift pixels for wind? give life to the game
 
 Sophie:
 -forest boss

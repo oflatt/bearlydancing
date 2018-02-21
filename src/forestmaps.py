@@ -16,11 +16,22 @@ from mapsvars import *
 outside6width = 1200
 outside6height = 600
 groveheight = variables.TREEHEIGHT*1.5
-grovewidth = variables.TREEWIDTH*4
-outside6 = Map(graphics.grassland(outside6width, outside6height), [])
+grovewidth = variables.TREEWIDTH*3
+
+grovetree = Rock(graphics.pinetree(),
+                 outside6width/2-variables.TREEWIDTH/2,
+                 outside6height-(groveheight/2)-(variables.TREEHEIGHT/2),
+                 variables.TREECOLLIDESECTION)
+kewlcorn = Rock("kewlcorn0", grovetree.x+variables.TREEWIDTH/2+5, grovetree.h+variables.TREEHEIGHT/4, None)
+kewlcorn.name = "kewlcorn"
+kewlcorn.hide()
+
+outside6 = Map(graphics.grassland(outside6width, outside6height), [grovetree, kewlcorn])
+
 # make a cleared area for the one tree
 groverect = Rect(outside6width/2-grovewidth/2, outside6height-groveheight,
                  grovewidth, groveheight)
+
 outside6.populate_with("greyrock", 6, [groverect])
 outside6.populate_with("pinetree", 28, [groverect])
 outside6.enemies = enemies.woodsenemies
@@ -67,8 +78,8 @@ def make_rock_or_sheep_rocks():
     bigx += 30
     addgroup(6, 6, bigx)
     return rocklist
-    
-        
+
+
 outside4 = Map(rgrassland, [])
 outside4.populate_with("greyrock", 40)
 
