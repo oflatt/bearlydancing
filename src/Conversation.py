@@ -14,6 +14,8 @@ class Conversation():
         self.special_battle_story_penalty = None
         self.progress = 0
         self.timestalkedto = 0
+        # the number of times you can activate the conversation
+        self.talkedtolimit = None
         
         # a list of Speak
         self.speaks = speaks
@@ -29,8 +31,10 @@ class Conversation():
         else:
             self.speaksafter = None
 
-        # a string of a name of a rock to switch the animation of
+        # a string of a name of a rock to switch the animation of at the beginning of the conversation
         self.switchthisrock = switchthisrock
+        # string of a name of a rock to unhide after the end of the conversation
+        self.unhidethisrock = None
 
         self.area = [0, 0, 0, 0]  # x, y, width, height in a list (a Rect)
         self.isbutton = True  # true if you have to hit a button to enter

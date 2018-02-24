@@ -241,6 +241,12 @@ class Map():
                 if rock.name == rockname:
                     rock.nextanimation()
 
+    def unhiderock(self, rockname):
+        if rockname != None:
+            for rock in self.terrain:
+                if rock.name == rockname:
+                    rock.unhide()
+
     def checkexit(self):
         currentexit = False
         for x in range(0, len(self.exitareas)):
@@ -281,10 +287,17 @@ class Map():
             if (p.xpos + p.normal_width) >= e.area[0] and p.xpos <= (e.area[0] + e.area[2]) \
                     and (p.ypos + p.normal_height) >= e.area[1] and p.ypos <= (e.area[1] + e.area[3]):
                 # check the storyrequirement
-                if classvar.player.storyprogress in e.storyrequirement or len(e.storyrequirement) == 0:
+                if self.conversationactivatedp(e):
                     currentconversation = e
                     break
         return currentconversation
+
+    def conversationactivatedp(self, conversation):
+        storyp = classvar.player.storyprogress in conversation.storyrequirement or len(conversation.storyrequirement) == 0
+        timestalkedtop = conversation.talkedtolimit == None
+        if not timestalkedtop:
+            timestalkedtop = conversation.timestalkedto < conversation.talkedtolimit
+        return storyp and timestalkedtop
 
     def checkenemy(self):
         # goes through the list of enemies, adding up all the encounter chances up until that list number

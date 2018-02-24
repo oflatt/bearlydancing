@@ -22,7 +22,7 @@ grovetree = Rock(graphics.pinetree(),
                  outside6width/2-variables.TREEWIDTH/2,
                  outside6height-(groveheight/2)-(variables.TREEHEIGHT/2),
                  variables.TREECOLLIDESECTION)
-kewlcorn = Rock("kewlcorn0", grovetree.x+variables.TREEWIDTH/2+5, grovetree.h+variables.TREEHEIGHT/4, None)
+kewlcorn = Rock("sheep0", grovetree.x+variables.TREEWIDTH/2+5, grovetree.h+variables.TREEHEIGHT/4, None)
 kewlcorn.name = "kewlcorn"
 kewlcorn.hide()
 
@@ -34,6 +34,13 @@ groverect = Rect(outside6width/2-grovewidth/2, outside6height-groveheight,
 
 outside6.populate_with("greyrock", 6, [groverect])
 outside6.populate_with("pinetree", 28, [groverect])
+
+kewlappearconversation = Conversation([])
+kewlappearconversation.area = [grovetree.x, grovetree.y+grovetree.h/2, grovetree.w, grovetree.h]
+kewlappearconversation.talkedtolimit = 1
+kewlappearconversation.unhidethisrock = "kewlcorn"
+outside6.conversations = [kewlappearconversation]
+
 outside6.enemies = enemies.woodsenemies
 outside6.lvrange = [3, 4]
 outside6.exitareas = [Exit("left", False, "outside5", "right", "same")]

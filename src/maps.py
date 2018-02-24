@@ -389,3 +389,6 @@ def checkconversation():
 def changerock(rockname):
     current_map.changerock(rockname)
 
+
+def unhiderock(rockname):
+    current_map.unhiderock(rockname)

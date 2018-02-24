@@ -136,16 +136,21 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
     # chance to repeat section moved again
     if 'repeatmove' in specs['rules'] or 'repeatmovevariation' in specs['rules'] and newtime<maxtime:
         returnval = {'time': newtime, 'list': l}
+        doanotherp = False
         # if we have already added an extra
         if iterations > 0:
             if myrand(1):
-                returnval = normalrepetition(newtime, movelength, l, repeatlength, specs, maxtime, iterations+1)
+                doanotherp = True
         else:
             if myrand(2):
-                returnval = normalrepetition(newtime, movelength, l, repeatlength, specs, maxtime, iterations+1)
-                
+                doanotherp = True
+        if doanotherp:
+            returnval = normalrepetition(newtime, movelength, l, repeatlength, specs, maxtime, iterations+1)
+        else:
+            print(str(iterations+1) + " times")
         return returnval
     else:
+        print(str(iterations+1) + " times")
         return {'time': newtime, 'list': l}
 
 

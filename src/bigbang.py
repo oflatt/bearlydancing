@@ -77,6 +77,9 @@ while not done:
             if (not variables.settings.menuonq):
                 if variables.settings.state == "conversation":
                     conversations.currentconversation.keypress(event.key)
+                    # check if it was exited to unhide rocks
+                    if variables.settings.state == "world":
+                        maps.unhiderock(conversations.currentconversation.unhidethisrock)
                 elif variables.settings.state == "world":
                     if maps.playerenabledp() and maps.current_map.playerenabledp:
                         classvar.player.keypress(event.key)
