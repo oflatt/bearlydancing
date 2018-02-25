@@ -1,4 +1,4 @@
-import variables, classvar, conversations, enemies, graphics, random, pygame
+import variables, classvar, conversations, enemies, graphics, random, pygame, copy
 from Animation import Animation
 from graphics import scale_pure
 from graphics import GR
@@ -38,11 +38,18 @@ outside6.populate_with("greyrock", 6, [groverect])
 outside6.populate_with("pinetree", 28, [groverect])
 
 kewlappearconversation = Conversation([])
-kewlappearconversation.area = [grovetree.x, grovetree.y+grovetree.h/2, grovetree.w, grovetree.h]
+kewlappearconversation.area = [grovetree.x, grovetree.y+grovetree.h/2, grovetree.w, grovetree.h/2]
 kewlappearconversation.storyevent = "kewlappears"
 kewlappearconversation.eventrequirements = [EventRequirement("kewlappears", -1, 1)]
 kewlappearconversation.unhidethisrock = "kewlcorn"
-outside6.conversations = [kewlappearconversation]
+
+kewlbattle = conversations.kewlcornyo
+kewlbattle.area = [grovetree.x+grovetree.w/2, grovetree.y + grovetree.h*(3/4), grovetree.w/2, grovetree.h/4]
+kewlbattle.eventrequirements = [EventRequirement("kewlappears")]
+kewlbattle.special_battle = copy.copy(enemies.kewlcorn)
+kewlbattle.special_battle.lv = 5
+
+outside6.conversations = [kewlappearconversation, kewlbattle]
 
 outside6.enemies = enemies.woodsenemies
 outside6.lvrange = [3, 4]
@@ -123,7 +130,7 @@ outside4.terrain.extend(make_rock_or_sheep_rocks())
 
 sheepconversation = conversations.sheepconversation
 sheepconversation.area = [randrock.x, randrock.y, randrock.w, randrock.h]
-sheepconversation.special_battle = enemies.sheep
+sheepconversation.special_battle = copy.copy(enemies.sheep)
 sheepconversation.special_battle.lv = 3
 
 outside4.conversations = [sheepconversation]

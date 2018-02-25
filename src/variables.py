@@ -1,4 +1,4 @@
-import pygame, ctypes, os, pickle
+import pygame, os, pickle
 from pygame import Rect
 from Settings import Settings
 from Properties import Properties
@@ -33,10 +33,13 @@ pygame.mixer.init()
 pygame.init()
 pygame.mixer.set_num_channels(46)
 
-# Set the width and height of the screen [width,height]
-ctypes.windll.user32.SetProcessDPIAware()
+if os.name == 'nt':
+    import ctypes
+    ctypes.windll.user32.SetProcessDPIAware()
+    
 modes = pygame.display.list_modes()
 mode = modes[0]#(ctypes.windll.user32.GetSystemMetrics(0),ctypes.windll.user32.GetSystemMetrics(1))
+# Set the width and height of the screen [width,height]
 height = mode[1]
 width = mode[0]
 

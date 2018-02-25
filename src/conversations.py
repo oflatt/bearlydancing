@@ -139,4 +139,6 @@ letsflee = Conversation([Speak("honeyback3",
 want2gospeak = Speak("meangreen0", ["Want to have a go?"], options = ["yes", "no"])
 want2go = Conversation([want2gospeak])
 
+kewlcornyo = Conversation([Speak("kewlcorn0", ["Yo!"])])
+
 currentconversation = None
