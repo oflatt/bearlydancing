@@ -95,8 +95,8 @@ class Rock():
     # this is used for moving stuff, checks the name of the rock.
     def ontick(self):
         if self.name == "kewlcorn":
-            maxy = self.originaly + variables.TREEHEIGHT-self.h
-            if not hiddenp and self.y<maxy:
+            maxy = self.originaly + variables.TREEHEIGHT*(3/4)-self.h
+            if not self.hiddenp and self.y<maxy:
                 # length in milliseconds the animation should last
                 dt = variables.settings.current_time - self.unhiddentime
-                self.y = self.originaly + (variables.accelpixelpermillisecond/2)*dt**2
+                self.y = self.originaly + (variables.accelpixelpermillisecond/2)*(dt**2)

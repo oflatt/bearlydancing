@@ -27,8 +27,14 @@ def load():
         if os.path.getsize(os.path.abspath("bdsave0.txt")) > 0:
             f = open("bdsave0.txt", "rb")
             loadedlist = pickle.load(f)
-            mapsdict, variables.settings, classvar.player, classvar.battle, maps.current_map_name = loadedlist
-            loadmaps(mapsdict)
+
+            if variables.loadonlyplayerandmapname:
+                classvar.player = loadedlist[2]
+                maps.current_map_name = loadedlist[-1]
+            else:
+                mapsdict, variables.settings, classvar.player, classvar.battle, maps.current_map_name = loadedlist
+                loadmaps(mapsdict)
+                
             maps.change_map_nonteleporting(maps.current_map_name)
             # don't start at beginning
             m.firstbootup = False

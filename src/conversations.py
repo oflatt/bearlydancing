@@ -43,7 +43,7 @@ jeremy = Conversation([Speak("jeremy0", ["Howdey, Honey",
                                          "... or give your bard a bit of practice.",
                                          "Now bug off."])])
 
-secondscene = Conversation([Speak("meangreen0", monster),
+meaniestops = Conversation([Speak("meangreen0", monster),
                             Speak("honeyside3", ohhoney4),
                             Speak("meangreen0", monster2),
                             Speak("honeyside3", ohhoney5),

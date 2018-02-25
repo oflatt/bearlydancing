@@ -1,11 +1,11 @@
 Bearly Dancing To-Do List
 
--auto-save
 -adjust difficulty, fix the beatmap generator
 -expand the map!
 -write some tests for once
 -flying chimney once sophie makes it
 -controls in menu
+-auto-save
 -map objects and loading more safely, versioning, safely load with new content
 
 -fix volume
@@ -39,6 +39,5 @@ graphics
 
 Sophie:
 -forest boss
--flying chimney!
 -nice looking interaction button to replace circle
--wardrobe open, "why do I even have this?"
+-wardrobe open, "why do I have this?"

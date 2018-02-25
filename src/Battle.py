@@ -6,17 +6,20 @@ from Note import Note
 from play_sound import play_sound
 from play_sound import soundpackkeys
 from graphics import getpic, sscale, sscale_customfactor, getpicbyheight
+from FrozenClass import FrozenClass
 
 
-class Battle():
+# battle is the class that runs the battle- information about the game such as storyeventonwin is stored in enemy
+class Battle(FrozenClass):
 
     def __init__(self, enemy):
+
         self.current_beatmap = 0
         self.damage_multiplier = 1
         self.drumcounter = 0
         self.beatmaps = []
 
-        # copy the enemy first
+        # copy the enemy first to avoid editing originals
         self.enemy = copy.copy(enemy)
         # offset enemy lv by difficulty
         self.enemy.lv += variables.settings.difficulty
@@ -42,10 +45,6 @@ class Battle():
                 note.time += 24
             b.notes[0].time -= 12
             b.notes = [Note(0, 1, 1), Note(1, 2, 1)] + b.notes
-        
-
-        # if this is set, when the lose they lose progress in the story
-        self.storypenalty = None
 
         # for attacking animation
         self.isplayernext = False  # if the player is currently being damaged
@@ -70,6 +69,8 @@ class Battle():
         # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
         self.pausetime = 0
         self.enemy.sethealth()
+
+        self._freeze()
 
     def reset_time(self):
         self.starttime = variables.settings.current_time
@@ -324,19 +325,25 @@ class Battle():
 
     def lose(self):
         # go home
+        classvar.player.addstoryevents(self.enemy.storyeventsonlose)
         classvar.player.heal()
         variables.settings.state = "world"
         maps.change_map(maps.home_map_name, 0, 0)
         classvar.player.teleport(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
-        if self.storypenalty != None:
-            classvar.player.storyprogress -= self.storypenalty
         classvar.player.timeslost += 1
         classvar.player.totalbattles += 1
 
     def win(self):
+        classvar.player.addstoryevents(self.enemy.storyeventsonwin)
         classvar.player.totalbattles += 1
         variables.settings.state = "world"  # finally exit Battle
-            
+
+    def flee(self):
+        variables.settings.state = "world"
+        classvar.player.addstoryevents(self.enemy.storyeventsonflee)
+        if self.enemy.lv - variables.settings.difficulty == 0:
+            maps.engage_conversation(conversations.letsflee)
+
     def onkey(self, key):
         def change_soundpack(offset):
             i = soundpackkeys.index(variables.settings.soundpack)
@@ -344,8 +351,10 @@ class Battle():
             self.battlechoice.buttons[-1].assign_text(variables.settings.soundpack)
         
         if(variables.devmode):
-            if(key == pygame.K_DELETE):
+            if(key == variables.devlosebattlekey):
                 self.lose()
+            elif(key == variables.devwinbattlekey):
+                self.win()
         if self.state == 'dance':
             if self.tutorialp:
                 if not self.tutorialstate == "first note" or not key in variables.settings.note1keys:
@@ -359,12 +368,7 @@ class Battle():
                     self.beatmaps[self.current_beatmap].reset(self.starttime, True)
                     self.drumcounter = 0
                 elif self.battlechoice.current_option == 1:
-                    if self.enemy.lv - variables.settings.difficulty == 0:
-                        variables.settings.state = "world"
-                        conversations.letsflee.storytimestalkedtogreaterthan = -1
-                        maps.engage_conversation(conversations.letsflee)
-                    else:
-                        variables.settings.state = "world"
+                    self.flee()
                 elif self.battlechoice.current_option == 2:
                     change_soundpack(1)
             else:
@@ -380,10 +384,7 @@ class Battle():
         elif self.state == "lose" and key in variables.settings.enterkeys:
             self.lose()
         elif self.state == "win" and key in variables.settings.enterkeys:
-            self.state = "exp"
-            self.newexp = classvar.player.exp + stathandeling.exp_gained(self.enemy.lv)
-            self.animationtime = variables.settings.current_time
-            self.oldexp = classvar.player.exp
+            self.addexp()
         elif self.state == "got exp" and key in variables.settings.enterkeys:
             self.win()
 
@@ -405,15 +406,20 @@ class Battle():
         if releasep:
             self.beatmaps[self.current_beatmap].onrelease(key)
 
+    def addexp(self):
+        self.state = "exp"
+        self.newexp = classvar.player.exp + stathandeling.exp_gained(self.enemy.lv)
+        self.animationtime = variables.settings.current_time
+        self.oldexp = classvar.player.exp
+            
     # "damages" player and enemy after a round and before the animation
     def trade(self, scores):
         self.damage_multiplier = sum(scores) / len(scores)
-
+        self.damage_multiplier *= variables.player_advantage_multiplier
+        
         # if they did not miss any
         if (not (variables.miss_value in scores)):
-            self.damage_multiplier += variables.all_perfect_bonus
-
-        self.damage_multiplier *= variables.player_advantage_multiplier
+            self.damage_multiplier *= variables.all_perfect_multiplier
 
         
         playerlv = classvar.player.lv()

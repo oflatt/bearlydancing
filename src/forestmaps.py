@@ -9,6 +9,7 @@ from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
 from random import randint
+from EventRequirement import EventRequirement
 
 from mapsvars import *
 
@@ -22,8 +23,9 @@ grovetree = Rock(graphics.pinetree(),
                  outside6width/2-variables.TREEWIDTH/2,
                  outside6height-(groveheight/2)-(variables.TREEHEIGHT/2),
                  variables.TREECOLLIDESECTION)
-kewlcorn = Rock("sheep0", grovetree.x+variables.TREEWIDTH/2+5, grovetree.h+variables.TREEHEIGHT/4, None)
+kewlcorn = Rock("kewlcorn0", grovetree.x+variables.TREEWIDTH/2+5, grovetree.y+variables.TREEHEIGHT/4, [0.5, 0.5, 0.5, 0.5])
 kewlcorn.name = "kewlcorn"
+kewlcorn.background_range.y += variables.TREEHEIGHT*(3/4)-kewlcorn.h+1
 kewlcorn.hide()
 
 outside6 = Map(graphics.grassland(outside6width, outside6height), [grovetree, kewlcorn])
@@ -37,7 +39,8 @@ outside6.populate_with("pinetree", 28, [groverect])
 
 kewlappearconversation = Conversation([])
 kewlappearconversation.area = [grovetree.x, grovetree.y+grovetree.h/2, grovetree.w, grovetree.h]
-kewlappearconversation.talkedtolimit = 1
+kewlappearconversation.storyevent = "kewlappears"
+kewlappearconversation.eventrequirements = [EventRequirement("kewlappears", -1, 1)]
 kewlappearconversation.unhidethisrock = "kewlcorn"
 outside6.conversations = [kewlappearconversation]
 

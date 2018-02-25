@@ -9,7 +9,7 @@ def lvexp(lv):
 
 # converts exp to lv
 def explv(exp):
-    return int(exp**(1./3.))
+    return int(exp**(1./3.)+0.0001) # add a tiny bit for floating point error- rather be above
 
 #calculated the exp needed to get to the next level
 def exp_needed(lv):

@@ -1,9 +1,10 @@
 #!/usr/bin/python
 #Oliver Flatt works on Classes
-from Dancer import Dancer
+from FrozenClass import FrozenClass
 import graphics, variables, enemies, copy, stathandeling
+from FrozenClass import FrozenClass
 
-class Enemy(Dancer):
+class Enemy(FrozenClass):
 
     def __init__(self, animationnum, rarity, name, beatmaprules):
         self.lv = 0
@@ -13,6 +14,11 @@ class Enemy(Dancer):
         self.name = name
         self.beatmaprules = beatmaprules
         self.health = None
+        self.storyeventsonwin = None
+        self.storyeventsonlose = None
+        self.storyeventsonflee = None
+        
+        self._freeze()
 
     def reset(self):
         self.animation = enemies.animations[self.animationnum]

@@ -6,11 +6,15 @@ from Properties import Properties
 testsmallp = False
 devmode = True
 newworldeachloadq = False
+loadonlyplayerandmapname = True
 # only loads first couple of maps
 fasttestmodep = False
 
 # if None it does nothing, if it is a dictionary for "specs" it goes directly into a battle with those specs
 testspecs = None #{'maxtime' : 20, 'lv' : 7, 'rules' : ["repeatvalues", "highrepeatchance", "cheapending"]}
+
+devlosebattlekey = pygame.K_DELETE
+devwinbattlekey = pygame.K_END
 
 # this is the mode for the finished product- it just turns off all other development modes
 exportmode = False
@@ -18,7 +22,9 @@ if exportmode:
     testsmallp = False
     devmode = False
     newworldeachloadq = False
+    loadonlyplayerandmapname = False
     fasttestmodep = False
+    testspecs = None
 
 # Setup
 
@@ -106,7 +112,7 @@ good_value = 1
 ok_value = 0.7
 miss_value = 0
 
-all_perfect_bonus = 0.75
+all_perfect_multiplier = 1.7
 player_advantage_multiplier = 1.3
 
 perfect_range = height/100
@@ -132,7 +138,7 @@ beginningprompttextcolor = BLUE
 playerspeed = 0.05
 if devmode:
     playerspeed *= 2
-accelpixelpermillisecond = 170/1000
+accelpixelpermillisecond = 0.2359/1000
     
 #encountering enemies
 encounter_check_rate = 100 #rate of check in milliseconds

@@ -86,13 +86,12 @@ class Map():
             xconstraints = [0, width-variables.ROCKMAXRADIUS*2]
             yconstraints = [0, height-variables.ROCKMAXRADIUS*2]
 
-        # this compares unscaled coordinates
         def collidewithonep(xpos, ypos, rock):
             #don't do collision with placing rocks
             if not greyrockp:
                 rmask = TREEMASK
                 currentmask = rock.get_mask()
-                overlapp = rmask.overlap(currentmask, [int(xpos-rock.x), int(ypos-rock.y)])
+                overlapp = rmask.overlap(currentmask, [int(rock.x-xpos), int(rock.y-ypos)])
                 
             # else it is a grey rock
             else:
@@ -110,6 +109,7 @@ class Map():
                 testrect = pygame.Rect(xpos, ypos, variables.TREEWIDTH, variables.TREEHEIGHT)
             else:
                 raise NotImplementedError("Unknown type of rock %s for populate_with in Map.py" % rocktype)
+            
             for crect in colliderects:
                 if crect.colliderect(testrect):
                     collisiontracker = True
@@ -174,8 +174,9 @@ class Map():
             
         #also sort the rocks by the y-position of the top of their background range
         def getbaseypos(rock):
+            # if it has no background range, it would go in front of everything- so pick a large number
             if rock.background_range == None:
-                return 0
+                return variables.height*10
             else:
                 return rock.background_range.y
         
@@ -215,10 +216,10 @@ class Map():
         buttony = buttony * variables.compscale - drawpos[1] - pw
         
         e = self.checkexit()
-        if not e == False and e.showbutton:
+        if not e == False and e.showbutton and e.isbutton:
             self.draw_interation_button(buttonx, buttony, pw)
         c = self.checkconversation()
-        if not c == False and c.isbutton and c.showbutton:
+        if not c == False and c.showbutton and c.isbutton:
             self.draw_interation_button(buttonx, buttony, pw)
 
     def draw_foreground(self, drawpos):
@@ -235,35 +236,31 @@ class Map():
         pygame.draw.ellipse(variables.screen, variables.GREY,
                             [xpos + width / 4, ypos + width / 4, width / 2, width / 2])
 
-    def changerock(self,rockname):
-        if rockname != None:
-            for rock in self.terrain:
-                if rock.name == rockname:
-                    rock.nextanimation()
-
-    def unhiderock(self, rockname):
-        if rockname != None:
-            for rock in self.terrain:
-                if rock.name == rockname:
-                    rock.unhide()
-
     def checkexit(self):
         currentexit = False
         for x in range(0, len(self.exitareas)):
             e = self.exitareas[x]
-            p = classvar.player
-            if (p.xpos + p.normal_width) >= e.area[0] and p.xpos <= (e.area[0] + e.area[2]) \
-                    and (p.ypos + p.normal_height) >= e.area[1] and p.ypos <= (e.area[1] + e.area[3]):
-                currentexit = e
-                break
-        #if there is a conversation, do that instead
-        if currentexit:
-            if currentexit.conversation != None:
-                e = currentexit.conversation
-                if classvar.player.storyprogress in e.storyrequirement or len(e.storyrequirement) == 0:
+            if e.activatedp():
+                p = classvar.player
+                if (p.xpos + p.normal_width) >= e.area[0] and p.xpos <= (e.area[0] + e.area[2]) \
+                        and (p.ypos + p.normal_height) >= e.area[1] and p.ypos <= (e.area[1] + e.area[3]):
                     currentexit = e
+                    break
 
         return currentexit
+
+    def checkconversation(self):
+        currentconversation = False
+        for x in range(0, len(self.conversations)):
+            e = self.conversations[x]
+            p = classvar.player
+            if e.activatedp():
+                p = classvar.player
+                if (p.xpos + p.normal_width) >= e.area[0] and p.xpos <= (e.area[0] + e.area[2]) \
+                        and (p.ypos + p.normal_height) >= e.area[1] and p.ypos <= (e.area[1] + e.area[3]):
+                    currentconversation = e
+                    break
+        return currentconversation
 
     def reset_screenxoffset(self):
         drawwidth = self.map_width * variables.displayscale * self.map_scale_offset
@@ -279,25 +276,8 @@ class Map():
                 self.checkenemy()
                 self.last_encounter_check = variables.settings.current_time
 
-    def checkconversation(self):
-        currentconversation = False
-        for x in range(0, len(self.conversations)):
-            e = self.conversations[x]
-            p = classvar.player
-            if (p.xpos + p.normal_width) >= e.area[0] and p.xpos <= (e.area[0] + e.area[2]) \
-                    and (p.ypos + p.normal_height) >= e.area[1] and p.ypos <= (e.area[1] + e.area[3]):
-                # check the storyrequirement
-                if self.conversationactivatedp(e):
-                    currentconversation = e
-                    break
-        return currentconversation
-
-    def conversationactivatedp(self, conversation):
-        storyp = classvar.player.storyprogress in conversation.storyrequirement or len(conversation.storyrequirement) == 0
-        timestalkedtop = conversation.talkedtolimit == None
-        if not timestalkedtop:
-            timestalkedtop = conversation.timestalkedto < conversation.talkedtolimit
-        return storyp and timestalkedtop
+        for r in self.terrain:
+            r.ontick()
 
     def checkenemy(self):
         # goes through the list of enemies, adding up all the encounter chances up until that list number
@@ -332,3 +312,25 @@ class Map():
                 initiatebattle(currentenemy)
         else:
             self.encounterchecksnotactivated += 1
+
+    def changerock(self,rockname):
+        if rockname != None:
+            for rock in self.terrain:
+                if rock.name == rockname:
+                    rock.nextanimation()
+
+    def unhiderock(self, rockname):
+        if rockname != None:
+            for rock in self.terrain:
+                if rock.name == rockname:
+                    rock.unhide()
+
+    def getrockbyname(self, rockname):
+        returnrock = None
+        if rockname != None:
+            for rock in self.terrain:
+                if rock.name == rockname:
+                    returnrock = rock
+                    break
+        return returnrock
+            

@@ -6,9 +6,10 @@ from ChoiceButtons import ChoiceButtons
 from graphics import scale_pure, getpic, getTextPic
 from variables import displayscale, textsize
 from initiatestate import initiatebattle
+from FrozenClass import FrozenClass
 
 
-class Speak():
+class Speak(FrozenClass):
 
     def __init__(self, pic, dialogue, side = None, bottomp = True, options = [], special_battle = "none"):
         self.pic = pic
@@ -39,7 +40,8 @@ class Speak():
             self.choicebuttons.nextoption()
             
         self.special_battle = special_battle
-        self.special_battle_story_penalty = None
+
+        self._freeze()
 
     def reset(self):
         self.line = 0
@@ -119,7 +121,7 @@ class Speak():
         if self.state == "done":
             if choice in [None, "y", "yes"]:
                 if self.special_battle != "none":
-                    initiatebattle(self.special_battle, self.special_battle_story_penalty)
+                    initiatebattle(self.special_battle)
                     returnstate = "specialbattle"
 
             self.reset()

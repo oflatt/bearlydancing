@@ -1,26 +1,19 @@
-#!/usr/bin/python
-# Oliver Flatt works on Classes
 import variables, classvar
-from Speak import initiatebattle
+from initiatestate import initiatebattle
 from graphics import getpicbywidth
+from FrozenClass import FrozenClass
 
-
-class Conversation():
+class Conversation(FrozenClass):
 
     def __init__(self, speaks, speaksafter=None, switchthisrock=None):
         # none or an enemy object to encounter after the conversation
         self.special_battle = "none"
-        
-        self.special_battle_story_penalty = None
+
         self.progress = 0
-        self.timestalkedto = 0
-        # the number of times you can activate the conversation
-        self.talkedtolimit = None
+        self.timesexited = 0
         
         # a list of Speak
         self.speaks = speaks
-        #list of all the story numbers that it would appear in
-        self.storyrequirement = []
         
         # a list of lists of Speak for after the first time they are talked to
         if speaksafter != None:
@@ -36,16 +29,19 @@ class Conversation():
         # string of a name of a rock to unhide after the end of the conversation
         self.unhidethisrock = None
 
+        # a list of eventrequirements to check for if the conversation is activated
+        self.eventrequirements = []
+        # a string of the storyevent that the conversation is
+        self.storyevent = None
+        
         self.area = [0, 0, 0, 0]  # x, y, width, height in a list (a Rect)
         self.isbutton = True  # true if you have to hit a button to enter
         self.showbutton = True
 
-        # conditions for increasing the story
-        # none on both means never
-        self.storytimestalkedtolessthan = None
-        self.storytimestalkedtogreaterthan = None
-
         self.exitteleport = ["same", "same"]
+        
+        self._freeze()
+
 
     def draw(self):
         if len(self.speaks) > 0:
@@ -100,15 +96,24 @@ class Conversation():
                 variables.settings.state = variables.settings.backgroundstate
                 classvar.battle.unpause()
         else:
-            initiatebattle(self.special_battle, self.special_battle_story_penalty)
+            initiatebattle(self.special_battle)
 
-        self.timestalkedto += 1
+        self.timesexited += 1
         self.progress = 0
-        if self.speaksafter != None and self.timestalkedto <= len(self.speaksafter):
-            self.speaks = self.speaksafter[self.timestalkedto-1]
+        if self.speaksafter != None and self.timesexited <= len(self.speaksafter):
+            self.speaks = self.speaksafter[self.timesexited-1]
         if self.exitteleport != ["same", "same"]:
             classvar.player.teleport(self.exitteleport[0], self.exitteleport[1])
 
     def scale_by_offset(self, scale):
         s = scale
         self.area = [self.area[0] * s, self.area[1] * s, self.area[2] * s, self.area[3] * s]
+
+    # check all story requirements
+    def activatedp(self):
+        ap = True
+        for e in self.eventrequirements:
+            if not e.check():
+                ap = False
+                break
+        return ap

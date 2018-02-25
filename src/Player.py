@@ -1,11 +1,11 @@
 #!/usr/bin/python
 import pygame, variables, maps, stathandeling
 from graphics import GR, getpic, getmask
-from Dancer import Dancer
 from Animation import Animation
 from pygame import Rect
+from FrozenClass import FrozenClass
 
-class Player(Dancer):
+class Player(FrozenClass):
 
     def __init__(self):
         self.xspeed = 0
@@ -15,14 +15,15 @@ class Player(Dancer):
         self.uppresstime = 0
         self.downpresstime = 0
         self.xpos = 0
+        self.oldxpos = 0
         self.ypos = 0
+        self.oldypos = 0
         self.drawx = 0
         self.drawy = 0
         self.mapdrawx = 0
         self.mapdrawy = 0
         self.lastxupdate = 0
         self.lastyupdate = 0
-        self.storyprogress = 0
         self.timeslost = 0
         self.totalbattles = 0
 
@@ -40,6 +41,11 @@ class Player(Dancer):
         self.normal_height = GR[self.right_animation.pics[1]]["h"]
         self.collidesection = (0, self.normal_height * (26/29), self.normal_width, self.normal_height/2)
         self.exp = 0
+        self.health = stathandeling.max_health(1)
+
+        # a dictionary mapping events (strings) to the number of times it has happened
+        self.storyevents = {}
+        self._freeze()
 
     def lv(self):
         return stathandeling.explv(self.exp)
@@ -280,3 +286,22 @@ class Player(Dancer):
     def soft_change_of_state(self):
         self.lastxupdate = variables.settings.current_time
         self.lastyupdate = variables.settings.current_time
+
+    def addstoryevents(self, events):
+        if events != None:
+            for e in events:
+                self.addstoryevent(e)
+        
+    def addstoryevent(self, event):
+        if event != None:
+            if event in self.storyevents:
+                self.storyevents[event] += 1
+            else:
+                self.storyevents[event] = 1
+
+    # returns number of times that event has occured
+    def getstoryevent(self, event):
+        if event in self.storyevents:
+            return self.storyevents[event]
+        else:
+            return 0

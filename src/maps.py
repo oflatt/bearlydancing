@@ -10,6 +10,7 @@ from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
 from variables import displayscale, fasttestmodep
+from EventRequirement import EventRequirement
 
 if fasttestmodep:
     from mapsvars import *
@@ -53,32 +54,33 @@ outside1.exitareas = [Exit("right", False, 'outside2', "left", "same"),
                            p * 41, insideheight - honeyh)]
 
 outside1.lvrange = [1, 2]
-outside1c = conversations.secondscene
+outside1c = conversations.meaniestops
 outside1c.area = [treerock.x, 0, outsidewidth, outsideheight]
 outside1c.isbutton = False
-outside1c.storyrequirement = [getpartofstory("greenie")]
-outside1c.storytimestalkedtogreaterthan = -1
+outside1c.eventrequirements = [EventRequirement("beat meanie", -1, 1)]
 
 outside1c.special_battle = copy.copy(enemies.greenie)
 # lv of 0 triggers tutorial
 outside1c.special_battle.lv = 0
-outside1c.special_battle_story_penalty = 1
+outside1c.special_battle.storyeventsonwin = ["beat meanie"]
+outside1c.special_battle.storyeventsonflee = ["beat meanie", "flee from meanie"]
 
 goodc = conversations.prettygood
 goodc.area = [0,0,outsidewidth,outsideheight]
-goodc.storyrequirement = [getpartofstory("good job")]
-goodc.storytimestalkedtogreaterthan = -1
+goodc.storyevent = "goodc"
+goodc.eventrequirements = [EventRequirement("beat meanie"), EventRequirement("goodc", -1, 1),
+                           EventRequirement("flee from meanie", -1, 1)]
 goodc.isbutton = False
 
 conversations.gotoforest.area = [0,0,b/2,b*20]
 conversations.gotoforest.isbutton = False
 conversations.gotoforest.exitteleport = [b/2 + honeyw/4, "same"]
-conversations.gotoforest.storyrequirement = [getpartofstory("greenie")]
+conversations.gotoforest.eventrequirements = [EventRequirement("beat meanie", -1, 1)]
 
 conversations.want2go.area = [meangreenrock.x - 5, meangreenrock.y - 5, meangreenrock.w+10, meangreenrock.h+10]
 enemies.greenie.lv = 1
 conversations.want2gospeak.special_battle = enemies.greenie
-conversations.want2go.storyrequirement = [getpartofstory("forest")]
+conversations.want2go.eventrequirements = [EventRequirement("beat meanie")]
 
 outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversations.want2go]
 
@@ -120,8 +122,9 @@ letter = Map("backgroundforpaper", [bigpaper,
 letter.playerenabledp = False
 
 conversations.thatracoon.area = [0, 0, b * 10, b * 10]
-conversations.thatracoon.storyrequirement = [getpartofstory("that racoon")]
-conversations.thatracoon.storytimestalkedtogreaterthan = -1
+conversations.thatracoon.storyevent = "that racoon"
+conversations.thatracoon.eventrequirements = [EventRequirement("that racoon", -1, 1)]
+
 letter.conversations = [conversations.thatracoon]
 letter.exitareas = [Exit([0, 0, b * 10, b * 10], True, 'honeyhome', 'same', 'same')]
 
@@ -131,6 +134,7 @@ table = Rock("table", p * 75, p * 110, None)
 table.background_range = Rect(0, 110 + int(table.h / 2), 9999999, 9999999)
 littleletter = Rock('letter', p * 75, p * 110, None)
 littleletter.background_range = table.background_range.copy()
+
 bed = Rock(["honeywakesup0", "honeywakesup1", "honeywakesup2", "honeywakesup3", "bed"],
            p*8, p*38, None, name = "bed")
 stashlist = []
@@ -144,9 +148,9 @@ honeyhome = Map("honeyhouseinside",
                  Rock(stashlist, p * 131, p * 55, [0, 0.9, 1, 0.1], name="stash")])
 
 outofbed = Conversation([], speaksafter = [[],[],[]], switchthisrock = "bed")
+outofbed.storyevent = "bed"
 outofbed.area = [0, 0, b*20, b*20]
-outofbed.storyrequirement = [getpartofstory("bed")]
-outofbed.storytimestalkedtogreaterthan = len(bed.animations)-3
+outofbed.eventrequirements = [EventRequirement("bed", -1, len(bed.animations)-1)]
 outofbed.showbutton = False
 
 eatfromstash = Conversation([],
@@ -157,20 +161,24 @@ eatfromstash = Conversation([],
 eatfromstashoffset = p*10
 eatfromstash.area = [p*131+eatfromstashoffset, p*61, GR["stash00"]["w"]-2*eatfromstashoffset, GR["stash00"]["h"]]
 
-honeyhome.conversations = [eatfromstash, outofbed]
-
-honeyhome.startpoint = [28 * p, 39 * p]
 doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
                 True, 'outside1',
                 GR["honeyhouseoutside"]["w"] * 0.3 + houserock.x, GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight-20*p)
-doorexit.conversation = conversations.hungry
-doorexit.conversation.storyrequirement = [getpartofstory("letter")]
+doorexit.eventrequirements = [EventRequirement("letter")]
 
-letterexit = Exit([p * 65, p * 100, 20, 30],
+blockexit = conversations.hungry
+blockexit.area = doorexit.area
+blockexit.eventrequirements = [EventRequirement("letter", -1, 1)]
+
+honeyhome.conversations = [eatfromstash, outofbed, blockexit]
+
+honeyhome.startpoint = [28 * p, 39 * p]
+
+letterexit = Exit([p * 67, p * 100, 20, 30],
                   True, 'letter',
                   GR["paper"]['w']*(3/10), 0)
+letterexit.storyevent = "letter"
 
-letterexit.part_of_story = getpartofstory("letter")
 honeyhome.exitareas = [doorexit,
                        letterexit]
 honeyhome.colliderects = [Rect(0, 0, p * 30, p * 74),  # bed
@@ -319,28 +327,12 @@ def change_map(name, newx, newy):
 
 def engage_conversation(c):
     classvar.player.change_of_state()
+    classvar.player.addstoryevent(c.storyevent)
+
     variables.settings.backgroundstate = variables.settings.state
     if variables.settings.backgroundstate == "battle":
         classvar.battle.pause()
-
-
-    if not (c.storytimestalkedtogreaterthan == None and c.storytimestalkedtolessthan == None):
-        lessthanp = False
-        if c.storytimestalkedtolessthan == None:
-            lessthanp = True
-        else:
-            if c.timestalkedto < c.storytimestalkedtolessthan:
-                lessthanp = True
-
-        greaterthanp = False
-        if c.storytimestalkedtogreaterthan == None:
-            greaterthanp = True
-        else:
-            if c.timestalkedto > c.storytimestalkedtogreaterthan:
-                greaterthanp = True
-
-        if lessthanp and greaterthanp:
-            classvar.player.storyprogress += 1
+        
         
     variables.settings.state = "conversation"
     conversations.currentconversation = c
@@ -351,26 +343,25 @@ def engage_conversation(c):
 
     if len(current.speaks) == 0:
         current.exit_conversation()
+        unhiderock(current.unhidethisrock)
 
 
 def engage_exit(e):
-    if not e.part_of_story == "none":
-        classvar.player.storyprogress += 1
-        e.part_of_story = "none"
+    classvar.player.addstoryevent(e.storyevent)
     change_map(e.name, e.newx, e.newy)
         
 def on_key(key):
     if key in variables.settings.enterkeys:
         e = current_map.checkexit()
         c = current_map.checkconversation()
+        #if c:
+        #    print(c.storyevent)
+        #print(classvar.player.storyevents)
         # check for conversations first
         if not c == False:
             engage_conversation(c)
         elif not e == False:
-            if type(e) == Conversation:
-                engage_conversation(e)
-            else:
-                engage_exit(e)
+            engage_exit(e)
 
 
 def checkexit():
@@ -392,3 +383,6 @@ def changerock(rockname):
 
 def unhiderock(rockname):
     current_map.unhiderock(rockname)
+
+def playerenabledp():
+    return not outofbed.activatedp()
