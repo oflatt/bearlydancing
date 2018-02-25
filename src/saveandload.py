@@ -28,11 +28,8 @@ def load():
             f = open("bdsave0.txt", "rb")
             loadedlist = pickle.load(f)
 
-            if variables.loadonlyplayerandmapname:
-                classvar.player = loadedlist[2]
-                maps.current_map_name = loadedlist[-1]
-            else:
-                mapsdict, variables.settings, classvar.player, classvar.battle, maps.current_map_name = loadedlist
+            mapsdict, variables.settings, classvar.player, classvar.battle, maps.current_map_name = loadedlist
+            if not variables.dontloadmapsdict:
                 loadmaps(mapsdict)
                 
             maps.change_map_nonteleporting(maps.current_map_name)

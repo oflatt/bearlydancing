@@ -10,7 +10,8 @@ animations = [Animation(["sheep0", "sheep1", "sheep2", "sheep3"], defaultanimspe
               Animation(["purpleperp0", "purpleperp1", "purpleperp2", "purpleperp3"], defaultanimspeed),
               Animation(["spoe0", "spoe1"], defaultanimspeed),
               Animation(["croc0", "croc1"], defaultanimspeed),
-              Animation(["kewlcorn0", "kewlcorn1", "kewlcorn2", "kewlcorn3"], defaultanimspeed)]
+              Animation(["kewlcorn0", "kewlcorn1", "kewlcorn2", "kewlcorn3"], defaultanimspeed),
+              Animation(["bugo0","bugo1"], defaultanimspeed)]
 
 # refer to randombeatmap for the definitions for beatmap rules
 # we use an animation number because the actual animation cannot be saved
@@ -19,7 +20,7 @@ counter = 0
 sheep = Enemy(counter, 1, "sheep", [])
 counter += 1
 # just tutorial enemy
-greenie = Enemy(counter, 1, "mean greenie", ["melodic", "repeatmovevariation", "rests"])
+greenie = Enemy(counter, 1, "mean greenie", ["melodic", "repeat", "rests"])
 counter += 1
 perp = Enemy(counter, 1, "perp", ["alternating"])
 counter += 1
@@ -28,8 +29,10 @@ counter += 1
 croc = Enemy(counter, 1, "croc", ["melodic", "repeatmove"])
 counter += 1
 kewlcorn = Enemy(counter, 1, "kewlcorn", ["repeatvalues", "highrepeatchance"])
+counter += 1
+bugo = Enemy(counter, 1, "bugo", ["repeatmovevariation", "highrepeatchance"])
 
-woodsenemies = [perp, spoe, croc]
+woodsenemies = [perp, spoe, croc, bugo]
 
 def random_enemy(area):
     if area == "woods":

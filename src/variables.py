@@ -6,7 +6,7 @@ from Properties import Properties
 testsmallp = False
 devmode = True
 newworldeachloadq = False
-loadonlyplayerandmapname = True
+dontloadmapsdict = True
 # only loads first couple of maps
 fasttestmodep = False
 

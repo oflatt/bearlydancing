@@ -239,7 +239,7 @@ def random_beatmap(specs):
         addlayerp = False
         if repeatmodep:
             if 'highrepeatchance' in specs['rules']:
-                repeatp = myrand(5 - max(len(l)%repeatlength, 3))
+                repeatp = myrand(5 - min(len(l)%repeatlength, 3))
             else:
                 repeatp = randint(-1, len(l) % repeatlength) == 0
             # chance to do a repetition

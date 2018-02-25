@@ -36,6 +36,7 @@ graphics
 -flower
 -collide with path maybe for placing objects
 -shift pixels for wind? give life to the game
+-randomly generated faces for bugo- simple one half of smile, pixels are expressive
 
 Sophie:
 -forest boss
