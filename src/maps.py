@@ -95,7 +95,7 @@ conversations.want2go.eventrequirements = [EventRequirement("beat meanie")]
 outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversations.want2go, secretchimneyactivation]
 
 
-outside1.colliderects = [Rect(houserock.x-3, houserock.background_range.y, 3, houserock.y+houserock.h-houserock.background_range.y-20)]
+outside1.colliderects = [Rect(houserock.x-3, houserock.y+houserock.collidesection[1], 3, houserock.collidesection[3]-20)]
 
 # letter########################################################################################
 paperscale = int((variables.height/GR["paper"]["h"])/(variables.displayscale))
@@ -279,8 +279,6 @@ def change_map(name, newx, newy):
     xpos = newx
     ypos = newy
 
-    oldscaleoffset = current_map.map_scale_offset
-
     #now current map is the new one
     change_map_nonteleporting(name)
 
@@ -299,23 +297,17 @@ def change_map(name, newx, newy):
     #if the new pos is the same
     if newx == "same" or newx == "s":
         xpos = classvar.player.xpos
-        xpos /= oldscaleoffset
-        xpos *= current_map.map_scale_offset
-        if (xpos < 0):
+        if xpos < 0:
             xpos = 0
-        if (xpos > (GR[current_map.base]["w"] * current_map.map_scale_offset - (honeyw * current_map.map_scale_offset))):
-            xpos = GR[current_map.base]["w"] * current_map.map_scale_offset - (honeyw * current_map.map_scale_offset)
-    else:
-        xpos *= current_map.map_scale_offset
+        if xpos > GR[current_map.base]["w"]- honeyw:
+            xpos = GR[current_map.base]["w"]- honeyw
 
     if newy == "same" or newy == "s":
         ypos = classvar.player.ypos
-        ypos /= oldscaleoffset
-        ypos *= current_map.map_scale_offset
-        if (ypos < 0):
+        if ypos < 0:
             ypos = 0
-        if (ypos > (GR[current_map.base]["h"] * current_map.map_scale_offset - (honeyh * current_map.map_scale_offset))):
-            ypos = GR[current_map.base]["h"] * current_map.map_scale_offset - (honeyh * current_map.map_scale_offset)
+        if ypos > GR[current_map.base]["h"] - honeyh:
+            ypos = GR[current_map.base]["h"] - honeyh
     else:
         ypos *= current_map.map_scale_offset
 

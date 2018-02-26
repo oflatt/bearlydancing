@@ -211,8 +211,6 @@ class Player(FrozenClass):
             #collision detection for the moved x pos with the unmoved y pos
             for x in range(0, len(colliderects)):
                 if(playerR.colliderect(colliderects[x]) == 1):
-                    print(xpos)
-                    print(colliderects[x].x)
                     iscollision = True
                     break
             if not iscollision:
