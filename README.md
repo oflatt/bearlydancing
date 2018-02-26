@@ -4,7 +4,7 @@ A rhythm rpg with randomly generated beatmaps, written in python using the pygam
 ## Setting up the environment
 
 Download a version of python 3.
-Run setup.py.
+Run setup.py. Do not run setup.py from IDLE, because there seems to be a bug that causes ultra-slow download speeds.
 
 To play the game without development features, set exportmode in variables.py to True.
 
