@@ -25,8 +25,8 @@ repeatmovevariation- like repeatmove but calls the variation function on repeate
 repeatbig- UNIMPLEMENTED would be an aditional layer of repetition for a large phrase with variation
 
 ------ repeat separated -------
-repeatrhythm- UNIMPLEMENTED like repeat, but uses only the values and computes new durations for the values
-repeatvalues- like repeat, but uses only the times and durations for the last few notes
+repeatrhythm- UNIMPLEMENTED like repeat, but uses only the times and durations for the last few notes
+repeatvalues- like repeat, but uses only the values from last few notes and computes new durations for the values
 
 ----- modifiers ---------------
 highrepeatchance- makes the chance for a repeat very high

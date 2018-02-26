@@ -34,8 +34,9 @@ houserock = Rock("honeyhouseoutside", housewidth, 0,
 
 houseandtreerect = Rect(houserock.x, houserock.y, treerock.x+treerock.w-houserock.x, treerock.y+treerock.h-houserock.y)
 
-chimneyrock = Rock([Animation(["flyingchimney0"], 1), Animation(["flyingchimney1", "flyingchimney2"], 60),
-                    Animation(["flyingchimney3", "flyingchimney4"], 1000)], houserock.x+ 115,houserock.y+ 16, None, "chimney")
+chimneyrock = Rock([Animation(["flyingchimney0"], 1),
+                    Animation(["flyingchimney1", "flyingchimney2", "flyingchimney3", "flyingchimney4"], 20),
+                    Animation(["flyingchimney5", "flyingchimney6"], 300)], houserock.x+ 115,houserock.y+ 16, None, "chimney")
 
 secretchimneyactivation = Conversation([])
 secretchimneyactivation.area = [houserock.x + houserock.w/2 - 2, houserock.y + houserock.h/2 - 2, 4, houserock.h/10]
@@ -95,7 +96,7 @@ conversations.want2go.eventrequirements = [EventRequirement("beat meanie")]
 outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversations.want2go, secretchimneyactivation]
 
 
-outside1.colliderects = [Rect(houserock.x-3, houserock.y+houserock.collidesection[1], 3, houserock.collidesection[3]-20)]
+outside1.colliderects = [Rect(houserock.x-3, houserock.y+houserock.collidesection[1], 3, houserock.collidesection[3])]
 
 # letter########################################################################################
 paperscale = int((variables.height/GR["paper"]["h"])/(variables.displayscale))

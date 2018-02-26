@@ -30,8 +30,6 @@ class Rock():
         self.collidey = y
 
         # these are used for movement animations
-        self.originalx = x
-        self.originaly = y
         self.x = x
         self.y = y
         self.w = GR[self.animations[0].pics[0]]["w"]
@@ -57,13 +55,19 @@ class Rock():
         self.collidesection = tuple(self.collidesection)
         self.set_backgroundrange()
 
+        # variables played with for special moving or hiding rocks
         self.hiddenp = False
         self.unhiddentime = 0
+        self.originalx = x
+        self.originaly = y
+        self.tickstatetime = 0
+        self.tickstate = 0
 
     def nextanimation(self):
         if self.animationnum+1 < len(self.animations) or self.loopanimationsp:
             self.animationnum = (self.animationnum + 1) % len(self.animations)
             self.animations[self.animationnum].reset()
+            # for chimney unhiddentime is used for each animation change
             if self.name == "chimney":
                 self.unhiddentime = variables.settings.current_time
 
@@ -105,10 +109,44 @@ class Rock():
                 # length in milliseconds the animation should last
                 dt = variables.settings.current_time - self.unhiddentime
                 self.y = self.originaly + (variables.accelpixelpermillisecond/2)*(dt**2)
+
+        # chimney- originalx is not changed but originaly is used for high point after a flap
+        # unhiddentime is used for each change of animation- inanimate to growing wings to flying
+        # tickstatetime is used to record when the last flap was, for applying acceleration
         elif self.name == "chimney":
-            if self.animationnum > 0:
-                dt = variables.settings.current_time - self.unhiddentime
-                if self.animationnum == 1:
-                    if dt >= self.animations[1].framerate*len(self.animations[1].pics):
-                        self.nextanimation()
+            
+            dt = variables.settings.current_time - self.unhiddentime
+            if self.animationnum == 1:
+                if dt >= self.animations[1].framerate*len(self.animations[self.animationnum].pics):
+                    self.nextanimation()
+                    self.tickstatetime = variables.settings.current_time
+            elif self.animationnum == 2:
+                fallingdt = variables.settings.current_time - self.tickstatetime
+                framerate = self.animations[self.animationnum].framerate
+                
+                # fall with gravity
+                if self.tickstate != 0:
+                    self.y = self.originaly + (variables.accelpixelpermillisecond/2)*(fallingdt**2)
+                if self.x < 400 and dt >= framerate :
+                    # move to the right at ten pixels per second
+                    self.x = self.originalx + (dt-framerate)/70
+
+                # if we do a flap
+                flapp = False
+
+                # devide by 2 because only on downwards flapping
+                if ((dt / self.animations[self.animationnum].framerate) - 1) / 2 >= self.tickstate:
+                    flapp = True
+                    
+                # if we do a flap
+                if flapp:
+                    # jump up
+                    self.y = min(self.y-25, 50)
+                    
+                    # reset unhiddentime and originaly
+                    self.tickstatetime = variables.settings.current_time
+                    self.originaly = self.y
+                    self.tickstate += 1
+    
+                
             
