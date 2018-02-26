@@ -56,20 +56,18 @@ class Rock():
         self.set_backgroundrange()
 
         # variables played with for special moving or hiding rocks
+        # hiddenp is if the rock should not be displayed
+        # yposfunction and xposfunction are functions to call and add to the respective y and x positions
         self.hiddenp = False
-        self.unhiddentime = 0
-        self.originalx = x
-        self.originaly = y
-        self.tickstatetime = 0
-        self.tickstate = 0
+        self.yposfunctions = []
+        self.xposfunctions = []
+        self.lasty = self.y
+        self.lastx = self.x
 
     def nextanimation(self):
         if self.animationnum+1 < len(self.animations) or self.loopanimationsp:
             self.animationnum = (self.animationnum + 1) % len(self.animations)
             self.animations[self.animationnum].reset()
-            # for chimney unhiddentime is used for each animation change
-            if self.name == "chimney":
-                self.unhiddentime = variables.settings.current_time
 
     def draw(self, offset = [0,0]):
         p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale)
@@ -97,23 +95,36 @@ class Rock():
     def hide(self):
         self.hiddenp = True
 
+    def makegravityfunction(self, starttime, limit = None):
+        def gfunction():
+            dt = variables.settings.current_time - starttime
+            dpos = (variables.accelpixelpermillisecond/2) * (dt**2)
+            print(dpos)
+            if limit != None:
+                dpos = min(dpos, limit)
+            return dpos
+        return gfunction
+
     def unhide(self):
         self.hiddenp = False
-        self.unhiddentime = variables.settings.current_time
+
+        if self.name == "kewlcorn":
+            self.yposfunctions = [self.makegravityfunction(variables.settings.current_time, variables.TREEHEIGHT*(3/4)-self.h)]
 
     # this is used for moving stuff, checks the name of the rock.
     def ontick(self):
-        if self.name == "kewlcorn":
-            maxy = self.originaly + variables.TREEHEIGHT*(3/4)-self.h
-            if not self.hiddenp and self.y<maxy:
-                # length in milliseconds the animation should last
-                dt = variables.settings.current_time - self.unhiddentime
-                self.y = self.originaly + (variables.accelpixelpermillisecond/2)*(dt**2)
+        if self.name in ["kewlcorn", "chimney"]:
+            self.y = self.lasty
+            self.x = self.lastx
+            for f in self.yposfunctions:
+                self.y += f()
+            for f in self.xposfunctions:
+                self.x += f()
 
         # chimney- originalx is not changed but originaly is used for high point after a flap
         # unhiddentime is used for each change of animation- inanimate to growing wings to flying
         # tickstatetime is used to record when the last flap was, for applying acceleration
-        elif self.name == "chimney":
+        elif False:#self.name == "chimney":
             
             dt = variables.settings.current_time - self.unhiddentime
             if self.animationnum == 1:
