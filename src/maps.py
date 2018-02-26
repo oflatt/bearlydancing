@@ -34,11 +34,21 @@ houserock = Rock("honeyhouseoutside", housewidth, 0,
 
 houseandtreerect = Rect(houserock.x, houserock.y, treerock.x+treerock.w-houserock.x, treerock.y+treerock.h-houserock.y)
 
+chimneyrock = Rock([Animation(["flyingchimney0"], 1), Animation(["flyingchimney1", "flyingchimney2"], 60),
+                    Animation(["flyingchimney3", "flyingchimney4"], 1000)], houserock.x+ 115,houserock.y+ 16, None, "chimney")
+
+secretchimneyactivation = Conversation([])
+secretchimneyactivation.area = [houserock.x + houserock.w/2 - 2, houserock.y + houserock.h/2 - 2, 4, houserock.h/10]
+secretchimneyactivation.switchthisrock = "chimney"
+secretchimneyactivation.storyevent = "chimneyactivation"
+secretchimneyactivation.eventrequirements = [EventRequirement("chimneyactivation", -1, 1)]
+
 outside1 = Map(rgrassland,
                [houserock,
                 Rock(graphics.greyrock(), 6.5 * b, 7.5 * b, variables.ROCKCOLLIDESECTION),
                 treerock,
-                meangreenrock])
+                meangreenrock,
+                chimneyrock])
 
 outside1.populate_with("pinetree", 3, [houseandtreerect])
 
@@ -82,7 +92,10 @@ enemies.greenie.lv = 1
 conversations.want2gospeak.special_battle = enemies.greenie
 conversations.want2go.eventrequirements = [EventRequirement("beat meanie")]
 
-outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversations.want2go]
+outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversations.want2go, secretchimneyactivation]
+
+
+outside1.colliderects = [Rect(houserock.x-3, houserock.background_range.y, 3, houserock.y+houserock.h-houserock.background_range.y-20)]
 
 # letter########################################################################################
 paperscale = int((variables.height/GR["paper"]["h"])/(variables.displayscale))

@@ -1,13 +1,15 @@
 Bearly Dancing To-Do List
 
--adjust difficulty, fix the beatmap generator
+gameplay
+-loading can't go back into house bug, and trapped in letter bug
 -expand the map!
 -write some tests for once
--flying chimney once sophie makes it
+-flying chimney
 -controls in menu
 -auto-save
 -map objects and loading more safely, versioning, safely load with new content
 
+sound
 -fix volume
 -add music
 -load own sounds using the bowl pianoputer as example

@@ -205,24 +205,10 @@ class Map():
         
     # x and y are the player's x and y pos
     def draw(self, drawpos):
-        
         self.draw_background(drawpos)
 
-        # draw button above exits and conversations
-        pw = (classvar.player.normal_width / 2) * variables.compscale
-        buttonx = classvar.player.xpos + classvar.player.normal_width / 2
-        buttony = classvar.player.ypos
-        buttonx = buttonx * variables.compscale - drawpos[0] - pw/2
-        buttony = buttony * variables.compscale - drawpos[1] - pw
-        
-        e = self.checkexit()
-        if not e == False and e.showbutton and e.isbutton:
-            self.draw_interation_button(buttonx, buttony, pw)
-        c = self.checkconversation()
-        if not c == False and c.showbutton and c.isbutton:
-            self.draw_interation_button(buttonx, buttony, pw)
-
     def draw_foreground(self, drawpos):
+            
         rockoffset = [-drawpos[0], -drawpos[1]]
         # detect if within the foreground range
         playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
@@ -230,6 +216,19 @@ class Map():
         for r in self.terrain:
             if not r.drawnp:
                 r.draw(rockoffset)
+
+        # draw button above exits and conversations
+        pw = (classvar.player.normal_width / 2) * variables.compscale
+        buttonx = classvar.player.xpos + classvar.player.normal_width / 2
+        buttony = classvar.player.ypos
+        buttonx = buttonx * variables.compscale - drawpos[0] - pw/2
+        buttony = buttony * variables.compscale - drawpos[1] - pw
+        e = self.checkexit()
+        if not e == False and e.showbutton and e.isbutton:
+            self.draw_interation_button(buttonx, buttony, pw)
+        c = self.checkconversation()
+        if not c == False and c.showbutton and c.isbutton:
+            self.draw_interation_button(buttonx, buttony, pw)
 
     def draw_interation_button(self, xpos, ypos, width):
         pygame.draw.ellipse(variables.screen, variables.WHITE, [xpos, ypos, width, width])

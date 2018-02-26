@@ -6,6 +6,8 @@ from Properties import Properties
 testsmallp = False
 devmode = True
 newworldeachloadq = False
+# this overrides the generation of a new set of graphics for a new game
+newworldnever = True
 dontloadmapsdict = True
 # only loads first couple of maps
 fasttestmodep = False
@@ -21,6 +23,7 @@ exportmode = False
 if exportmode:
     testsmallp = False
     devmode = False
+    newworldnever = False
     newworldeachloadq = False
     loadonlyplayerandmapname = False
     fasttestmodep = False

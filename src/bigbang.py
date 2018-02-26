@@ -7,7 +7,7 @@ variables.draw_loading_text("importing graphics (1/2)")
 pygame.display.flip()
 
 # determine if everything should be re-loaded
-if not os.path.isfile(os.path.abspath("bdsave0.txt")):
+if not os.path.isfile(os.path.abspath("bdsave0.txt")) and not variables.newworldnever:
     variables.newworldeachloadq = True
 
 # now go ahead and load everything in

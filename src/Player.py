@@ -176,7 +176,7 @@ class Player(FrozenClass):
                 self.yspeed = -s
         self.change_animation()
 
-    def collisioncheck(self,xpos, ypos):
+    def collisioncheck(self, xpos, ypos):
         cmask = getmask(self.right_animation.pics[1], self.collidesection)
         #checks if the player collides with a rock
         def rockcollisioncheck(arock, x, y):
@@ -204,13 +204,15 @@ class Player(FrozenClass):
         elif ypos+self.normal_height>m.map_height and m.bottombound:
             iscollision = True
         else:
+            #make playerR only the feet
+            playerR = Rect(xpos+playermaskrect.x, ypos+playermaskrect.y,
+                           playermaskrect.w, playermaskrect.h)
+            
             #collision detection for the moved x pos with the unmoved y pos
             for x in range(0, len(colliderects)):
-                p = self.normal_height/29
-                #make playerR only the feet
-                playerR = Rect(xpos+playermaskrect.x, ypos+playermaskrect.y,
-                               playermaskrect.w, playermaskrect.h)
                 if(playerR.colliderect(colliderects[x]) == 1):
+                    print(xpos)
+                    print(colliderects[x].x)
                     iscollision = True
                     break
             if not iscollision:

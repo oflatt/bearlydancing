@@ -63,6 +63,9 @@ class Rock():
     def nextanimation(self):
         if self.animationnum+1 < len(self.animations) or self.loopanimationsp:
             self.animationnum = (self.animationnum + 1) % len(self.animations)
+            self.animations[self.animationnum].reset()
+            if self.name == "chimney":
+                self.unhiddentime = variables.settings.current_time
 
     def draw(self, offset = [0,0]):
         p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale)
@@ -76,6 +79,8 @@ class Rock():
         h = GR[self.animations[0].pics[0]]["h"]
         if cs == (0, 0, self.w, self.h):
             self.background_range = pygame.Rect(0, self.y, 9999999, 9999999)
+        elif cs == (0,0,0,0):
+            self.background_range = None
         else:
             self.background_range = pygame.Rect(0, int(self.y + cs[1] + cs[3] * (1 / 3)), 9999999, 9999999)
 
@@ -100,3 +105,10 @@ class Rock():
                 # length in milliseconds the animation should last
                 dt = variables.settings.current_time - self.unhiddentime
                 self.y = self.originaly + (variables.accelpixelpermillisecond/2)*(dt**2)
+        elif self.name == "chimney":
+            if self.animationnum > 0:
+                dt = variables.settings.current_time - self.unhiddentime
+                if self.animationnum == 1:
+                    if dt >= self.animations[1].framerate*len(self.animations[1].pics):
+                        self.nextanimation()
+            

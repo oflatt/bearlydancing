@@ -2,7 +2,6 @@
 import variables
 
 class Animation():
-    beginning_time = 0
 
     def __init__(self, picnames, framerate):
         if len(picnames):
@@ -12,10 +11,11 @@ class Animation():
         self.pics = picnames
         # milliseconds per frame
         self.framerate = framerate
+        self.beginning_time = 0
 
     def current_frame(self):
         at = variables.settings.current_time-self.beginning_time
-        framenum = int(at/self.framerate) % len(self.pics) - 1
+        framenum = int(at/self.framerate) % len(self.pics)
         return self.pics[framenum]
 
     def reset(self):
