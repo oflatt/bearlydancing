@@ -191,7 +191,7 @@ class Map(FrozenClass):
             mapbaserect = pygame.Rect(drawpos[0], drawpos[1], self.map_width*variables.compscale+1, self.map_height*variables.compscale+1)
             variables.screen.blit(getpic(self.finalimage, variables.compscale), (0,0), mapbaserect)
         else:
-            variables.screen.blit(getpic(self.finalimage, variables.compscale), (self.screenxoffset,0))
+            variables.screen.blit(getpic(self.finalimage, variables.compscale), (self.screenxoffset,offset[1]))
 
         # detect if within the foreground range
         playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
