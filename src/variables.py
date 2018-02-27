@@ -9,7 +9,7 @@ newworldeachloadq = False
 # this overrides the generation of a new set of graphics for a new game
 newworldnever = True
 # this is for not loading the maps from the save file, to test new map changes
-dontloadmapsdict = False
+dontloadmapsdict = True
 # only loads first couple of maps
 fasttestmodep = False
 
@@ -141,6 +141,8 @@ playerspeed = 0.05
 if devmode:
     playerspeed *= 2
 accelpixelpermillisecond = 0.2359/1000
+floatinessagainstreality = 0.6
+accelpixelpermillisecond *= floatinessagainstreality
     
 #encountering enemies
 encounter_check_rate = 100 #rate of check in milliseconds

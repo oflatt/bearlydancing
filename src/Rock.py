@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import pygame, variables
+import pygame, variables, math
 from Animation import Animation
 from graphics import GR, getpic, getmask
 from FrozenClass import FrozenClass
@@ -102,21 +102,28 @@ class Rock(FrozenClass):
     def hide(self):
         self.hiddenp = True
 
-    def makegravityfunction(self, starttime, limit = None):
-        def gfunction():
-            dt = variables.settings.current_time - starttime
-            dpos = (variables.accelpixelpermillisecond/2) * (dt**2)
-            if limit != None:
-                dpos = min(dpos, limit)
-            return dpos
-        return gfunction
+    def makegravityfunction(self, starttime, upperlimit = None, lowerlimit = None):
+        return self.makeexponentialfunction(starttime, variables.accelpixelpermillisecond, 0, upperlimit, lowerlimit)
 
     def makelinearfunction(self, starttime, velocity, minimumheightwithgravity = None):
+        if minimumheightwithgravity != None:
+            velocity = -math.sqrt(2*variables.accelpixelpermillisecond*minimumheightwithgravity)
         def ffunction():
             dt = variables.settings.current_time - starttime
             return velocity*dt
 
         return ffunction
+
+    def makeexponentialfunction(self, starttime, accel, yoffset = 0, upperlimit = None, lowerlimit = None):
+        def gfunction():
+            dt = variables.settings.current_time - starttime
+            dpos = (accel/2) * (dt**2) + yoffset
+            if upperlimit != None:
+                dpos = min(dpos, upperlimit)
+            if lowerlimit != None:
+                dpos = max(dpos, lowerlimit)
+            return dpos
+        return gfunction
 
     def unhide(self):
         self.hiddenp = False
@@ -135,11 +142,6 @@ class Rock(FrozenClass):
                 self.x += f()
 
 
-
-
-
-
-                
         # chimney-
         if self.name == "chimney" and self.animationnum>0:
             dt = variables.settings.current_time - self.changetime
@@ -164,9 +166,11 @@ class Rock(FrozenClass):
                 # if we do a flap
                 if flapp:
                     flapstarttime = variables.settings.current_time - variables.settings.current_time%framerate
+                    flapheight= max(20, self.y-100)
+                    timeoffsetforheight = math.sqrt(flapheight*2/variables.accelpixelpermillisecond)
                     # jump up
-                    self.yposfunctions = [self.makegravityfunction(flapstarttime),
-                                          self.makelinearfunction(flapstarttime, -100/1000)]
+                    self.yposfunctions = [self.makeexponentialfunction(flapstarttime+timeoffsetforheight,
+                                                                       variables.accelpixelpermillisecond, -flapheight)]
 
                     # set the pos for reference
                     self.lasty = self.y

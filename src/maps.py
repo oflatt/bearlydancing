@@ -36,7 +36,7 @@ houseandtreerect = Rect(houserock.x, houserock.y, treerock.x+treerock.w-houseroc
 
 chimneyrock = Rock([Animation(["flyingchimney0"], 1),
                     Animation(["flyingchimney1", "flyingchimney2", "flyingchimney3", "flyingchimney4"], 20),
-                    Animation(["flyingchimney5", "flyingchimney6"], 300)], houserock.x+ 115,houserock.y+ 16, None, "chimney")
+                    Animation(["flyingchimney5", "flyingchimney6"], 600)], houserock.x+ 115,houserock.y+ 16, None, "chimney")
 
 secretchimneyactivation = Conversation([])
 secretchimneyactivation.area = [houserock.x + houserock.w/2 - 2, houserock.y + houserock.h/2 - 2, 4, houserock.h/10]
