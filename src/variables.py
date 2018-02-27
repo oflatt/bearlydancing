@@ -77,11 +77,7 @@ LIGHTYELLOW = (235,227, 92)
 LIGHTBLUE = (66, 206, 244)
 
 # font
-fontlist = pygame.font.get_fonts()
-fontname = "use default"
-if "orangekidregular" in fontlist:
-    fontname = "orangekidregular"
-font = pygame.font.SysFont(fontname, 30)
+font = pygame.font.Font(os.path.realpath('orangekidregular.ttf'), 30)
 
 # map stuff
 # pinetreesused is used to keep track of how many random trees are used

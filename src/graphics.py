@@ -112,7 +112,8 @@ def getTextPic(text, textheight, color = variables.BLACK):
     return TextGR[text][textheight][color]
 
 for x in picnames:
-    addtoGR(x)
+    if x != "" and x[0] != ".":
+        addtoGR(x)
 
 # down arrow used for conversations
 DOWNARROW = pygame.Surface([5, 8], pygame.SRCALPHA)

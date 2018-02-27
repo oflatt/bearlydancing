@@ -151,6 +151,7 @@ littleletter.background_range = table.background_range.copy()
 
 bed = Rock(["honeywakesup0", "honeywakesup1", "honeywakesup2", "honeywakesup3", "bed"],
            p*8, p*38, None, name = "bed")
+bed.background_range = pygame.Rect(0,0,9999999,9999999)
 stashlist = []
 for x in range(10):
     stashname = "stash0" + str(x)
