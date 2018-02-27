@@ -77,6 +77,7 @@ class Rock(FrozenClass):
             self.changetime = variables.settings.current_time
 
     def draw(self, offset = [0,0]):
+        self.drawtick()
         p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale)
         drawx = self.x * variables.compscale + offset[0]
         drawy = self.y * variables.compscale + offset[1]
@@ -105,12 +106,21 @@ class Rock(FrozenClass):
     def makegravityfunction(self, starttime, upperlimit = None, lowerlimit = None):
         return self.makeexponentialfunction(starttime, variables.accelpixelpermillisecond, 0, upperlimit, lowerlimit)
 
-    def makelinearfunction(self, starttime, velocity, minimumheightwithgravity = None):
+    def makelinearfunction(self, starttime, velocity, minimumheightwithgravity = None, limit = None, delay = None):
         if minimumheightwithgravity != None:
             velocity = -math.sqrt(2*variables.accelpixelpermillisecond*minimumheightwithgravity)
         def ffunction():
             dt = variables.settings.current_time - starttime
-            return velocity*dt
+            pos = velocity*dt
+            if limit != None:
+                if pos>limit:
+                    pos = limit
+            if delay != None:
+                if dt >= delay:
+                    pos = velocity*(dt-delay)
+                else:
+                    pos = 0
+            return pos
 
         return ffunction
 
@@ -131,8 +141,8 @@ class Rock(FrozenClass):
         if self.name == "kewlcorn":
             self.yposfunctions = [self.makegravityfunction(variables.settings.current_time, variables.TREEHEIGHT*(3/4)-self.h)]
 
-    # this is used for moving stuff, checks the name of the rock.
-    def ontick(self):
+    # called for drawing the rock
+    def drawtick(self):
         if self.name in ["kewlcorn", "chimney"]:
             self.y = self.lasty
             self.x = self.lastx
@@ -149,12 +159,14 @@ class Rock(FrozenClass):
             if self.animationnum == 1:
                 if dt >= self.animations[1].framerate*len(self.animations[self.animationnum].pics):
                     self.nextanimation()
+                    # also start moving to the right
+                    self.xposfunctions = [self.makelinearfunction(variables.settings.current_time,
+                                                                  20/1000,
+                                                                  limit=400,
+                                                                  delay = self.animations[self.animationnum].framerate)]
             elif self.animationnum == 2:
                 framerate = self.animations[self.animationnum].framerate
                 
-                #if self.x < 400 and dt >= framerate :
-                    # move to the right at ten pixels per second
-#                    self.x = self.originalx + (dt-framerate)/70
 
                 # if we do a flap
                 flapp = False
@@ -163,8 +175,8 @@ class Rock(FrozenClass):
                 if ((dt /framerate) - 1) / 2 >= self.tickstate:
                     flapp = True
                     
-                # if we do a flap
-                if flapp:
+                # if we do a flap- don't do it if above the screen, so it can fall in
+                if flapp and self.y > -50:
                     flapstarttime = variables.settings.current_time - variables.settings.current_time%framerate
                     flapheight= max(20, self.y-100)
                     timeoffsetforheight = math.sqrt(flapheight*2/variables.accelpixelpermillisecond)
@@ -175,6 +187,10 @@ class Rock(FrozenClass):
                     # set the pos for reference
                     self.lasty = self.y
                     self.tickstate += 1
+
+    # currently not used
+    def ontick(self):
+        pass
     
                 
             
