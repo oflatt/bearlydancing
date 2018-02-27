@@ -2,8 +2,9 @@
 import pygame, variables
 from Animation import Animation
 from graphics import GR, getpic, getmask
+from FrozenClass import FrozenClass
 
-class Rock():
+class Rock(FrozenClass):
 
     def __init__(self, base, x, y, collidesection, name = None):
 
@@ -63,11 +64,17 @@ class Rock():
         self.xposfunctions = []
         self.lasty = self.y
         self.lastx = self.x
+        self.changetime = None
+        self.tickstate = 0
+
+        self._freeze()
+        
 
     def nextanimation(self):
         if self.animationnum+1 < len(self.animations) or self.loopanimationsp:
             self.animationnum = (self.animationnum + 1) % len(self.animations)
             self.animations[self.animationnum].reset()
+            self.changetime = variables.settings.current_time
 
     def draw(self, offset = [0,0]):
         p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale)
@@ -99,11 +106,17 @@ class Rock():
         def gfunction():
             dt = variables.settings.current_time - starttime
             dpos = (variables.accelpixelpermillisecond/2) * (dt**2)
-            print(dpos)
             if limit != None:
                 dpos = min(dpos, limit)
             return dpos
         return gfunction
+
+    def makelinearfunction(self, starttime, velocity, minimumheightwithgravity = None):
+        def ffunction():
+            dt = variables.settings.current_time - starttime
+            return velocity*dt
+
+        return ffunction
 
     def unhide(self):
         self.hiddenp = False
@@ -121,42 +134,42 @@ class Rock():
             for f in self.xposfunctions:
                 self.x += f()
 
-        # chimney- originalx is not changed but originaly is used for high point after a flap
-        # unhiddentime is used for each change of animation- inanimate to growing wings to flying
-        # tickstatetime is used to record when the last flap was, for applying acceleration
-        elif False:#self.name == "chimney":
+
+
+
+
+
+                
+        # chimney-
+        if self.name == "chimney" and self.animationnum>0:
+            dt = variables.settings.current_time - self.changetime
             
-            dt = variables.settings.current_time - self.unhiddentime
             if self.animationnum == 1:
                 if dt >= self.animations[1].framerate*len(self.animations[self.animationnum].pics):
                     self.nextanimation()
-                    self.tickstatetime = variables.settings.current_time
             elif self.animationnum == 2:
-                fallingdt = variables.settings.current_time - self.tickstatetime
                 framerate = self.animations[self.animationnum].framerate
                 
-                # fall with gravity
-                if self.tickstate != 0:
-                    self.y = self.originaly + (variables.accelpixelpermillisecond/2)*(fallingdt**2)
-                if self.x < 400 and dt >= framerate :
+                #if self.x < 400 and dt >= framerate :
                     # move to the right at ten pixels per second
-                    self.x = self.originalx + (dt-framerate)/70
+#                    self.x = self.originalx + (dt-framerate)/70
 
                 # if we do a flap
                 flapp = False
 
                 # devide by 2 because only on downwards flapping
-                if ((dt / self.animations[self.animationnum].framerate) - 1) / 2 >= self.tickstate:
+                if ((dt /framerate) - 1) / 2 >= self.tickstate:
                     flapp = True
                     
                 # if we do a flap
                 if flapp:
+                    flapstarttime = variables.settings.current_time - variables.settings.current_time%framerate
                     # jump up
-                    self.y = min(self.y-25, 50)
-                    
-                    # reset unhiddentime and originaly
-                    self.tickstatetime = variables.settings.current_time
-                    self.originaly = self.y
+                    self.yposfunctions = [self.makegravityfunction(flapstarttime),
+                                          self.makelinearfunction(flapstarttime, -100/1000)]
+
+                    # set the pos for reference
+                    self.lasty = self.y
                     self.tickstate += 1
     
                 

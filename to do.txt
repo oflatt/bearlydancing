@@ -1,7 +1,6 @@
 Bearly Dancing To-Do List
 
 gameplay
--loading can't go back into house bug, and trapped in letter bug
 -expand the map!
 -write some tests for once
 -flying chimney
@@ -31,8 +30,9 @@ battle
 -battle code is ugly and convoluted with all the time/health variables
 
 graphics
+-ability to lower resolution for computers with less powerful graphics cards
+-dirtyrects- lazy way, update this time's dirty rects and last time's dirty rects
 -make conversation appear above if sheep is on bottom of screen
--tree not colliding with rock bug
 -more complex asthetic background grass
 -bush
 -flower

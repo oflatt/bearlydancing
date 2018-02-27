@@ -6,6 +6,7 @@ from graphics import viewfactorrounded, getpic, GR
 from Rock import Rock
 from pygame import Mask
 from initiatestate import initiatebattle
+from FrozenClass import FrozenClass
 
 extraarea = 50
 TREEMASK = Mask((variables.TREEWIDTH, variables.TREEHEIGHT))
@@ -14,7 +15,7 @@ BASEMASK.fill()
 TREEMASK.draw(BASEMASK,
               (int(variables.TREEWIDTH)-13, variables.TREEHEIGHT-15))
 
-class Map():
+class Map(FrozenClass):
 
     def __init__(self, base, terrain, leftbound = True, rightbound = True, topbound = True, bottombound = True):
         self.topbound = topbound
@@ -46,11 +47,11 @@ class Map():
         self.conversations = []  # list of conversation on the map
         self.isscaled = False  # if scale stuff has been called
         self.screenxoffset = 0 # this is if the map width is less than the screen width
-        self.finalimagescale = 1
         self.map_width = GR[base]["w"]
         self.map_height = GR[base]["h"]
         self.reset_screenxoffset()
         self.playerenabledp = True
+        self._freeze()
 
     def set_map_scale_offset(self):
         mapw = GR[self.base]["w"] * variables.displayscale
@@ -182,9 +183,15 @@ class Map():
         
         self.terrain.sort(key=getbaseypos)
 
+    # drawpos comes from the player's mapdrawx and mapdrawy
     def draw_background(self, drawpos):
         offset = [-drawpos[0], -drawpos[1]]
-        variables.screen.blit(getpic(self.finalimage, variables.compscale), offset)
+
+        if self.screenxoffset == 0:
+            mapbaserect = pygame.Rect(drawpos[0], drawpos[1], self.map_width*variables.compscale+1, self.map_height*variables.compscale+1)
+            variables.screen.blit(getpic(self.finalimage, variables.compscale), (0,0), mapbaserect)
+        else:
+            variables.screen.blit(getpic(self.finalimage, variables.compscale), (self.screenxoffset,0))
 
         # detect if within the foreground range
         playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
