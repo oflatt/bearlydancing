@@ -112,14 +112,14 @@ class Rock(FrozenClass):
         def ffunction():
             dt = variables.settings.current_time - starttime
             pos = velocity*dt
-            if limit != None:
-                if pos>limit:
-                    pos = limit
             if delay != None:
                 if dt >= delay:
                     pos = velocity*(dt-delay)
                 else:
                     pos = 0
+            if limit != None:
+                if pos>limit:
+                    pos = limit
             return pos
 
         return ffunction
@@ -162,7 +162,7 @@ class Rock(FrozenClass):
                     # also start moving to the right
                     self.xposfunctions = [self.makelinearfunction(variables.settings.current_time,
                                                                   20/1000,
-                                                                  limit=400,
+                                                                  limit=450-self.lastx,
                                                                   delay = self.animations[self.animationnum].framerate)]
             elif self.animationnum == 2:
                 framerate = self.animations[self.animationnum].framerate
@@ -178,7 +178,7 @@ class Rock(FrozenClass):
                 # if we do a flap- don't do it if above the screen, so it can fall in
                 if flapp and self.y > -50:
                     flapstarttime = variables.settings.current_time - variables.settings.current_time%framerate
-                    flapheight= max(20, self.y-100)
+                    flapheight= max(25, self.y-100)
                     timeoffsetforheight = math.sqrt(flapheight*2/variables.accelpixelpermillisecond)
                     # jump up
                     self.yposfunctions = [self.makeexponentialfunction(flapstarttime+timeoffsetforheight,

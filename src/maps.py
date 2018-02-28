@@ -32,7 +32,7 @@ meangreenrock = Rock("meangreen0", treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1
 houserock = Rock("honeyhouseoutside", housewidth, 0,
                  [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())])
 
-houseandtreerect = Rect(houserock.x, houserock.y, treerock.x+treerock.w-houserock.x, treerock.y+treerock.h-houserock.y)
+cleararearect = Rect(houserock.x, houserock.y, 500-houserock.x, treerock.y+treerock.h-houserock.y)
 raisewing = Animation(["flyingchimney7", "flyingchimney4"], 100, False)
 lowerwing = Animation(["flyingchimney5", "flyingchimney6"], 60, False)
 
@@ -53,7 +53,7 @@ outside1 = Map(rgrassland,
                 meangreenrock,
                 chimneyrock])
 
-outside1.populate_with("pinetree", 3, [houseandtreerect])
+outside1.populate_with("pinetree", 3, [cleararearect])
 
 outsidewidth = GR[rgrassland]["w"]
 outsideheight = GR[rgrassland]["h"]
