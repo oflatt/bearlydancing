@@ -24,13 +24,13 @@ greenie = Enemy(counter, 1, "mean greenie", ["melodic", "repeat", "rests"])
 counter += 1
 perp = Enemy(counter, 1, "perp", ["alternating"])
 counter += 1
-spoe = Enemy(counter, 1, "spoe", ["rests", "skippy", "melodic", "repeat"])
+spoe = Enemy(counter, 1, "spoe", ["rests", "skippy", "melodic", "repeatvariation"])
 counter += 1
 croc = Enemy(counter, 1, "croc", ["melodic", "repeatmove"])
 counter += 1
 kewlcorn = Enemy(counter, 1, "kewlcorn", ["repeatvalues", "highrepeatchance"])
 counter += 1
-bugo = Enemy(counter, 1, "bugo", ["repeatmovevariation", "highrepeatchance"])
+bugo = Enemy(counter, 1, "bugo", ["repeatvariation", "repeatmove", "highrepeatchance"])
 
 woodsenemies = [perp, spoe, croc, bugo]
 

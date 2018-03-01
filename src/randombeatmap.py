@@ -19,21 +19,23 @@ alternating- high chance to go back to a note or be near the previous note, and 
 rests- high chance of shorter notes and rests in between notes
 
 ------- repeat ----------------
-repeat- repeats sections with variations
+repeat- repeats sections with variations- all of the following can combine except repeatvalues
 repeatmove- repeats sections with all the tones shifted
-repeatmovevariation- like repeatmove but calls the variation function on repeated sectons as well (combines repeat and repeatmove)
+repeatvariation- like repeatmove but calls the variation function on repeated sectons as well (combines repeat and repeatmove)
+repeatrhythm- UNIMPLEMENTED like repeat, but uses only the times and durations for the last few notes
 repeatbig- UNIMPLEMENTED would be an aditional layer of repetition for a large phrase with variation
 
 ------ repeat separated -------
-repeatrhythm- UNIMPLEMENTED like repeat, but uses only the times and durations for the last few notes
 repeatvalues- like repeat, but uses only the values from last few notes and computes new durations for the values
 
 ----- modifiers ---------------
-highrepeatchance- makes the chance for a repeat very high
+highrepeatchance- makes the initial chance for a repeat to start very high
 
 ----- defaults ----------------
 -If no ending specified, it throws in a tonic at the end
 '''
+ruletypes = ['melodic', 'skippy', 'alternating', 'rests', 'repeat',
+             'repeatmove', 'repeatvariation', 'repeatvalues', 'highrepeatchance']
 
 
 testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
@@ -95,13 +97,27 @@ def repeatvaluesrepetition(starttime, movelength, listofnotes, repeatlength, spe
     notestoadd = l[-repeatlength:len(l)]
     
     valuelist = valuelistfromnotes(notestoadd)
+    valuelistoriginal = valuelist.copy()
     
     time = starttime
+    iterations = 0
     
     while len(valuelist) > 0:
         addl = addlayer(l, time, specs, valuelist)
         l = addl[0]
         time += addl[1]
+
+        # chance to do it again
+        if len(valuelist) == 0 and time<maxtime:
+            if iterations == 0:
+                if myrand(2):
+                    valuelist = valuelistoriginal.copy()
+                    iterations += 1
+            else:
+                if myrand(1):
+                    valuelist = valuelistoriginal.copy()
+                    iterations += 1
+            
 
     return {'time': time, 'list':l}
 
@@ -111,12 +127,13 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
 
     # get the last repeatlength notes to add on again
     notestoadd = l[-repeatlength:len(l)]
+    notestoadd = copy.deepcopy(notestoadd)
     
     # with certain rules we want to call variation of notes on the list
-    if 'repeat' in specs['rules'] or 'repeatmovevariation' in specs['rules']:
+    if 'repeatvariation' in specs['rules']:
         notestoadd = variation_of_notes(notestoadd)
 
-    if 'repeatmove' in specs['rules'] or 'repeatmovevariation' in specs['rules']:
+    if 'repeatmove' in specs['rules']:
         notestoadd = movednotes(notestoadd, movelength)
 
     oldendtime = time
@@ -134,7 +151,7 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
     l.extend(notestoadd)
 
     # chance to repeat section moved again
-    if 'repeatmove' in specs['rules'] or 'repeatmovevariation' in specs['rules'] and newtime<maxtime:
+    if newtime<maxtime:
         returnval = {'time': newtime, 'list': l}
         doanotherp = False
         # if we have already added an extra
@@ -144,6 +161,7 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
         else:
             if myrand(2):
                 doanotherp = True
+                
         if doanotherp:
             returnval = normalrepetition(newtime, movelength, l, repeatlength, specs, maxtime, iterations+1)
         else:
@@ -163,6 +181,7 @@ def repeatlengthfromspecs(specs):
         return randint(3, 7 + lv)
     
 # returns a tuple with a new list and the duration of the new note
+# values touse is a list of values to use instead of calling random_value
 def addnote(notelist, time, ischord, specs, valuestouse):
     lv = specs['lv']
     l = notelist.copy()
@@ -241,7 +260,7 @@ def random_beatmap(specs):
             if 'highrepeatchance' in specs['rules']:
                 repeatp = myrand(5 - min(len(l)%repeatlength, 3))
             else:
-                repeatp = randint(-1, len(l) % repeatlength) == 0
+                repeatp = randint(-2, len(l) % repeatlength) == 0
             # chance to do a repetition
             if repeatp and len(l) >= repeatlength:
                 # add on the last repeatlength notes again, varied
@@ -279,6 +298,10 @@ def random_beatmap(specs):
         thrownoteerror('note list not ordered properly for chords')
     if anynotescollide(l):
         thrownoteerror('notes collided')
+
+    for rule in specs['rules']:
+        if not rule in ruletypes:
+            thrownoteerror('rule ' + str(rule) + ' unknown')
         
     return Beatmap(tempo, l)
 
