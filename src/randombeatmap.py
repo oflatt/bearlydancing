@@ -22,7 +22,7 @@ rests- high chance of shorter notes and rests in between notes
 repeat- repeats sections with variations- all of the following can combine except repeatvalues
 repeatmove- repeats sections with all the tones shifted
 repeatvariation- like repeatmove but calls the variation function on repeated sectons as well (combines repeat and repeatmove)
-repeatrhythm- UNIMPLEMENTED like repeat, but uses only the times and durations for the last few notes
+repeatrhythm- like repeat, but uses only the times and durations for the last few notes
 repeatbig- UNIMPLEMENTED would be an aditional layer of repetition for a large phrase with variation
 
 ------ repeat separated -------
@@ -35,7 +35,8 @@ highrepeatchance- makes the initial chance for a repeat to start very high
 -If no ending specified, it throws in a tonic at the end
 '''
 ruletypes = ['melodic', 'skippy', 'alternating', 'rests', 'repeat',
-             'repeatmove', 'repeatvariation', 'repeatvalues', 'highrepeatchance']
+             'repeatmove', 'repeatvariation', 'repeatvalues', 'highrepeatchance',
+             'repeatrhythm']
 
 
 testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
@@ -74,7 +75,12 @@ def movednotes(old_notes, movelength):
         for n in l:
             n.newvalue(n.value + movelength)
         return l
-        
+
+def newvaluesfornotes(listofnotes, specs):
+    l = copy.deepcopy(listofnotes)
+    for n in l:
+        n.value = random_value(n.time, n.chordadditionp, listofnotes, specs)
+    return l
 
     
 # returns a dictionary with the new time and the list
@@ -135,6 +141,9 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
 
     if 'repeatmove' in specs['rules']:
         notestoadd = movednotes(notestoadd, movelength)
+
+    if 'repeatrhythm' in specs['rules']:
+        notestoadd = newvaluesfornotes(notestoadd, specs)
 
     oldendtime = time
     

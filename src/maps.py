@@ -33,18 +33,23 @@ houserock = Rock("honeyhouseoutside", housewidth, 0,
                  [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())])
 
 cleararearect = Rect(houserock.x, houserock.y, 500-houserock.x, treerock.y+treerock.h-houserock.y)
-raisewing = Animation(["flyingchimney7", "flyingchimney4"], 100, False)
-lowerwing = Animation(["flyingchimney5", "flyingchimney6"], 60, False)
 
 chimneyrock = Rock([Animation(["flyingchimney0"], 1),
                     Animation(["flyingchimney1", "flyingchimney2", "flyingchimney3"], 20),
-                    Animation([raisewing, lowerwing], 600)], houserock.x+ 115,houserock.y+ 16, None, "chimney")
+                    enemies.chimneyanimation], houserock.x+ 115,houserock.y+ 16, None, "chimney")
 
 secretchimneyactivation = Conversation([])
 secretchimneyactivation.area = [houserock.x + houserock.w/2 - 2, houserock.y + houserock.h/2 - 2, 4, houserock.h/10]
 secretchimneyactivation.switchthisrock = "chimney"
 secretchimneyactivation.storyevent = "chimneyactivation"
 secretchimneyactivation.eventrequirements = [EventRequirement("chimneyactivation", -1, 1)]
+
+chimneybattlec = conversations.chimneytalk
+chimneybattlec.area = [450+chimneyrock.w/3, 190, chimneyrock.w/3, 20]
+chimneybattlec.eventrequirements = [EventRequirement("chimneyactivation")]
+chimneye = copy.copy(enemies.chimney)
+chimneybattlec.special_battle = chimneye
+
 
 outside1 = Map(rgrassland,
                [houserock,
@@ -95,8 +100,7 @@ enemies.greenie.lv = 1
 conversations.want2gospeak.special_battle = enemies.greenie
 conversations.want2go.eventrequirements = [EventRequirement("beat meanie")]
 
-outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversations.want2go, secretchimneyactivation]
-
+outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversations.want2go, secretchimneyactivation, chimneybattlec]
 
 outside1.colliderects = [Rect(houserock.x-3, houserock.y+houserock.collidesection[1], 3, houserock.collidesection[3])]
 

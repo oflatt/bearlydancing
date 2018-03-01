@@ -141,4 +141,6 @@ want2go = Conversation([want2gospeak])
 
 kewlcornyo = Conversation([Speak("kewlcorn0", ["Yo!"])])
 
+chimneytalk = Conversation([Speak("flyingchimney4", ["..."])])
+
 currentconversation = None

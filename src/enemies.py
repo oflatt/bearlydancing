@@ -5,13 +5,18 @@ import random
 
 defaultanimspeed = 1000
 
+raisewing = Animation(["flyingchimney7", "flyingchimney4"], 100, False)
+lowerwing = Animation(["flyingchimney5", "flyingchimney6"], 60, False)
+chimneyanimation = Animation([raisewing, lowerwing], 600)
+
 animations = [Animation(["sheep0", "sheep1", "sheep2", "sheep3"], defaultanimspeed/2),
               Animation(["meangreen0", "meangreen1"], defaultanimspeed),
               Animation(["purpleperp0", "purpleperp1", "purpleperp2", "purpleperp3"], defaultanimspeed),
               Animation(["spoe0", "spoe1"], defaultanimspeed),
               Animation(["croc0", "croc1"], defaultanimspeed),
               Animation(["kewlcorn0", "kewlcorn1", "kewlcorn2", "kewlcorn3"], defaultanimspeed),
-              Animation(["bugo0","bugo1"], defaultanimspeed)]
+              Animation(["bugo0","bugo1"], defaultanimspeed),
+              chimneyanimation]
 
 # refer to randombeatmap for the definitions for beatmap rules
 # we use an animation number because the actual animation cannot be saved
@@ -31,6 +36,8 @@ counter += 1
 kewlcorn = Enemy(counter, 1, "kewlcorn", ["repeatvalues", "highrepeatchance"])
 counter += 1
 bugo = Enemy(counter, 1, "bugo", ["repeatvariation", "repeatmove", "highrepeatchance"])
+counter += 1
+chimney = Enemy(counter, 1, "chimney", ["repeatrhythm", "melodic", "highrepeatchance"])
 
 woodsenemies = [perp, spoe, croc, bugo]
 

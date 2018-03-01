@@ -40,6 +40,7 @@ class Rock(FrozenClass):
         # used to keep track of if it was drawn for backgroundrange
         self.drawnp = False
 
+
         # collidesection is a list x y width height all of the arguments are relative to the rock's pos and dimensions
         # width and height of collidesection are multiplied by the width and height of the base
         self.collidesection = collidesection
