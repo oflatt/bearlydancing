@@ -12,18 +12,20 @@ import variables, math
 from notelistfunctions import *
 
 ''' rule types for beatmaps (in specs)
--------- for values -----------
+-------- general --------------
 melodic- higher chance of notes being in a row in one direction
 skippy- high chance of note value being 2 away, with continuing direction chance, only melodic
 alternating- high chance to go back to a note or be near the previous note, and if not further away, uses melodic chords
 rests- high chance of shorter notes and rests in between notes
+norests- no rests are possible
+nochords- no added chord notes possible
+shorternotes- add more of a chance for the shorter notes
 
 ------- repeat ----------------
 repeat- repeats sections with variations- all of the following can combine except repeatvalues
 repeatmove- repeats sections with all the tones shifted
 repeatvariation- like repeatmove but calls the variation function on repeated sectons as well (combines repeat and repeatmove)
 repeatrhythm- like repeat, but uses only the times and durations for the last few notes
-repeatbig- UNIMPLEMENTED would be an aditional layer of repetition for a large phrase with variation
 
 ------ repeat separated -------
 repeatvalues- like repeat, but uses only the values from last few notes and computes new durations for the values
@@ -34,9 +36,10 @@ highrepeatchance- makes the initial chance for a repeat to start very high
 ----- defaults ----------------
 -If no ending specified, it throws in a tonic at the end
 '''
+
 ruletypes = ['melodic', 'skippy', 'alternating', 'rests', 'repeat',
              'repeatmove', 'repeatvariation', 'repeatvalues', 'highrepeatchance',
-             'repeatrhythm']
+             'repeatrhythm', 'norests', 'nochords']
 
 
 testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
@@ -234,7 +237,7 @@ def addlayer(notelist, time, specs, valuestouse = []):
         notedurations.append(addn[1])
 
         # chance to add chord notes, if it is not a rest
-        if (randint(0, 150) < ((lv/2) + 2) ** 2):
+        if (randint(0, 150) < ((lv/2) + 2) ** 2) and not 'nochords' in specs['rules']:
             if randint(1, 2) == 1:
                 addn = addnote(l, oldt, True, specs, valuestouse)
                 l = addn[0]
@@ -267,7 +270,7 @@ def random_beatmap(specs):
         addlayerp = False
         if repeatmodep:
             if 'highrepeatchance' in specs['rules']:
-                repeatp = myrand(5 - min(len(l)%repeatlength, 3))
+                repeatp = randint(-1, len(l)%repeatlength) == 0
             else:
                 repeatp = randint(-2, len(l) % repeatlength) == 0
             # chance to do a repetition
@@ -443,7 +446,7 @@ def alternating_value(rv, depth, specs, l):
 def restp(t, l, specs):
     isr = False
     # handeling rests
-    if (len(l) > 0):
+    if (len(l) > 0) and not 'norests' in specs['rules']:
         if ('rests' in specs['rules'] and l[-1].time + l[-1].duration >= t-0.05):
             if compare_around(t, 0):
                 if myrand(1):
@@ -501,21 +504,28 @@ def random_value(t, ischord, unflippedlist, specs):
 
 def random_duration(time, notelist, specs, isr):
     lv = specs['lv']
+    if 'shorternotes' in specs['rules']:
+        lv += 3
+
+    def halfp():
+        offset = 0
+        if 'shorternotes' in specs['rules']:
+            offset = 0.15 
+        return random.random() < 0.5+offset
 
     d = 1
     if randint(0, 50) < (lv + 2) ** 2:
-        if (randint(1, 2) == 1):
-            d = 2
+        if halfp():
+            d = d/2
         if (randint(0, 1000) < (lv + 2) ** 2):
-            if (randint(1, 2) == 1):
+            if halfp():
                 if (randint(1, 3) == 1):
-                    print("triplet duration")
                     d = 3
                 else:
-                    d = 4
+                    d = d/2
 
     # so that usually it is the inverse, short notes
-    if myrand(2):
+    if random.random()< (2/3) + min(2/9, lv/20):
         d = 1 / d
 
     # additional chance at lower levels to be slow
