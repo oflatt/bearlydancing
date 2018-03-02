@@ -17,7 +17,7 @@ class Speak(FrozenClass):
         # dialogue is a list of strings, one per line
         self.dialogue = dialogue
         self.side = side
-        # can be a list of keys that work to exit the conversation
+        # a list of keys that work to exit the conversation- keys acceced in settings keydict
         self.specialexitkeys = None
         self.bottomp = bottomp
         self.releaseexit = False
@@ -105,15 +105,20 @@ class Speak(FrozenClass):
                 self.state = "choosing"
             elif self.state == "choosing":
                 self.choicebuttons.leftrightonkey(key)
-                if key in variables.settings.enterkeys:
+                if variables.checkkey("enter", key):
                     choice = self.choicebuttons.getoption()
                     self.state = "done"
             
         # if there is a specialexitkey, only exit if it is pressed
         elif self.specialexitkeys != None:
-            if key in self.specialexitkeys:
+            keypressedp = False
+            for keytype in self.specialexitkeys:
+                if variables.checkkey(keytype, key):
+                    keypressedp = True
+                    break
+            if keypressedp:
                 self.state = "done"
-        elif key in variables.settings.enterkeys:
+        elif variables.checkkey("enter", key):
             self.state = "done"
         
         returnstate = self.state

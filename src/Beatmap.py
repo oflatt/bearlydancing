@@ -181,21 +181,21 @@ class Beatmap():
             self.time_key_started[kp] = variables.settings.current_time
             play_tone(v)
 
-        if key in variables.settings.note1keys:
+        if variables.checkkey("note1", key):
             playnotepressed(0)
-        elif key in variables.settings.note2keys:
+        elif variables.checkkey("note2", key):
             playnotepressed(1)
-        elif key in variables.settings.note3keys:
+        elif variables.checkkey("note3", key):
             playnotepressed(2)
-        elif key in variables.settings.note4keys:
+        elif variables.checkkey("note4", key):
             playnotepressed(3)
-        elif key in variables.settings.note5keys:
+        elif variables.checkkey("note5", key):
             playnotepressed(4)
-        elif key in variables.settings.note6keys:
+        elif variables.checkkey("note6", key):
             playnotepressed(5)
-        elif key in variables.settings.note7keys:
+        elif variables.checkkey("note7", key):
             playnotepressed(6)
-        elif key in variables.settings.note8keys:
+        elif variables.checkkey("note8", key):
             playnotepressed(7)
 
     def onrelease(self, key):
@@ -250,35 +250,35 @@ class Beatmap():
                 self.feedback[v] = graphics.MISStext
                 self.feedback_timers[v] = variables.settings.current_time + self.tempo
 
-        if key in variables.settings.note1keys:
+        if variables.checkkey("note1", key):
             check_place(0)
             stop_tone(self.held_keys[0])
             self.held_keys[0] = None
-        elif key in variables.settings.note2keys:
+        elif variables.checkkey("note2", key):
             check_place(1)
             stop_tone(self.held_keys[1])
             self.held_keys[1] = None
-        elif key in variables.settings.note3keys:
+        elif variables.checkkey("note3", key):
             check_place(2)
             stop_tone(self.held_keys[2])
             self.held_keys[2] = None
-        elif key in variables.settings.note4keys:
+        elif variables.checkkey("note4", key):
             check_place(3)
             stop_tone(self.held_keys[3])
             self.held_keys[3] = None
-        elif key in variables.settings.note5keys:
+        elif variables.checkkey("note5", key):
             check_place(4)
             stop_tone(self.held_keys[4])
             self.held_keys[4] = None
-        elif key in variables.settings.note6keys:
+        elif variables.checkkey("note6", key):
             check_place(5)
             stop_tone(self.held_keys[5])
             self.held_keys[5] = None
-        elif key in variables.settings.note7keys:
+        elif variables.checkkey("note7", key):
             check_place(6)
             stop_tone(self.held_keys[6])
             self.held_keys[6] = None
-        elif key in variables.settings.note8keys:
+        elif variables.checkkey("note8", key):
             check_place(7)
             stop_tone(self.held_keys[7])
             self.held_keys[7] = None

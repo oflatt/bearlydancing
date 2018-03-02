@@ -222,7 +222,7 @@ class Menu():
             self.onkeyname(key)
 
     def onkeyname(self, key):
-        if key in variables.settings.enterkeys and key != pygame.K_SPACE:
+        if variables.checkkey("enter", key) and key != pygame.K_SPACE:
             if len(self.namestring) != 0 or self.option>1:
                 # self.namestring = self.namestring[:1].upper() + self.namestring[1:]
                 if self.option == 0:
@@ -260,7 +260,7 @@ class Menu():
             self.tempdifficulty = int(self.tempdifficulty/10)
             self.backspaceon = True
             self.backspacetime = variables.settings.current_time
-        elif len(self.namestring) < 20 and not key in variables.settings.escapekeys and self.option <2:
+        elif len(self.namestring) < 20 and not variables.checkkey("escape", key) and self.option <2:
             toadd = pygame.key.name(key)
             if toadd == "space":
                 toadd = " "
@@ -274,9 +274,9 @@ class Menu():
                     self.tempdifficulty = numentered
                 else:
                     self.tempdifficulty = self.tempdifficulty * 10 + numentered
-            elif key in variables.settings.upkeys:
+            elif variables.checkkey("up", key):
                 self.tempdifficulty += 1
-            elif key in variables.settings.downkeys and self.tempdifficulty > 0:
+            elif variables.checkkey("down", key) and self.tempdifficulty > 0:
                 self.tempdifficulty -= 1
             if self.tempdifficulty > variables.maxdifficulty:
                 self.tempdifficulty = variables.maxdifficulty
@@ -288,11 +288,11 @@ class Menu():
         optionslength = len(self.options)
         if self.mainmenup:
             optionslength = len(self.mainmenuoptions)
-        if key in variables.settings.upkeys:
+        if variables.checkkey("up", key):
             self.option = (self.option - 1) % optionslength
-        elif key in variables.settings.downkeys:
+        elif variables.checkkey("down", key):
             self.option = (self.option + 1) % optionslength
-        elif key in variables.settings.enterkeys:
+        elif variables.checkkey("enter", key):
             if self.getoption() in ["resume", "play"]:
                 if self.mainmenup and self.firstbootup:
                     self.state = "name"

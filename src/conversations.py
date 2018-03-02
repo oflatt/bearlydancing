@@ -96,18 +96,18 @@ tutorialconversation1 = Conversation([Speak("honeyback3",
                                             ["Oh look, a note. I'll tell you when to play it."],
                                             "left", bottomp = False)])
 
-holdthis = "Obviously, you'll want to press and hold \"" + pygame.key.name(variables.settings.note1keys[0]) + "\" now."
+holdthis = "Obviously, you'll want to press and hold \"" + pygame.key.name(variables.settings.keydict["note1"][0]) + "\" now."
 
 pressaspeak = Speak("honeyback3", [holdthis,
                                    "Hold the note until it ends,",
                                    "because otherwise you will miss it."], bottomp = False)
 
-pressaspeak.specialexitkeys = variables.settings.note1keys
+pressaspeak.specialexitkeys = ["note1"]
 
 pressanow = Conversation([pressaspeak])
 
 releaseaspeak = Speak("honeyback3", ["Alright, release the key now."], bottomp = False)
-releaseaspeak.specialexitkeys = variables.settings.note1keys
+releaseaspeak.specialexitkeys = ["note1"]
 releaseaspeak.releaseexit = True
 
 releaseanow = Conversation([releaseaspeak])
@@ -115,8 +115,8 @@ releaseanow = Conversation([releaseaspeak])
 releasedearlyspeak = Speak("honeyback3", ["You released too early.",
                                           "Hold the note until the end."], bottomp = False)
 releasedearlyagainspeak = Speak("honeyback3", ["You released too early... again."], bottomp = False)
-releasedearlyspeak.specialexitkeys = variables.settings.note1keys
-releasedearlyagainspeak.specialexitkeys = variables.settings.note1keys
+releasedearlyspeak.specialexitkeys = ["note1"]
+releasedearlyagainspeak.specialexitkeys = ["note1"]
 
 releasedearly = Conversation([releasedearlyspeak], speaksafter = [releasedearlyagainspeak])
 

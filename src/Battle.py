@@ -357,12 +357,12 @@ class Battle(FrozenClass):
                 self.win()
         if self.state == 'dance':
             if self.tutorialp:
-                if not self.tutorialstate == "first note" or not key in variables.settings.note1keys:
+                if not self.tutorialstate == "first note" or not variables.checkkey("note1", key):
                     self.beatmaps[self.current_beatmap].onkey(key)
             else:
                 self.beatmaps[self.current_beatmap].onkey(key)
         elif self.state == "choose":
-            if key in variables.settings.enterkeys:
+            if variables.checkkey("enter", key):
                 if self.battlechoice.current_option == 0:
                     self.state = "dance"
                     self.beatmaps[self.current_beatmap].reset(self.starttime, True)
@@ -372,27 +372,27 @@ class Battle(FrozenClass):
                 elif self.battlechoice.current_option == 2:
                     change_soundpack(1)
             else:
-                if key in variables.settings.leftkeys:
+                if variables.checkkey("left", key):
                     self.battlechoice.previousoption()
-                elif key in variables.settings.rightkeys:
+                elif variables.checkkey("right", key):
                     self.battlechoice.nextoption()
-                elif key in variables.settings.upkeys and self.battlechoice.current_option == 2:
+                elif variables.checkkey("up", key) and self.battlechoice.current_option == 2:
                     change_soundpack(-1)
-                elif key in variables.settings.downkeys and self.battlechoice.current_option == 2:
+                elif variables.checkkey("down", key) and self.battlechoice.current_option == 2:
                     change_soundpack(1)
 
-        elif self.state == "lose" and key in variables.settings.enterkeys:
+        elif self.state == "lose" and variables.checkkey("enter", key):
             self.lose()
-        elif self.state == "win" and key in variables.settings.enterkeys:
+        elif self.state == "win" and variables.checkkey("enter", key):
             self.addexp()
-        elif self.state == "got exp" and key in variables.settings.enterkeys:
+        elif self.state == "got exp" and variables.checkkey("enter", key):
             self.win()
 
     def onrelease(self, key):
         releasep = False
         if self.state == "dance":
             if self.tutorialp:
-                if key in variables.settings.note1keys:
+                if variables.checkkey("note1", key):
                     if self.tutorialstate == "first note":
                         pass
                     elif self.tutorialstate == "release note":

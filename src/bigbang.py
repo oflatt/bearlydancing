@@ -57,7 +57,7 @@ while not done:
         #first check for saving and exiting
         if event.type == pygame.QUIT:
             done = True
-        elif event.type == pygame.KEYDOWN and event.key in variables.settings.enterkeys and variables.settings.menuonq:
+        elif event.type == pygame.KEYDOWN and variables.checkkey("enter", event.key) and variables.settings.menuonq:
             if menu.state == "main":
                 if menu.getoption() == "exit":
                     done = True
@@ -67,7 +67,7 @@ while not done:
 
         # User pressed down on a key
         if event.type == pygame.KEYDOWN:
-            if event.key in variables.settings.escapekeys:
+            if variables.checkkey("escape", event.key):
                 #if we are turning on the menu pause the beatmaps
                 if not variables.settings.menuonq:
                     menu.pause()
@@ -157,8 +157,7 @@ while not done:
 
 
     # blit fps
-    if variables.devmode:
-        variables.screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [10, variables.font.get_linesize()])
+    variables.screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [10, variables.font.get_linesize()])
 
     if variables.testsmallp:
         # blit red boarder for testing

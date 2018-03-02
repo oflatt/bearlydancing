@@ -125,19 +125,19 @@ class Player(FrozenClass):
     def keypress(self, k):
         t = variables.settings.current_time
         s = variables.playerspeed
-        if k in variables.settings.leftkeys:
+        if variables.checkkey("left", k):
             self.leftpresstime = variables.settings.current_time
             self.xspeed = -s
             self.lastxupdate = t
-        if k in variables.settings.rightkeys:
+        if variables.checkkey("right", k):
             self.rightpresstime = variables.settings.current_time
             self.lastxupdate = t
             self.xspeed = s
-        if k in variables.settings.upkeys:
+        if variables.checkkey("up", k):
             self.uppresstime = variables.settings.current_time
             self.yspeed = -s
             self.lastyupdate = t
-        if k in variables.settings.downkeys:
+        if variables.checkkey("down", k):
             self.downpresstime = variables.settings.current_time
             self.yspeed = s
             self.lastyupdate = t

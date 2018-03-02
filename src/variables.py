@@ -128,7 +128,7 @@ notes_colors = [ORANGE, BLUE, RED, GREEN, GREEN, RED, BLUE, ORANGE]
 
 #conversation
 textsize = height/15
-textbox_height = height*1/4
+textbox_height = height/4
 lines_in_screen = int(textbox_height/textsize)
 photo_size = width/6
 buttonpadding = int(width/70)
@@ -196,3 +196,9 @@ def draw_progress_bar():
         screen.blit(progresstext, [int(width/2 - progresstext.get_width()/2), texty])
         pygame.display.flip()
         
+
+
+def checkkey(name, key):
+    if name == "enter":
+        name = "action"
+    return key in settings.keydict[name]

@@ -365,7 +365,7 @@ def engage_exit(e):
     change_map(e.name, e.newx, e.newy)
         
 def on_key(key):
-    if key in variables.settings.enterkeys:
+    if variables.checkkey("enter", key):
         e = current_map.checkexit()
         c = current_map.checkconversation()
         #if c:

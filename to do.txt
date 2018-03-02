@@ -2,16 +2,17 @@ Bearly Dancing To-Do List
 
 gameplay
 -expand the map!
--write some tests for once
 -controls in menu
 -auto-save
 -map objects and loading more safely, versioning, safely load with new content
+-ddr machine that you can play and dance against
 
 sound
 -fix volume
 -add music
 -load own sounds using the bowl pianoputer as example
 -chimney wing sounds
+-add new scales
 
 battle
 -melodicmode:

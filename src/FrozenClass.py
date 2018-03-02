@@ -1,4 +1,4 @@
-from variables import devmode
+
 class FrozenClass(object):
     __isfrozen = False
     def __setattr__(self, key, value):
@@ -7,5 +7,4 @@ class FrozenClass(object):
         object.__setattr__(self, key, value)
 
     def _freeze(self):
-        if devmode: # only freeze the class for dev mode
-            self.__isfrozen = True
+        self.__isfrozen = True
