@@ -67,12 +67,6 @@ while not done:
 
         # User pressed down on a key
         if event.type == pygame.KEYDOWN:
-            if variables.checkkey("escape", event.key):
-                #if we are turning on the menu pause the beatmaps
-                if not variables.settings.menuonq:
-                    menu.pause()
-                else:
-                    menu.resume()
                 
             if (not variables.settings.menuonq):
                 if variables.settings.state == "conversation":
@@ -88,6 +82,12 @@ while not done:
                     classvar.battle.onkey(event.key)
             else:
                 menu.onkey(event.key)
+
+            # also check if the player is pausing the game
+            if variables.checkkey("escape", event.key):
+                #if we are turning on the menu pause the beatmaps
+                if not variables.settings.menuonq:
+                    menu.pause()
 
 
         # User let up on a key
@@ -135,7 +135,7 @@ while not done:
     drawworldp = True
     if variables.settings.menuonq:
         if menu.mainmenup:
-            if menu.state == "main":
+            if menu.state in ["main", "settings"]:
                 variables.screen.fill(variables.BLACK)
                 drawworldp = False
     if drawworldp:

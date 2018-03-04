@@ -3,8 +3,8 @@ from pygame import Rect
 from classvar import player
 from graphics import getpicbyheight, getTextPic
 from ChoiceButtons import ChoiceButtons
+from SettingsMenu import SettingsMenu
 
-textsize = variables.height/10
 
 def keytonum(key):
     numentered = None
@@ -34,12 +34,12 @@ def keytonum(key):
 class Menu():
     
     def __init__(self):
+        self.settingsmenu = SettingsMenu()
+        
         self.option = 0
         self.state = "main"
-        self.options = ["resume", "save", "controls", "exit"]
-        self.mainmenuoptions = ["play", "controls", "exit"]
-        self.textxoffset = 0
-        self.textyspace = 0
+        self.options = ["resume", "save", "settings", "exit"]
+        self.mainmenuoptions = ["play", "settings", "exit"]
 
         self.message = None
         self.messagetime = 0
@@ -51,9 +51,7 @@ class Menu():
         self.yesno.nextoption()
         self.tempdifficulty = 0
         
-        self.textyspace = variables.font.get_linesize()*variables.height*0.003
-        self.textxoffset = getTextPic(self.options[0], textsize, variables.WHITE).get_width() / 6
-        self.extrabuttonwidth = self.textxoffset / 4
+        
         self.reset()
 
         # if it is true, it is displaying the main menu
@@ -66,8 +64,9 @@ class Menu():
 
 
     def setmessage(self, string):
-        self.message = string
-        self.messagetime = variables.settings.current_time
+        if string != None:
+            self.message = string
+            self.messagetime = variables.settings.current_time
 
     def saved(self):
         self.setmessage("saved!")
@@ -79,9 +78,11 @@ class Menu():
         
         if self.state == "name":
             if self.backspaceon:
-                if (variables.settings.current_time - self.backspacetime) > 200:
+                if (variables.settings.current_time - self.backspacetime) > variables.menuscrollspeed:
                     self.namestring = self.namestring[:-1]
                     self.backspacetime = variables.settings.current_time
+        elif self.state == "settings":
+            self.settingsmenu.ontick()
         
     def reset(self):
         self.option = 0
@@ -106,31 +107,20 @@ class Menu():
                     classvar.battle.unpause()
 
     def drawmain(self):
-        extrabuttonwidth = self.extrabuttonwidth
-
-        if self.message != None:
-            mpic = variables.font.render(self.message, 0, variables.WHITE).convert()
-            mpic = graphics.scale_pure(mpic, textsize)
-            mx = variables.width/2-mpic.get_width()/2
-            my = variables.height/2-mpic.get_height()/2
-            variables.screen.fill(variables.BLACK, Rect(mx-extrabuttonwidth,
-                                                        my,
-                                                        mpic.get_width()+2*extrabuttonwidth,
-                                                        mpic.get_height()))
-            variables.screen.blit(mpic, [mx, my])
+        extrabuttonwidth = variables.getmenutextxoffset() / 4
         
         opics = []
         
         if self.mainmenup:
             for o in self.mainmenuoptions:
-                textpic = getTextPic(o, textsize, variables.WHITE)
+                textpic = getTextPic(o, variables.textsize, variables.WHITE)
                 opics.append(textpic)
         else:
             for o in self.options:
-                textpic = getTextPic(o, textsize, variables.WHITE)
+                textpic = getTextPic(o, variables.textsize, variables.WHITE)
                 opics.append(textpic)
             
-        xoffset = self.textxoffset
+        xoffset = variables.getmenutextxoffset()
         
         for x in range(len(opics)):
             textpic = opics[x]
@@ -139,34 +129,51 @@ class Menu():
                 xoffset = int(variables.width / 2 - (textpic.get_width() / 2))
             pygame.draw.rect(variables.screen, variables.BLACK,
                              pygame.Rect(xoffset-extrabuttonwidth,
-                                         (x + 1) * self.textyspace,
+                                         (x + 1) * variables.getmenutextyspace(),
                                          textpic.get_width() + 2*extrabuttonwidth,
                                          textpic.get_height()))
             variables.screen.blit(textpic,
-                                  [xoffset, (x + 1) * self.textyspace])
-        dotxoffset = self.textxoffset
+                                  [xoffset, (x + 1) * variables.getmenutextyspace()])
+            
+        dotxoffset = variables.getmenutextxoffset()
+        dotwidth = variables.getmenutextxoffset() * 1/3
         if self.mainmenup:
             dotxoffset = int(variables.width / 2 - (opics[self.option].get_width() / 2))
         pygame.draw.rect(variables.screen, variables.WHITE,
-                         [dotxoffset - (self.textxoffset * (3/4)), (self.option + 1) * self.textyspace, self.textxoffset * (3 / 4),
-                          self.textxoffset * (3 / 4)])
+                         [dotxoffset - dotwidth,
+                          (self.option + 1) * variables.getmenutextyspace(),
+                          dotwidth,
+                          dotwidth])
+        
         if self.mainmenup:
             enemyframe = getpicbyheight(self.enemyanimation.current_frame(), variables.height/5)
             variables.screen.blit(enemyframe,
-                                  [int(variables.width/2 - enemyframe.get_width()/2), (len(opics) + 1) * self.textyspace])
+                                  [int(variables.width/2 - enemyframe.get_width()/2), (len(opics) + 1) * variables.getmenutextyspace()])
+
+        # blit message on top
+        if self.message != None:
+            mpic = variables.font.render(self.message, 0, variables.WHITE).convert()
+            mpic = graphics.scale_pure(mpic, variables.textsize)
+            mx = variables.width/2-mpic.get_width()/2
+            my = variables.height/2-mpic.get_height()/2
+            variables.screen.fill(variables.BLACK, Rect(mx-extrabuttonwidth,
+                                                        my,
+                                                        mpic.get_width()+2*extrabuttonwidth,
+                                                        mpic.get_height()))
+            variables.screen.blit(mpic, [mx, my])
 
     # in drawname option is used as how far they have gotten through the process
     def drawname(self):
         promptstring = self.nameprompts[self.option]
-        extrabuttonwidth = self.extrabuttonwidth
+        extrabuttonwidth = variables.getmenutextxoffset() / 4
         if self.option == len(self.nameprompts)-1:
-            reccomendedtext = getTextPic("The reccomended difficulty for new players is 0.", textsize, variables.beginningprompttextcolor)
+            reccomendedtext = getTextPic("The reccomended difficulty for new players is 0.", variables.textsize, variables.beginningprompttextcolor)
             variables.screen.blit(reccomendedtext, [variables.width/2 - reccomendedtext.get_width()/2,
-                                                    variables.height/2 - textsize*3.5])
+                                                    variables.height/2 - variables.textsize*3.5])
             self.yesno.draw()
             promptstring = promptstring + str(self.tempdifficulty) + "?"
         
-        textpic = getTextPic(promptstring, textsize, variables.beginningprompttextcolor)
+        textpic = getTextPic(promptstring, variables.textsize, variables.beginningprompttextcolor)
         
         typestring = self.namestring
         typecolor = variables.BLACK
@@ -187,13 +194,13 @@ class Menu():
             else:
                 typecolor = (0,0,0)
                 
-        typepic = graphics.scale_pure(variables.font.render(typestring, 0, typecolor).convert(), textsize, "height")
-        variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.height/2 - textsize*1.5])
-        variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.height/2 - textsize/2])
+        typepic = graphics.scale_pure(variables.font.render(typestring, 0, typecolor).convert(), variables.textsize, "height")
+        variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.height/2 - variables.textsize*1.5])
+        variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.height/2 - variables.textsize/2])
 
         if self.message != None:
             mpic = variables.font.render(self.message, 0, variables.WHITE).convert()
-            mpic = graphics.scale_pure(mpic, textsize, "height")
+            mpic = graphics.scale_pure(mpic, variables.textsize, "height")
             mx = variables.width/2-mpic.get_width()/2
             my = variables.height/2+mpic.get_height()
             variables.screen.fill(variables.BLACK, Rect(mx-extrabuttonwidth,
@@ -205,6 +212,8 @@ class Menu():
     def draw(self):
         if self.state == "main":
             self.drawmain()
+        elif self.state == "settings":
+            self.settingsmenu.draw()
         else:
             self.drawname()
 
@@ -214,10 +223,21 @@ class Menu():
                 self.shifton = False
             elif key == pygame.K_BACKSPACE:
                 self.backspaceon = False
+        elif self.state == "settings":
+            self.settingsmenu.onrelease(key)    
 
     def onkey(self, key):
         if self.state == "main":
-            self.onkeymain(key)
+            if variables.checkkey("escape", key):
+                self.resume()
+            else:
+                self.onkeymain(key)
+        elif self.state == "settings":
+            message = self.settingsmenu.onkey(key)
+            self.setmessage(message)
+
+            if message == "confirmed new settings":
+                self.state = "main"
         else:
             self.onkeyname(key)
 
@@ -230,7 +250,7 @@ class Menu():
                     if variables.settings.username.lower() == "tessa":
                         self.setmessage("<3")
                     elif variables.settings.username.lower() == "oliver":
-                        self.setmessage("hey that's me!")
+                        self.setmessage("hey that's me")
                     elif variables.settings.username.lower() == "sophie" or variables.settings.username.lower() == "sophia":
                         self.setmessage("the best sister there is")
                 elif self.option == 1:
@@ -254,7 +274,7 @@ class Menu():
                     
         elif key in [pygame.K_LSHIFT, pygame.K_RSHIFT]:
             self.shifton = True
-            
+
         elif key in [pygame.K_BACKSPACE]:
             self.namestring = self.namestring[:-1]
             self.tempdifficulty = int(self.tempdifficulty/10)
@@ -282,7 +302,7 @@ class Menu():
                 self.tempdifficulty = variables.maxdifficulty
         elif self.option == len(self.nameprompts)-1:
             self.yesno.leftrightonkey(key)
-        
+
 
     def onkeymain(self, key):
         optionslength = len(self.options)
@@ -300,6 +320,8 @@ class Menu():
                 else:
                     self.mainmenup = False
                     self.resume()
+            if self.getoption() == "settings":
+                self.state = "settings"
 
     def getoption(self):
         if self.mainmenup:

@@ -146,28 +146,28 @@ class Player(FrozenClass):
     def keyrelease(self, k):
         s = variables.playerspeed
         t = variables.settings.current_time
-        if k == pygame.K_LEFT or k == pygame.K_a:
+        if variables.checkkey("left", k):
             self.leftpresstime = 0
             self.lastxupdate = t
             if self.rightpresstime == 0:
                 self.xspeed = 0
             else:
                 self.xspeed = s
-        elif k == pygame.K_RIGHT or k == pygame.K_d:
+        elif variables.checkkey("right", k):
             self.rightpresstime = 0
             self.lastxupdate = t
             if self.leftpresstime == 0:
                 self.xspeed = 0
             else:
                 self.xspeed = -s
-        elif k == pygame.K_UP or k == pygame.K_w:
+        elif variables.checkkey("up", k):
             self.lastyupdate = t
             self.uppresstime = 0
             if self.downpresstime == 0:
                 self.yspeed = 0
             else:
                 self.yspeed = s
-        elif k == pygame.K_DOWN or k == pygame.K_s:
+        elif variables.checkkey("down", k):
             self.lastyupdate = t
             self.downpresstime = 0
             if self.uppresstime == 0:

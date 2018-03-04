@@ -1,11 +1,12 @@
 import pygame
+from collections import OrderedDict
 from FrozenClass import FrozenClass
 
 class Settings(FrozenClass):
 
     def __init__(self):
         # keybindings
-        self.keydict = {}
+        self.keydict = OrderedDict()
         self.keydict["up"] =[pygame.K_UP, pygame.K_w]
         self.keydict["down"] = [pygame.K_DOWN, pygame.K_s]
         self.keydict["left"] = [pygame.K_LEFT, pygame.K_a]

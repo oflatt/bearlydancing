@@ -135,6 +135,12 @@ buttonpadding = int(width/70)
 
 # menu
 beginningprompttextcolor = BLUE
+menuscrollspeed = 150 # in milliseconds
+confirmduration = 11 # in seconds
+def getmenutextyspace():
+    return textsize * 1.5
+def getmenutextxoffset():
+    return textsize
 
 #world
 playerspeed = 0.05
@@ -145,8 +151,8 @@ floatinessagainstreality = 0.6
 accelpixelpermillisecond *= floatinessagainstreality
     
 #encountering enemies
-encounter_check_rate = 100 #rate of check in milliseconds
-encounter_chance = 0.002#chance per check
+encounter_check_rate = 100 # rate of check in milliseconds
+encounter_chance = 0.002 # chance per check
 
 settings = Settings()
 properties = Properties()
@@ -183,7 +189,10 @@ def draw_progress_bar():
             pygame.display.flip()
     
     if not estimated == None:
-        percent_complete = numused / estimated
+        if estimated <= 0:
+            percent_complete = 1
+        else:
+            percent_complete = numused / estimated
 
         progresstext = pygame.transform.scale2x(font.render(str(numused) + "/" + str(estimated), 0, WHITE).convert())
 

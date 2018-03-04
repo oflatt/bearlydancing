@@ -36,7 +36,7 @@ cleararearect = Rect(houserock.x, houserock.y, 500-houserock.x, treerock.y+treer
 
 chimneyrock = Rock([Animation(["flyingchimney0"], 1),
                     Animation(["flyingchimney1", "flyingchimney2", "flyingchimney3"], 20),
-                    enemies.chimneyanimation], houserock.x+ 115,houserock.y+ 16, None, "chimney")
+                    enemies.chimneyanimation], houserock.x+ 136-25, houserock.y+ 64-43, None, "chimney")
 
 secretchimneyactivation = Conversation([])
 secretchimneyactivation.area = [houserock.x + houserock.w/2 - 2, houserock.y + houserock.h/2 - 2, 4, houserock.h/10]
