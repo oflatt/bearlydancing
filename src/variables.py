@@ -137,10 +137,13 @@ buttonpadding = int(width/70)
 beginningprompttextcolor = BLUE
 menuscrollspeed = 150 # in milliseconds
 confirmduration = 11 # in seconds
+maxbindings = 50
 def getmenutextyspace():
     return textsize * 1.5
 def getmenutextxoffset():
     return textsize
+def getdotwidth():
+    return getmenutextxoffset() * 1/3
 
 #world
 playerspeed = 0.05

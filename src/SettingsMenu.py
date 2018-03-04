@@ -8,6 +8,7 @@ class SettingsMenu(FrozenClass):
         self.option = 0
         self.scroll = 0
         self.bindingoption = 0
+        self.bindingscroll = 0
         self.confirmoption = 0
         # when keys are hit
         self.lefttime = None
@@ -28,7 +29,7 @@ class SettingsMenu(FrozenClass):
 
             onscreen = options[self.scroll:self.scroll+self.linesperscreen()]
             for i in range(len(onscreen)):
-                ypos = i* variables.getmenutextyspace()
+                ypos = i * variables.getmenutextyspace()
                 keytype = onscreen[i]
                 # if it is the back button
                 if keytype == options[-1]:
@@ -74,7 +75,7 @@ class SettingsMenu(FrozenClass):
     def drawdot(self, xpos, ypos = None):
         if ypos == None:
             ypos = (self.option - self.scroll) * variables.getmenutextyspace()
-        dotwidth = variables.getmenutextxoffset() * 1/3
+        dotwidth = variables.getdotwidth()
         pygame.draw.rect(variables.screen, variables.WHITE,
                          [xpos - dotwidth,
                           ypos,
@@ -87,26 +88,27 @@ class SettingsMenu(FrozenClass):
     def drawline(self, keytype, ypos, selectedoption = None):
         title = getTextPic(keytype + "-", variables.textsize, variables.WHITE)
         variables.screen.blit(title, (variables.getmenutextxoffset(), ypos))
-        keylist = ["X"] + self.workingcopy[keytype] + ["+"]
+        keylist = ["-"] + self.workingcopy[keytype] + ["+"]
         
-        i = 0
+        i = self.bindingscroll
         currentx = variables.getmenutextxoffset()*2 + title.get_width()
         while i < len(keylist):
+            textpic = self.gettextpic(i, keylist)
+            
             if i == selectedoption:
                 self.drawdot(currentx)
-            if i == len(keylist)-1:
-                textstring = keylist[i]
-            elif i == 0:
-                textstring = keylist[i]
-            else:
-                textstring = pygame.key.name(keylist[i])
+                # handle scrolling for next frame
+                if currentx + textpic.get_width() > variables.width:
+                    self.bindingscroll += 1
             
-            textpic = getTextPic(textstring, variables.textsize, variables.WHITE)
-                
+            
             variables.screen.blit(textpic, (currentx, ypos))
             currentx += variables.getmenutextxoffset()+textpic.get_width()
                 
             i += 1
+
+        if self.bindingoption < self.bindingscroll:
+            self.bindingscroll -= 1
 
     def getcurrentoptionbindings(self):
         options = list(self.workingcopy.keys()) + ["back"]
@@ -114,6 +116,37 @@ class SettingsMenu(FrozenClass):
             return []
         else:
             return self.workingcopy[options[self.option]]
+
+    def gettextpic(self, i, keylist):
+        if i > len(keylist)-1:
+            return None
+        else:
+            if i == len(keylist)-1:
+                textstring = keylist[i]
+            elif i == 0:
+                textstring = keylist[i]
+            elif keylist[i] == None:
+                textstring = "none"
+            else:
+                textstring = pygame.key.name(keylist[i])
+
+            textpic = getTextPic(textstring, variables.textsize, variables.WHITE)
+            return textpic
+
+    def getdotxpos(self):
+        i = self.bindingscroll
+        currentx = variables.getmenutextxoffset()*2 + title.get_width()
+        dotx = currentx
+        while i < len(keylist):
+            if i == self.bindingoption:
+                dotx = currentx
+                break
+            textpic = gettextstring(i)
+
+            currentx += variables.getmenutextxoffset()+textpic.get_width()
+                
+            i += 1
+        return dotx
 
     # returns a message to set or None
     def onkey(self, key):
@@ -134,6 +167,7 @@ class SettingsMenu(FrozenClass):
                 if self.option < self.scroll:
                     self.scroll -= 1
                 self.bindingoption = 0
+                self.bindingscroll = 0
             elif variables.checkkey("down", key):
                 self.downtime = variables.settings.current_time
                 if self.option >= optionslength-1:
@@ -141,6 +175,8 @@ class SettingsMenu(FrozenClass):
                 self.option = (self.option + 1) % optionslength
                 if self.option > self.scroll + self.linesperscreen()-1:
                     self.scroll += 1
+                self.bindingoption = 0
+                self.bindingscroll = 0
             elif variables.checkkey("left", key):
                 bindingslength = len(self.getcurrentoptionbindings()) + 2
                 self.lefttime = variables.settings.current_time
@@ -149,13 +185,16 @@ class SettingsMenu(FrozenClass):
                 bindingslength = len(self.getcurrentoptionbindings()) + 2
                 self.righttime = variables.settings.current_time
                 self.bindingoption = (self.bindingoption + 1) % bindingslength
-
             elif variables.checkkey("enter", key):
                 bindingslength = len(self.getcurrentoptionbindings()) + 2
                 if bindingslength-1 > self.bindingoption > 0:
                     self.initiatekeychange()
                 elif self.option == optionslength - 1:
                     self.initiateconfirm()
+                elif self.bindingoption == 0:
+                    self.deleteonebinding()
+                elif self.bindingoption == bindingslength-1:
+                    message = self.addonebinding()
 
             elif variables.checkkey("escape", key):
                 self.initiateconfirm()
@@ -208,6 +247,24 @@ class SettingsMenu(FrozenClass):
             self.workingcopy = copy.deepcopy(variables.settings.keydict)
         self.state = "keychange"
         self.clearkeys()
+
+    def deleteonebinding(self):
+        if self.workingcopy is variables.settings.keydict:
+            self.workingcopy = copy.deepcopy(variables.settings.keydict)
+        bindings = self.getcurrentoptionbindings()
+        if len(bindings) > 0:
+            del bindings[0]
+
+    def addonebinding(self):
+        if self.workingcopy is variables.settings.keydict:
+            self.workingcopy = copy.deepcopy(variables.settings.keydict)
+        bindings = self.getcurrentoptionbindings()
+        if len(bindings) < variables.maxbindings:
+            bindings.append(None)
+            self.bindingoption += 1
+            return None
+        else:
+            return "Maximum of " + str(variables.maxbindings) + " keybindings"
 
     def exitkeychange(self):
         self.state = "main"

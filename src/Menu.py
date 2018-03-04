@@ -150,17 +150,6 @@ class Menu():
             variables.screen.blit(enemyframe,
                                   [int(variables.width/2 - enemyframe.get_width()/2), (len(opics) + 1) * variables.getmenutextyspace()])
 
-        # blit message on top
-        if self.message != None:
-            mpic = variables.font.render(self.message, 0, variables.WHITE).convert()
-            mpic = graphics.scale_pure(mpic, variables.textsize)
-            mx = variables.width/2-mpic.get_width()/2
-            my = variables.height/2-mpic.get_height()/2
-            variables.screen.fill(variables.BLACK, Rect(mx-extrabuttonwidth,
-                                                        my,
-                                                        mpic.get_width()+2*extrabuttonwidth,
-                                                        mpic.get_height()))
-            variables.screen.blit(mpic, [mx, my])
 
     # in drawname option is used as how far they have gotten through the process
     def drawname(self):
@@ -198,16 +187,6 @@ class Menu():
         variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.height/2 - variables.textsize*1.5])
         variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.height/2 - variables.textsize/2])
 
-        if self.message != None:
-            mpic = variables.font.render(self.message, 0, variables.WHITE).convert()
-            mpic = graphics.scale_pure(mpic, variables.textsize, "height")
-            mx = variables.width/2-mpic.get_width()/2
-            my = variables.height/2+mpic.get_height()
-            variables.screen.fill(variables.BLACK, Rect(mx-extrabuttonwidth,
-                                                        my,
-                                                        mpic.get_width()+2*extrabuttonwidth,
-                                                        mpic.get_height()))
-            variables.screen.blit(mpic, [mx, my])
             
     def draw(self):
         if self.state == "main":
@@ -216,6 +195,19 @@ class Menu():
             self.settingsmenu.draw()
         else:
             self.drawname()
+
+        # blit message on top
+        if self.message != None:
+            extrabuttonwidth = variables.getmenutextxoffset() / 4
+            mpic = variables.font.render(self.message, 0, variables.WHITE).convert()
+            mpic = graphics.scale_pure(mpic, variables.textsize)
+            mx = variables.width/2-mpic.get_width()/2
+            my = variables.height/2-mpic.get_height()/2
+            variables.screen.fill(variables.BLACK, Rect(mx-extrabuttonwidth,
+                                                        my,
+                                                        mpic.get_width()+2*extrabuttonwidth,
+                                                        mpic.get_height()))
+            variables.screen.blit(mpic, [mx, my])
 
     def onrelease(self, key):
         if self.state == "name":

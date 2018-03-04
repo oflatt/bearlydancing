@@ -1,8 +1,7 @@
 Bearly Dancing To-Do List
 
 gameplay
--expand the map!
--controls in menu
+-expand the map- forest boss
 -auto-save
 -map objects and loading more safely, versioning, safely load with new content
 -ddr machine that you can play and dance against
@@ -13,6 +12,7 @@ sound
 -load own sounds using the bowl pianoputer as example
 -chimney wing sounds
 -add new scales
+-different drums for different enemies
 
 battle
 -melodicmode:
