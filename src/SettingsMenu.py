@@ -166,8 +166,11 @@ class SettingsMenu(FrozenClass):
                 self.option = (self.option - 1) % optionslength
                 if self.option < self.scroll:
                     self.scroll -= 1
-                self.bindingoption = 0
-                self.bindingscroll = 0
+                bindlength = len(self.getcurrentoptionbindings())
+                if bindlength == 0:
+                    self.bindingoption = 0
+                else:
+                    self.bindingoption = min(bindlength+1, self.bindingoption)
             elif variables.checkkey("down", key):
                 self.downtime = variables.settings.current_time
                 if self.option >= optionslength-1:
@@ -175,8 +178,11 @@ class SettingsMenu(FrozenClass):
                 self.option = (self.option + 1) % optionslength
                 if self.option > self.scroll + self.linesperscreen()-1:
                     self.scroll += 1
-                self.bindingoption = 0
-                self.bindingscroll = 0
+                bindlength = len(self.getcurrentoptionbindings())
+                if bindlength == 0:
+                    self.bindingoption = 0
+                else:
+                    self.bindingoption = min(bindlength+1, self.bindingoption)
             elif variables.checkkey("left", key):
                 bindingslength = len(self.getcurrentoptionbindings()) + 2
                 self.lefttime = variables.settings.current_time
@@ -190,14 +196,14 @@ class SettingsMenu(FrozenClass):
                 if bindingslength-1 > self.bindingoption > 0:
                     self.initiatekeychange()
                 elif self.option == optionslength - 1:
-                    self.initiateconfirm()
+                    message = self.initiateconfirm()
                 elif self.bindingoption == 0:
                     self.deleteonebinding()
                 elif self.bindingoption == bindingslength-1:
                     message = self.addonebinding()
 
             elif variables.checkkey("escape", key):
-                self.initiateconfirm()
+                message = self.initiateconfirm()
 
             return message
         
@@ -226,16 +232,26 @@ class SettingsMenu(FrozenClass):
                     self.notconfirm()
                 elif self.confirmoption == 0:
                     # put the working copy into effect
+                    self.exitsettingsmenu()
                     variables.settings.keydict = self.workingcopy
                     message = "confirmed new settings"
 
             return message
 
     def initiateconfirm(self):
-        # start on no
-        self.confirmoption = 1
-        self.confirmationtime = variables.settings.current_time
-        self.state = "confirm"
+        if self.workingcopy == variables.settings.keydict:
+            self.exitsettingsmenu()
+            return "confirmed without change"
+        else:
+            # start on no
+            self.confirmoption = 1
+            self.confirmationtime = variables.settings.current_time
+            self.state = "confirm"
+            self.clearkeys()
+            return None
+
+    def exitsettingsmenu(self):
+        self.state = "main"
         self.clearkeys()
 
     def notconfirm(self):

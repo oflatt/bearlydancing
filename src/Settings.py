@@ -23,6 +23,8 @@ class Settings(FrozenClass):
 
         self.keydict["escape"] = [pygame.K_ESCAPE]
 
+        self.volume = 0.5
+
         # state can be world, battle, or conversation
         self.state = "world"
         self.backgroundstate = "world"

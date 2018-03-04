@@ -226,9 +226,10 @@ class Menu():
                 self.onkeymain(key)
         elif self.state == "settings":
             message = self.settingsmenu.onkey(key)
-            self.setmessage(message)
+            if message != "confirmed without change":
+                self.setmessage(message)
 
-            if message == "confirmed new settings":
+            if message == "confirmed new settings" or message == "confirmed without change":
                 self.state = "main"
         else:
             self.onkeyname(key)

@@ -15,7 +15,6 @@ all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 25),
 soundpackkeys = ["sine", 'square', 'triangle', 'triangleh', 'sawtooth', 'sawtoothh']
 
 Drum_kick_heavy = pygame.mixer.Sound("drum_heavy_kick.wav")
-Drum_kick_heavy.set_volume(variables.battle_volume * 6)
 
 channels = []
 for x in range(37):
@@ -23,15 +22,18 @@ for x in range(37):
 
 def play_tone(t):
     # add because values are centered on 0
+    all_tones[variables.settings.soundpack].soundlist[t+12].set_volume(variables.settings.volume)
     channels[t+12].play(all_tones[variables.settings.soundpack].soundlist[t + 12])
 
 def update_tone(t):
     c = channels[t+12]
+    all_tones[variables.settings.soundpack].loopsoundlist[t + 12].set_volume(variables.settings.volume)
     if c.get_queue() == None:
         c.queue(all_tones[variables.settings.soundpack].loopsoundlist[t + 12])
 
 def play_sound(s):
     if s == "drum kick heavy":
+        Drum_kick_heavy.set_volume(variables.settings.volume)
         Drum_kick_heavy.play()
 
 def stop_tone(t):

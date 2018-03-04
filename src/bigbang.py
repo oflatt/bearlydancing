@@ -80,14 +80,13 @@ while not done:
                     maps.on_key(event.key)
                 elif variables.settings.state == "battle":
                     classvar.battle.onkey(event.key)
+                    
+                # also check if the player is pausing the game
+                if variables.checkkey("escape", event.key):
+                    if not variables.settings.menuonq:
+                        menu.pause()
             else:
                 menu.onkey(event.key)
-
-            # also check if the player is pausing the game
-            if variables.checkkey("escape", event.key):
-                #if we are turning on the menu pause the beatmaps
-                if not variables.settings.menuonq:
-                    menu.pause()
 
 
         # User let up on a key
