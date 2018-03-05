@@ -27,9 +27,14 @@ class Beatmap():
         self.time_key_started = [0] * 8
         # when to stop displaying the text, in milliseconds
         self.feedback_timers = [None] * 8
-        # list of text pics to display for each note (perfect ect.)
-        self.feedback = [graphics.Atext, graphics.Stext, graphics.Dtext, graphics.Ftext,
-            graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
+        self.feedback = []
+        self.setfeedbacktocontrols()
+
+    def setfeedbacktocontrols(self):
+        self.feedback = []
+        for x in range(8):
+            n = pygame.key.name(variables.settings.keydict["note" + str(x+1)][0])
+            self.feedback.append(n)
 
     def pause(self):
         self.pausetime = variables.settings.current_time
@@ -40,8 +45,8 @@ class Beatmap():
 
     def showkeys(self):
         self.feedback_timers = [None] * 8
-        self.feedback = [graphics.Atext, graphics.Stext, graphics.Dtext, graphics.Ftext,
-                         graphics.Jtext, graphics.Ktext, graphics.Ltext, graphics.SEMICOLONtext]
+        self.setfeedbacktocontrols()
+
 
     def reset(self, battlestarttime, beginningq):
         self.scores = []
@@ -74,6 +79,26 @@ class Beatmap():
             notetimetext = variables.font.render(str(self.notetime()), 0, variables.WHITE)
             variables.screen.blit(notetimetext, [10, 2*variables.font.get_linesize()])
 
+    def getfeedbackpic(self, index):
+        s = self.feedback[index]
+        rotatep = False
+        if s == "miss":
+            s = "MISS"
+            rotatep = True
+        elif s == "ok":
+            rotatep = True
+            s = "OK"
+        elif s == "good":
+            s = "GOOD"
+            rotatep = True
+        elif s == "perfect":
+            s = "PERFECT"
+            rotatep = True
+        pic = graphics.getTextPic(s, variables.textsize, variables.WHITE)
+        if rotatep:
+            pic = pygame.transform.rotate(pic, -45)
+        return pic
+            
     def draw_pads(self):
         w = variables.width / 20
         # draw bottom rectangles
@@ -91,9 +116,9 @@ class Beatmap():
                 xoffset = middleoffset
             if self.feedback_timers[x] != None:
                 if variables.settings.current_time < self.feedback_timers[x]:
-                    variables.screen.blit(self.feedback[x], [padxspace * (x + 1) - w / 8 + xoffset, padypos - padheight])
+                    variables.screen.blit(self.getfeedbackpic(x), [padxspace * (x + 1) - w / 8 + xoffset, padypos - padheight])
             else:
-                variables.screen.blit(self.feedback[x], [padxspace * (x + 1) - w / 8 + xoffset, padypos - padheight])
+                variables.screen.blit(self.getfeedbackpic(x), [padxspace * (x + 1) - w / 8 + xoffset, padypos - padheight])
 
     # returns number of notes that should have passed the pad by now
     def notetime(self):
@@ -152,7 +177,7 @@ class Beatmap():
                     self.notes[np].beginning_score = s
                     if self.notes[np].beginning_score == variables.miss_value:
                         self.notes[np].ison = False
-                        self.feedback[self.notes[np].screenvalue()] = graphics.MISStext
+                        self.feedback[self.notes[np].screenvalue()] = "miss"
                         self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
 
         # returns the value for the sound produced
@@ -224,21 +249,21 @@ class Beatmap():
                     self.scores.append(final_note_score)
 
                     if final_note_score == variables.miss_value:
-                        self.feedback[self.notes[np].screenvalue()] = graphics.MISStext
+                        self.feedback[self.notes[np].screenvalue()] = "miss"
                         self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
                     elif final_note_score == variables.good_value:
-                        self.feedback[self.notes[np].screenvalue()] = graphics.GOODtext
+                        self.feedback[self.notes[np].screenvalue()] = "good"
                         self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
                     elif final_note_score == variables.ok_value:
-                        self.feedback[self.notes[np].screenvalue()] = graphics.OKtext
+                        self.feedback[self.notes[np].screenvalue()] = "ok"
                         self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
                     elif final_note_score == variables.perfect_value:
-                        self.feedback[self.notes[np].screenvalue()] = graphics.PERFECTtext
+                        self.feedback[self.notes[np].screenvalue()] = "perfect"
                         self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
             # released before a note, penalty for randomly playing notes not written
             else:
                 self.scores.append(variables.miss_value)
-                self.feedback[self.notes[np].screenvalue()] = graphics.MISStext
+                self.feedback[self.notes[np].screenvalue()] = "miss"
                 self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
 
         def check_place(v):
@@ -247,7 +272,7 @@ class Beatmap():
                 check_note(np)
             else:
                 self.scores.append(variables.miss_value)
-                self.feedback[v] = graphics.MISStext
+                self.feedback[v] = "miss"
                 self.feedback_timers[v] = variables.settings.current_time + self.tempo
 
         if variables.checkkey("note1", key):
@@ -303,7 +328,7 @@ class Beatmap():
 
             if self.notes[x].pos[1] - smaller > padypos and self.notes[x].beginning_score == None:
                 if self.notes[x].ison:
-                    self.feedback[self.notes[x].screenvalue()] = graphics.MISStext
+                    self.feedback[self.notes[x].screenvalue()] = "miss"
                     self.feedback_timers[self.notes[x].screenvalue()] = variables.settings.current_time + self.tempo
                     self.notes[x].ison = False
                     self.scores.append(variables.miss_value)

@@ -19,24 +19,37 @@ class SettingsMenu(FrozenClass):
         self.confirmationtime = None
         self.state = "main" # can be main, keychange, or confirm
 
-        self.workingcopy = variables.settings.keydict # a copy is created with the first edit
+        self.workingcopy = variables.settings # a copy is created with the first edit
+
+        self.optionsbeforebindings = ["resolution", "volume"]
+        self.optionsafterbindings = ["back"]
         
         self._freeze()
 
+    def newworkingcopy(self):
+        self.workingcopy = variables.settings
+
     def draw(self):
-        options = list(self.workingcopy.keys()) + ["back"]
+        options = self.optionsbeforebindings + list(self.workingcopy.keydict.keys()) + self.optionsafterbindings
         if self.state == "main":
 
             onscreen = options[self.scroll:self.scroll+self.linesperscreen()]
             for i in range(len(onscreen)):
                 ypos = i * variables.getmenutextyspace()
                 keytype = onscreen[i]
-                # if it is the back button
-                if keytype == options[-1]:
+                # if it is not a binding
+                if keytype in self.optionsbeforebindings or keytype in self.optionsafterbindings:
                     title = getTextPic(keytype, variables.textsize, variables.WHITE)
                     variables.screen.blit(title, (variables.getmenutextxoffset(), ypos))
+                    # draw dot
                     if i == self.option-self.scroll:
                         self.drawdot(variables.getmenutextxoffset())
+
+                    if keytype == "volume":
+                        for x in range(int(self.workingcopy.volume*10)):
+                            xpos = variables.getmenutextxoffset() + variables.textsize*x + title.get_width()
+                            variables.screen.fill(variables.BLUE, (xpos + variables.textsize/4, ypos + variables.textsize/4,
+                                                                   variables.textsize*(3/4), variables.textsize*(3/4)))
                 else:
                     if i == self.option-self.scroll:
                         self.drawline(keytype, ypos, selectedoption = self.bindingoption)
@@ -88,7 +101,7 @@ class SettingsMenu(FrozenClass):
     def drawline(self, keytype, ypos, selectedoption = None):
         title = getTextPic(keytype + "-", variables.textsize, variables.WHITE)
         variables.screen.blit(title, (variables.getmenutextxoffset(), ypos))
-        keylist = ["-"] + self.workingcopy[keytype] + ["+"]
+        keylist = ["-"] + self.workingcopy.keydict[keytype] + ["+"]
         
         i = self.bindingscroll
         currentx = variables.getmenutextxoffset()*2 + title.get_width()
@@ -111,11 +124,14 @@ class SettingsMenu(FrozenClass):
             self.bindingscroll -= 1
 
     def getcurrentoptionbindings(self):
-        options = list(self.workingcopy.keys()) + ["back"]
-        if self.option == len(options)-1:
+        options = self.getoptionlist()
+        if self.option >= len(options)-len(self.optionsafterbindings) or self.option <= len(self.optionsbeforebindings)-1:
             return []
         else:
-            return self.workingcopy[options[self.option]]
+            return self.workingcopy.keydict[options[self.option]]
+
+    def getoptionlist(self):
+        return self.optionsbeforebindings + list(self.workingcopy.keydict.keys()) + self.optionsafterbindings
 
     def gettextpic(self, i, keylist):
         if i > len(keylist)-1:
@@ -152,13 +168,13 @@ class SettingsMenu(FrozenClass):
     def onkey(self, key):
         if self.state == "main":
             message = None
-            optionslength = len(self.workingcopy) + 1
+            optionslist = self.getoptionlist()
+            optionslength = len(optionslist)
             # if on the back button
-            if self.option == optionslength-1:
-                linelength = 1
-            else:
-                linelength = len(self.getcurrentoptionbindings()) + 3
-
+            bindingslength = len(self.getcurrentoptionbindings()) + 2
+            if bindingslength == 2:
+                bindingslength = 0
+            
             if variables.checkkey("up", key):
                 self.uptime = variables.settings.current_time
                 if self.option <= 0:
@@ -166,11 +182,12 @@ class SettingsMenu(FrozenClass):
                 self.option = (self.option - 1) % optionslength
                 if self.option < self.scroll:
                     self.scroll -= 1
-                bindlength = len(self.getcurrentoptionbindings())
-                if bindlength == 0:
+                
+                if bindingslength == 0:
                     self.bindingoption = 0
                 else:
-                    self.bindingoption = min(bindlength+1, self.bindingoption)
+                    self.bindingoption = min(bindingslength-1, self.bindingoption)
+                    
             elif variables.checkkey("down", key):
                 self.downtime = variables.settings.current_time
                 if self.option >= optionslength-1:
@@ -179,23 +196,29 @@ class SettingsMenu(FrozenClass):
                 if self.option > self.scroll + self.linesperscreen()-1:
                     self.scroll += 1
                 bindlength = len(self.getcurrentoptionbindings())
-                if bindlength == 0:
+                if bindingslength == 0:
                     self.bindingoption = 0
                 else:
-                    self.bindingoption = min(bindlength+1, self.bindingoption)
+                    self.bindingoption = min(bindingslength-1, self.bindingoption)
+                    
             elif variables.checkkey("left", key):
-                bindingslength = len(self.getcurrentoptionbindings()) + 2
                 self.lefttime = variables.settings.current_time
-                self.bindingoption = (self.bindingoption - 1) % bindingslength
+                if bindingslength > 0:
+                    self.bindingoption = (self.bindingoption - 1) % bindingslength
+                if optionslist[self.option] == "volume":
+                    self.changevolume(-1)
+                    
             elif variables.checkkey("right", key):
-                bindingslength = len(self.getcurrentoptionbindings()) + 2
                 self.righttime = variables.settings.current_time
-                self.bindingoption = (self.bindingoption + 1) % bindingslength
+                if bindingslength > 0:
+                    self.bindingoption = (self.bindingoption + 1) % bindingslength
+                if optionslist[self.option] == "volume":
+                    self.changevolume(1)
+                    
             elif variables.checkkey("enter", key):
-                bindingslength = len(self.getcurrentoptionbindings()) + 2
                 if bindingslength-1 > self.bindingoption > 0:
                     self.initiatekeychange()
-                elif self.option == optionslength - 1:
+                elif optionslist[self.option] == "back":
                     message = self.initiateconfirm()
                 elif self.bindingoption == 0:
                     self.deleteonebinding()
@@ -219,7 +242,7 @@ class SettingsMenu(FrozenClass):
             def checkkeyworkingcopy(name, key):
                 if name == "enter":
                     name = "action" # to make things easier
-                return key in self.workingcopy[name]
+                return key in self.workingcopy.keydict[name]
             
             if checkkeyworkingcopy("left", key):
                 self.uptime = variables.settings.current_time
@@ -233,13 +256,13 @@ class SettingsMenu(FrozenClass):
                 elif self.confirmoption == 0:
                     # put the working copy into effect
                     self.exitsettingsmenu()
-                    variables.settings.keydict = self.workingcopy
+                    variables.settings = self.workingcopy
                     message = "confirmed new settings"
 
             return message
 
     def initiateconfirm(self):
-        if self.workingcopy == variables.settings.keydict:
+        if self.workingcopy == variables.settings:
             self.exitsettingsmenu()
             return "confirmed without change"
         else:
@@ -259,21 +282,27 @@ class SettingsMenu(FrozenClass):
         self.clearkeys()
         
     def initiatekeychange(self):
-        if self.workingcopy is variables.settings.keydict:
-            self.workingcopy = copy.deepcopy(variables.settings.keydict)
+        self.changingcopy()
         self.state = "keychange"
         self.clearkeys()
 
+    def changevolume(self, factor):
+        self.changingcopy()
+        self.workingcopy.volume = (int(self.workingcopy.volume*10) + factor) / 10
+        self.workingcopy.volume = min(max(0.0, self.workingcopy.volume), 1.0)
+
     def deleteonebinding(self):
-        if self.workingcopy is variables.settings.keydict:
-            self.workingcopy = copy.deepcopy(variables.settings.keydict)
         bindings = self.getcurrentoptionbindings()
-        if len(bindings) > 0:
+        if len(bindings) > 1:
+            self.changingcopy()
             del bindings[0]
 
+    def changingcopy(self):
+        if self.workingcopy is variables.settings:
+            self.workingcopy = copy.deepcopy(variables.settings)
+            
     def addonebinding(self):
-        if self.workingcopy is variables.settings.keydict:
-            self.workingcopy = copy.deepcopy(variables.settings.keydict)
+        self.changingcopy()
         bindings = self.getcurrentoptionbindings()
         if len(bindings) < variables.maxbindings:
             bindings.append(None)

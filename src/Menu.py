@@ -202,7 +202,7 @@ class Menu():
             mpic = variables.font.render(self.message, 0, variables.WHITE).convert()
             mpic = graphics.scale_pure(mpic, variables.textsize)
             mx = variables.width/2-mpic.get_width()/2
-            my = variables.height/2-mpic.get_height()/2
+            my = variables.height/2+mpic.get_height()*2
             variables.screen.fill(variables.BLACK, Rect(mx-extrabuttonwidth,
                                                         my,
                                                         mpic.get_width()+2*extrabuttonwidth,
@@ -315,6 +315,7 @@ class Menu():
                     self.resume()
             if self.getoption() == "settings":
                 self.state = "settings"
+                self.settingsmenu.newworkingcopy()
 
     def getoption(self):
         if self.mainmenup:
