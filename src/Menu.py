@@ -46,7 +46,7 @@ class Menu():
         
         self.nameprompts = ["Your name:", "The sleeping bear's name:", "Increase difficulty of game by:",
                             "Confirm difficulty level "]
-        self.yesno = ChoiceButtons(["yes","no"], variables.height/2 + variables.textsize)
+        self.yesno = ChoiceButtons(["yes","no"], variables.height/2 + variables.gettextsize())
         # so that it starts on "no"
         self.yesno.nextoption()
         self.tempdifficulty = 0
@@ -113,11 +113,11 @@ class Menu():
         
         if self.mainmenup:
             for o in self.mainmenuoptions:
-                textpic = getTextPic(o, variables.textsize, variables.WHITE)
+                textpic = getTextPic(o, variables.gettextsize(), variables.WHITE)
                 opics.append(textpic)
         else:
             for o in self.options:
-                textpic = getTextPic(o, variables.textsize, variables.WHITE)
+                textpic = getTextPic(o, variables.gettextsize(), variables.WHITE)
                 opics.append(textpic)
             
         xoffset = variables.getmenutextxoffset()
@@ -156,13 +156,13 @@ class Menu():
         promptstring = self.nameprompts[self.option]
         extrabuttonwidth = variables.getmenutextxoffset() / 4
         if self.option == len(self.nameprompts)-1:
-            reccomendedtext = getTextPic("The reccomended difficulty for new players is 0.", variables.textsize, variables.beginningprompttextcolor)
+            reccomendedtext = getTextPic("The reccomended difficulty for new players is 0.", variables.gettextsize(), variables.beginningprompttextcolor)
             variables.screen.blit(reccomendedtext, [variables.width/2 - reccomendedtext.get_width()/2,
-                                                    variables.height/2 - variables.textsize*3.5])
+                                                    variables.height/2 - variables.gettextsize()*3.5])
             self.yesno.draw()
             promptstring = promptstring + str(self.tempdifficulty) + "?"
         
-        textpic = getTextPic(promptstring, variables.textsize, variables.beginningprompttextcolor)
+        textpic = getTextPic(promptstring, variables.gettextsize(), variables.beginningprompttextcolor)
         
         typestring = self.namestring
         typecolor = variables.BLACK
@@ -183,9 +183,9 @@ class Menu():
             else:
                 typecolor = (0,0,0)
                 
-        typepic = graphics.scale_pure(variables.font.render(typestring, 0, typecolor).convert(), variables.textsize, "height")
-        variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.height/2 - variables.textsize*1.5])
-        variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.height/2 - variables.textsize/2])
+        typepic = graphics.scale_pure(variables.font.render(typestring, 0, typecolor).convert(), variables.gettextsize(), "height")
+        variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.height/2 - variables.gettextsize()*1.5])
+        variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.height/2 - variables.gettextsize()/2])
 
             
     def draw(self):
@@ -200,7 +200,7 @@ class Menu():
         if self.message != None:
             extrabuttonwidth = variables.getmenutextxoffset() / 4
             mpic = variables.font.render(self.message, 0, variables.WHITE).convert()
-            mpic = graphics.scale_pure(mpic, variables.textsize)
+            mpic = graphics.scale_pure(mpic, variables.gettextsize())
             mx = variables.width/2-mpic.get_width()/2
             my = variables.height/2+mpic.get_height()*2
             variables.screen.fill(variables.BLACK, Rect(mx-extrabuttonwidth,

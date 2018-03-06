@@ -39,7 +39,7 @@ class SettingsMenu(FrozenClass):
                 keytype = onscreen[i]
                 # if it is not a binding
                 if keytype in self.optionsbeforebindings or keytype in self.optionsafterbindings:
-                    title = getTextPic(keytype, variables.textsize, variables.WHITE)
+                    title = getTextPic(keytype, variables.gettextsize(), variables.WHITE)
                     variables.screen.blit(title, (variables.getmenutextxoffset(), ypos))
                     # draw dot
                     if i == self.option-self.scroll:
@@ -47,9 +47,9 @@ class SettingsMenu(FrozenClass):
 
                     if keytype == "volume":
                         for x in range(int(self.workingcopy.volume*10)):
-                            xpos = variables.getmenutextxoffset() + variables.textsize*x + title.get_width()
-                            variables.screen.fill(variables.BLUE, (xpos + variables.textsize/4, ypos + variables.textsize/4,
-                                                                   variables.textsize*(3/4), variables.textsize*(3/4)))
+                            xpos = variables.getmenutextxoffset() + variables.gettextsize()*x + title.get_width()
+                            variables.screen.fill(variables.BLUE, (xpos + variables.gettextsize()/4, ypos + variables.gettextsize()/4,
+                                                                   variables.gettextsize()*(3/4), variables.gettextsize()*(3/4)))
                 else:
                     if i == self.option-self.scroll:
                         self.drawline(keytype, ypos, selectedoption = self.bindingoption)
@@ -57,21 +57,21 @@ class SettingsMenu(FrozenClass):
                         self.drawline(keytype, ypos)
                         
         elif self.state == "keychange":
-            text = getTextPic("Press a key to bind to " + options[self.option], variables.textsize, variables.WHITE)
+            text = getTextPic("Press a key to bind to " + options[self.option], variables.gettextsize(), variables.WHITE)
             variables.screen.blit(text, (variables.width/2 - text.get_width()/2, variables.height/2 - text.get_height()/2))
 
         elif self.state == "confirm":
-            text = getTextPic("Continue with these settings?", variables.textsize, variables.WHITE)
-            variables.screen.blit(text, (variables.width/2 - text.get_width()/2, variables.height/2 - variables.textsize*2))
-            counter = getTextPic(str(self.confirmsecondsleft()), variables.textsize, variables.WHITE)
-            variables.screen.blit(counter, (variables.width/2 - counter.get_width()/2, variables.height/2 - variables.textsize/2))
+            text = getTextPic("Continue with these settings?", variables.gettextsize(), variables.WHITE)
+            variables.screen.blit(text, (variables.width/2 - text.get_width()/2, variables.height/2 - variables.gettextsize()*2))
+            counter = getTextPic(str(self.confirmsecondsleft()), variables.gettextsize(), variables.WHITE)
+            variables.screen.blit(counter, (variables.width/2 - counter.get_width()/2, variables.height/2 - variables.gettextsize()/2))
 
-            yesnoy = variables.height/2 + variables.textsize*2
-            yes = getTextPic("yes", variables.textsize, variables.WHITE)
+            yesnoy = variables.height/2 + variables.gettextsize()*2
+            yes = getTextPic("yes", variables.gettextsize(), variables.WHITE)
             yesx = variables.width/2 - yes.get_width() - variables.getmenutextxoffset()
             variables.screen.blit(yes, (yesx, yesnoy))
 
-            no = getTextPic("no", variables.textsize, variables.WHITE)
+            no = getTextPic("no", variables.gettextsize(), variables.WHITE)
             nox = variables.width/2 + no.get_width() + variables.getmenutextxoffset()
             variables.screen.blit(no, (nox, yesnoy))
 
@@ -99,7 +99,7 @@ class SettingsMenu(FrozenClass):
         return int(variables.height/(variables.getmenutextyspace()))
         
     def drawline(self, keytype, ypos, selectedoption = None):
-        title = getTextPic(keytype + "-", variables.textsize, variables.WHITE)
+        title = getTextPic(keytype + "-", variables.gettextsize(), variables.WHITE)
         variables.screen.blit(title, (variables.getmenutextxoffset(), ypos))
         keylist = ["-"] + self.workingcopy.keydict[keytype] + ["+"]
         
@@ -146,7 +146,7 @@ class SettingsMenu(FrozenClass):
             else:
                 textstring = pygame.key.name(keylist[i])
 
-            textpic = getTextPic(textstring, variables.textsize, variables.WHITE)
+            textpic = getTextPic(textstring, variables.gettextsize(), variables.WHITE)
             return textpic
 
     def getdotxpos(self):

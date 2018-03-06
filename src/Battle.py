@@ -62,9 +62,7 @@ class Battle(FrozenClass):
 
         # drawing buttons
         # extra space around dance to leave space for synth options
-        self.battlechoice = ChoiceButtons(["   DANCE!   ", "Flee", variables.settings.soundpack],
-                                          variables.height * 13 / 16,
-                                          variables.battlebuttontextheight)
+        self.battlechoice = ChoiceButtons(["   DANCE!   ", "Flee", variables.settings.soundpack], 13 / 16)
 
         # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
         self.pausetime = 0
@@ -143,7 +141,8 @@ class Battle(FrozenClass):
                 text = "go home..."
             else:
                 text = "continue"
-            continuebutton = Button(w / 2, b, text, variables.battlebuttontextheight)
+            # button coordinates are multipliers of screen width and height
+            continuebutton = Button(1 / 2, b/h, text, variables.gettextsize()/h)
             continuebutton.iscentered = True
             continuebutton.draw(True)
 
@@ -158,7 +157,7 @@ class Battle(FrozenClass):
         elif self.state == "exp" or self.state == "got exp":
             text = "continue"
             # continue button
-            continuebutton = Button(w / 2, b, text, variables.battlebuttontextheight)
+            continuebutton = Button(1 / 2, b/h, text, variables.gettextsize()/h)
             continuebutton.iscentered = True
             continuebutton.draw(True)
 
@@ -209,7 +208,7 @@ class Battle(FrozenClass):
             punscaled = variables.font.render("PERFECT!", 0, variables.WHITE)
             ptext = sscale_customfactor(punscaled, 1.5)
             variables.screen.blit(ptext, [(variables.width / 2) - (ptext.get_width() / 2) - epicw,
-                                          variables.padypos - ptext.get_height() - 10])
+                                          variables.getpadypos() - ptext.get_height() - 10])
 
     # for things like the attack animation
     def ontick(self):
@@ -247,12 +246,12 @@ class Battle(FrozenClass):
                         maps.engage_conversation(conversations.tutorialconversation1)
             elif self.tutorialstate == "first note":
                 fnote = currentb.notes[0]
-                if fnote.pos[1] >= variables.padypos and fnote.time > variables.settings.notes_per_screen + 2:
+                if fnote.pos[1] >= variables.getpadypos() and fnote.time > variables.settings.notes_per_screen + 2:
                     self.tutorialstate = "release note"
                     maps.engage_conversation(conversations.pressanow)
             elif self.tutorialstate == "release note":
                 fnote = currentb.notes[0]
-                if fnote.pos[1] - fnote.height(currentb.tempo) > variables.padypos and fnote.time > 10:
+                if fnote.pos[1] - fnote.height(currentb.tempo) > variables.getpadypos() and fnote.time > 10:
                     self.tutorialstate = "finished first"
                     maps.engage_conversation(conversations.releaseanow)
             elif self.tutorialstate == "finished first":

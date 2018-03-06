@@ -68,34 +68,36 @@ class Player(FrozenClass):
         pheight = self.normal_height * variables.compscale
         hpheight = pheight/2
         hpwidth = pwidth/2
+        screenhw = variables.width/2
+        screenhh = variables.height/2
         
         if w <= variables.width:
             # if the map fits in the screen, no scrolling needed
             self.drawx = x
             self.mapdrawx = 0
-        elif x < variables.hw - hpwidth:  # if it is in the left side of the map
+        elif x < screenhw - hpwidth:  # if it is in the left side of the map
             self.mapdrawx = 0  # do not scroll the map at all
             self.drawx = x
-        elif x > (w - variables.hw - hpwidth):  # if it is on the right side of the map
+        elif x > (w - screenhw - hpwidth):  # if it is on the right side of the map
             self.mapdrawx = w - variables.width  # set it to the maximum scroll
             self.drawx = x - (w-variables.width)
         else:
             # otherwise, scroll it by pos (accounting for the initial non-scolling area)
-            self.mapdrawx = x - variables.hw + hpwidth
-            self.drawx = variables.hw - hpwidth
+            self.mapdrawx = x - screenhw + hpwidth
+            self.drawx = screenhw - hpwidth
 
         if h <= variables.height:
             self.drawy = y
             self.mapdrawy = 0
-        elif y < variables.hh - hpheight:  # same but for y pos
+        elif y < screenhh - hpheight:  # same but for y pos
             self.mapdrawy = 0
             self.drawy = y
-        elif y > (h - variables.hh - hpheight):
+        elif y > (h - screenhh - hpheight):
             self.mapdrawy = h - variables.height
             self.drawy = y - (h-variables.height)
         else:
-            self.mapdrawy = y - variables.hh + hpheight
-            self.drawy = variables.hh - hpheight
+            self.mapdrawy = y - screenhh + hpheight
+            self.drawy = screenhh - hpheight
 
         # then add the map's x offset for drawing small maps in the middle
         self.drawx += m.screenxoffset

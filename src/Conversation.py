@@ -49,10 +49,10 @@ class Conversation(FrozenClass):
             self.speaks[self.progress].draw()
 
             # draw picture
-            currentpic = getpicbywidth(self.speaks[self.progress].pic, variables.photo_size)
+            currentpic = getpicbywidth(self.speaks[self.progress].pic, variables.getphotosize())
             w = currentpic.get_width()
             h = currentpic.get_height()
-            b = variables.height - variables.textbox_height
+            b = variables.height - variables.gettextboxheight()
             side = self.speaks[self.progress].side
             if (self.progress % 2 == 0 or side == 'l' or side == 'left') and side != 'right':
                 xpos = 0
@@ -60,7 +60,7 @@ class Conversation(FrozenClass):
                 xpos = variables.width - w
             ypos = b - h
             if not self.speaks[self.progress].bottomp:
-                ypos = variables.textbox_height
+                ypos = variables.gettextboxheight()
             variables.screen.blit(currentpic, [xpos, b - h])
 
     #returns None or the name of a rock to change the animation of

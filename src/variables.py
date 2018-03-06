@@ -50,8 +50,7 @@ if testsmallp:
     height = int(height/2)
     width = int(width/2)
     
-hh = height/2
-hw = width/2
+
 flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
 screen = pygame.display.set_mode(mode, flags)
 #screen = pygame.Surface([height, width])
@@ -97,10 +96,10 @@ TREECOLLIDESECTION = [0, 18.5 / 20, 1, 1.5 / 20]
 ROCKCOLLIDESECTION = [0, 1/10, 1, 9/10]
 
 # battle
-battlebuttontextheight = height/10
 healthanimationspeed = 2000# time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
-padypos = height*(13/16)
+def getpadypos():
+    return height*(13/16)
 
 # lv and rules are added later
 maxdifficulty = 200
@@ -117,31 +116,41 @@ miss_value = 0
 all_perfect_multiplier = 1.7
 player_advantage_multiplier = 1.3
 
-perfect_range = height/100
-good_range = height/60
-ok_range = height/25
-miss_range = height/15
+def getperfectrange():
+    return height/100
+def getgoodrange():
+    return height/60
+def getokrange():
+    return height/25
+def getmissrange():
+    return height/15
 
 notes_colors = [ORANGE, BLUE, RED, GREEN, GREEN, RED, BLUE, ORANGE]
 
-#conversation
-textsize = height/15
-textbox_height = height/4
-lines_in_screen = int(textbox_height/textsize)
-photo_size = width/6
-buttonpadding = int(width/70)
+# conversation
+def gettextsize():
+    return height/15
+def gettextboxheight():
+    return height/4
+def getlinesinscreen():
+    return int(gettextboxheight()/gettextsize())
+def getphotosize():
+    return width/6
+def getbuttonpadding():
+    return int(width/70)
 
 # menu
 beginningprompttextcolor = BLUE
 menuscrollspeed = 150 # in milliseconds
 confirmduration = 11 # in seconds
 maxbindings = 50
+
 def getmenutextyspace():
-    return textsize * 1.5
+    return gettextsize() * 1.5
 def getmenutextxoffset():
-    return textsize
+    return gettextsize()
 def getdotwidth():
-    return getmenutextxoffset() * 1/3
+    return getmenutextxoffset() / 3
 
 #world
 playerspeed = 0.05

@@ -106,7 +106,7 @@ outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversati
 outside1.colliderects = [Rect(houserock.x-3, houserock.y+houserock.collidesection[1], 3, houserock.collidesection[3])]
 
 # letter########################################################################################
-paperscale = int((variables.height/GR["paper"]["h"])/(variables.displayscale))
+paperscale = int((GR["honeyhouseinside"]["h"]/GR["paper"]["h"])+1) # so it is as big as inside to put the text in it
 
 GR["backgroundforpaper"]["img"] = pygame.transform.scale(GR["backgroundforpaper"]["img"],
                                                          [GR["backgroundforpaper"]["w"]*paperscale,

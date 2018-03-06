@@ -4,7 +4,6 @@ import variables, pygame, classvar
 from Battle import Battle
 from ChoiceButtons import ChoiceButtons
 from graphics import scale_pure, getpic, getTextPic
-from variables import displayscale, textsize
 from initiatestate import initiatebattle
 from FrozenClass import FrozenClass
 
@@ -34,8 +33,7 @@ class Speak(FrozenClass):
         self.choicebuttons = None
         if len(self.options)>0:
             self.choicebuttons = ChoiceButtons(self.options,
-                                               variables.height- variables.textsize - variables.height/20,
-                                               variables.textsize)
+                                               1- variables.gettextsize()/variables.height-1/20)
             # start on second option
             self.choicebuttons.nextoption()
             
@@ -59,7 +57,7 @@ class Speak(FrozenClass):
                 index += 1
     
     def linepic(self, index):
-        return getTextPic(self.dialogue[index], textsize, variables.WHITE)
+        return getTextPic(self.dialogue[index], variables.gettextsize(), variables.WHITE)
 
     def draw(self):
         if not self.dialogue_initializedp:
@@ -67,36 +65,36 @@ class Speak(FrozenClass):
         
         yoffset = 0
         if not self.bottomp:
-            yoffset = -variables.height + variables.textbox_height
+            yoffset = -variables.height + variables.gettextboxheight()
         #text
         line1 = self.linepic(0)
                                 
         line_height = line1.get_height()
         h = variables.height
         w = variables.width
-        b = h-variables.textbox_height
-        pygame.draw.rect(variables.screen, variables.BLACK, [0, b+yoffset, w, variables.textbox_height])
-        numoflines = variables.lines_in_screen
+        b = h-variables.gettextboxheight()
+        pygame.draw.rect(variables.screen, variables.BLACK, [0, b+yoffset, w, variables.gettextboxheight()])
+        numoflines = variables.getlinesinscreen()
         if numoflines > len(self.dialogue):
             numoflines = len(self.dialogue)
         for x in range(0, numoflines):
             line = self.linepic(x+self.line)
             variables.screen.blit(line, [w/2 - line.get_width()/2, b+(line_height*x)+yoffset])
 
-        if self.line < len(self.dialogue) - variables.lines_in_screen:
-            arrowpic = getpic("downarrow", displayscale*2)
+        if self.line < len(self.dialogue) - variables.getlinesinscreen():
+            arrowpic = getpic("downarrow", variables.displayscale*2)
         else:
-            arrowpic = getpic("rightarrow", displayscale*2)
+            arrowpic = getpic("rightarrow", variables.displayscale*2)
         variables.screen.blit(arrowpic,
-                              [variables.width-2*displayscale*2-arrowpic.get_width(),
-                               variables.height-2*displayscale*2-arrowpic.get_height()])
+                              [variables.width-2*variables.displayscale*2-arrowpic.get_width(),
+                               variables.height-2*variables.displayscale*2-arrowpic.get_height()])
 
         if self.state == "choosing":
             self.choicebuttons.draw()
 
     def keypress(self, key):
         choice = None
-        if self.line < len(self.dialogue) - variables.lines_in_screen:
+        if self.line < len(self.dialogue) - variables.getlinesinscreen():
             self.line += 1
             return "talking"
         # if there is a choice to be made

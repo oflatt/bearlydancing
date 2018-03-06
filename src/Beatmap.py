@@ -1,6 +1,5 @@
 import graphics, pygame, variables, copy
 from play_sound import stop_tone, play_tone, update_tone
-from variables import padypos
 
 padxspace = variables.width / 12
 padheight = variables.height / 80
@@ -66,7 +65,7 @@ class Beatmap():
                     xoffset = middleoffset
                 ew = w * 1.25
                 pygame.draw.ellipse(variables.screen, variables.WHITE, [padxspace * (x + 1) - w / 8 + xoffset,
-                                                                        padypos - padheight + padheight / 2 - ew / 4,
+                                                                        variables.getpadypos() - padheight + padheight / 2 - ew / 4,
                                                                         ew, ew / 2])
         # draw the notes that are on the screen
         for n in self.notes:
@@ -94,7 +93,7 @@ class Beatmap():
         elif s == "perfect":
             s = "PERFECT"
             rotatep = True
-        pic = graphics.getTextPic(s, variables.textsize, variables.WHITE)
+        pic = graphics.getTextPic(s, variables.gettextsize(), variables.WHITE)
         if rotatep:
             pic = pygame.transform.rotate(pic, -45)
         return pic
@@ -107,7 +106,7 @@ class Beatmap():
             if (x > 4):
                 xoffset = middleoffset
             pygame.draw.rect(variables.screen, variables.notes_colors[x - 1],
-                             [padxspace * (x) - w / 8 + xoffset, padypos - padheight, w * 1.25, padheight])
+                             [padxspace * (x) - w / 8 + xoffset, variables.getpadypos() - padheight, w * 1.25, padheight])
 
         # draw the feedback (keys then scores, perfect ect)
         for x in range(0, 8):
@@ -116,9 +115,9 @@ class Beatmap():
                 xoffset = middleoffset
             if self.feedback_timers[x] != None:
                 if variables.settings.current_time < self.feedback_timers[x]:
-                    variables.screen.blit(self.getfeedbackpic(x), [padxspace * (x + 1) - w / 8 + xoffset, padypos - padheight])
+                    variables.screen.blit(self.getfeedbackpic(x), [padxspace * (x + 1) - w / 8 + xoffset, variables.getpadypos() - padheight])
             else:
-                variables.screen.blit(self.getfeedbackpic(x), [padxspace * (x + 1) - w / 8 + xoffset, padypos - padheight])
+                variables.screen.blit(self.getfeedbackpic(x), [padxspace * (x + 1) - w / 8 + xoffset, variables.getpadypos() - padheight])
 
     # returns number of notes that should have passed the pad by now
     def notetime(self):
@@ -131,7 +130,7 @@ class Beatmap():
     # returns the pos of the bottom of the note
     def notepos(self, note):
         notetime = self.notetime()
-        ypos = (notetime - note.time) * (variables.padypos / variables.settings.notes_per_screen) + padypos
+        ypos = (notetime - note.time) * (variables.getpadypos() / variables.settings.notes_per_screen) + variables.getpadypos()
         if (note.screenvalue() > 3):
             xpos = note.screenvalue() * padxspace + middleoffset + padxspace
         else:
@@ -139,14 +138,14 @@ class Beatmap():
         return [xpos, ypos]
 
     def pos_to_score(self, ypos):
-        difference = abs(ypos - padypos)
-        if difference <= variables.perfect_range:
+        difference = abs(ypos - variables.getpadypos())
+        if difference <= variables.getperfectrange():
             return variables.perfect_value
-        elif difference <= variables.good_range:
+        elif difference <= variables.getgoodrange():
             return variables.good_value
-        elif difference <= variables.ok_range:
+        elif difference <= variables.getokrange():
             return variables.ok_value
-        elif difference <= variables.miss_range:
+        elif difference <= variables.getmissrange():
             return variables.miss_value
         else:
             return None
@@ -232,7 +231,7 @@ class Beatmap():
 
                 if s == None and self.notes[np].beginning_score != None:
                     s = variables.miss_value
-                    self.notes[np].height_offset = self.notes[np].pos[1] - padypos
+                    self.notes[np].height_offset = self.notes[np].pos[1] - variables.getpadypos()
 
                 if s != None:
                     if s < self.notes[np].beginning_score:
@@ -243,7 +242,7 @@ class Beatmap():
                     self.notes[np].end_score = s
 
                     if s == variables.miss_value:
-                        self.notes[np].height_offset = self.notes[np].pos[1] - padypos
+                        self.notes[np].height_offset = self.notes[np].pos[1] - variables.getpadypos()
                         self.notes[np].ison = False
 
                     self.scores.append(final_note_score)
@@ -324,9 +323,9 @@ class Beatmap():
         for x in range(len(self.notes)):
             # find whether the miss range or the distance to middle of note is smaller
             h = self.notes[x].height(self.tempo)
-            smaller = min(h / 2, variables.miss_range)
+            smaller = min(h / 2, variables.getmissrange())
 
-            if self.notes[x].pos[1] - smaller > padypos and self.notes[x].beginning_score == None:
+            if self.notes[x].pos[1] - smaller > variables.getpadypos() and self.notes[x].beginning_score == None:
                 if self.notes[x].ison:
                     self.feedback[self.notes[x].screenvalue()] = "miss"
                     self.feedback_timers[self.notes[x].screenvalue()] = variables.settings.current_time + self.tempo

@@ -69,7 +69,7 @@ class Note:
         self.value = newval
 
     def height(self, tempo):
-        return self.duration * (variables.padypos / variables.settings.notes_per_screen)
+        return self.duration * (variables.getpadypos() / variables.settings.notes_per_screen)
 
     # bottom end of note included, top of note goes over height
     # detection is by the bottom of each end of the note
@@ -135,8 +135,8 @@ class Note:
 
         # subtract height from y because the pos is the bottom of the rectangle
         # the first case is if the note is currently being played
-        if self.ison and variables.padypos > p[1] - height and self.beginning_score != None and self.end_score == None:
-            mheight = height+1 - (p[1]-variables.padypos)
+        if self.ison and variables.getpadypos() > p[1] - height and self.beginning_score != None and self.end_score == None:
+            mheight = height+1 - (p[1]-variables.getpadypos())
             drawmid(p[1]-height-1, mheight, darkercolor)
             drawend(endx, topendy, color, self.secondshape())
             #variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, mheight+end_height))
