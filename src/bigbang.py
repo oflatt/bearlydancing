@@ -164,10 +164,15 @@ while not done:
         variables.screen.fill(variables.RED, Rect(0, variables.height, variables.width, 10))
     
     # Go ahead and update the screen with what we've drawn.
-    pygame.display.flip()
+    
+    if len(variables.dirtyrects) > 0 and True:
+        pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
+    pygame.display.update(variables.dirtyrects)
+    variables.olddirtyrects = variables.dirtyrects
+    variables.dirtyrects = []
 
     # Limit frames per second
-    clock.tick_busy_loop(59)
+    clock.tick_busy_loop(60)
 
 # Close the window and quit, this is after the main loop has finished
 pygame.quit()

@@ -53,6 +53,8 @@ if testsmallp:
 
 flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
 screen = pygame.display.set_mode(mode, flags)
+olddirtyrects = []
+dirtyrects = []
 #screen = pygame.Surface([height, width])
 
 unrounded_displayscale = height*0.0025

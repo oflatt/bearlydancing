@@ -21,7 +21,9 @@ class Player(FrozenClass):
         self.drawx = 0
         self.drawy = 0
         self.mapdrawx = 0
+        self.oldmapdrawx = 0
         self.mapdrawy = 0
+        self.oldmapdrawy = 0
         self.lastxupdate = 0
         self.lastyupdate = 0
         self.timeslost = 0
@@ -104,11 +106,17 @@ class Player(FrozenClass):
         self.mapdrawx -= m.screenxoffset
 
         #round to nearest pixel
+        self.oldmapdrawx = self.mapdrawx
+        self.oldmapdrawy = self.mapdrawy
         self.mapdrawx = int(self.mapdrawx)
         self.mapdrawy = int(self.mapdrawy)
 
-    def draw(self): #movement is combination of top down scrolling and free range
+    def draw(self):
         variables.screen.blit(self.current_pic_scaled(), [self.drawx, self.drawy])
+        if self.mapdrawx != self.oldmapdrawx or self.mapdrawy != self.oldmapdrawy:
+            variables.dirtyrects = [Rect(0,0,variables.width, variables.height)]
+        else:
+            variables.dirtyrects.append(Rect(self.drawx, self.drawy, self.normal_width*variables.compscale, self.normal_height*variables.compscale))
 
     def change_animation(self):
         oldanimation = self.current_animation

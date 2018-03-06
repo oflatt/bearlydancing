@@ -208,6 +208,7 @@ class Menu():
                                                         mpic.get_width()+2*extrabuttonwidth,
                                                         mpic.get_height()))
             variables.screen.blit(mpic, [mx, my])
+        variables.dirtyrects = [Rect(0,0,variables.width, variables.height)]
 
     def onrelease(self, key):
         if self.state == "name":

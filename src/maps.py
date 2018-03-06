@@ -272,6 +272,7 @@ def change_map_nonteleporting(name):
     global current_map
     current_map_name = name
     current_map = get_map(name)
+    variables.dirtyrects = [Rect(0,0,variables.width, variables.height)]
 
 # put player in correct place
 classvar.player.teleport(current_map.startpoint[0],
