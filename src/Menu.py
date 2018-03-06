@@ -46,7 +46,7 @@ class Menu():
         
         self.nameprompts = ["Your name:", "The sleeping bear's name:", "Increase difficulty of game by:",
                             "Confirm difficulty level "]
-        self.yesno = ChoiceButtons(["yes","no"], variables.height/2 + variables.gettextsize())
+        self.yesno = ChoiceButtons(["yes","no"], 1/2 + variables.gettextsize()/variables.height)
         # so that it starts on "no"
         self.yesno.nextoption()
         self.tempdifficulty = 0

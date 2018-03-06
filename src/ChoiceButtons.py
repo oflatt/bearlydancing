@@ -1,7 +1,8 @@
 import variables
 from Button import Button
+from FrozenClass import FrozenClass
 
-class ChoiceButtons():
+class ChoiceButtons(FrozenClass):
     # ypos and buttontextsize are multipliers of variables.height
     def __init__(self, options, ypos, buttontextsize = variables.gettextsize()/variables.height):
         # a list of strings
@@ -23,8 +24,10 @@ class ChoiceButtons():
         centering = (1 - length * self.maxwidth - (length-1) * spacing) / 2
         
         for i in range(self.length):
-            self.buttons[i].screenwidthoverridee = self.maxwidth
+            self.buttons[i].screenwidthoverride = self.maxwidth
             self.buttons[i].x = i * (self.maxwidth + spacing) + centering
+
+        self._freeze()
             
     def nextoption(self):
         self.current_option = (self.current_option + 1) % self.length

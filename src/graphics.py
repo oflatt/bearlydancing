@@ -87,13 +87,17 @@ def addsurfaceGR(s, name, dimensions = None):
         dimensions = [s.get_width(), s.get_height()]
     GR[name] = {"img":s,"w":dimensions[0],"h":dimensions[1]}
 
+# renders text so that the linesize is what matters
+def rendertext(text, color, textheight):
+    return scale_pure(variables.font.render(text, 0, color).convert(), textheight, "height")
+    
 def getTextPic(text, textheight, color = variables.BLACK):
     if not text in TextGR:
         TextGR[text] = {}
     if not textheight in TextGR[text]:
         TextGR[text][textheight] = {}
     if not color in TextGR[text][textheight]:
-        TextGR[text][textheight][color] = scale_pure(variables.font.render(text, 0, color).convert(), textheight, "height")
+        TextGR[text][textheight][color] = rendertext(text, color, textheight)
         
     return TextGR[text][textheight][color]
 
