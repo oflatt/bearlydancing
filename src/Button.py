@@ -52,4 +52,4 @@ class Button(FrozenClass):
         
         variables.screen.blit(textpic, [xpos + textpadding, ypos])
 
-        variables.screen.blit(
+
