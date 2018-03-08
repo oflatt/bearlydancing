@@ -167,8 +167,19 @@ while not done:
     
     if len(variables.dirtyrects) > 0 and True:
         pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
-    variables.dirtyrects.append(Rect(10,variables.font.get_linesize(), variables.font.get_linesize()*6, variables.font.get_linesize()*6))
-    pygame.display.update(variables.dirtyrects + variables.olddirtyrects)
+
+
+    def updatescreen():
+        pygame.display.update(variables.dirtyrects + variables.olddirtyrects + [Rect(10,variables.font.get_linesize(), variables.font.get_linesize()*6, variables.font.get_linesize()*6)])
+        
+    if len(variables.dirtyrects) > 0 and len(variables.olddirtyrects)>0:
+        if variables.dirtyrects[0] == Rect(0,0,variables.width,variables.height) or variables.dirtyrects == Rect(0,0,variables.width,variables.height):
+            pygame.display.update()
+        else:
+            updatescreen()
+    else:
+        updatescreen()
+        
     variables.olddirtyrects = variables.dirtyrects
     variables.dirtyrects = []
 
