@@ -4,7 +4,7 @@ import variables, pygame, classvar, random, stathandeling, math, graphics
 from Battle import Battle
 from graphics import viewfactorrounded, getpic, GR
 from Rock import Rock
-from pygame import Mask
+from pygame import Mask, Rect
 from initiatestate import initiatebattle
 from FrozenClass import FrozenClass
 
@@ -105,9 +105,9 @@ class Map(FrozenClass):
 
             # check if it collides with the colliderects given to the populate function
             if greyrockp:
-                testrect = pygame.Rect(xpos, ypos, variables.ROCKMAXRADIUS, variables.ROCKMAXRADIUS)
+                testrect = Rect(xpos, ypos, variables.ROCKMAXRADIUS, variables.ROCKMAXRADIUS)
             elif pinetreep:
-                testrect = pygame.Rect(xpos, ypos, variables.TREEWIDTH, variables.TREEHEIGHT)
+                testrect = Rect(xpos, ypos, variables.TREEWIDTH, variables.TREEHEIGHT)
             else:
                 raise NotImplementedError("Unknown type of rock %s for populate_with in Map.py" % rocktype)
             
@@ -188,13 +188,13 @@ class Map(FrozenClass):
         offset = [-drawpos[0], -drawpos[1]]
 
         if self.screenxoffset == 0:
-            mapbaserect = pygame.Rect(drawpos[0], drawpos[1], self.map_width*variables.compscale+1, self.map_height*variables.compscale+1)
+            mapbaserect = Rect(drawpos[0], drawpos[1], self.map_width*variables.compscale+1, self.map_height*variables.compscale+1)
             variables.screen.blit(getpic(self.finalimage, variables.compscale), (0,0), mapbaserect)
         else:
             variables.screen.blit(getpic(self.finalimage, variables.compscale), (self.screenxoffset,offset[1]))
 
         # detect if within the foreground range
-        playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
+        playerrect = Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
                                  classvar.player.normal_height)
 
         for r in self.terrain:
@@ -218,7 +218,7 @@ class Map(FrozenClass):
             
         rockoffset = [-drawpos[0], -drawpos[1]]
         # detect if within the foreground range
-        playerrect = pygame.Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
+        playerrect = Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
                                  classvar.player.normal_height)
         for r in self.terrain:
             if not r.drawnp:
@@ -232,12 +232,13 @@ class Map(FrozenClass):
         buttony = buttony * variables.compscale - drawpos[1] - pw
         e = self.checkexit()
         if not e == False and e.showbutton and e.isbutton:
-            self.draw_interation_button(buttonx, buttony, pw)
+            self.draw_interaction_button(buttonx, buttony, pw)
         c = self.checkconversation()
         if not c == False and c.showbutton and c.isbutton:
-            self.draw_interation_button(buttonx, buttony, pw)
+            self.draw_interaction_button(buttonx, buttony, pw)
 
-    def draw_interation_button(self, xpos, ypos, width):
+    def draw_interaction_button(self, xpos, ypos, width):
+        variables.dirtyrects.append(Rect(xpos, ypos, width, width))
         pygame.draw.ellipse(variables.screen, variables.WHITE, [xpos, ypos, width, width])
         pygame.draw.ellipse(variables.screen, variables.GREY,
                             [xpos + width / 4, ypos + width / 4, width / 2, width / 2])

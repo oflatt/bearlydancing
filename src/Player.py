@@ -60,6 +60,8 @@ class Player(FrozenClass):
             self.ypos = y
 
     def update_drawpos(self):
+        self.oldmapdrawx = self.mapdrawx
+        self.oldmapdrawy = self.mapdrawy
         x = self.xpos * variables.compscale
         y = self.ypos * variables.compscale
         m = maps.current_map
@@ -106,8 +108,6 @@ class Player(FrozenClass):
         self.mapdrawx -= m.screenxoffset
 
         #round to nearest pixel
-        self.oldmapdrawx = self.mapdrawx
-        self.oldmapdrawy = self.mapdrawy
         self.mapdrawx = int(self.mapdrawx)
         self.mapdrawy = int(self.mapdrawy)
 
@@ -116,7 +116,7 @@ class Player(FrozenClass):
         if self.mapdrawx != self.oldmapdrawx or self.mapdrawy != self.oldmapdrawy:
             variables.dirtyrects = [Rect(0,0,variables.width, variables.height)]
         else:
-            variables.dirtyrects.append(Rect(self.drawx, self.drawy, self.normal_width*variables.compscale, self.normal_height*variables.compscale))
+            variables.dirtyrects.append(Rect(self.drawx-variables.compscale*3, self.drawy-variables.compscale*3, self.normal_width*variables.compscale+6*variables.compscale, self.normal_height*variables.compscale + 6 * variables.compscale))
 
     def change_animation(self):
         oldanimation = self.current_animation

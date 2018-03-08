@@ -14,7 +14,7 @@ class ChoiceButtons(FrozenClass):
         for s in options:
             newb = Button(0, ypos, s, buttontextsize)
             self.buttons.append(newb)
-            if newb.width() > self.maxwidth:
+            if newb.width()/variables.width > self.maxwidth:
                 # devide by width because positions are multipliers of width
                 self.maxwidth = newb.width()/variables.width
         

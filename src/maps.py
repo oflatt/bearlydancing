@@ -341,6 +341,8 @@ def change_map(name, newx, newy):
 
 
 def engage_conversation(c):
+    c.updatescreenp = True
+    
     classvar.player.change_of_state()
     classvar.player.addstoryevent(c.storyevent)
 

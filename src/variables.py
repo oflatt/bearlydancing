@@ -186,7 +186,7 @@ def draw_loading_text(string):
     text = pygame.transform.scale2x(font.render(string, 0, WHITE).convert())
     xpos = int((width / 2) - (text.get_width() / 2))
     ypos = int((height / 2) - text.get_height() - height/10)
-    screen.fill(BLACK, Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height()*2))
+    pygame.draw.rect(screen, BLACK, Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height()*2))
     screen.blit(text, [xpos, ypos])
 
 def draw_progress_bar():

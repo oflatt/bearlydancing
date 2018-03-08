@@ -7,6 +7,7 @@ from play_sound import play_sound
 from play_sound import soundpackkeys
 from graphics import getpic, sscale, sscale_customfactor, getpicbyheight
 from FrozenClass import FrozenClass
+from pygame import Rect
 
 
 # battle is the class that runs the battle- information about the game such as storyeventonwin is stored in enemy
@@ -118,6 +119,8 @@ class Battle(FrozenClass):
         epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
         
         variables.screen.blit(epic, [w - epic.get_width(), 0])
+        # always update screen for enemy
+        variables.dirtyrects.append(Rect(w-epic.get_width(), 0, epic.get_width(), epic.get_height()))
 
         # draw beatmap
         if self.state == "dance":
@@ -366,6 +369,8 @@ class Battle(FrozenClass):
                     self.state = "dance"
                     self.beatmaps[self.current_beatmap].reset(self.starttime, True)
                     self.drumcounter = 0
+                    # clear screen
+                    variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
                 elif self.battlechoice.current_option == 1:
                     self.flee()
                 elif self.battlechoice.current_option == 2:

@@ -13,7 +13,7 @@ mode = modes[0]
 height = mode[1]#displayinfo.current_h - 200
 width = mode[0]
 hh = height/2
-flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
+flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
 wide_screen = pygame.display.set_mode(mode, flags)
 running = True
 

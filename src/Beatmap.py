@@ -1,5 +1,6 @@
 import graphics, pygame, variables, copy
 from play_sound import stop_tone, play_tone, update_tone
+from pygame import Rect
 
 padxspace = variables.width / 12
 padheight = variables.height / 80
@@ -57,16 +58,19 @@ class Beatmap():
 
     def draw(self):
         w = variables.width / 20
+        ew = w * 1.25
+        padellipseypos = variables.getpadypos() - padheight + padheight / 2 - ew / 4
         # draw which ones are pressed
         for x in range(0, 8):
             if self.held_keys[x] != None:
                 xoffset = 0
                 if (x + 1 > 4):
                     xoffset = middleoffset
-                ew = w * 1.25
-                pygame.draw.ellipse(variables.screen, variables.WHITE, [padxspace * (x + 1) - w / 8 + xoffset,
-                                                                        variables.getpadypos() - padheight + padheight / 2 - ew / 4,
+                expos = padxspace * (x + 1) - w / 8 + xoffset
+                pygame.draw.ellipse(variables.screen, variables.WHITE, [expos,
+                                                                        padellipseypos,
                                                                         ew, ew / 2])
+                variables.dirtyrects.append(Rect(expos, padellipseypos, ew, ew/2))
         # draw the notes that are on the screen
         for n in self.notes:
             n.draw(self.tempo)
@@ -105,19 +109,31 @@ class Beatmap():
             xoffset = 0
             if (x > 4):
                 xoffset = middleoffset
+            padrect = Rect(padxspace * (x) - w / 8 + xoffset, variables.getpadypos() - padheight, w * 1.25, padheight)
             pygame.draw.rect(variables.screen, variables.notes_colors[x - 1],
-                             [padxspace * (x) - w / 8 + xoffset, variables.getpadypos() - padheight, w * 1.25, padheight])
+                             padrect)
+            variables.dirtyrects.append(padrect)
+            
 
         # draw the feedback (keys then scores, perfect ect)
         for x in range(0, 8):
             xoffset = 0
             if (x > 3):
                 xoffset = middleoffset
+            blitp = False
             if self.feedback_timers[x] != None:
                 if variables.settings.current_time < self.feedback_timers[x]:
-                    variables.screen.blit(self.getfeedbackpic(x), [padxspace * (x + 1) - w / 8 + xoffset, variables.getpadypos() - padheight])
+                    blitp = True
             else:
-                variables.screen.blit(self.getfeedbackpic(x), [padxspace * (x + 1) - w / 8 + xoffset, variables.getpadypos() - padheight])
+                blitp = True
+
+            if blitp:
+                bx = padxspace * (x + 1) - w / 8 + xoffset
+                by = variables.getpadypos() - padheight
+                bpic = self.getfeedbackpic(x)
+                brect = Rect(bx, by, bpic.get_width(), bpic.get_height())
+                variables.screen.blit(self.getfeedbackpic(x), (bx, by))
+                variables.dirtyrects.append(brect)
 
     # returns number of notes that should have passed the pad by now
     def notetime(self):

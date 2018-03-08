@@ -139,14 +139,14 @@ class Note:
             mheight = height+1 - (p[1]-variables.getpadypos())
             drawmid(p[1]-height-1, mheight, darkercolor)
             drawend(endx, topendy, color, self.secondshape())
-            #variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, mheight+end_height))
+            variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, mheight+end_height))
 
         # second case is if the note was interrupted in the middle and counted as a miss
         elif not self.height_offset == 0:
             if (height - self.height_offset > 1):
                 drawmid(p[1]-height-1, height+1-self.height_offset, darkercolor)
                 drawend(endx, topendy, color, self.secondshape())
-             #   variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, height+end_height+1+self.height_offset))
+            variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, height+end_height+1+self.height_offset))
 
         # third case is if it has either been missed or has not been played yet (normal draw)
         elif self.beginning_score == None or self.beginning_score == variables.miss_value or self.end_score == variables.miss_value:
@@ -156,6 +156,6 @@ class Note:
             drawend(endx, topendy, color, self.secondshape())
             #bottom of note
             drawend(endx, p[1]-end_height, color, self.shape())
-            #variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, height+end_height+2))
+            variables.dirtyrects.append(pygame.Rect(endx, topendy, endwidth, height+end_height+2))
 
         #don't draw it if it has been played

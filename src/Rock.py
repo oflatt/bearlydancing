@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import pygame, variables, math
+from pygame import Rect
 from Animation import Animation
 from graphics import GR, getpic, getmask
 from FrozenClass import FrozenClass
@@ -68,10 +69,15 @@ class Rock(FrozenClass):
         self.changetime = None
         self.tickstate = 0
 
+        # if we need to add the dirtyrect for the rock to the screen-for changing animation
+        self.updatescreenp = False
+
         self._freeze()
         
 
     def nextanimation(self):
+        # add dirty rect
+        self.updatescreenp = True
         if self.animationnum+1 < len(self.animations) or self.loopanimationsp:
             self.animationnum = (self.animationnum + 1) % len(self.animations)
             self.animations[self.animationnum].reset()
@@ -79,27 +85,35 @@ class Rock(FrozenClass):
 
     def draw(self, offset = [0,0]):
         self.drawtick()
-        p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale)
         drawx = self.x * variables.compscale + offset[0]
         drawy = self.y * variables.compscale + offset[1]
-        variables.screen.blit(p, [drawx, drawy])
+        swidth = self.w * variables.compscale
+        sheight = self.h * variables.compscale
+
+        # only draw if on screen
+        if drawx+swidth>0 and drawx<variables.width and drawy<variables.height and drawy+sheight>0:
+            p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale)
+            if self.updatescreenp:
+                variables.dirtyrects.append(Rect(drawx, drawy, p.get_width(), p.get_height()))
+                self.updatescreenp = False
+            variables.screen.blit(p, [drawx, drawy])
 
     # background range is the range of the player's location that it is drawn behind the player
     def set_backgroundrange(self):
         cs = self.collidesection
         h = GR[self.animations[0].pics[0]]["h"]
         if cs == (0, 0, self.w, self.h):
-            self.background_range = pygame.Rect(0, self.y, 9999999, 9999999)
+            self.background_range = Rect(0, self.y, 9999999, 9999999)
         elif cs == (0,0,0,0):
             self.background_range = None
         else:
-            self.background_range = pygame.Rect(0, int(self.y + cs[1] + cs[3] * (1 / 3)), 9999999, 9999999)
+            self.background_range = Rect(0, int(self.y + cs[1] + cs[3] * (1 / 3)), 9999999, 9999999)
 
     def get_mask(self):
         return getmask(self.animations[0].pics[0], self.collidesection)
 
     def getrect(self):
-        return pygame.Rect(self.x, self.y, self.w, self.h)
+        return Rect(self.x, self.y, self.w, self.h)
 
     def hide(self):
         self.hiddenp = True
@@ -151,6 +165,8 @@ class Rock(FrozenClass):
                 self.y += f()
             for f in self.xposfunctions:
                 self.x += f()
+
+            self.updatescreenp = True
 
 
         # chimney-

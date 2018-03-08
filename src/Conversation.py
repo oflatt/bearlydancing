@@ -1,4 +1,5 @@
 import variables, classvar
+from pygame import Rect
 from initiatestate import initiatebattle
 from graphics import getpicbywidth
 from FrozenClass import FrozenClass
@@ -39,6 +40,7 @@ class Conversation(FrozenClass):
         self.showbutton = True
 
         self.exitteleport = ["same", "same"]
+        self.updatescreenp = False
         
         self._freeze()
 
@@ -54,17 +56,28 @@ class Conversation(FrozenClass):
             h = currentpic.get_height()
             b = variables.height - variables.gettextboxheight()
             side = self.speaks[self.progress].side
+            
             if (self.progress % 2 == 0 or side == 'l' or side == 'left') and side != 'right':
                 xpos = 0
             else:
                 xpos = variables.width - w
+                
             ypos = b - h
             if not self.speaks[self.progress].bottomp:
                 ypos = variables.gettextboxheight()
-            variables.screen.blit(currentpic, [xpos, b - h])
+            variables.screen.blit(currentpic, [xpos, ypos])
+            if self.updatescreenp:
+                self.updatescreen()
+
+
+    def updatescreen(self):
+        if not len(self.speaks) == 0:
+            variables.dirtyrects = [Rect(0,0, variables.width, variables.height)]
 
     #returns None or the name of a rock to change the animation of
     def keypress(self, key):
+        self.updatescreenp = True
+        
         if not self.speaks[self.progress].releaseexit:
             self.keyevent(key)
 
@@ -87,6 +100,7 @@ class Conversation(FrozenClass):
             self.keyevent(key)
 
     def exit_conversation(self):
+        self.updatescreen()
         
         if self.special_battle == "none":
             self.progress = 0
