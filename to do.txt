@@ -25,14 +25,11 @@ battle
 -octaves rule
 -dual notes rule- every note doubled, 2 notes apart
 -better drum machine
--shape different for ones on offbeats
 -note time ordered bug with repetition
 
 -battle code is ugly and convoluted with all the time/health variables
 
 graphics
--ability to lower resolution for computers with less powerful graphics cards
--dirtyrects- lazy way, update this time's dirty rects and last time's dirty rects
 -make conversation appear above if sheep is on bottom of screen
 -more complex asthetic background grass
 -bush

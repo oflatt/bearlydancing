@@ -87,7 +87,7 @@ class Speak(FrozenClass):
             arrowpic = getpic("rightarrow", variables.displayscale*2)
         variables.screen.blit(arrowpic,
                               [variables.width-2*variables.displayscale*2-arrowpic.get_width(),
-                               variables.height-2*variables.displayscale*2-arrowpic.get_height()])
+                               variables.height-2*variables.displayscale*2-arrowpic.get_height()+yoffset])
 
         if self.state == "choosing":
             self.choicebuttons.draw()
