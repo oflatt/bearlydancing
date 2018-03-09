@@ -8,14 +8,14 @@ everyyears = Speak("honeyside0", ["Every year the same thing. I'm going into hib
                                       "and TP makes things difficult."])
 everyyears.side = 'l'
 
-hungry = Conversation([Speak("honeyside0", ["I'm hungry...",
+hungry = Conversation("hungry",[Speak("honeyside0", ["I'm hungry...",
                                             "And I have no reason to go outside.",
                                             "Quick lunch, and back to sleep.",
                                             "I'll eat the quiche I made yesterday."])])
 
 hungryspeak = Speak("honeyside0",["And... I'm still hungry"])
 
-thatracoon = Conversation([Speak("honeyside0", ["That raccoon...",
+thatracoon = Conversation("thatracoon", [Speak("honeyside0", ["That raccoon...",
                                                 "I knew he was up to no good yesterday.",
                                                 "Now I have to track him down."]),
                            everyyears])
@@ -35,7 +35,7 @@ ohhoney8 = ["Hey, who are you? You've been here the whole time.",
             "Good thing too, because I'm in need of a bard to get me through this dance battle.",
             "Play the tunes, will you?"]
 
-jeremy = Conversation([Speak("jeremy0", ["Howdey, Honey",
+jeremy = Conversation("jeremy",[Speak("jeremy0", ["Howdey, Honey",
                                          "Have a random piece of advice.",
                                          "Better dancers live further away from your home for whatever reason.",
                                          "If you don't feel ready to continue, just stick around in one area for a while."])],
@@ -43,7 +43,8 @@ jeremy = Conversation([Speak("jeremy0", ["Howdey, Honey",
                                          "... or give your bard a bit of practice.",
                                          "Now bug off."])])
 
-meaniestops = Conversation([Speak("meangreen0", monster),
+meaniestops = Conversation("meaniestops",
+                           [Speak("meangreen0", monster),
                             Speak("honeyside3", ohhoney4),
                             Speak("meangreen0", monster2),
                             Speak("honeyside3", ohhoney5),
@@ -54,7 +55,8 @@ meaniestops = Conversation([Speak("meangreen0", monster),
                             Speak("honeyback3", ohhoney8, side="right")],
                            [Speak("honeyback3", ["Here we go again..."])])
 
-dancelionpass = Conversation([Speak("dancelion0",
+dancelionpass = Conversation("dancelionpass",
+                             [Speak("dancelion0",
                                     ["Hey, I'll only let you through if you beat me in a dance battle.",
                                      "...Yes I do wait around all day stopping travelers like this, thank you."]),
                               honeydotspeak,
@@ -64,11 +66,13 @@ dancelionpass = Conversation([Speak("dancelion0",
                              [Speak("dancelion0", ["Come back when your bard can play in the key of C minor.",
                                                        "I only dance to music in that key."])])
 
-gotoforest = Conversation([Speak("honeyside0",
+gotoforest = Conversation("gotoforest",
+                          [Speak("honeyside0",
                                  ["I think TP went deeper into the forest to the right,",
                                   "so I should go that way."])])
 
-sheepconversation = Conversation([Speak("sheepstanding", ["Woah, how'd you know?"], "right"),
+sheepconversation = Conversation("sheepconversation",
+                                 [Speak("sheepstanding", ["Woah, how'd you know?"], "right"),
                                   Speak("sheepstanding", ["How'd you know I am a sheep and not a rock?"], "right"),
                                   Speak("honeyside0", ["..."], "left"),
                                   Speak("sheepstanding", ["Interaction button? What?",
@@ -78,7 +82,8 @@ sheepconversation = Conversation([Speak("sheepstanding", ["Woah, how'd you know?
                                  speaksafter = [Speak("sheepstanding", ["Let's go again! I'll show you my best moves!"])],
                                  switchthisrock="sheeprock")
 
-tutorialconversation1 = Conversation([Speak("honeyback3",
+tutorialconversation1 = Conversation("tutorialconversation1",
+                                     [Speak("honeyback3",
                                             ["Wait...", "You've never done this before, have you."], bottomp=False),
                                       Speak("honeyback3", ["*sigh*"], "left", bottomp = False),
                                       Speak("honeyback3", ["I guess I'll have to teach you."], "left", bottomp = False),
@@ -104,13 +109,13 @@ pressaspeak = Speak("honeyback3", [holdthis,
 
 pressaspeak.specialexitkeys = ["note1"]
 
-pressanow = Conversation([pressaspeak])
+pressanow = Conversation("pressanow",[pressaspeak])
 
 releaseaspeak = Speak("honeyback3", ["Alright, release the key now."], bottomp = False)
 releaseaspeak.specialexitkeys = ["note1"]
 releaseaspeak.releaseexit = True
 
-releaseanow = Conversation([releaseaspeak])
+releaseanow = Conversation("releaseanow",[releaseaspeak])
 
 releasedearlyspeak = Speak("honeyback3", ["You released too early.",
                                           "Hold the note until the end."], bottomp = False)
@@ -118,18 +123,21 @@ releasedearlyagainspeak = Speak("honeyback3", ["You released too early... again.
 releasedearlyspeak.specialexitkeys = ["note1"]
 releasedearlyagainspeak.specialexitkeys = ["note1"]
 
-releasedearly = Conversation([releasedearlyspeak], speaksafter = [releasedearlyagainspeak])
+releasedearly = Conversation("releasedearly",[releasedearlyspeak], speaksafter = [releasedearlyagainspeak])
 
-endtutorial = Conversation([Speak("honeyback3",
+endtutorial = Conversation("endtutorial",
+                           [Speak("honeyback3",
                                   ["Alright, it seems like you get the idea.",
                                    "The dance battle's going to start now, so I'll leave you to it."], bottomp = False)])
 
-prettygood = Conversation([Speak("honeyback3",
+prettygood = Conversation("prettygood",
+                          [Speak("honeyback3",
                                  ["Hey, that wasn't bad, for your first song.",
                                   "I think I'll hire you as my bard. I have a feeling you'll be needed again.",
                                   "Let's go."])])
 
-letsflee = Conversation([Speak("honeyback3",
+letsflee = Conversation("letsflee",
+                        [Speak("honeyback3",
                                ["We're just going to run?"]),
                          Speak("honeyback3",
                                ["Fine, but you better stick around... who knows who will challenge me to a dance battle next."],
@@ -137,10 +145,13 @@ letsflee = Conversation([Speak("honeyback3",
                          Speak("meangreen0", ["Coward! I'd chase you but I'm stuck to this tree."], "right")])
 
 want2gospeak = Speak("meangreen0", ["Want to have a go?"], options = ["yes", "no"])
-want2go = Conversation([want2gospeak])
+want2go = Conversation("want2go",[want2gospeak])
 
-kewlcornyo = Conversation([Speak("kewlcorn0", ["Yo!"])])
+kewlcornyo = Conversation("kewlcornyo",[Speak("kewlcorn0", ["Yo!"])])
 
-chimneytalk = Conversation([Speak("flyingchimney4", ["..."])])
+chimneytalk = Conversation("chimneytalk",[Speak("flyingchimney4", ["..."])])
+
+losetochimney = Conversation("losetochimney", [Speak("honeyback3",
+                                                     ["We lost to my own chimney..."])])
 
 currentconversation = None

@@ -1,4 +1,4 @@
-import graphics, variables, pygame, enemies, pickle, classvar, maps, os
+import graphics, variables, pygame, enemies, pickle, classvar, maps, os, conversations
 from copy import deepcopy
 from Menu import Menu
 from Battle import Battle
@@ -15,8 +15,8 @@ def loadmaps(mapdict):
 # can't pickle pygame masks or surfaces
 def save(me):
     
-    savelist = [maps.map_dict,variables.settings, classvar.player,
-                classvar.battle, maps.current_map_name]
+    savelist = [maps.map_dict, variables.settings, conversations.currentconversation,
+                classvar.player, classvar.battle, maps.current_map_name]
     with open("bdsave0.txt", "wb") as f:
         pickle.dump(savelist, f)
         
@@ -28,7 +28,7 @@ def load():
             f = open("bdsave0.txt", "rb")
             loadedlist = pickle.load(f)
 
-            mapsdict, variables.settings, classvar.player, classvar.battle, maps.current_map_name = loadedlist
+            mapsdict, variables.settings, conversations.currentconversation, classvar.player, classvar.battle, maps.current_map_name = loadedlist
             if not variables.dontloadmapsdict:
                 loadmaps(mapsdict)
                 

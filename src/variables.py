@@ -141,6 +141,9 @@ def getphotosize():
 def getbuttonpadding():
     return int(width/70)
 
+# used to ensure that no duplicate names exist
+conversationnames = []
+
 # menu
 beginningprompttextcolor = BLUE
 menuscrollspeed = 150 # in milliseconds

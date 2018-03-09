@@ -6,7 +6,20 @@ from FrozenClass import FrozenClass
 
 class Conversation(FrozenClass):
 
-    def __init__(self, speaks, speaksafter=None, switchthisrock=None):
+    def __init__(self, name, speaks, speaksafter=None, switchthisrock=None):
+        # this is the name of the conversation to identify it using currentconversation
+        # they have to be unique
+        self.name = name
+        if name in variables.conversationnames:
+            print("-----------------------------------")
+            print("Error: duplicate conversation names")
+            print("-----------------------------------")
+        if not type(name) == str:
+            print("-----------------------------------")
+            print("Error: got non-string conversation name " + str(name))
+            print("-----------------------------------")
+        variables.conversationnames.append(name)
+        
         # none or an enemy object to encounter after the conversation
         self.special_battle = "none"
 

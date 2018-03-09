@@ -42,7 +42,8 @@ class Button(FrozenClass):
         else:
             xpos = self.x*variables.width
             ypos = self.y*variables.height
-            textpic = getTextPic(self.text, self.size*variables.height)
+            
+        textpic = getTextPic(self.text, self.size*variables.height)
 
         textpadding = (self.width() - textpic.get_width()) / 2
 

@@ -13,6 +13,16 @@ from EventRequirement import EventRequirement
 
 from mapsvars import *
 
+
+# outside7 #####################################################################################
+outside7 = Map(graphics.grassland(1000, 600), [])
+outside7.populate_with("greyrock", 6)
+outside7.populate_with("pinetree", 25)
+outside7.lvrange = [3, 4]
+
+outside7.exitareas = [Exit("left", False, "outside6", "right", "same")]
+
+
 # outside6 #####################################################################################
 outside6width = 1200
 outside6height = 600
@@ -37,7 +47,7 @@ groverect = Rect(outside6width/2-grovewidth/2, outside6height-groveheight,
 outside6.populate_with("greyrock", 6, [groverect])
 outside6.populate_with("pinetree", 28, [groverect])
 
-kewlappearconversation = Conversation([])
+kewlappearconversation = Conversation("kewlappearconversation",[])
 kewlappearconversation.area = [grovetree.x, grovetree.y+grovetree.h/2, grovetree.w, grovetree.h/2]
 kewlappearconversation.storyevent = "kewlappears"
 kewlappearconversation.eventrequirements = [EventRequirement("kewlappears", -1, 1)]
@@ -47,13 +57,14 @@ kewlbattle = conversations.kewlcornyo
 kewlbattle.area = [grovetree.x+grovetree.w/2, grovetree.y + grovetree.h*(3/4), grovetree.w/2, grovetree.h/4]
 kewlbattle.eventrequirements = [EventRequirement("kewlappears")]
 kewlbattle.special_battle = copy.copy(enemies.kewlcorn)
-kewlbattle.special_battle.lv = 5
+kewlbattle.special_battle.lv = 4
 
 outside6.conversations = [kewlappearconversation, kewlbattle]
 
 outside6.enemies = enemies.woodsenemies
-outside6.lvrange = [3, 4]
-outside6.exitareas = [Exit("left", False, "outside5", "right", "same")]
+outside6.lvrange = [3]
+outside6.exitareas = [Exit("left", False, "outside5", "right", "same"),
+                      Exit("right", False, "outside7", "left", "same")]
 
 # outside5 #####################################################################################
 outside5 = Map(graphics.grassland(800, outside6height, downpath = True), [])

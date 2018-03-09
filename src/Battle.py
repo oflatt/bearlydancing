@@ -141,7 +141,7 @@ class Battle(FrozenClass):
             text = None
             # button
             if self.state == "lose":
-                text = "go home..."
+                text = "go home in shame"
             else:
                 text = "continue"
             # button coordinates are multipliers of screen width and height
@@ -151,7 +151,7 @@ class Battle(FrozenClass):
 
             # text
             if self.state == "lose":
-                text = variables.font.render("you can't go on...", 0, variables.WHITE)
+                text = variables.font.render("you lost...", 0, variables.WHITE)
             else:
                 text = variables.font.render("you win!", 0, variables.WHITE)
             textscaled = sscale(text)
@@ -276,6 +276,8 @@ class Battle(FrozenClass):
                     classvar.player.health = self.newplayerhealth  # set it to the new health when done
                     if self.newplayerhealth <= 0:
                         self.state = "lose"
+                        if self.enemy.name == "chimney":
+                            maps.engage_conversation(conversations.losetochimney)
                     elif self.newenemyhealth == self.enemy.health:  # if done with the animation
                         self.state = "dance"  # exit
                         self.next_beatmap()

@@ -82,7 +82,7 @@ def movednotes(old_notes, movelength):
 def newvaluesfornotes(listofnotes, specs):
     l = copy.deepcopy(listofnotes)
     for n in l:
-        n.value = random_value(n.time, n.chordadditionp, listofnotes, specs)
+        n.value = random_value(n.time, n.chordadditionp, l, specs)
     return l
 
     

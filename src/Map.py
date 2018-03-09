@@ -341,3 +341,17 @@ class Map(FrozenClass):
                     break
         return returnrock
             
+    def getconversation(self, name):
+        c = None
+        for i in range(len(self.conversations)):
+            x = self.conversations[i]
+            if x.name == name:
+                c = x
+                break
+        if c == None:
+            print("---------------------------")
+            print("Error: No conversation in map called " + name)
+            print("--------------------------")
+            return None
+        else:
+            return c

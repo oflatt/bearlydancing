@@ -38,7 +38,7 @@ chimneyrock = Rock([Animation(["flyingchimney0"], 1),
                     Animation(["flyingchimney1", "flyingchimney2", "flyingchimney3"], 20),
                     enemies.chimneyanimation], houserock.x+ 136-25, houserock.y+ 64-43, None, "chimney")
 
-secretchimneyactivation = Conversation([])
+secretchimneyactivation = Conversation("secretchimneyactivation",[])
 secretchimneyactivation.area = [houserock.x + houserock.w/2 - 2, houserock.y + houserock.h/2 - 2, 4, houserock.h/10]
 secretchimneyactivation.switchthisrock = "chimney"
 secretchimneyactivation.storyevent = "chimneyactivation"
@@ -101,7 +101,9 @@ enemies.greenie.lv = 1
 conversations.want2gospeak.special_battle = enemies.greenie
 conversations.want2go.eventrequirements = [EventRequirement("beat meanie")]
 
-outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversations.want2go, secretchimneyactivation, chimneybattlec]
+outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversations.want2go, secretchimneyactivation, chimneybattlec, conversations.letsflee, conversations.losetochimney,
+                          conversations.tutorialconversation1, conversations.pressanow,
+                          conversations.endtutorial, conversations.releaseanow, conversations.releasedearly]
 
 outside1.colliderects = [Rect(houserock.x-3, houserock.y+houserock.collidesection[1], 3, houserock.collidesection[3])]
 
@@ -169,13 +171,14 @@ honeyhome = Map("honeyhouseinside",
                  littleletter,
                  Rock(stashlist, p * 131, p * 55, [0, 0.9, 1, 0.1], name="stash")])
 
-outofbed = Conversation([], speaksafter = [[],[],[]], switchthisrock = "bed")
+outofbed = Conversation("outofbed",[], speaksafter = [[],[],[]], switchthisrock = "bed")
 outofbed.storyevent = "bed"
 outofbed.area = [0, 0, b*20, b*20]
 outofbed.eventrequirements = [EventRequirement("bed", -1, len(bed.animations)-1)]
 outofbed.showbutton = False
 
-eatfromstash = Conversation([],
+eatfromstash = Conversation("eatfromstash",
+                            [],
                             speaksafter = [[],[],[],[],[],[],[],[],
                                            [conversations.hungryspeak]],
                             switchthisrock="stash")
@@ -352,11 +355,12 @@ def engage_conversation(c):
         
         
     variables.settings.state = "conversation"
-    conversations.currentconversation = c
-    current = conversations.currentconversation
+    conversations.currentconversation = c.name
+    
+    current = current_map.getconversation(c.name)
 
-    if conversations.currentconversation.switchthisrock != None:
-        current_map.changerock(conversations.currentconversation.switchthisrock)
+    if current.switchthisrock != None:
+        current_map.changerock(current.switchthisrock)
 
     if len(current.speaks) == 0:
         current.exit_conversation()
