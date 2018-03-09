@@ -12,15 +12,123 @@ from Speak import Speak
 from variables import displayscale, fasttestmodep
 from EventRequirement import EventRequirement
 
-if fasttestmodep:
-    from mapsvars import *
-else:
-    from forestmaps import *
+from mapsvars import *
+
+
+housewidth = GR["honeyhouseoutside"]["w"]
+househeight = GR["honeyhouseoutside"]["h"]
+houserock = Rock("honeyhouseoutside", housewidth, 0,
+                 [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())])
+
+# honeyhome#####################################################################################
+b = insidewidth / 10
+table = Rock("table", p * 75, p * 110, None)
+table.background_range = Rect(0, 110 + int(table.h / 2), 9999999, 9999999)
+littleletter = Rock('letter', p * 75, p * 110, None)
+littleletter.background_range = table.background_range.copy()
+
+bed = Rock(["honeywakesup0", "honeywakesup1", "honeywakesup2", "honeywakesup3", "bed"],
+           p*8, p*38, None, name = "bed")
+bed.background_range = pygame.Rect(0,0,9999999,9999999)
+stashlist = []
+for x in range(10):
+    stashname = "stash0" + str(x)
+    stashlist.append(stashname)
+honeyhome = Map("honeyhouseinside",
+                [bed,
+                 table,
+                 littleletter,
+                 Rock(stashlist, p * 131, p * 55, [0, 0.9, 1, 0.1], name="stash")])
+
+outofbed = Conversation("outofbed",[], speaksafter = [[],[],[]], switchthisrock = "bed")
+outofbed.storyevent = "bed"
+outofbed.area = [0, 0, b*20, b*20]
+outofbed.eventrequirements = [EventRequirement("bed", -1, len(bed.animations)-1)]
+outofbed.showbutton = False
+
+eatfromstash = Conversation("eatfromstash",
+                            [],
+                            speaksafter = [[],[],[],[],[],[],[],[],
+                                           [conversations.hungryspeak]],
+                            switchthisrock="stash")
+
+eatfromstashoffset = p*10
+eatfromstash.area = [p*131+eatfromstashoffset, p*61, GR["stash00"]["w"]-2*eatfromstashoffset, GR["stash00"]["h"]]
+
+doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
+                True, 'outside1',
+                GR["honeyhouseoutside"]["w"] * 0.3 + houserock.x, GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight-20*p)
+doorexit.eventrequirements = [EventRequirement("letter")]
+
+blockexit = conversations.hungry
+blockexit.area = doorexit.area
+blockexit.eventrequirements = [EventRequirement("letter", -1, 1)]
+
+honeyhome.conversations = [eatfromstash, outofbed, blockexit]
+
+honeyhome.startpoint = [28 * p, 39 * p]
+
+letterexit = Exit([p * 67, p * 100, 20, 30],
+                  True, 'letter',
+                  GR["paper"]['w']*(3/10), 0)
+letterexit.storyevent = "letter"
+
+honeyhome.exitareas = [doorexit,
+                       letterexit]
+honeyhome.colliderects = [Rect(0, 0, p * 30, p * 74),  # bed
+                          Rect(0, 0, insidewidth, p * 48),  # wall
+                          Rect(44 * p, 0, 26 * p, 60 * p),  # wardrobe
+                          Rect(p * 75, p * 110 + p * 11, p * 44, p * 13)]  # table
+honeyhome.uselastposq = True
+
+
+# letter########################################################################################
+paperscale = int((GR["honeyhouseinside"]["h"]/GR["paper"]["h"])+1) # so it is as big as inside to put the text in it
+
+GR["backgroundforpaper"]["img"] = pygame.transform.scale(GR["backgroundforpaper"]["img"],
+                                                         [GR["backgroundforpaper"]["w"]*paperscale,
+                                                          GR["backgroundforpaper"]["h"]*paperscale])
+                                                          
+GR["backgroundforpaper"]["w"] *= paperscale
+GR["backgroundforpaper"]["h"] *= paperscale
+b = GR['backgroundforpaper']['w'] / 10
+
+GR["paper"]["img"] = pygame.transform.scale(GR["paper"]["img"],
+                                            [GR["paper"]["w"]*paperscale,
+                                             GR["paper"]["h"]*paperscale])
+GR["paper"]["w"] *= paperscale
+GR["paper"]["h"] *= paperscale
+bigpaper = Rock("paper", (GR["backgroundforpaper"]['w'] - GR["paper"]["w"]) / 2, 0, None)
+bigpaper.background_range = None  # always in front
+s1 = variables.font.render("I stole your lunch.", 0, variables.BLACK).convert()
+s2 = variables.font.render("-Trash Panda", 0, variables.BLACK).convert()
+lettertextscalefactor = (GR["paper"]['w'] * (3/4)) / s1.get_width()
+s1 = pygame.transform.scale(s1, [int(lettertextscalefactor*s1.get_width()), int(lettertextscalefactor*s1.get_height())])
+s2 = pygame.transform.scale(s2, [int(lettertextscalefactor*s2.get_width()), int(lettertextscalefactor*s2.get_height())])
+graphics.addsurfaceGR(s1, "stolelunchtext", [s1.get_width(), s1.get_height()])
+graphics.addsurfaceGR(s2, "tplunchtext", [s2.get_width(), s2.get_height()])
+
+w1 = Rock("stolelunchtext", b * 5 - s1.get_width() / 2, b * 3, None)
+w1.background_range = None
+w2 = Rock("tplunchtext", b * 5 - s2.get_width() / 2, b * 4.5, None)
+w2.background_range = None
+
+letter = Map("backgroundforpaper", [bigpaper,
+                                        w1,
+                                        w2])
+
+letter.playerenabledp = False
+
+conversations.thatracoon.area = [0, 0, b * 10, b * 10]
+conversations.thatracoon.storyevent = "that racoon"
+conversations.thatracoon.eventrequirements = [EventRequirement("that racoon", -1, 1)]
+
+letter.conversations = [conversations.thatracoon]
+letter.exitareas = [Exit([0, 0, b * 10, b * 10], True, 'honeyhome', 'same', 'same')]
+
 
 # outside1######################################################################################
 b = GR["horizontal"]["w"] / 10
-housewidth = GR["honeyhouseoutside"]["w"]
-househeight = GR["honeyhouseoutside"]["h"]
 
 #stands for random pine tree
 rpt = graphics.pinetree()
@@ -28,9 +136,6 @@ rgrassland = graphics.grassland(700, 500)
 treerock = Rock(rpt, 3.5 * b + housewidth, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + GR[rpt]["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock("meangreen0", treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
-
-houserock = Rock("honeyhouseoutside", housewidth, 0,
-                 [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())])
 
 cleararearect = Rect(houserock.x, houserock.y, 500-houserock.x, treerock.y+treerock.h-houserock.y)
 
@@ -107,111 +212,9 @@ outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversati
 
 outside1.colliderects = [Rect(houserock.x-3, houserock.y+houserock.collidesection[1], 3, houserock.collidesection[3])]
 
-# letter########################################################################################
-paperscale = int((GR["honeyhouseinside"]["h"]/GR["paper"]["h"])+1) # so it is as big as inside to put the text in it
 
-GR["backgroundforpaper"]["img"] = pygame.transform.scale(GR["backgroundforpaper"]["img"],
-                                                         [GR["backgroundforpaper"]["w"]*paperscale,
-                                                          GR["backgroundforpaper"]["h"]*paperscale])
-                                                          
-GR["backgroundforpaper"]["w"] *= paperscale
-GR["backgroundforpaper"]["h"] *= paperscale
-b = GR['backgroundforpaper']['w'] / 10
-
-GR["paper"]["img"] = pygame.transform.scale(GR["paper"]["img"],
-                                            [GR["paper"]["w"]*paperscale,
-                                             GR["paper"]["h"]*paperscale])
-GR["paper"]["w"] *= paperscale
-GR["paper"]["h"] *= paperscale
-bigpaper = Rock("paper", (GR["backgroundforpaper"]['w'] - GR["paper"]["w"]) / 2, 0, None)
-bigpaper.background_range = None  # always in front
-s1 = variables.font.render("I stole your lunch.", 0, variables.BLACK).convert()
-s2 = variables.font.render("-Trash Panda", 0, variables.BLACK).convert()
-lettertextscalefactor = (GR["paper"]['w'] * (3/4)) / s1.get_width()
-s1 = pygame.transform.scale(s1, [int(lettertextscalefactor*s1.get_width()), int(lettertextscalefactor*s1.get_height())])
-s2 = pygame.transform.scale(s2, [int(lettertextscalefactor*s2.get_width()), int(lettertextscalefactor*s2.get_height())])
-graphics.addsurfaceGR(s1, "stolelunchtext", [s1.get_width(), s1.get_height()])
-graphics.addsurfaceGR(s2, "tplunchtext", [s2.get_width(), s2.get_height()])
-
-w1 = Rock("stolelunchtext", b * 5 - s1.get_width() / 2, b * 3, None)
-w1.background_range = None
-w2 = Rock("tplunchtext", b * 5 - s2.get_width() / 2, b * 4.5, None)
-w2.background_range = None
-
-letter = Map("backgroundforpaper", [bigpaper,
-                                        w1,
-                                        w2])
-
-letter.playerenabledp = False
-
-conversations.thatracoon.area = [0, 0, b * 10, b * 10]
-conversations.thatracoon.storyevent = "that racoon"
-conversations.thatracoon.eventrequirements = [EventRequirement("that racoon", -1, 1)]
-
-letter.conversations = [conversations.thatracoon]
-letter.exitareas = [Exit([0, 0, b * 10, b * 10], True, 'honeyhome', 'same', 'same')]
-
-# honeyhome#####################################################################################
-b = insidewidth / 10
-table = Rock("table", p * 75, p * 110, None)
-table.background_range = Rect(0, 110 + int(table.h / 2), 9999999, 9999999)
-littleletter = Rock('letter', p * 75, p * 110, None)
-littleletter.background_range = table.background_range.copy()
-
-bed = Rock(["honeywakesup0", "honeywakesup1", "honeywakesup2", "honeywakesup3", "bed"],
-           p*8, p*38, None, name = "bed")
-bed.background_range = pygame.Rect(0,0,9999999,9999999)
-stashlist = []
-for x in range(10):
-    stashname = "stash0" + str(x)
-    stashlist.append(stashname)
-honeyhome = Map("honeyhouseinside",
-                [bed,
-                 table,
-                 littleletter,
-                 Rock(stashlist, p * 131, p * 55, [0, 0.9, 1, 0.1], name="stash")])
-
-outofbed = Conversation("outofbed",[], speaksafter = [[],[],[]], switchthisrock = "bed")
-outofbed.storyevent = "bed"
-outofbed.area = [0, 0, b*20, b*20]
-outofbed.eventrequirements = [EventRequirement("bed", -1, len(bed.animations)-1)]
-outofbed.showbutton = False
-
-eatfromstash = Conversation("eatfromstash",
-                            [],
-                            speaksafter = [[],[],[],[],[],[],[],[],
-                                           [conversations.hungryspeak]],
-                            switchthisrock="stash")
-
-eatfromstashoffset = p*10
-eatfromstash.area = [p*131+eatfromstashoffset, p*61, GR["stash00"]["w"]-2*eatfromstashoffset, GR["stash00"]["h"]]
-
-doorexit = Exit([35 * p + honeyw / 2, 165 * p, 37 * p - honeyw, extraarea],
-                True, 'outside1',
-                GR["honeyhouseoutside"]["w"] * 0.3 + houserock.x, GR["honeyhouseoutside"]["h"] - honeyh + honeyfeetheight-20*p)
-doorexit.eventrequirements = [EventRequirement("letter")]
-
-blockexit = conversations.hungry
-blockexit.area = doorexit.area
-blockexit.eventrequirements = [EventRequirement("letter", -1, 1)]
-
-honeyhome.conversations = [eatfromstash, outofbed, blockexit]
-
-honeyhome.startpoint = [28 * p, 39 * p]
-
-letterexit = Exit([p * 67, p * 100, 20, 30],
-                  True, 'letter',
-                  GR["paper"]['w']*(3/10), 0)
-letterexit.storyevent = "letter"
-
-honeyhome.exitareas = [doorexit,
-                       letterexit]
-honeyhome.colliderects = [Rect(0, 0, p * 30, p * 74),  # bed
-                          Rect(0, 0, insidewidth, p * 48),  # wall
-                          Rect(44 * p, 0, 26 * p, 60 * p),  # wardrobe
-                          Rect(p * 75, p * 110 + p * 11, p * 44, p * 13)]  # table
-honeyhome.uselastposq = True
-
+if not fasttestmodep:
+    from forestmaps import *
 
 # teleportation and stuff#######################################################################
 home_map = honeyhome

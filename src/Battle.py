@@ -344,6 +344,7 @@ class Battle(FrozenClass):
 
     def flee(self):
         variables.settings.state = "world"
+        variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
         classvar.player.addstoryevents(self.enemy.storyeventsonflee)
         if self.enemy.lv - variables.settings.difficulty == 0:
             maps.engage_conversation(conversations.letsflee)

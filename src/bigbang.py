@@ -176,7 +176,7 @@ while not done:
     
     # Go ahead and update the screen with what we've drawn.
     
-    if len(variables.dirtyrects) > 0 and True:
+    if len(variables.dirtyrects) > 0 and variables.devmode:
         pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
 
 
