@@ -154,4 +154,11 @@ chimneytalk = Conversation("chimneytalk",[Speak("flyingchimney4", ["..."])])
 losetochimney = Conversation("losetochimney", [Speak("honeyback3",
                                                      ["We lost to my own chimney..."])])
 
+tpboss1 = Conversation("tpboss1", [Speak("honeyside0", ["...", "Tp, what are you doing?"]),
+                                   Speak("tpwalksright0", ["I'm dancing, what else?"]),
+                                   Speak("honeyside0", ["Never mind.", "Give me my lunch."]),
+                                   Speak("tpwalksright0", ["I will... as soon as you get good.",
+                                                           "In the mean time, beat my friend here."])])
+
+
 currentconversation = None

@@ -202,9 +202,14 @@ outside6.exitareas = [Exit("left", False, "outside5", "right", "same"),
 # outside7/scary steve##########################################################################
 outside7width = 1000
 outside7height = outside4height
-tp = Rock("tpwalksright0", outside7width-200, outside7height/2 - 30, None, "tp")
 
-outside7 = Map(graphics.grassland(outside7width, 600), [tp])
+tpdance = Animation(["tpwalksright0", "tpwalksright1", "tpwalksright2", "tpwalksright3", "tpwalksright4"], 250)
+tpwalking = tpdance
+tp = Rock([tpdance, tpwalking], outside7width-200, outside7height/2 - 30, None, "tp")
+tp.updatealways = True
+
+
+outside7 = Map(graphics.grassland(outside7width, 600, rightpath=False), [tp])
 reservedarea = [Rect(tp.x, 0, outside7width-tp.x, outside7width)]
 outside7.populate_with("greyrock", 6, reservedarea)
 outside7.populate_with("pinetree", 25, reservedarea)
@@ -212,3 +217,16 @@ outside7.populate_with("pinetree", 25, reservedarea)
 outside7.lvrange = [3, 4]
 
 outside7.exitareas = [Exit("left", False, "outside6", "right", "same")]
+
+conversations.tpboss1.area = [tp.x-40, 0, outside7width-(tp.x-40), outside7height]
+conversations.tpboss1.storyevent = "tpboss1"
+conversations.tpboss1.eventrequirements = [EventRequirement("tpboss1", -1, 1)]
+conversations.tpboss1.isbutton = False
+
+animstarter = Conversation("animstarter", [], switchthisrock = ["tp"])
+animstarter.storyevent = "tpboss1leaves"
+animstarter.area = [0,0,outside7width,outside7height]
+animstarter.isbutton = False
+animstarter.eventrequirements = [EventRequirement("tpboss1"), EventRequirement("tpboss1leaves", -1, 1)]
+
+outside7.conversations = [conversations.tpboss1, animstarter]

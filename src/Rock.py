@@ -71,6 +71,7 @@ class Rock(FrozenClass):
 
         # if we need to add the dirtyrect for the rock to the screen-for changing animation
         self.updatescreenp = False
+        self.updatealways = False
 
         self._freeze()
         
@@ -158,7 +159,9 @@ class Rock(FrozenClass):
 
     # called for drawing the rock
     def drawtick(self):
-        if self.name in ["kewlcorn", "chimney"]:
+        if self.updatealways:
+            self.updatescreenp = True
+        if self.name in ["kewlcorn", "chimney", "tp"]:
             self.y = self.lasty
             self.x = self.lastx
             for f in self.yposfunctions:
@@ -204,6 +207,22 @@ class Rock(FrozenClass):
                     # set the pos for reference
                     self.lasty = self.y
                     self.tickstate += 1
+                    
+        elif self.name == "tp" and self.animationnum>0 and self.y <= 1000:
+            dt = variables.settings.current_time - self.changetime
+            framerate = self.animations[self.animationnum].framerate
+            
+            if int(((dt/framerate)+2)/len(self.animations[self.animationnum].pics))-1 >= self.tickstate:
+                jumpduration = framerate * 2.5
+                jumpstarttime = variables.settings.current_time - variables.settings.current_time%framerate
+                jumpheight = 20
+                timeoffsetforheight = math.sqrt(jumpheight*2/variables.accelpixelpermillisecond)
+                self.yposfunctions = [self.makeexponentialfunction(jumpstarttime+timeoffsetforheight, variables.accelpixelpermillisecond, -jumpheight, upperlimit = 0)]
+                xvel = 30/1000
+                self.xposfunctions = [self.makelinearfunction(jumpstarttime, xvel, limit = (xvel*jumpduration))]
+                self.lasty = self.y
+                self.lastx = self.x
+                self.tickstate += 1
 
     # currently not used
     def ontick(self):

@@ -39,7 +39,10 @@ class Conversation(FrozenClass):
             self.speaksafter = None
 
         # a string of a name of a rock to switch the animation of at the beginning of the conversation
-        self.switchthisrock = switchthisrock
+        if type(switchthisrock) == str:
+            self.switchthisrock = [switchthisrock]
+        else:
+            self.switchthisrock = switchthisrock
         # string of a name of a rock to unhide after the end of the conversation
         self.unhidethisrock = None
 

@@ -5,6 +5,10 @@ gameplay
 -auto-save
 -map objects and loading more safely, versioning, safely load with new content
 -ddr machine that you can play and dance against
+-have enemy give you "wall jump"
+-recieve synths from enemies
+-recieve waves from enemies
+-recieve scales from enemies
 
 sound
 -fix volume

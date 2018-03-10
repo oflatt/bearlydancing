@@ -365,7 +365,8 @@ def engage_conversation(c):
     current = current_map.getconversation(c.name)
 
     if current.switchthisrock != None:
-        current_map.changerock(current.switchthisrock)
+        for rockname in current.switchthisrock:
+            current_map.changerock(rockname)
 
     if len(current.speaks) == 0:
         current.exit_conversation()
