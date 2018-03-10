@@ -8,6 +8,5 @@ def initiatebattle(enemy):
     enemy.sethealth()
     classvar.player.heal()
     classvar.battle = Battle(enemy)
-    classvar.battle.reset_time()
 
     variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]

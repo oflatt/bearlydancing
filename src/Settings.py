@@ -23,6 +23,8 @@ class Settings(FrozenClass):
 
         self.keydict["escape"] = [pygame.K_ESCAPE]
 
+        # normal setting stuff
+        self.windowmode = "fullscreen"
         self.volume = 0.5
 
         # state can be world, battle, or conversation
@@ -33,6 +35,10 @@ class Settings(FrozenClass):
 
         #possible soundpacks can be seen by listing the keys in all_sounds in play_sound
         self.soundpack = "sine"
+
+        # the index in the player.scales currently chosen
+        self.scaleindex = 0
+        
         # the number of (length 1) notes that can be shown on screen at once before the pad
         self.notes_per_screen = 6
 

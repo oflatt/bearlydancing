@@ -2,6 +2,7 @@
 import pygame, variables, copy, os
 from pygame import Rect
 
+
 variables.load_properties()
 variables.draw_loading_text("importing graphics (1/2)")
 pygame.display.flip()
@@ -185,7 +186,7 @@ while not done:
         
     if len(variables.dirtyrects) > 0 and len(variables.olddirtyrects)>0:
         if variables.dirtyrects[0] == Rect(0,0,variables.width,variables.height) or variables.dirtyrects == Rect(0,0,variables.width,variables.height):
-            pygame.display.update()
+            pygame.display.flip()
         else:
             updatescreen()
     else:
@@ -194,8 +195,8 @@ while not done:
     variables.olddirtyrects = variables.dirtyrects
     variables.dirtyrects = []
 
-    # Limit frames per second
-    clock.tick_busy_loop(60)
+    # We want as many frames as possible to reduce likelyhood for mismatch with screen refresh and tearing
+    clock.tick_busy_loop(0)
 
 # Close the window and quit, this is after the main loop has finished
 pygame.quit()

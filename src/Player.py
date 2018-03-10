@@ -45,8 +45,12 @@ class Player(FrozenClass):
         self.exp = 0
         self.health = stathandeling.max_health(1)
 
+        # a list of all the scales the player has
+        self.scales = ["C major"]
+
         # a dictionary mapping events (strings) to the number of times it has happened
         self.storyevents = {}
+        
         self._freeze()
 
     def lv(self):

@@ -21,7 +21,8 @@ class SettingsMenu(FrozenClass):
 
         self.workingcopy = variables.settings # a copy is created with the first edit
 
-        self.optionsbeforebindings = ["resolution", "volume"]
+        self.optionsbeforebindings = ["mode", "volume"]
+        self.windowmodes = ["fullscreen", "windowed"]
         self.optionsafterbindings = ["back"]
         
         self._freeze()
@@ -42,7 +43,7 @@ class SettingsMenu(FrozenClass):
                     title = getTextPic(keytype, variables.gettextsize(), variables.WHITE)
                     variables.screen.blit(title, (variables.getmenutextxoffset(), ypos))
                     # draw dot
-                    if i == self.option-self.scroll:
+                    if i == self.option-self.scroll and keytype != "mode":
                         self.drawdot(variables.getmenutextxoffset())
 
                     if keytype == "volume":
@@ -50,6 +51,20 @@ class SettingsMenu(FrozenClass):
                             xpos = variables.getmenutextxoffset() + variables.gettextsize()*x + title.get_width()
                             variables.screen.fill(variables.BLUE, (xpos + variables.gettextsize()/4, ypos + variables.gettextsize()/4,
                                                                    variables.gettextsize()*(3/4), variables.gettextsize()*(3/4)))
+                    elif keytype == "mode":
+                        xpos = variables.getmenutextxoffset()*2 + title.get_width()
+                        i = 0
+                        for t in self.windowmodes:
+                            if i == self.bindingoption:
+                                if options[self.option] == "mode":
+                                    self.drawdot(xpos, ypos)
+                            pic = getTextPic(t, variables.gettextsize(), variables.WHITE)
+                            variables.screen.blit(pic, (xpos, ypos))
+                            if self.workingcopy.windowmode == t:
+                                pygame.draw.rect(variables.screen, variables.BLUE, (xpos-2, ypos+2, pic.get_width()+4, pic.get_height()+2), 2)
+                            xpos += variables.getmenutextxoffset() + pic.get_width()
+                            i += 1
+                            
                 else:
                     if i == self.option-self.scroll:
                         self.drawline(keytype, ypos, selectedoption = self.bindingoption)
@@ -174,6 +189,8 @@ class SettingsMenu(FrozenClass):
             bindingslength = len(self.getcurrentoptionbindings()) + 2
             if bindingslength == 2:
                 bindingslength = 0
+            if optionslist[self.option] == "mode":
+                bindingslength = len(self.windowmodes)
             
             if variables.checkkey("up", key):
                 self.uptime = variables.settings.current_time
@@ -220,6 +237,8 @@ class SettingsMenu(FrozenClass):
                     self.initiatekeychange()
                 elif optionslist[self.option] == "back":
                     message = self.initiateconfirm()
+                elif optionslist[self.option] == "mode":
+                    self.changewindowmode()
                 elif self.bindingoption == 0:
                     self.deleteonebinding()
                 elif self.bindingoption == bindingslength-1:
@@ -280,6 +299,12 @@ class SettingsMenu(FrozenClass):
     def notconfirm(self):
         self.state = "main"
         self.clearkeys()
+
+    def changewindowmode(self):
+        newmode = self.windowmodes[self.bindingoption]
+        if not self.workingcopy.windowmode == newmode:
+            self.changingcopy()
+            self.workingcopy.windowmode = newmode
         
     def initiatekeychange(self):
         self.changingcopy()

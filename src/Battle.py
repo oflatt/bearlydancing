@@ -5,6 +5,7 @@ from Button import Button
 from Note import Note
 from play_sound import play_sound
 from play_sound import soundpackkeys
+from play_sound import scales
 from graphics import getpic, sscale, sscale_customfactor, getpicbyheight
 from FrozenClass import FrozenClass
 from pygame import Rect
@@ -17,7 +18,6 @@ class Battle(FrozenClass):
 
         self.current_beatmap = 0
         self.damage_multiplier = 1
-        self.drumcounter = 0
         self.beatmaps = []
 
         # copy the enemy first to avoid editing originals
@@ -27,25 +27,10 @@ class Battle(FrozenClass):
         
         # state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
-        specs = copy.deepcopy(variables.generic_specs)
-        specs["lv"] = self.enemy.lv
-        specs["rules"].extend(self.enemy.beatmaprules)
-        self.beatmaps = [randombeatmap.random_beatmap(specs)]
-        self.reset_time()
-        self.reset_enemy()
+        self.tutorialstate = None
         
         # if the enemy's level is 0 and there have been no battles, the tutorial is triggered
         self.tutorialp = self.enemy.lv - variables.settings.difficulty == 0 and classvar.player.totalbattles == 0
-        if self.tutorialp:
-            self.tutorialstate = "starting"
-            # if it is the tutorial, add two notes for the player to fail on, and change first note to a
-            b = self.beatmaps[0]
-            b.notes[0] = Note(0, b.notes[0].time, 3)
-            # first add ten to give space for the new notes
-            for note in b.notes:
-                note.time += 24
-            b.notes[0].time -= 12
-            b.notes = [Note(0, 1, 1), Note(1, 2, 1)] + b.notes
 
         # for attacking animation
         self.isplayernext = False  # if the player is currently being damaged
@@ -56,6 +41,7 @@ class Battle(FrozenClass):
 
         # animation time is used for all animations
         self.animationtime = 0
+        self.starttime = variables.settings.current_time
 
         # for win animation
         self.newexp = 0
@@ -71,10 +57,29 @@ class Battle(FrozenClass):
 
         self._freeze()
 
+    def setfirstbeatmap(self):
+        specs = copy.deepcopy(variables.generic_specs)
+        specs["lv"] = self.enemy.lv
+        specs["rules"].extend(self.enemy.beatmaprules)
+        self.beatmaps = [randombeatmap.random_beatmap(specs)]
+        self.beatmaps[0].scale = scales[classvar.player.scales[variables.settings.scaleindex]]
+        self.reset_time()
+        self.reset_enemy()
+
+        if self.tutorialp:
+            self.tutorialstate = "starting"
+            # if it is the tutorial, add two notes for the player to fail on, and change first note to a
+            b = self.beatmaps[0]
+            b.notes[0] = Note(0, b.notes[0].time, 3)
+            # first add ten to give space for the new notes
+            for note in b.notes:
+                note.time += 24
+            b.notes[0].time -= 12
+            b.notes = [Note(0, 1, 1), Note(1, 2, 1)] + b.notes
+
     def reset_time(self):
         self.starttime = variables.settings.current_time
         self.beatmaps[self.current_beatmap].reset(self.starttime, True)
-        self.drumcounter = 0
         
 
     def pause(self):
@@ -99,7 +104,6 @@ class Battle(FrozenClass):
             print("should only have one beatmap in the list!")
             self.current_beatmap += 1
         self.beatmaps[self.current_beatmap].reset(self.starttime, False)
-        self.drumcounter = 0
         self.reset_enemy()
 
     def reset_enemy(self):
@@ -113,7 +117,7 @@ class Battle(FrozenClass):
         b = h * 13 / 16
         p = classvar.player
         # background
-        pygame.draw.rect(variables.screen, variables.BLACK, [0, 0, w, h])
+        variables.screen.fill(variables.BLACK)
 
         # draw enemy first
         epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
@@ -174,10 +178,9 @@ class Battle(FrozenClass):
 
             # exp bar
             percentofbar = stathandeling.percentoflevel(p.exp)
-            pygame.draw.rect(variables.screen, variables.BLUE, [0,
-                                                                h / 2,
-                                                                w * percentofbar,
-                                                                h / 18])
+            barrect = Rect(0, h/2, w*percentofbar, h/18)
+            variables.screen.fill(variables.BLUE, barrect)
+            variables.dirtyrects.append(barrect)
 
             # level up text
             if self.state == "got exp" and stathandeling.explv(self.oldexp) < stathandeling.explv(self.newexp):
@@ -197,15 +200,13 @@ class Battle(FrozenClass):
         healthbarcolor = variables.GREEN
         if p.health != playermaxh:
             percenthealthleft = p.health / playermaxh
-            pygame.draw.rect(variables.screen, healthbarcolor, [w - epicw,
-                                                                epich,
-                                                                epicw * (1 - percenthealthleft),
-                                                                enemyhealthh])
+            barrect = Rect(w - epicw, epich, epicw * (1 - percenthealthleft),enemyhealthh)
+            variables.screen.fill(healthbarcolor, barrect)
+            variables.dirtyrects.append(barrect)
         if not percenthealthlefte == 1:
-            pygame.draw.rect(variables.screen, healthbarcolor, [0,
-                                                                h - healthh,
-                                                                w * (1 - percenthealthlefte),
-                                                                healthh])
+            barrect = Rect(0, h-healthh, w*(1-percenthealthlefte), healthh)
+            variables.screen.fill(healthbarcolor, barrect)
+            variables.dirtyrects.append(barrect)
         # if they did not miss any in the last beatmap
         if (self.damage_multiplier > variables.perfect_value and self.state == "attacking"):
             punscaled = variables.font.render("PERFECT!", 0, variables.WHITE)
@@ -215,8 +216,9 @@ class Battle(FrozenClass):
 
     # for things like the attack animation
     def ontick(self):
-        currentb = self.beatmaps[self.current_beatmap]
+        currentb = None
         if self.state == "dance":
+            currentb = self.beatmaps[self.current_beatmap]
             currentb.ontick()
         
         dt = variables.settings.current_time - self.animationtime
@@ -319,13 +321,6 @@ class Battle(FrozenClass):
                 self.trade(currentb.scores)
                 currentb.reset_buttons()
 
-        # drum sounds
-        # now dt is based on starttime
-        notetime = currentb.notetime() + variables.settings.notes_per_screen
-        # play a drum sound if it is on the beat
-        if (notetime >= self.drumcounter):
-            self.drumcounter += 1
-            play_sound("drum kick heavy")
 
     def lose(self):
         # go home
@@ -370,8 +365,7 @@ class Battle(FrozenClass):
             if variables.checkkey("enter", key):
                 if self.battlechoice.current_option == 0:
                     self.state = "dance"
-                    self.beatmaps[self.current_beatmap].reset(self.starttime, True)
-                    self.drumcounter = 0
+                    self.setfirstbeatmap()
                     # clear screen
                     variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
                 elif self.battlechoice.current_option == 1:

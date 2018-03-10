@@ -3,6 +3,7 @@ from pygame import Rect
 from Settings import Settings
 from Properties import Properties
 
+
 testsmallp = False
 devmode = True
 newworldeachloadq = False

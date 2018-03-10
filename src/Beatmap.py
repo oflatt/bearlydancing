@@ -1,5 +1,5 @@
 import graphics, pygame, variables, copy
-from play_sound import stop_tone, play_tone, update_tone
+from play_sound import stop_tone, play_tone, update_tone, play_sound
 from pygame import Rect
 
 padxspace = variables.width / 12
@@ -30,6 +30,8 @@ class Beatmap():
         self.feedback = []
         self.setfeedbacktocontrols()
 
+        self.drumcounter = 0
+
     def setfeedbacktocontrols(self):
         self.feedback = []
         for x in range(8):
@@ -55,6 +57,7 @@ class Beatmap():
         self.showkeys()
         if not beginningq:
             self.notes = copy.deepcopy(self.originalnotes)
+        self.drumcounter = 0
 
     def draw(self):
         w = variables.width / 20
@@ -356,6 +359,14 @@ class Beatmap():
         for k in self.held_keys:
             if not k == None:
                 update_tone(k)
+
+        # handle the drum machine
+        # now dt is based on starttime
+        notetime = self.notetime() + variables.settings.notes_per_screen
+        # play a drum sound if it is on the beat
+        if (notetime >= self.drumcounter):
+            self.drumcounter += 1
+            play_sound("drum kick heavy")
 
     def reset_buttons(self):
         for x in range(8):

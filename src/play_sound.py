@@ -14,6 +14,8 @@ all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 25),
 # all possible soundpacks
 soundpackkeys = ["sine", 'square', 'triangle', 'triangleh', 'sawtooth', 'sawtoothh']
 
+scales = {"C major" : [2, 2, 1, 2, 2, 2, 1]}  # list of offsets for the scale
+
 Drum_kick_heavy = pygame.mixer.Sound("drum_heavy_kick.wav")
 
 channels = []
