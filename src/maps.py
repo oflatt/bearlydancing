@@ -289,8 +289,8 @@ def change_map(name, newx, newy):
     oldplayerx = classvar.player.oldxpos
     oldplayery = classvar.player.oldypos
     
-    current_map.lastx = oldplayerx
-    current_map.lasty = oldplayery
+    current_map.lastx = classvar.player.xpos
+    current_map.lasty = classvar.player.ypos
 
     xpos = newx
     ypos = newy
@@ -340,6 +340,8 @@ def change_map(name, newx, newy):
     new_scale_offset()
 
     if classvar.player.collisioncheck(classvar.player.xpos, classvar.player.ypos):
+        print(classvar.player.xpos)
+        print(classvar.player.ypos)
         change_map_nonteleporting(oldmapname)
         classvar.player.soft_change_of_state()
         new_scale_offset()
