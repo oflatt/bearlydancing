@@ -275,7 +275,7 @@ class SettingsMenu(FrozenClass):
                 elif self.confirmoption == 0:
                     # put the working copy into effect
                     self.exitsettingsmenu()
-                    variables.settings = self.workingcopy
+                    self.implementnewsettings()
                     message = "confirmed new settings"
 
             return message
@@ -291,6 +291,12 @@ class SettingsMenu(FrozenClass):
             self.state = "confirm"
             self.clearkeys()
             return None
+
+    def implementnewsettings(self):
+        newwindowmode = self.workingcopy.windowmode
+        if self.workingcopy.windowmode != variables.settings.windowmode:
+            variables.setscreen(newwindowmode)
+        variables.settings = self.workingcopy
 
     def exitsettingsmenu(self):
         self.state = "main"

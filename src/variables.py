@@ -3,6 +3,7 @@ from pygame import Rect
 from Settings import Settings
 from Properties import Properties
 
+os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 
 testsmallp = False
 devmode = True
@@ -35,6 +36,7 @@ if exportmode:
 pygame.mixer.pre_init(22050, -16, 2, 128)
 pygame.mixer.init()
 pygame.init()
+pygame.display.set_caption('Bearly Dancing')
 pygame.mixer.set_num_channels(46)
 
 if os.name == 'nt':
@@ -51,9 +53,26 @@ if testsmallp:
     height = int(height/2)
     width = int(width/2)
     
+settingspath = "save0/bdsettings.txt"
+settings = Settings()
+if (os.path.isfile(os.path.abspath(settingspath))):
+        if os.path.getsize(os.path.abspath(settingspath)) > 0:
+            with open(save0path, "rb") as f:
+                settings = pickle.load(f)
 
-flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
-screen = pygame.display.set_mode(mode, flags)
+
+screen = None
+def setscreen(windowmode):
+    global screen
+    if windowmode == "windowed":
+        flags = pygame.NOFRAME | pygame.DOUBLEBUF
+        screen = pygame.display.set_mode((width, height), flags)
+    if windowmode == "fullscreen":
+        flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
+        screen = pygame.display.set_mode((width, height), flags)
+
+setscreen(settings.windowmode)
+
 olddirtyrects = []
 dirtyrects = []
 #screen = pygame.Surface([height, width])
@@ -170,7 +189,6 @@ accelpixelpermillisecond *= floatinessagainstreality
 encounter_check_rate = 100 # rate of check in milliseconds
 encounter_chance = 0.002 # chance per check
 
-settings = Settings()
 properties = Properties()
 properties_filename = "properties.txt"
 
