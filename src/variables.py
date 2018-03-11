@@ -57,11 +57,11 @@ if testsmallp:
     height = int(height/2)
     width = int(width/2)
     
-settingspath = "save0/bdsettings.txt"
+settingspath = "/save0/bdsettings.txt"
 settings = Settings()
 if (os.path.isfile(os.path.abspath(settingspath))):
         if os.path.getsize(os.path.abspath(settingspath)) > 0:
-            with open(save0path, "rb") as f:
+            with open(settingspath, "rb") as f:
                 settings = pickle.load(f)
 
 

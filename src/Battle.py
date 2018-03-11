@@ -6,7 +6,7 @@ from Note import Note
 from play_sound import play_sound
 from play_sound import soundpackkeys
 from play_sound import scales
-from graphics import getpic, sscale, sscale_customfactor, getpicbyheight
+from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR
 from FrozenClass import FrozenClass
 from pygame import Rect
 
@@ -55,6 +55,9 @@ class Battle(FrozenClass):
         self.pausetime = 0
         self.enemy.sethealth()
 
+        self.playerframe = 0
+        self.playercurrentanim = 0
+
         self._freeze()
 
     def setfirstbeatmap(self):
@@ -64,7 +67,7 @@ class Battle(FrozenClass):
         self.beatmaps = [randombeatmap.random_beatmap(specs)]
         self.beatmaps[0].scale = scales[classvar.player.scales[variables.settings.scaleindex]]
         self.reset_time()
-        self.reset_enemy() 
+        self.reset_enemy()
 
         if self.tutorialp:
             self.tutorialstate = "starting"
@@ -111,6 +114,9 @@ class Battle(FrozenClass):
         self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
         self.enemy.animation.beginning_time = self.starttime
 
+    def currentplayerframename(self):
+        return "honeydance" + str(self.playercurrentanim) + "-" + str(self.playerframe)
+
     def draw(self):
         h = variables.height
         w = variables.width
@@ -120,11 +126,17 @@ class Battle(FrozenClass):
         variables.screen.fill(variables.BLACK)
 
         # draw enemy first
+        if self.state != "dance":
+            self.enemy.animation.reset() # if not dancing, use first frame
         epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
+
+        if self.state != "dance":
+            playerpic = getpicbyheight("honeydance0-0", variables.height/4)
+        else:
+            playerpic = getpicbyheight(self.currentplayerframename(), variables.height/4)
         
         variables.screen.blit(epic, [w - epic.get_width(), 0])
-        # always update screen for enemy
-        variables.dirtyrects.append(Rect(w-epic.get_width(), 0, epic.get_width(), epic.get_height()))
+        variables.screen.blit(playerpic, [w-playerpic.get_width(), h-playerpic.get_height()])
 
         # draw beatmap
         if self.state == "dance":
@@ -214,12 +226,43 @@ class Battle(FrozenClass):
             variables.screen.blit(ptext, [(variables.width / 2) - (ptext.get_width() / 2) - epicw,
                                           variables.getpadypos() - ptext.get_height() - 10])
 
+    def drumbeat(self):
+        # update screen for enemy, player
+        epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
+        variables.dirtyrects.append(Rect(variables.width-epic.get_width(), 0, epic.get_width(), epic.get_height()))
+        playerpic = getpicbyheight("honeydance0-0", variables.height/4)
+        variables.dirtyrects.append(Rect(variables.width-playerpic.get_width(), variables.height-playerpic.get_height(), playerpic.get_width(), playerpic.get_height()))
+
+        # change player pic
+        self.nextplayerpic()
+
+    def nextplayerpic(self):
+        self.playerframe += 1
+        
+        newname = self.currentplayerframename()
+        # if this frame does not exist pick a new dance animation
+        if not newname in GR:
+            self.newplayeranimation()
+
+    def newplayeranimation(self):
+        self.playerframe = 0
+        maxanimnumber = classvar.player.lv() - variables.settings.difficulty
+        self.playercurrentanim = random.randint(0, maxanimnumber)
+        # if this number is too large because an animation for that level does not exist, pick a new one lower than it
+        while not self.currentplayerframename() in GR:
+            maxanimnumber = self.playercurrentanim-1
+            self.playercurrentanim = random.randint(0, maxanimnumber)
+        
+
     # for things like the attack animation
     def ontick(self):
         currentb = None
         if self.state == "dance":
             currentb = self.beatmaps[self.current_beatmap]
+            olddrum = currentb.drumcounter
             currentb.ontick()
+            if currentb.drumcounter > olddrum:
+                self.drumbeat()
         
         dt = variables.settings.current_time - self.animationtime
 
