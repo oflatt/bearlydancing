@@ -250,6 +250,12 @@ def addlayer(notelist, time, specs, valuestouse = []):
         return (l, max(notedurations))
 
 def random_beatmap(specs):
+    if variables.devmode:
+        print()
+        print('output of:')
+        print("   " + str(specs['rules']))
+        print()
+    
     variation_of_notes([])
     l = []
     lv = specs['lv']
@@ -299,8 +305,6 @@ def random_beatmap(specs):
     l = shorten_doubles(l)
 
     if variables.devmode:
-        print('output of:')
-        print(specs['rules'])
         printnotelist(l)
 
     # then perform checks

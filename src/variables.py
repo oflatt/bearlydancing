@@ -2,6 +2,7 @@ import pygame, os, pickle
 from pygame import Rect
 from Settings import Settings
 from Properties import Properties
+from os import platform
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 
@@ -39,9 +40,12 @@ pygame.init()
 pygame.display.set_caption('Bearly Dancing')
 pygame.mixer.set_num_channels(46)
 
-if os.name == 'nt':
+if platform == 'win32':
     import ctypes
     ctypes.windll.user32.SetProcessDPIAware()
+elif platform == 'darwin':
+    import AppKit
+    AppKit.NSMenu.setMenuBarVisible_(False)
     
 modes = pygame.display.list_modes()
 mode = modes[0]#(ctypes.windll.user32.GetSystemMetrics(0),ctypes.windll.user32.GetSystemMetrics(1))

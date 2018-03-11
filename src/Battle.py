@@ -64,7 +64,7 @@ class Battle(FrozenClass):
         self.beatmaps = [randombeatmap.random_beatmap(specs)]
         self.beatmaps[0].scale = scales[classvar.player.scales[variables.settings.scaleindex]]
         self.reset_time()
-        self.reset_enemy()
+        self.reset_enemy() 
 
         if self.tutorialp:
             self.tutorialstate = "starting"

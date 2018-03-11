@@ -1,6 +1,8 @@
 Bearly Dancing To-Do List
 
 gameplay
+-no command tab mac fullscreen bug
+-max six notes held down bug
 -expand the map- forest boss
 -auto-save
 -map objects and loading more safely, versioning, safely load with new content
