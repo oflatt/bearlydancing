@@ -378,6 +378,7 @@ class Battle(FrozenClass):
     def win(self):
         classvar.player.addstoryevents(self.enemy.storyeventsonwin)
         classvar.player.totalbattles += 1
+        variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
         variables.settings.state = "world"  # finally exit Battle
 
     def flee(self):
