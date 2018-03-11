@@ -2,7 +2,7 @@ import pygame, os, pickle
 from pygame import Rect
 from Settings import Settings
 from Properties import Properties
-from os import platform
+from sys import platform
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 
