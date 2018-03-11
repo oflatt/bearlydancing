@@ -512,7 +512,7 @@ def random_duration(time, notelist, specs, isr):
         lv += 3
 
     def halfp():
-        offset = 0
+        offset = lv/200
         if 'shorternotes' in specs['rules']:
             offset = 0.15 
         return random.random() < 0.5+offset
@@ -529,14 +529,16 @@ def random_duration(time, notelist, specs, isr):
                     d = d/2
 
     # so that usually it is the inverse, short notes
-    if random.random()< (2/3) + min(2/9, lv/20):
+    if random.random() < (2/3) + min(2/9, lv/20):
+        print("inverse, short")
         d = 1 / d
 
     # additional chance at lower levels to be slow
     if (randint(0, 7) > lv):
         d = 2
 
-      # rests rule
+        
+    # rests rule
     if 'rests' in specs['rules'] and not specs['lv'] in [0,1]:
         # good chance to make it half as long
         if myrand(4) and d>0.25:

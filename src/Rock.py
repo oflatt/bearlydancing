@@ -174,6 +174,10 @@ class Rock(FrozenClass):
 
         # chimney-
         if self.name == "chimney" and self.animationnum>0:
+            # keep it not super out of the screen
+            if self.y > 1500:
+                self.y = 1400
+                self.oldy = 1400
             dt = variables.settings.current_time - self.changetime
             
             if self.animationnum == 1:

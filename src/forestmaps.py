@@ -132,6 +132,7 @@ randrock.name = "sheeprock"
 outside4.terrain.extend(make_rock_or_sheep_rocks())
 
 sheepconversation = conversations.sheepconversation
+sheepconversation.switchtheserocks = ["sheeprock"]
 sheepconversation.area = [randrock.x, randrock.y, randrock.w, randrock.h]
 sheepconversation.special_battle = copy.copy(enemies.sheep)
 sheepconversation.special_battle.lv = 3
@@ -223,7 +224,7 @@ conversations.tpboss1.storyevent = "tpboss1"
 conversations.tpboss1.eventrequirements = [EventRequirement("tpboss1", -1, 1)]
 conversations.tpboss1.isbutton = False
 
-animstarter = Conversation("animstarter", [], switchthisrock = ["tp"])
+animstarter = Conversation("animstarter", [], switchtheserocks = ["tp"])
 animstarter.storyevent = "tpboss1leaves"
 animstarter.area = [0,0,outside7width,outside7height]
 animstarter.isbutton = False

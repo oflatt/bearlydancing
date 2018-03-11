@@ -6,7 +6,7 @@ from FrozenClass import FrozenClass
 
 class Conversation(FrozenClass):
 
-    def __init__(self, name, speaks, speaksafter=None, switchthisrock=None):
+    def __init__(self, name, speaks, speaksafter=None, switchtheserocks=None):
         # this is the name of the conversation to identify it using currentconversation
         # they have to be unique
         self.name = name
@@ -39,10 +39,10 @@ class Conversation(FrozenClass):
             self.speaksafter = None
 
         # a string of a name of a rock to switch the animation of at the beginning of the conversation
-        if type(switchthisrock) == str:
-            self.switchthisrock = [switchthisrock]
+        if type(switchtheserocks) == str:
+            self.switchtheserocks = [switchtheserocks]
         else:
-            self.switchthisrock = switchthisrock
+            self.switchtheserocks = switchtheserocks
         # string of a name of a rock to unhide after the end of the conversation
         self.unhidethisrock = None
 

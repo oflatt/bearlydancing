@@ -40,7 +40,7 @@ honeyhome = Map("honeyhouseinside",
                  littleletter,
                  Rock(stashlist, p * 131, p * 55, [0, 0.9, 1, 0.1], name="stash")])
 
-outofbed = Conversation("outofbed",[], speaksafter = [[],[],[]], switchthisrock = "bed")
+outofbed = Conversation("outofbed",[], speaksafter = [[],[],[]], switchtheserocks = "bed")
 outofbed.storyevent = "bed"
 outofbed.area = [0, 0, b*20, b*20]
 outofbed.eventrequirements = [EventRequirement("bed", -1, len(bed.animations)-1)]
@@ -50,7 +50,7 @@ eatfromstash = Conversation("eatfromstash",
                             [],
                             speaksafter = [[],[],[],[],[],[],[],[],
                                            [conversations.hungryspeak]],
-                            switchthisrock="stash")
+                            switchtheserocks="stash")
 
 eatfromstashoffset = p*10
 eatfromstash.area = [p*131+eatfromstashoffset, p*61, GR["stash00"]["w"]-2*eatfromstashoffset, GR["stash00"]["h"]]
@@ -144,8 +144,8 @@ chimneyrock = Rock([Animation(["flyingchimney0"], 1),
                     enemies.chimneyanimation], houserock.x+ 136-25, houserock.y+ 64-43, None, "chimney")
 
 secretchimneyactivation = Conversation("secretchimneyactivation",[])
-secretchimneyactivation.area = [houserock.x + houserock.w/2 - 2, houserock.y + houserock.h/2 - 2, 4, houserock.h/10]
-secretchimneyactivation.switchthisrock = "chimney"
+secretchimneyactivation.area = [houserock.x + houserock.w/2 - 5, houserock.y + houserock.h/2 - 2, 4, houserock.h/10]
+secretchimneyactivation.switchtheserocks = ["chimney"]
 secretchimneyactivation.storyevent = "chimneyactivation"
 secretchimneyactivation.eventrequirements = [EventRequirement("chimneyactivation", -1, 1)]
 
@@ -279,6 +279,7 @@ def change_map_nonteleporting(name):
     current_map_name = name
     current_map = get_map(name)
     variables.dirtyrects = [Rect(0,0,variables.width, variables.height)]
+    new_scale_offset()
 
 # put player in correct place
 classvar.player.teleport(current_map.startpoint[0],
@@ -337,14 +338,10 @@ def change_map(name, newx, newy):
         classvar.player.change_of_state()
     else:
         classvar.player.soft_change_of_state()
-    new_scale_offset()
 
     if classvar.player.collisioncheck(classvar.player.xpos, classvar.player.ypos):
-        print(classvar.player.xpos)
-        print(classvar.player.ypos)
         change_map_nonteleporting(oldmapname)
         classvar.player.soft_change_of_state()
-        new_scale_offset()
         classvar.player.teleport(oldplayerx, oldplayery)
 
 
@@ -364,8 +361,8 @@ def engage_conversation(c):
     
     current = current_map.getconversation(c.name)
 
-    if current.switchthisrock != None:
-        for rockname in current.switchthisrock:
+    if current.switchtheserocks != None:
+        for rockname in current.switchtheserocks:
             current_map.changerock(rockname)
 
     if len(current.speaks) == 0:

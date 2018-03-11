@@ -79,8 +79,8 @@ sheepconversation = Conversation("sheepconversation",
                                                               "Whatever. Naturally, I suppose you are expecting a dance battle."]),
                                   Speak("honeyside0", ["Wait wha-"]),
                                   Speak("sheepstanding", ["Here we go!", "I'll show you my best moves!"])],
-                                 speaksafter = [Speak("sheepstanding", ["Let's go again! I'll show you my best moves!"])],
-                                 switchthisrock="sheeprock")
+                                 speaksafter = [Speak("sheepstanding", ["Let's go again! I'll show you my best moves!"])])
+                                 
 
 tutorialconversation1 = Conversation("tutorialconversation1",
                                      [Speak("honeyback3",

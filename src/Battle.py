@@ -370,7 +370,7 @@ class Battle(FrozenClass):
         classvar.player.addstoryevents(self.enemy.storyeventsonlose)
         classvar.player.heal()
         variables.settings.state = "world"
-        maps.change_map(maps.home_map_name, 0, 0)
+        maps.change_map_nonteleporting(maps.home_map_name)
         classvar.player.teleport(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
         classvar.player.timeslost += 1
         classvar.player.totalbattles += 1
