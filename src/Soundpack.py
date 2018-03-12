@@ -42,7 +42,8 @@ class Soundpack():
         wave = math.sin(2 * math.pi * f * t)
         harmonic1 = (1 / 4) * math.sin(4 * math.pi * f * t)
         harmonic2 = (1 / 8) * math.sin(8 * math.pi * f * t)
-        return (wave + harmonic1 + harmonic2)
+        s = wave + harmonic1 + harmonic2
+        return s
 
     def squaresval(self, t, frequency, squareness):
         sval = 0
@@ -111,12 +112,20 @@ class Soundpack():
 
             return int(round(max_sample * sval))
 
+        # find the maximum value to use to normalize it (make the max volume 1)
+        normalizevalue = 1
+        for s in range(int(round((1/frequency)*2*sample_rate))):
+            t = float(s)/sample_rate
+            sval = get_sval(t)
+            if sval/max_sample > normalizevalue:
+                normalizevalue = sval/max_sample
+
         for s in range(n_samples):
             t = float(s) / sample_rate  # time in seconds
             volume = self.volumelist[-1][1]
             if loopq == False:
                 volume = self.tone_volume(t * 1000)
-            sval = get_sval(t) * volume
+            sval = (get_sval(t) / normalizevalue) * volume 
             buf[s][0] = sval # left
             buf[s][1] = sval # right
 

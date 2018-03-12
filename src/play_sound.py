@@ -8,7 +8,7 @@ from Soundpack import Soundpack
 # value of 0 corresponds to A4, -12 is A3
 all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 25),
              "triangle": Soundpack("triangle", 2),
-             "triangleh": Soundpack("triangle", 30), "sawtooth": Soundpack("sawtooth", 2),
+             "triangleh": Soundpack("triangle", 30), "sawtooth": Soundpack("sawtooth", 4),
              "sawtoothh": Soundpack("sawtooth", 30)}
 
 # all possible soundpacks
