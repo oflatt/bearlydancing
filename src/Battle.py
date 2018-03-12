@@ -61,6 +61,7 @@ class Battle(FrozenClass):
         self._freeze()
 
     def setfirstbeatmap(self):
+        print("setfirstbeatmap")
         specs = copy.deepcopy(variables.generic_specs)
         specs["lv"] = self.enemy.lv
         specs["rules"].extend(self.enemy.beatmaprules)
@@ -111,7 +112,8 @@ class Battle(FrozenClass):
 
     def reset_enemy(self):
         self.enemy.reset()
-        self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
+        if len(self.beatmaps) > 0:
+            self.enemy.animation.framerate = self.beatmaps[self.current_beatmap].tempo
         self.enemy.animation.beginning_time = self.starttime
 
     def currentplayerframename(self):

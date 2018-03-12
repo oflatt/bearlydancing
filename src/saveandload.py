@@ -1,14 +1,11 @@
-import graphics, variables, pygame, enemies, pickle, classvar, maps, os, conversations
+import graphics, variables, pygame, enemies, classvar, maps, os, conversations
 from copy import deepcopy
 from Menu import Menu
 from Battle import Battle
 from enemies import greenie
+import dill as pickle
 
 def loadmaps(mapdict):
-    for key in mapdict:
-        m = mapdict[key]
-        m.set_map_scale_offset()
-    
     maps.set_new_maps(mapdict)
 
 

@@ -65,6 +65,10 @@ class Map(FrozenClass):
         else:
             self.map_scale_offset = 1
 
+    def clearrockfunctions(self):
+        for r in self.terrain:
+            r.clearfunctions()
+
     # puts a number of one kind of object into the map randomly
     # call with greyrocks before trees
     # if the randomly generated coordinates collide with anything, they are skipped

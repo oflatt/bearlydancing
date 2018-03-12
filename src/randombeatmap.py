@@ -520,17 +520,16 @@ def random_duration(time, notelist, specs, isr):
     d = 1
     if randint(0, 50) < (lv + 2) ** 2:
         if halfp():
-            d = d/2
+            d = d*2
         if (randint(0, 1000) < (lv + 2) ** 2):
             if halfp():
                 if (randint(1, 3) == 1):
                     d = 3
                 else:
-                    d = d/2
+                    d = d*2
 
     # so that usually it is the inverse, short notes
     if random.random() < (2/3) + min(2/9, lv/20):
-        print("inverse, short")
         d = 1 / d
 
     # additional chance at lower levels to be slow

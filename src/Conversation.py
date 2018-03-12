@@ -84,6 +84,7 @@ class Conversation(FrozenClass):
             variables.screen.blit(currentpic, [xpos, ypos])
             if self.updatescreenp:
                 self.updatescreen()
+                self.updatescreenp = False
 
 
     def updatescreen(self):
@@ -92,12 +93,12 @@ class Conversation(FrozenClass):
 
     #returns None or the name of a rock to change the animation of
     def keypress(self, key):
-        self.updatescreenp = True
         
         if not self.speaks[self.progress].releaseexit:
             self.keyevent(key)
 
     def keyevent(self, key):
+        self.updatescreenp = True
         if len(self.speaks) > 0:
             r = self.speaks[self.progress].keypress(key)
             if r == "done":

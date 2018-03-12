@@ -24,6 +24,7 @@ battle
 	-melodicvalue uses randomlast, maybe it should use the melody line instead, the front of each layer (chords added behind)
 	-better restp function, currently just a 1/9 chance of a rest
 -repeatbig, and aditional layer of repetition for a large phrase with variation
+-repeat alternating- a-b pattern
 -repeatwithvariation more sophisticated- switch notes, offset by a beat
 -triplet chord mode
 -octaves rule

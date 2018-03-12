@@ -157,7 +157,12 @@ class Rock(FrozenClass):
         if self.name == "kewlcorn":
             self.yposfunctions = [self.makegravityfunction(variables.settings.current_time, variables.TREEHEIGHT*(3/4)-self.h)]
 
-    # called for drawing the rock
+    def clearfunctions(self):
+        self.xposfunctions = []
+        self.yposfunctions = []
+
+    # called just before drawing the rock
+    # these functions must be safe so that the functions can be erased in saving
     def drawtick(self):
         if self.updatealways:
             self.updatescreenp = True
@@ -177,7 +182,7 @@ class Rock(FrozenClass):
             # keep it not super out of the screen
             if self.y > 1500:
                 self.y = 1400
-                self.oldy = 1400
+                self.lasty = 1400
             dt = variables.settings.current_time - self.changetime
             
             if self.animationnum == 1:
@@ -197,10 +202,11 @@ class Rock(FrozenClass):
 
                 # devide by 2 because only on downwards flapping
                 if ((dt /framerate) - 1) / 2 >= self.tickstate:
+                    self.tickstate = int((dt/framerate - 1) / 2) + 1
                     flapp = True
                     
                 # if we do a flap- don't do it if above the screen, so it can fall in
-                if flapp and self.y > -50:
+                if flapp and self.y > 0:
                     flapstarttime = variables.settings.current_time - variables.settings.current_time%framerate
                     flapheight= max(25, self.y-100)
                     timeoffsetforheight = math.sqrt(flapheight*2/variables.accelpixelpermillisecond)
@@ -210,7 +216,6 @@ class Rock(FrozenClass):
 
                     # set the pos for reference
                     self.lasty = self.y
-                    self.tickstate += 1
                     
         elif self.name == "tp" and self.animationnum>0 and self.y <= 1000:
             dt = variables.settings.current_time - self.changetime

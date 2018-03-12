@@ -140,9 +140,9 @@ letsflee = Conversation("letsflee",
                         [Speak("honeyback3",
                                ["We're just going to run?"]),
                          Speak("honeyback3",
-                               ["Fine, but you better stick around... who knows who will challenge me to a dance battle next."],
+                               ["Fine, let's go."],
                                "left"),
-                         Speak("meangreen0", ["Coward! I'd chase you but I'm stuck to this tree."], "right")])
+                         Speak("meangreen0", ["Coward! I'd chase you, but I'm stuck to this tree."], "right")])
 
 want2gospeak = Speak("meangreen0", ["Want to have a go?"], options = ["yes", "no"])
 want2go = Conversation("want2go",[want2gospeak])
