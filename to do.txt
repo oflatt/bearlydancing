@@ -9,6 +9,7 @@ gameplay
 -recieve synths from enemies
 -recieve waves from enemies
 -recieve scales from enemies
+-make menu messages display in any state
 
 sound
 -fix volume
