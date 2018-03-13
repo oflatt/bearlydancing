@@ -1,4 +1,4 @@
-#!/usr/bin/python
+ #!/usr/bin/python
 # Oliver Flatt works on Classes
 import variables, pygame, classvar, random, stathandeling, math, graphics
 from Battle import Battle

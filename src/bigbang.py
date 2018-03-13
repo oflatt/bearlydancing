@@ -165,6 +165,9 @@ while not done:
 
     if (variables.settings.menuonq):
         menu.draw()
+    # draw message regardless
+    if menu != None:
+        menu.drawmessage()
 
 
     # blit fps

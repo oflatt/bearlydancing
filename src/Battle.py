@@ -61,7 +61,6 @@ class Battle(FrozenClass):
         self._freeze()
 
     def setfirstbeatmap(self):
-        print("setfirstbeatmap")
         specs = copy.deepcopy(variables.generic_specs)
         specs["lv"] = self.enemy.lv
         specs["rules"].extend(self.enemy.beatmaprules)
