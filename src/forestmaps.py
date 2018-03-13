@@ -214,7 +214,7 @@ tp.updatealways = True
 
 
 outside7 = Map(graphics.grassland(outside7width, 600, rightpath=False), [tp])
-reservedarea = [Rect(tp.x, 0, outside7width-tp.x, outside7width)]
+reservedarea = [Rect(tp.x-10, 0, outside7width-tp.x, outside7width)]
 outside7.populate_with("greyrock", 6, reservedarea)
 outside7.populate_with("pinetree", 25, reservedarea)
 
@@ -225,6 +225,7 @@ outside7.exitareas = [Exit("left", False, "outside6", "right", "same")]
 conversations.tpboss1.area = [tp.x-40, 0, outside7width-(tp.x-40), outside7height]
 conversations.tpboss1.storyevent = "tpboss1"
 conversations.tpboss1.eventrequirements = [EventRequirement("tpboss1", -1, 1)]
+conversations.tpboss1.exitteleport = [tp.x-40-honeyw-4, "same"]
 conversations.tpboss1.isbutton = False
 
 animstarter = Conversation("animstarter", [], switchtheserocks = ["tp"])
@@ -233,7 +234,14 @@ animstarter.area = [0,0,outside7width,outside7height]
 animstarter.isbutton = False
 animstarter.eventrequirements = [EventRequirement("tpboss1"), EventRequirement("tpboss1leaves", -1, 1)]
 
-outside7.conversations = [conversations.tpboss1, animstarter]
+conversations.scarysteve.area = conversations.tpboss1.area.copy()
+conversations.scarysteve.area[0] += 40
+conversations.scarysteve.eventrequirements = [EventRequirement("tpboss1leaves")]
+conversations.scarysteve.isbutton = False
+conversations.scarysteve.exitteleport = conversations.tpboss1.exitteleport.copy()
+conversations.scarysteve.exitteleport[0] += 40
+
+outside7.conversations = [conversations.tpboss1, animstarter, conversations.scarysteve]
 
 # tutorialwin###################################################################################
 

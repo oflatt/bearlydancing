@@ -160,6 +160,8 @@ tpboss1 = Conversation("tpboss1", [Speak("honeyside0", ["...", "Tp, what are you
                                    Speak("tpwalksright0", ["I will... as soon as you get good.",
                                                            "In the mean time, beat my friend here."])])
 
+scarysteve = Conversation("scarysteve", [Speak("scarysteven0", ["Let's dance, bear."])])
+
 trophyspeak = Speak("trophy",
                     ["Congradulations!",
                      "This concludes the demo version of Bearly Dancing.",
