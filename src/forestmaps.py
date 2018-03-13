@@ -33,12 +33,15 @@ dontputrockslist = [dancelion.getrect(), jmyman.getrect()]
 jeremyhome.populate_with("greyrock", randint(0, 2), dontputrockslist)
 jeremyhome.populate_with("pinetree", randint(3, 8), dontputrockslist)
 
-jeremyhome.exitareas = [Exit("right", False, 'outside1', "left", "same")]
+jeremyhome.exitareas = [Exit("right", False, 'outside1', "left", "same"),
+                        Exit("left", False, 'tutorialwin', "right", "same")]
 conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"] - (honeyw / 2), GR["rabbithole"]["h"]]
 conversations.dancelionpass.area = [0, 0, b, b * 10]
 conversations.dancelionpass.isbutton = False
 conversations.dancelionpass.exitteleport = [b + honeyw / 4, "same"]
+conversations.dancelionpass.eventrequirements = [EventRequirement("beatsteve", -1, 1)]
+
 jeremyhome.conversations = [conversations.jeremy, conversations.dancelionpass]
 
 # outside2######################################################################################
@@ -231,3 +234,13 @@ animstarter.isbutton = False
 animstarter.eventrequirements = [EventRequirement("tpboss1"), EventRequirement("tpboss1leaves", -1, 1)]
 
 outside7.conversations = [conversations.tpboss1, animstarter]
+
+# tutorialwin###################################################################################
+
+trophy = Rock("trophy", 40, 70, [0,3/4, 1, 1/4])
+tutorialwin = Map(graphics.grassland(200, 200), [trophy])
+
+conversations.trophyc.area = [39, 69, GR["trophy"]["w"]+2, GR["trophy"]["h"]+2]
+
+tutorialwin.conversations = [conversations.trophyc]
+tutorialwin.exitareas = [Exit("right", False, "jeremyhome", "left", "same")]
