@@ -36,7 +36,6 @@ class Rock(FrozenClass):
         self.y = y
         self.w = GR[self.animations[0].pics[0]]["w"]
         self.h = GR[self.animations[0].pics[0]]["h"]
-        self.draw_scale = 1
 
         # used to keep track of if it was drawn for backgroundrange
         self.drawnp = False
@@ -84,6 +83,9 @@ class Rock(FrozenClass):
             self.animations[self.animationnum].reset()
             self.changetime = variables.settings.current_time
 
+        if self.name == "steve":
+            self.xposfunctions = [self.makelinearfunction(variables.settings.current_time, -30/1000, lowerlimit = -100)]
+
     def draw(self, offset = [0,0]):
         self.drawtick()
         drawx = self.x * variables.compscale + offset[0]
@@ -122,7 +124,7 @@ class Rock(FrozenClass):
     def makegravityfunction(self, starttime, upperlimit = None, lowerlimit = None):
         return self.makeexponentialfunction(starttime, variables.accelpixelpermillisecond, 0, upperlimit, lowerlimit)
 
-    def makelinearfunction(self, starttime, velocity, minimumheightwithgravity = None, limit = None, delay = None):
+    def makelinearfunction(self, starttime, velocity, minimumheightwithgravity = None, limit = None, delay = None, lowerlimit = None):
         if minimumheightwithgravity != None:
             velocity = -math.sqrt(2*variables.accelpixelpermillisecond*minimumheightwithgravity)
         def ffunction():
@@ -136,6 +138,9 @@ class Rock(FrozenClass):
             if limit != None:
                 if pos>limit:
                     pos = limit
+            if lowerlimit != None:
+                if pos<lowerlimit:
+                    pos = lowerlimit
             return pos
 
         return ffunction
@@ -166,14 +171,14 @@ class Rock(FrozenClass):
     def drawtick(self):
         if self.updatealways:
             self.updatescreenp = True
-        if self.name in ["kewlcorn", "chimney", "tp"]:
+        if self.name in ["kewlcorn", "chimney", "tp", "steve"]:
             self.y = self.lasty
             self.x = self.lastx
             for f in self.yposfunctions:
                 self.y += f()
             for f in self.xposfunctions:
                 self.x += f()
-
+            
             self.updatescreenp = True
 
 
@@ -222,12 +227,12 @@ class Rock(FrozenClass):
             framerate = self.animations[self.animationnum].framerate
             
             if int(((dt/framerate)+2)/len(self.animations[self.animationnum].pics))-1 >= self.tickstate:
-                jumpduration = framerate * 2.5
+                jumpduration = framerate * 3
                 jumpstarttime = variables.settings.current_time - variables.settings.current_time%framerate
-                jumpheight = 20
+                jumpheight = 22
                 timeoffsetforheight = math.sqrt(jumpheight*2/variables.accelpixelpermillisecond)
                 self.yposfunctions = [self.makeexponentialfunction(jumpstarttime+timeoffsetforheight, variables.accelpixelpermillisecond, -jumpheight, upperlimit = 0)]
-                xvel = 30/1000
+                xvel = 55/1000
                 self.xposfunctions = [self.makelinearfunction(jumpstarttime, xvel, limit = (xvel*jumpduration))]
                 self.lasty = self.y
                 self.lastx = self.x
