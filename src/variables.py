@@ -15,6 +15,8 @@ newworldnever = False
 dontloadmapsdict = True
 # only loads first couple of maps
 fasttestmodep = False
+# adds to player level when loading
+lvcheat = 0
 
 # if None it does nothing, if it is a dictionary for "specs" it goes directly into a battle with those specs
 testspecs = None #{'maxtime' : 20, 'lv' : 7, 'rules' : ["repeatvalues", "highrepeatchance", "cheapending"]}
@@ -32,6 +34,7 @@ if exportmode:
     dontloadmapsdict = False
     fasttestmodep = False
     testspecs = None
+    lvcheat = 0
 
 # Setup
 pygame.mixer.pre_init(22050, -16, 2, 128)
