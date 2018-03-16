@@ -49,7 +49,7 @@ class Battle(FrozenClass):
 
         # drawing buttons
         # extra space around dance to leave space for synth options
-        self.battlechoice = ChoiceButtons(["   DANCE!   ", "Flee", variables.settings.soundpack], 13 / 16)
+        self.battlechoice = ChoiceButtons(["   DANCE!   ", "Flee", variables.settings.soundpack, classvar.player.scales[variables.settings.scaleindex]], 13 / 16)
 
         # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
         self.pausetime = 0
@@ -87,7 +87,8 @@ class Battle(FrozenClass):
 
     def pause(self):
         self.pausetime = variables.settings.current_time
-        self.beatmaps[self.current_beatmap].pause()
+        if len(self.beatmaps) > 0:
+            self.beatmaps[self.current_beatmap].pause()
         self.beatmaps[self.current_beatmap].reset_buttons()
 
     def unpause(self):
@@ -98,6 +99,7 @@ class Battle(FrozenClass):
 
     def new_beatmaps(self):
         self.beatmaps = [randombeatmap.variation_of(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo)]
+        self.beatmaps[0].scale = scales[classvar.player.scales[variables.settings.scaleindex]]
 
     def next_beatmap(self):
         if self.current_beatmap + 1 == len(self.beatmaps):
@@ -393,7 +395,11 @@ class Battle(FrozenClass):
         def change_soundpack(offset):
             i = soundpackkeys.index(variables.settings.soundpack)
             variables.settings.soundpack = soundpackkeys[(i + offset) % len(soundpackkeys)]
-            self.battlechoice.buttons[-1].assign_text(variables.settings.soundpack)
+            self.battlechoice.buttons[-2].assign_text(variables.settings.soundpack)
+
+        def change_scale(offset):
+            variables.settings.scaleindex = (variables.settings.scaleindex + offset) % len(classvar.player.scales)
+            self.battlechoice.buttons[-1].assign_text(classvar.player.scales[variables.settings.scaleindex])
         
         if(variables.devmode):
             if(key == variables.devlosebattlekey):
@@ -417,6 +423,8 @@ class Battle(FrozenClass):
                     self.flee()
                 elif self.battlechoice.current_option == 2:
                     change_soundpack(1)
+                elif self.battlechoice.current_option == 3:
+                    change_scale(1)
             else:
                 if variables.checkkey("left", key):
                     self.battlechoice.previousoption()
@@ -426,6 +434,10 @@ class Battle(FrozenClass):
                     change_soundpack(-1)
                 elif variables.checkkey("down", key) and self.battlechoice.current_option == 2:
                     change_soundpack(1)
+                elif variables.checkkey("up", key) and self.battlechoice.current_option == 3:
+                    change_scale(-1)
+                elif variables.checkkey("down", key) and self.battlechoice.current_option == 3:
+                    change_scale(1)
 
         elif self.state == "lose" and variables.checkkey("enter", key):
             self.lose()
