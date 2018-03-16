@@ -12,7 +12,7 @@ newworldeachloadq = False
 # this overrides the generation of a new set of graphics for a new game
 newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
-dontloadmapsdict = True
+dontloadmapsdict = False
 # only loads first couple of maps
 fasttestmodep = False
 # adds to player level when loading

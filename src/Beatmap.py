@@ -364,7 +364,7 @@ class Beatmap():
         # now dt is based on starttime
         notetime = self.notetime() + variables.settings.notes_per_screen
         # play a drum sound if it is on the beat, drumcounter increases 4 times per beat
-        if (notetime*4 >= self.drumcounter):
+        if (notetime*4 >= self.drumcounter+1):
             self.drumcounter += 1
             if self.drumcounter % 4 == 0:
                 play_sound("drum kick heavy")
