@@ -49,7 +49,7 @@ class Battle(FrozenClass):
 
         # drawing buttons
         # extra space around dance to leave space for synth options
-        self.battlechoice = ChoiceButtons(["   DANCE!   ", "Flee", variables.settings.soundpack, classvar.player.scales[variables.settings.scaleindex]], 13 / 16)
+        self.battlechoice = ChoiceButtons(["   DANCE!   ", "Flee", variables.settings.soundpack, self.getscalename()], 13 / 16)
 
         # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
         self.pausetime = 0
@@ -60,12 +60,18 @@ class Battle(FrozenClass):
 
         self._freeze()
 
+    def getscalename(self):
+        if self.enemy.specialscale != None:
+            return self.enemy.specialscale
+        else:
+            return classvar.player.scales[variables.settings.scaleindex]
+
     def setfirstbeatmap(self):
         specs = copy.deepcopy(variables.generic_specs)
         specs["lv"] = self.enemy.lv
         specs["rules"].extend(self.enemy.beatmaprules)
         self.beatmaps = [randombeatmap.random_beatmap(specs)]
-        self.beatmaps[0].scale = scales[classvar.player.scales[variables.settings.scaleindex]]
+        self.beatmaps[0].scale = scales[self.getscalename()]
         self.reset_time()
         self.reset_enemy()
 
@@ -99,7 +105,7 @@ class Battle(FrozenClass):
 
     def new_beatmaps(self):
         self.beatmaps = [randombeatmap.variation_of(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo)]
-        self.beatmaps[0].scale = scales[classvar.player.scales[variables.settings.scaleindex]]
+        self.beatmaps[0].scale = scales[self.getscalename()]
 
     def next_beatmap(self):
         if self.current_beatmap + 1 == len(self.beatmaps):
@@ -399,7 +405,7 @@ class Battle(FrozenClass):
 
         def change_scale(offset):
             variables.settings.scaleindex = (variables.settings.scaleindex + offset) % len(classvar.player.scales)
-            self.battlechoice.buttons[-1].assign_text(classvar.player.scales[variables.settings.scaleindex])
+            self.battlechoice.buttons[-1].assign_text(self.getscalename())
         
         if(variables.devmode):
             if(key == variables.devlosebattlekey):

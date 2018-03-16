@@ -202,8 +202,8 @@ conversations.gotoforest.exitteleport = [b/2 + honeyw/4, "same"]
 conversations.gotoforest.eventrequirements = [EventRequirement("beat meanie", -1, 1)]
 
 conversations.want2go.area = [meangreenrock.x - 5, meangreenrock.y - 5, meangreenrock.w+10, meangreenrock.h+10]
-enemies.greenie.lv = 1
-conversations.want2gospeak.special_battle = enemies.greenie
+conversations.want2gospeak.special_battle = copy.copy(enemies.greenie)
+conversations.want2gospeak.special_battle.lv = 1
 conversations.want2go.eventrequirements = [EventRequirement("beat meanie")]
 
 outside1.conversations = [outside1c, conversations.gotoforest, goodc, conversations.want2go, secretchimneyactivation, chimneybattlec, conversations.letsflee, conversations.losetochimney,

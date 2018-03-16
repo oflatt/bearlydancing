@@ -239,12 +239,30 @@ animstarter.eventrequirements = [EventRequirement("tpboss1"), EventRequirement("
 
 conversations.scarysteve.area = conversations.tpboss1.area.copy()
 conversations.scarysteve.area[0] += 40
-conversations.scarysteve.eventrequirements = [EventRequirement("tpboss1leaves")]
+conversations.scarysteve.eventrequirements = [EventRequirement("tpboss1leaves"), EventRequirement("beatsteve", -1, 1)]
 conversations.scarysteve.isbutton = False
 conversations.scarysteve.exitteleport = conversations.tpboss1.exitteleport.copy()
 conversations.scarysteve.exitteleport[0] += 40
+conversations.scarysteve.special_battle = copy.copy(enemies.steve)
+conversations.scarysteve.special_battle.lv = 5
+conversations.scarysteve.special_battle.storyeventsonwin = ["beatsteve"]
 
-outside7.conversations = [conversations.tpboss1, animstarter, conversations.scarysteve]
+sagain = conversations.steveagain
+sagain.area = [steve.x-100-3, steve.y, steve.w+6, steve.h+10]
+sagain.special_battle = copy.copy(conversations.scarysteve.special_battle)
+sagain.eventrequirements = [EventRequirement("beatsteve")]
+
+# make the boss battle force C minor
+conversations.scarysteve.special_battle.specialscale = "C minor"
+
+slose = conversations.steveloses
+slose.area = [0,0,outside7width, outside7height]
+slose.isbutton = False
+slose.storyevent = "steveloseconversation"
+slose.eventrequirements = [EventRequirement("steveloseconversation", -1, 1), EventRequirement("beatsteve")]
+slose.reward = "C minor"
+
+outside7.conversations = [conversations.tpboss1, animstarter, conversations.scarysteve,slose, sagain]
 
 # tutorialwin###################################################################################
 

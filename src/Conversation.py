@@ -57,6 +57,9 @@ class Conversation(FrozenClass):
 
         self.exitteleport = ["same", "same"]
         self.updatescreenp = False
+
+        # this can be a scale to add to the list of player scales, gained at the end of the conversation
+        self.reward = None
         
         self._freeze()
 
@@ -97,7 +100,9 @@ class Conversation(FrozenClass):
         if not self.speaks[self.progress].releaseexit:
             self.keyevent(key)
 
+    # returns a message to display
     def keyevent(self, key):
+        message = None
         self.updatescreenp = True
         if len(self.speaks) > 0:
             r = self.speaks[self.progress].keypress(key)
@@ -110,7 +115,8 @@ class Conversation(FrozenClass):
                             classvar.battle.onrelease(key)
                         else:
                             classvar.battle.onkey(key)
-                    self.exit_conversation()
+                    message = self.exit_conversation()
+        return message
 
     def keyrelease(self, key):
         if self.speaks[self.progress].releaseexit:
@@ -135,6 +141,12 @@ class Conversation(FrozenClass):
             self.speaks = self.speaksafter[self.timesexited-1]
         if self.exitteleport != ["same", "same"]:
             classvar.player.teleport(self.exitteleport[0], self.exitteleport[1])
+
+        if self.reward != None:
+            classvar.player.addreward(self.reward)
+            return "Recieved " + self.reward
+        else:
+            return None
 
     def scale_by_offset(self, scale):
         s = scale

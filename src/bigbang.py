@@ -74,7 +74,8 @@ while not done:
                 
             if (not variables.settings.menuonq):
                 if variables.settings.state == "conversation":
-                    currentc.keyevent(event.key)
+                    message = currentc.keyevent(event.key)
+                    menu.setmessage(message)
                     # check if it was exited to unhide rocks
                     if variables.settings.state == "world":
                         maps.unhiderock(currentc.unhidethisrock)

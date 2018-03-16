@@ -17,6 +17,7 @@ class Enemy(FrozenClass):
         self.storyeventsonwin = None
         self.storyeventsonlose = None
         self.storyeventsonflee = None
+        self.specialscale = None
         
         self._freeze()
 

@@ -16,7 +16,8 @@ animations = [Animation(["sheep0", "sheep1", "sheep2", "sheep3"], defaultanimspe
               Animation(["croc0", "croc1"], defaultanimspeed),
               Animation(["kewlcorn0", "kewlcorn1", "kewlcorn2", "kewlcorn3"], defaultanimspeed),
               Animation(["bugo0","bugo1"], defaultanimspeed),
-              chimneyanimation]
+              chimneyanimation,
+              Animation(["scarysteven0", "scarysteven1", "scarysteven2", "scarysteven3"], defaultanimspeed)]
 
 # refer to randombeatmap for the definitions for beatmap rules
 # we use an animation number because the actual animation cannot be saved
@@ -38,6 +39,8 @@ counter += 1
 bugo = Enemy(counter, 1, "bugo", ["repeatvariation", "repeatmove", "highrepeatchance"])
 counter += 1
 chimney = Enemy(counter, 1, "chimney", ["repeatrhythm", "melodic", "highrepeatchance"])
+counter += 1
+steve = Enemy(counter, 1, "steve", ["norests", "nochords", "shorternotes", "melodic"])
 
 woodsenemies = [perp, spoe, croc, bugo]
 

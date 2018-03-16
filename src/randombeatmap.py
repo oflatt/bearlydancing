@@ -39,7 +39,7 @@ highrepeatchance- makes the initial chance for a repeat to start very high
 
 ruletypes = ['melodic', 'skippy', 'alternating', 'rests', 'repeat',
              'repeatmove', 'repeatvariation', 'repeatvalues', 'highrepeatchance',
-             'repeatrhythm', 'norests', 'nochords']
+             'repeatrhythm', 'norests', 'nochords', 'shorternotes']
 
 
 testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)])]

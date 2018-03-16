@@ -195,7 +195,7 @@ class Player(FrozenClass):
         #checks if the player collides with a rock
         def rockcollisioncheck(arock, x, y):
             rockmask = arock.get_mask()
-            if(rockmask.overlap(cmask, [int(x-arock.collidex), int(y-arock.collidey)]) == None):
+            if(rockmask.overlap(cmask, [int(x-arock.x), int(y-arock.y)]) == None):
                 return False
             else:
                 return True
@@ -319,3 +319,7 @@ class Player(FrozenClass):
             return self.storyevents[event]
         else:
             return 0
+
+    def addreward(self, reward):
+        if not reward in self.scales:
+            self.scales.append(reward)

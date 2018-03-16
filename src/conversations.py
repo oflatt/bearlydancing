@@ -161,6 +161,10 @@ tpboss1 = Conversation("tpboss1", [Speak("honeyside0", ["...", "Tp, what are you
                                                            "In the mean time, beat my friend here."])])
 
 scarysteve = Conversation("scarysteve", [Speak("scarysteven0", ["Let's dance, bear."])])
+steveloses = Conversation("steveloses", [Speak("scarysteven0", ["You win. Take this.",
+                                                                "By now, TP has danced his way to the cold forest."])])
+
+steveagain = Conversation("steveagain", [Speak("scarysteven0", ["Let's dance again."], options = ["yes", "no"])])
 
 trophyspeak = Speak("trophy",
                     ["Congradulations!",
@@ -172,15 +176,9 @@ trophyspeak = Speak("trophy",
                      "Finally, thanks to you the player.",
                      "Please give as much feedback as possible to: oflatt@gmail.com",
                      "In bug reports, please give the situation and any error message recieved.",
-                     "(spam action)",
-                     ".               ",
-                     " .              ",
-                     "  .             ",
-                     "   .            ",
-                     "    .           ",
-                     "     .          ",
-                     "      .         ",
-                     "       .        ",
+                     "(spam action)", ".               ", " .              ",
+                     "  .             ", "   .            ", "    .           ",
+                     "     .          ","      .         ", "       .        ",
                      "        .       ",
                      "         .      ",
                      "          .     ",

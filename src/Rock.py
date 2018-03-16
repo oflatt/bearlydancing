@@ -28,9 +28,6 @@ class Rock(FrozenClass):
         self.name = name
         self.loopanimationsp = False
 
-        self.collidex = x
-        self.collidey = y
-
         # these are used for movement animations
         self.x = x
         self.y = y
@@ -237,6 +234,13 @@ class Rock(FrozenClass):
                 self.lasty = self.y
                 self.lastx = self.x
                 self.tickstate += 1
+
+                # if since last tick it has been an entire jump, just dissapear
+                if dt>jumpduration*2:
+                    self.x = 1001
+                    self.lastx = 1001
+                    self.clearfunctions()
+                    
 
     # currently not used
     def ontick(self):
