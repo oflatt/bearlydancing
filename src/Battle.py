@@ -237,7 +237,7 @@ class Battle(FrozenClass):
 
     def partofbeatlist(self):
         pofbeatlist = [0]
-        if self.playercurrentanim == 3 or self.playercurrentanim == 2:
+        if self.playercurrentanim == 3 or self.playercurrentanim == 2 or self.playercurrentanim == 4:
             # double speed of animation 3 (spin)
             pofbeatlist.append(2)
         return pofbeatlist
