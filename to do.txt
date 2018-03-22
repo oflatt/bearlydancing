@@ -2,7 +2,6 @@ Bearly Dancing To-Do List
 
 gameplay
 -rad turtle
--expand the map- forest boss
 -auto-save
 -map objects and loading more safely, versioning, safely load with new content
 -ddr machine that you can play and dance against
@@ -10,10 +9,8 @@ gameplay
 -recieve synths from enemies
 -recieve waves from enemies
 -recieve scales from enemies
--make menu messages display in any state
 
 sound
--fix volume
 -add music
 -load own sounds using the bowl pianoputer as example
 -chimney wing sounds
