@@ -363,10 +363,11 @@ class Beatmap():
         # handle the drum machine
         # now dt is based on starttime
         notetime = self.notetime() + variables.settings.notes_per_screen
-        # play a drum sound if it is on the beat
-        if (notetime >= self.drumcounter):
+        # play a drum sound if it is on the beat, drumcounter increases 4 times per beat
+        if (notetime*4 >= self.drumcounter+1):
             self.drumcounter += 1
-            play_sound("drum kick heavy")
+            if self.drumcounter % 4 == 0:
+                play_sound("drum kick heavy")
 
     def reset_buttons(self):
         for x in range(8):

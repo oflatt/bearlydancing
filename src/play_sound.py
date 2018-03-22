@@ -23,6 +23,8 @@ channels = []
 for x in range(37):
     channels.append(pygame.mixer.Channel(x))
 
+musicchannel = pygame.mixer.Channel(37)
+
 def play_tone(t):
     # add because values are centered on 0
     all_tones[variables.settings.soundpack].soundlist[t+12].set_volume(variables.settings.volume)
@@ -37,7 +39,7 @@ def update_tone(t):
 def play_sound(s):
     if s == "drum kick heavy":
         Drum_kick_heavy.set_volume(variables.settings.volume)
-        Drum_kick_heavy.play()
+        musicchannel.play(Drum_kick_heavy)
 
 def stop_tone(t):
     if not t == None:

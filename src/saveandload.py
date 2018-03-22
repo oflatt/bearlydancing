@@ -4,6 +4,7 @@ from Menu import Menu
 from Battle import Battle
 from enemies import greenie
 import dill as pickle
+from stathandeling import explv, lvexp
 
 def loadmaps(mapdict):
     maps.set_new_maps(mapdict)
@@ -31,6 +32,8 @@ def load():
                 loadedlist = pickle.load(f)
 
                 mapsdict, conversations.currentconversation, classvar.player, classvar.battle, maps.current_map_name = loadedlist
+                if variables.lvcheat != 0:
+                    classvar.player.exp = lvexp(explv(classvar.player.exp)+variables.lvcheat)
                 if not variables.dontloadmapsdict:
                     loadmaps(mapsdict)
 

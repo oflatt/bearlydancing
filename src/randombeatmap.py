@@ -190,6 +190,15 @@ def repeatlengthfromspecs(specs):
     if 'repeatvalues' in specs['rules'] or 'repeatrhythm' in specs['rules']:
         return randint(2, 4+int(lv/3))
     else:
+        rlength = randint(3, 8)
+        if myrand(1):
+            rlength += randint(0, lv)
+        if rlength < 4:
+            if mrand(2):
+                rlength += 1
+        if rlength%2 == 1:
+            if myrand(1):
+                rlength += 1
         return randint(3, 7 + lv)
     
 # returns a tuple with a new list and the duration of the new note

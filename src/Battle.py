@@ -235,23 +235,33 @@ class Battle(FrozenClass):
             variables.screen.blit(ptext, [(variables.width / 2) - (ptext.get_width() / 2) - epicw,
                                           variables.getpadypos() - ptext.get_height() - 10])
 
-    def drumbeat(self):
-        # update screen for enemy, player
-        epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
-        variables.dirtyrects.append(Rect(variables.width-epic.get_width(), 0, epic.get_width(), epic.get_height()))
-        playerpic = getpicbyheight("honeydance0-0", variables.height/4)
-        variables.dirtyrects.append(Rect(variables.width-playerpic.get_width(), variables.height-playerpic.get_height(), playerpic.get_width(), playerpic.get_height()))
+    def partofbeatlist(self):
+        pofbeatlist = [0]
+        doublespeedlist = [2,3,4,5]
+        if self.playercurrentanim in doublespeedlist:
+            # double speed of animation 3 (spin)
+            pofbeatlist.append(2)
+        return pofbeatlist
+            
+    def drumbeat(self, partofbeat):
+        if partofbeat in self.partofbeatlist():
+            # update screen for enemy, player
+            epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
+            variables.dirtyrects.append(Rect(variables.width-epic.get_width(), 0, epic.get_width(), epic.get_height()))
+            playerpic = getpicbyheight("honeydance0-0", variables.height/4)
+            variables.dirtyrects.append(Rect(variables.width-playerpic.get_width(), variables.height-playerpic.get_height(), playerpic.get_width(), playerpic.get_height()))
 
         # change player pic
-        self.nextplayerpic()
+        self.nextplayerpic(partofbeat)
 
-    def nextplayerpic(self):
-        self.playerframe += 1
-        
-        newname = self.currentplayerframename()
-        # if this frame does not exist pick a new dance animation
-        if not newname in GR:
-            self.newplayeranimation()
+    def nextplayerpic(self, partofbeat):
+        if partofbeat in self.partofbeatlist():
+            self.playerframe += 1
+            
+            newname = self.currentplayerframename()
+            # if this frame does not exist pick a new dance animation
+            if not newname in GR:
+                self.newplayeranimation()
 
     def newplayeranimation(self):
         self.playerframe = 0
@@ -271,7 +281,7 @@ class Battle(FrozenClass):
             olddrum = currentb.drumcounter
             currentb.ontick()
             if currentb.drumcounter > olddrum:
-                self.drumbeat()
+                self.drumbeat(currentb.drumcounter%4)
         
         dt = variables.settings.current_time - self.animationtime
 
