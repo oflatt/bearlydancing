@@ -40,7 +40,7 @@ def load():
                 maps.change_map_nonteleporting(maps.current_map_name)
                 # don't start at beginning
                 m.firstbootup = False
-
+                
     if (not isinstance(classvar.battle, str)):
         classvar.battle.reset_enemy()
     

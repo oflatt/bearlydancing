@@ -42,7 +42,7 @@ class Player(FrozenClass):
         self.normal_width = GR[self.right_animation.pics[1]]["w"]
         self.normal_height = GR[self.right_animation.pics[1]]["h"]
         self.collidesection = (0, self.normal_height * (26/29), self.normal_width, self.normal_height/2)
-        self.exp = 0
+        self.exp = stathandeling.lvexp(1)
         self.health = stathandeling.max_health(1)
 
         # a list of all the scales the player has

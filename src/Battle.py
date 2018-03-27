@@ -192,10 +192,14 @@ class Battle(FrozenClass):
             # text
             text = variables.font.render("EXP", 0, variables.WHITE)
             textscaled = sscale(text)
-            variables.screen.blit(textscaled, [w / 2 - (textscaled.get_width() / 2), h / 3])
-            text = variables.font.render("Lv " + str(classvar.player.lv()), 0, variables.WHITE)
+            exppos = [w / 2 - (textscaled.get_width() / 2), h / 3]
+            variables.screen.blit(textscaled, exppos)
+            variables.dirtyrects.append(Rect(exppos[0], exppos[1], textscaled.get_width(), textscaled.get_height()))
+            text = variables.font.render("Lv " + str(classvar.player.lv()-variables.settings.difficulty), 0, variables.WHITE)
             textscaled = sscale(text)
-            variables.screen.blit(textscaled, [0, h / 3 - textscaled.get_height()])
+            lvpos = [0, h / 3 - textscaled.get_height()]
+            variables.screen.blit(textscaled, lvpos)
+            variables.dirtyrects.append(Rect(lvpos[0], lvpos[1], textscaled.get_width(), textscaled.get_height()))
 
             # exp bar
             percentofbar = stathandeling.percentoflevel(p.exp)
@@ -207,8 +211,10 @@ class Battle(FrozenClass):
             if self.state == "got exp" and stathandeling.explv(self.oldexp) < stathandeling.explv(self.newexp):
                 text = variables.font.render(variables.settings.bearname + "'s dance level increased.", 0, variables.GREEN)
                 textscaled = sscale(text)
+                coordinates = [w / 2 - (textscaled.get_width() / 2), h / 3 - textscaled.get_height()]
                 variables.screen.blit(textscaled,
-                                      [w / 2 - (textscaled.get_width() / 2), h / 3 - textscaled.get_height()])
+                                      coordinates)
+                variables.dirtyrects.append(Rect(coordinates[0], coordinates[1], textscaled.get_width(), textscaled.get_height()))
 
         # player health bar
         playermaxh = stathandeling.max_health(p.lv())
@@ -232,8 +238,10 @@ class Battle(FrozenClass):
         if (self.damage_multiplier > variables.perfect_value and self.state == "attacking"):
             punscaled = variables.font.render("PERFECT!", 0, variables.WHITE)
             ptext = sscale_customfactor(punscaled, 1.5)
-            variables.screen.blit(ptext, [(variables.width / 2) - (ptext.get_width() / 2) - epicw,
-                                          variables.getpadypos() - ptext.get_height() - 10])
+            coordinates = [(variables.width / 2) - (ptext.get_width() / 2) - epicw, variables.getpadypos() - ptext.get_height() - 10]
+            variables.screen.blit(ptext, coordinates)
+            variables.dirtyrects.append(Rect(coordinates[0], coordinates[1], ptext.get_width(), ptext.get_height()))
+            
 
     def partofbeatlist(self):
         pofbeatlist = [0]

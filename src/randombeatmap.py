@@ -194,7 +194,7 @@ def repeatlengthfromspecs(specs):
         if myrand(1):
             rlength += randint(0, lv)
         if rlength < 4:
-            if mrand(2):
+            if myrand(2):
                 rlength += 1
         if rlength%2 == 1:
             if myrand(1):
