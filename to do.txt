@@ -1,7 +1,6 @@
 Bearly Dancing To-Do List
 
 gameplay
--bug with tutorial conversation and screen refresh
 -rad turtle
 -auto-save
 -map objects and loading more safely, versioning, safely load with new content

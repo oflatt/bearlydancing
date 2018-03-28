@@ -259,7 +259,8 @@ class Menu():
                     variables.settings.bearname = self.namestring
                 else:
                     variables.settings.difficulty = self.tempdifficulty
-                    classvar.player.exp = stathandeling.lvexp(self.tempdifficulty + classvar.player.lv())
+                    classvar.player.exp = stathandeling.lvexp(self.tempdifficulty + 1)
+                    
 
                     
                 self.namestring = ""
