@@ -88,10 +88,11 @@ class Conversation(FrozenClass):
             if self.updatescreenp:
                 self.updatescreen()
                 self.updatescreenp = False
+        
 
 
     def updatescreen(self):
-        if not len(self.speaks) == 0:
+        if len(self.speaks) > 0:
             variables.dirtyrects = [Rect(0,0, variables.width, variables.height)]
 
     #returns None or the name of a rock to change the animation of

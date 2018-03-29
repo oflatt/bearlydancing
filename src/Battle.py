@@ -95,7 +95,7 @@ class Battle(FrozenClass):
         self.pausetime = variables.settings.current_time
         if len(self.beatmaps) > 0:
             self.beatmaps[self.current_beatmap].pause()
-        self.beatmaps[self.current_beatmap].reset_buttons()
+            self.beatmaps[self.current_beatmap].reset_buttons()
 
     def unpause(self):
         self.starttime += variables.settings.current_time - self.pausetime

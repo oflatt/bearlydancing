@@ -346,7 +346,6 @@ def change_map(name, newx, newy):
 
 
 def engage_conversation(c):
-    c.updatescreenp = True
     
     classvar.player.change_of_state()
     classvar.player.addstoryevent(c.storyevent)
@@ -360,6 +359,7 @@ def engage_conversation(c):
     conversations.currentconversation = c.name
     
     current = current_map.getconversation(c.name)
+    current.updatescreenp = True
 
     if current.switchtheserocks != None:
         for rockname in current.switchtheserocks:

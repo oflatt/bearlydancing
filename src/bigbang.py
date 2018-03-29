@@ -188,9 +188,14 @@ while not done:
     def updatescreen():
         pygame.display.update(variables.dirtyrects + variables.olddirtyrects + [Rect(10,variables.font.get_linesize(), variables.font.get_linesize()*6, variables.font.get_linesize()*6)])
         
-    if len(variables.dirtyrects) > 0 and len(variables.olddirtyrects)>0:
-        if variables.dirtyrects[0] == Rect(0,0,variables.width,variables.height) or variables.dirtyrects == Rect(0,0,variables.width,variables.height):
-            pygame.display.flip()
+    if len(variables.dirtyrects) > 0:
+        if variables.dirtyrects[0] == Rect(0,0,variables.width,variables.height):
+            pygame.display.update(Rect(0,0,variables.width, variables.height))
+        else:
+            updatescreen()
+    elif len(variables.olddirtyrects) > 0:
+        if variables.olddirtyrects[0] == Rect(0,0,variables.width,variables.height):
+            pygame.display.update(Rect(0,0,variables.width, variables.height))
         else:
             updatescreen()
     else:

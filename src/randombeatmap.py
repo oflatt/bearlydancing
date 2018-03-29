@@ -32,6 +32,8 @@ repeatvalues- like repeat, but uses only the values from last few notes and comp
 
 ----- modifiers ---------------
 highrepeatchance- makes the initial chance for a repeat to start very high
+repeatonlybeginning- makes notestoadd in repetition only take from the start of the list
+repeatspaceinbetween- makes it extremely likely to repeat every other repeatlength, so that you get a repetition with normally generated notes in between
 
 ----- defaults ----------------
 -If no ending specified, it throws in a tonic at the end
@@ -39,7 +41,8 @@ highrepeatchance- makes the initial chance for a repeat to start very high
 
 ruletypes = ['melodic', 'skippy', 'alternating', 'rests', 'repeat',
              'repeatmove', 'repeatvariation', 'repeatvalues', 'highrepeatchance',
-             'repeatrhythm', 'norests', 'nochords', 'shorternotes']
+             'repeatrhythm', 'norests', 'nochords', 'shorternotes', 'repeatonlybeginning',
+             'repeatspaceinbetween']
 
 
 testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
@@ -135,8 +138,12 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
     l = listofnotes.copy()
 
     # get the last repeatlength notes to add on again
-    notestoadd = l[-repeatlength:len(l)]
+    if not 'repeatonlybeginning' in specs['rules']:
+        notestoadd = l[-repeatlength:len(l)]
+    else:
+        notestoadd = l[0:repeatlength]
     notestoadd = copy.deepcopy(notestoadd)
+        
     
     # with certain rules we want to call variation of notes on the list
     if 'repeatvariation' in specs['rules']:
@@ -183,6 +190,22 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
         print(str(iterations+1) + " times")
         return {'time': newtime, 'list': l}
 
+
+# returns if there should be a repetition
+def repeatp(notelist, repeatlength, specs):
+    l = notelist
+    if 'repeatspaceinbetween' in specs['rules']:
+        # if on the every other one, the even dividing by repeatlength, very high chance
+        if((len(notelist)/repeatlength) % 2 < 1):
+            repeatp = randint(-2, len(l)%repeatlength) == 0
+        else:
+            repeatp = randint(-5, len(l)%repeatlength) == 0
+    elif 'highrepeatchance' in specs['rules']:
+        repeatp = randint(-1, len(l)%repeatlength) == 0
+    else:
+        repeatp = randint(-2, len(l) % repeatlength) == 0
+
+    return repeatp
 
 def repeatlengthfromspecs(specs):
     lv = specs['lv']
@@ -284,12 +307,8 @@ def random_beatmap(specs):
     while time < maxtime:
         addlayerp = False
         if repeatmodep:
-            if 'highrepeatchance' in specs['rules']:
-                repeatp = randint(-1, len(l)%repeatlength) == 0
-            else:
-                repeatp = randint(-2, len(l) % repeatlength) == 0
             # chance to do a repetition
-            if repeatp and len(l) >= repeatlength:
+            if repeatp(l, repeatlength, specs) and len(l) >= repeatlength:
                 # add on the last repeatlength notes again, varied
                 r = repetition(time, randint(-4, 4), l, repeatlength, specs, maxtime)
                 l = r['list']
