@@ -17,7 +17,8 @@ animations = [Animation(["sheep0", "sheep1", "sheep2", "sheep3"], defaultanimspe
               Animation(["kewlcorn0", "kewlcorn1", "kewlcorn2", "kewlcorn3"], defaultanimspeed),
               Animation(["bugo0","bugo1"], defaultanimspeed),
               chimneyanimation,
-              Animation(["scarysteven0", "scarysteven1", "scarysteven2", "scarysteven3"], defaultanimspeed)]
+              Animation(["scarysteven0", "scarysteven1", "scarysteven2", "scarysteven3"], defaultanimspeed),
+              Animation(["radturtle0", "radturtle1"], defaultanimspeed)]
 
 # refer to randombeatmap for the definitions for beatmap rules
 # we use an animation number because the actual animation cannot be saved
@@ -36,13 +37,15 @@ croc = Enemy(counter, 1, "croc", ["melodic", "repeatmove"])
 counter += 1
 kewlcorn = Enemy(counter, 1, "kewlcorn", ["repeatvalues", "highrepeatchance"])
 counter += 1
-bugo = Enemy(counter, 1, "bugo", ["repeatvariation", "repeatmove", "highrepeatchance"])
+bugo = Enemy(counter, 1, "bogo", ["repeatvariation", "repeatmove", "highrepeatchance"])
 counter += 1
 chimney = Enemy(counter, 1, "chimney", ["repeatrhythm", "melodic", "highrepeatchance"])
 counter += 1
-steve = Enemy(counter, 1, "steve", ["norests", "nochords", "shorternotes", "melodic"])
+steve = Enemy(counter, 1, "scary steven", ["norests", "nochords", "shorternotes", "melodic", "repeatspaceinbetween", "repeatonlybeginning", "nodoublerepeats"])
+counter += 1
+radturtle = Enemy(counter, 1, "rad turtle", ["repeatmove", "repeatspaceinbetween", "nodoublerepeats"])
 
-woodsenemies = [perp, spoe, croc, bugo]
+woodsenemies = [perp, spoe, croc, bugo, radturtle]
 
 def random_enemy(area):
     if area == "woods":
