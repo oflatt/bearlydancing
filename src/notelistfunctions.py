@@ -55,8 +55,8 @@ def random_last(depth, l):
             x += 1
     return random.choice(possibles)
 
-#testl = [Note(5, 1, 2), Note(6, 2, 1), Note(6, 4, 1), Note(2, 5, 2), Note(3, 6, 4),
-#         Note(4, 7, 3), Note(4, 7, 3)]
+testl = [Note(5, 1, 2), Note(6, 2, 1), Note(6, 4, 1), Note(2, 5, 2), Note(3, 6, 4),
+         Note(4, 7, 3), Note(4, 7, 3)]
 
 # print(random_last(0, testl).value)
 # print(random_last(1, testl).value)
@@ -91,7 +91,10 @@ def getlastnlayers(notelist, n, startingpoint = 0):
 def getfirstnlayers(notelist, n, startingpoint = 0):
     l = notelist.copy()
     l.reverse()
-    return getlastnlayers(l, n, startingpoint)
+    newl = getlastnlayers(l, n, startingpoint)
+    newl.reverse()
+    return newl
+
 
 # q stands for question mark
 def outsiderangeq(value):

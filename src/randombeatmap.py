@@ -95,8 +95,9 @@ def newvaluesfornotes(listofnotes, specs):
 # startingtime is the time the main loop left off
 # maxtime is the (soft) limit on time to use
 def repetition(time, movelength, listofnotes, repeatlength, specs, maxtime):
-    print('repetition: time: ' + str(time) + ' repeatlength: ' +
-          str(repeatlength) + ' last note time: ' + str(listofnotes[-1].time))
+    if variables.devmode:
+        print('repetition: time: ' + str(time) + ' repeatlength: ' +
+              str(repeatlength) + ' last note time: ' + str(listofnotes[-1].time) + ' depth: ' + str(notedepth(listofnotes)))
     if 'repeatvalues' in specs['rules']:
         return repeatvaluesrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime)
     else:
@@ -141,7 +142,7 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
     if not 'repeatonlybeginning' in specs['rules']:
         notestoadd = getlastnlayers(l, repeatlength)
     else:
-        notestoadd = getfirstnlayer(l, repeatlength)
+        notestoadd = getfirstnlayers(l, repeatlength)
         
     notestoadd = copy.deepcopy(notestoadd)
         
@@ -162,7 +163,7 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
         oldendtime = notestoadd[-1].time + notestoadd[-1].duration
     
     # calculate when to start next note so that the first note is on the same part of the beat as it was
-    newstarttime = oldendtime + abs(oldendtime%1 - notestoadd[0].time%1)
+    newstarttime = time + abs(oldendtime%1 - notestoadd[0].time%1)
     offsetfactor = newstarttime - notestoadd[0].time
 
     # offset the notestoadd by the offsetfactor
@@ -188,28 +189,31 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
         if doanotherp:
             returnval = normalrepetition(newtime, movelength, l, repeatlength, specs, maxtime, iterations+1)
         else:
-            print(str(iterations+1) + " times")
+            if variables.devmode:
+                print(str(iterations+1) + " times")
         return returnval
     else:
-        print(str(iterations+1) + " times")
+        if variables.devmode:
+            print(str(iterations+1) + " times")
         return {'time': newtime, 'list': l}
 
 
 # returns if there should be a repetition
 def repeatp(notelist, repeatlength, specs):
     l = notelist
+    depth = notedepth(l)
     if 'repeatspaceinbetween' in specs['rules']:
         # if on the every other one, the even dividing by repeatlength, very high chance
         if((len(notelist)/repeatlength) % 2 < 1):
-            repeatp = randint(-1, len(l)%repeatlength) == 0
+            repeatp = randint(-2, depth%repeatlength) == 0
         else:
-            repeatp = randint(-5, len(l)%repeatlength) == 0
+            repeatp = randint(-6, depth%repeatlength) == 0
     elif 'highrepeatchance' in specs['rules']:
-        repeatp = randint(-1, len(l)%repeatlength) == 0
+        repeatp = randint(-1, depth%repeatlength) == 0
     else:
-        repeatp = randint(-2, len(l) % repeatlength) == 0
+        repeatp = randint(-2, depth % repeatlength) == 0
 
-    repeatp = repeatp and notedepth(notelist)>=repeatlength
+    repeatp = repeatp and depth>=repeatlength
         
     return repeatp
 
@@ -309,8 +313,6 @@ def random_beatmap(specs):
         if r[0:6] == 'repeat':
             repeatmodep = True
             repeatlength = repeatlengthfromspecs(specs)
-            if variables.devmode:
-                print("repeatlength: " + str(repeatlength))
             break
 
     # masterloop for adding on notes
@@ -363,7 +365,7 @@ def random_beatmap(specs):
 # assume depth>0
 def melodic_value(rv, depth, specs, l):
     value = rv
-    lastv = random_last(0, l).value
+    lastv = l[-1]
 
     # have a big chance of 2 away if 'skippy' rule is on
     if ('skippy' in specs['rules']) and myrand(3):
@@ -386,8 +388,8 @@ def melodic_value(rv, depth, specs, l):
             else:
                 value = lastv - 2
 
-    # 2/3 chance of being 1 or 2 away from previous note
-    elif (myrand(2)):
+    # 2/3 * 3/4 chance of being 1 or 2 away from previous note
+    elif myrand(2) and myrand(3):
         # 2/3 chance of continuing same direction
         if (depth > 1):
             secondv = random_last(1, l).value
@@ -406,8 +408,8 @@ def melodic_value(rv, depth, specs, l):
                 rd = -rd
             value = lastv + rd
 
-    # within 6
-    elif (myrand(1)):
+    #1/3 chance to be within 6
+    elif not myrand(2):
         rd = randint(1, 6)
         if (myrand(1)):
             rd = -rd
@@ -514,9 +516,13 @@ def random_value(t, ischord, unflippedlist, specs):
         value = rv
         lastv = l[0].value
 
-        # 3/4 are within 6, but not right next to the last note
-        if myrand(3) or value == lastv:
-            rd = randint(2, 6)
+        # half are thirds or fifths
+        if myrand(1):
+            rd = random.choice([-2, 2, -4, 4])
+            value = lastv+rd
+        # 2/3 of remaining are not right next to the last note
+        elif myrand(2) or value == lastv:
+            rd = randint(2, 5)
             if (myrand(1)):
                 rd = -rd
             value = lastv + rd
@@ -547,7 +553,7 @@ def random_value(t, ischord, unflippedlist, specs):
 def random_duration(time, notelist, specs, isr):
     lv = specs['lv']
     if 'shorternotes' in specs['rules']:
-        lv += 3
+        lv += 5
 
     def halfp():
         offset = lv/200
@@ -569,6 +575,13 @@ def random_duration(time, notelist, specs, isr):
     # so that usually it is the inverse, short notes
     if random.random() < (2/3) + min(2/9, lv/20):
         d = 1 / d
+
+    # so we don't end up with long notes for higher levels
+    if lv > 10 and d>2:
+        d -= 1
+    if lv > 10 and d==2:
+        if myrand(1):
+            d -= 1
 
     # additional chance at lower levels to be slow
     if (randint(0, 7) > lv):
