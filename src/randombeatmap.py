@@ -297,7 +297,7 @@ def random_beatmap(specs):
     if variables.devmode:
         print()
         print('output of:')
-        print("   " + str(specs['rules']))
+        print("   " + str(specs['rules']) + " lv: " + specs['lv'] )
         print()
     
     variation_of_notes([])
@@ -365,7 +365,7 @@ def random_beatmap(specs):
 # assume depth>0
 def melodic_value(rv, depth, specs, l):
     value = rv
-    lastv = l[-1]
+    lastv = l[-1].value
 
     # have a big chance of 2 away if 'skippy' rule is on
     if ('skippy' in specs['rules']) and myrand(3):
