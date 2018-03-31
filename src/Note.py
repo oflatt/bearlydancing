@@ -15,9 +15,12 @@ def compare_around(num, comparedto, within = 0, modulus = 1):
     left = comparedto-(within + 0.000001)
     right = comparedto+(within + 0.000001)
     if left<0 or right>modulus:
-        return num%1 >= left%1 or num%1 <= right%1
+        return num%modulus >= left%modulus or num%modulus <= right%modulus
     else:
-        return left%1 <= num%1 <= right%1
+        return left%modulus <= num%modulus <= right%modulus
+
+def compare_numbers_around(num, othernum, within = 0):
+    return abs(num-othernum) <= 0.000001+within
 
 # tests
 if not compare_around(28.1, 0, 0.1, 1):

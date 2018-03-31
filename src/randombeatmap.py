@@ -74,9 +74,8 @@ def movednotes(old_notes, movelength):
             minval = n.value
 
     #print(str(maxval) + '  ' + str(minval) + '  ' + str(movelength))
-    if outsiderangeq(maxval + 1) and outsiderangeq(minval - 1):
-        return l
-    elif outsiderangeq(maxval + movelength) or outsiderangeq(minval + movelength):
+
+    if outsiderangeq(maxval + movelength) or outsiderangeq(minval + movelength):
         return movednotes(l, randint(-4, 4))
     else:
         for n in l:
@@ -107,9 +106,9 @@ def repeatvaluesrepetition(starttime, movelength, listofnotes, repeatlength, spe
     l = listofnotes.copy()
 
     # get the last repeatlength notes to add on again
-    notestoadd = l[-repeatlength:len(l)]
+    notestoadd = getlastnlayers(l, repeatlength)
     
-    valuelist = valuelistfromnotes(notestoadd)
+    valuelist = valuelistfromnotesskipchords(notestoadd)
     valuelistoriginal = valuelist.copy()
     
     time = starttime
@@ -140,9 +139,10 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
 
     # get the last repeatlength notes to add on again
     if not 'repeatonlybeginning' in specs['rules']:
-        notestoadd = l[-repeatlength:len(l)]
+        notestoadd = getlastnlayers(l, repeatlength)
     else:
-        notestoadd = l[0:repeatlength]
+        notestoadd = getfirstnlayer(l, repeatlength)
+        
     notestoadd = copy.deepcopy(notestoadd)
         
     
@@ -151,6 +151,7 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
         notestoadd = variation_of_notes(notestoadd)
 
     if 'repeatmove' in specs['rules']:
+        print("movelength: " + str(movelength))
         notestoadd = movednotes(notestoadd, movelength)
 
     if 'repeatrhythm' in specs['rules']:
@@ -208,6 +209,8 @@ def repeatp(notelist, repeatlength, specs):
     else:
         repeatp = randint(-2, len(l) % repeatlength) == 0
 
+    repeatp = repeatp and notedepth(notelist)>=repeatlength
+        
     return repeatp
 
 def repeatlengthfromspecs(specs):
@@ -310,13 +313,12 @@ def random_beatmap(specs):
                 print("repeatlength: " + str(repeatlength))
             break
 
-    
     # masterloop for adding on notes
     while time < maxtime:
         addlayerp = False
         if repeatmodep:
             # chance to do a repetition
-            if repeatp(l, repeatlength, specs) and len(l) >= repeatlength:
+            if repeatp(l, repeatlength, specs):
                 # add on the last repeatlength notes again, varied
                 r = repetition(time, randint(-4, 4), l, repeatlength, specs, maxtime)
                 l = r['list']

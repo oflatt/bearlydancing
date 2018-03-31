@@ -100,7 +100,8 @@ class Battle(FrozenClass):
     def unpause(self):
         self.starttime += variables.settings.current_time - self.pausetime
         self.pausetime = 0
-        self.beatmaps[self.current_beatmap].unpause()
+        if len(self.beatmaps) > 0:
+            self.beatmaps[self.current_beatmap].unpause()
         self.reset_enemy()
 
     def new_beatmaps(self):

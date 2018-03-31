@@ -1,5 +1,7 @@
 import variables, random
 from Note import value_to_screenvalue
+from Note import compare_numbers_around
+from Note import Note
 
 def printnotelist(l):
     for x in l:
@@ -53,24 +55,43 @@ def random_last(depth, l):
             x += 1
     return random.choice(possibles)
 
-# testl = [Note(5, 1, 2), Note(6, 2, 1), Note(6, 4, 1), Note(2, 5, 2), Note(3, 6, 4)]
+#testl = [Note(5, 1, 2), Note(6, 2, 1), Note(6, 4, 1), Note(2, 5, 2), Note(3, 6, 4),
+#         Note(4, 7, 3), Note(4, 7, 3)]
+
 # print(random_last(0, testl).value)
 # print(random_last(1, testl).value)
 
 # returns a list of the notes for the first layer
 # a layer is notes that share the same time, so a melody note and its chords
-def get_first_layer(notelist, startingpoint = 0):
+def getfirstlayer(notelist, startingpoint = 0):
     l = []
-    layertime = notelist[0].time
-    i = startingpoint
-    while i < len(notelist):
-        if notelist[i].time == layertime:
-            l.append(notelist[i])
+    i = len(notelist) - 1 - startingpoint
+    layertime = notelist[i].time
+    while i >= 0:
+        if compare_numbers_around(notelist[i].time, layertime):
+            l.insert(0,notelist[i])
         else:
             break
-        i += 1
+        i -= 1
     return l
 
+# notelist is ordered early notes first
+def getlastnlayers(notelist, n, startingpoint = 0):
+    i = startingpoint
+    l = []
+    layers = 0
+    while i <= len(notelist)-1 and layers<n:
+        layers += 1
+        nextlayer = getfirstlayer(notelist, i)
+        l = nextlayer + l
+        i += len(nextlayer)
+
+    return l
+
+def getfirstnlayers(notelist, n, startingpoint = 0):
+    l = notelist.copy()
+    l.reverse()
+    return getlastnlayers(l, n, startingpoint)
 
 # q stands for question mark
 def outsiderangeq(value):
@@ -162,4 +183,11 @@ def valuelistfromnotes(notelist):
     for n in notelist:
         vlist.append(n.value)
 
+    return vlist
+
+def valuelistfromnotesskipchords(notelist):
+    vlist = []
+    for n in notelist:
+        if not n.chordp:
+            vlist.append(n.value)
     return vlist
