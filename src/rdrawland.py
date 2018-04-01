@@ -80,14 +80,21 @@ def makepatch(randomcolorsunsorted, width, height):
         return color[0] + color[1] + color[2]
     randomcolors = sorted(randomcolorsunsorted, key=brightness)
     s = pygame.Surface([width, height], pygame.SRCALPHA)
-    # randomcolors should be sorted in order of drawing
-    texture1 = Texture(randomcolors[0], 1/15, 2/5, 2/5)
-    texture2 = Texture(randomcolors[1], 1/30, 2/5, 2/5)
-    texture3 = Texture(randomcolors[2], 1/60, 2/5, 2/5)
+    # randomcolors should be sorted in order of drawing, brightest is texture 3
+    texture1 = Texture(randomcolors[0], 1/13, 1/10, 9/20)
+    texture2 = Texture(randomcolors[1], 1/13, 1/10, 9/20)
+    texture3 = Texture(randomcolors[2], 1/9, 1/10, 9/20)
     textures = [texture1, texture2, texture3]
     for t in textures:
-        t.xinvisiblechance = 1/2
-        t.yinvisiblechance = 1/2
+        t.greenvariancefactor = 8
+        t.addupq = True
+        t.adddownq = False
+        t.pickonedirp = True
+        # skip first couple pixels
+        t.texturingbounds = [0, 2, width-2, height-2]
+        t.distruibution = "geometric"
+        t.xinvisiblechance = 1/4
+        t.yinvisiblechance = 1/4
         addtexture(s, t)
     return s
 

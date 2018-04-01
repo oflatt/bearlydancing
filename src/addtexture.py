@@ -63,36 +63,72 @@ def texturepoint(surface, x, y, t, bounds):
             # first check if the point is already colored, or if it is one of the colors not to paint
             if (pcolor != t.color) and (not pcolor in t.stopcolors) and acceptedcolorq:
                 if not p[2]:
-                    surface.set_at(p[0:2], t.color)
+                    setcolor = (t.color[0]+random.randint(-t.redvariancefactor, t.redvariancefactor), t.color[1]+random.randint(-t.greenvariancefactor, t.greenvariancefactor), t.color[2]+random.randint(-t.bluevariancefactor, t.bluevariancefactor))
+                    
+                    surface.set_at(p[0:2], setcolor)
+
+                addup = False
+                adddown = False
+                addright = False
+                addleft = False
+                yprob = t.ychance
+                xprob = t.xchance
+                if t.distruibution == "geometric":
+                    yprob = yprob ** (1+abs(y-p[1]))
+                    xprob = xprob ** (1+abs(x-p[0]))
+                
                 #now decide which points to add
                 if t.addupq and (t.backtrackmodeonq or p[1] <= y):
                     if t.yinvisiblechance == 0:
                         invisibleq = False
                     else:
                         invisibleq = random.random() < t.yinvisiblechance
-                    if random.random() < t.ychance:
-                        points.append([p[0], p[1]-1, invisibleq])
+                    if random.random() < yprob:
+                        addup = True
                 if t.adddownq and (t.backtrackmodeonq or p[1] >= y):
                     if t.yinvisiblechance == 0:
                         invisibleq = False
                     else:
                         invisibleq = random.random() < t.yinvisiblechance
-                    if random.random() < t.ychance:
-                        points.append([p[0], p[1]+1, invisibleq])
+                    if random.random() < yprob:
+                        adddown = True
                 if t.addleftq and (t.backtrackmodeonq or p[0] <= x):
                     if t.xinvisiblechance == 0:
                         invisibleq = False
                     else:
                         invisibleq = random.random() < t.xinvisiblechance
-                    if random.random() < t.xchance:
-                        points.append([p[0]-1, p[1], invisibleq])
+                    if random.random() < xprob:
+                        addleft = True
                 if t.addrightq and (t.backtrackmodeonq or p[0] >= x):
                     if t.xinvisiblechance == 0:
                         invisibleq = False
                     else:
                         invisibleq = random.random() < t.xinvisiblechance
-                    if random.random() < t.xchance:
-                        points.append([p[0]+1, p[1], invisibleq])
+                    if random.random() < xprob:
+                        addright = True
+                        
+                addlist = [addleft, addright, adddown, addup]
+                if t.pickonedirp:
+                    trueindexes = []
+                    for i in range(len(addlist)):
+                        if addlist[i]:
+                            trueindexes.append(i)
+                    if len(trueindexes)>0:
+                        directioni = random.choice(trueindexes)
+                        for i in range(len(addlist)):
+                            if i == directioni:
+                                addlist[i] = True
+                            else:
+                                addlist[i] = False
+                    
+                if addlist[3]:
+                    points.append([p[0], p[1]-1, invisibleq])
+                if addlist[2]:
+                    points.append([p[0], p[1]+1, invisibleq])
+                if addlist[0]:
+                    points.append([p[0]-1, p[1], invisibleq])
+                if addlist[1]:
+                    points.append([p[0]+1, p[1], invisibleq])
 
 def get_bounds(surface, texture):
     b = [0, 0, surface.get_width(), surface.get_height()]
