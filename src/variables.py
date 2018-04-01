@@ -109,13 +109,14 @@ LIGHTBLUE = (66, 206, 244)
 font = pygame.font.Font(os.path.realpath('orangekidregular.ttf'), 30)
 
 # map stuff
-# pinetreesused is used to keep track of how many random trees are used
-pinetreesused = 0
-grasslandsused = 0
-greyrocksused = 0
+# keys are filenames like randompinetree and values are the number generated
+generatedgraphicsused = {}
 
 def num_of_generated_graphics_used():
-    return pinetreesused + grasslandsused + greyrocksused
+    s = 0
+    for k in generatedgraphicsused.keys():
+        s += generatedgraphicsused[k]
+    return s
 
 basemapsize = 360
 

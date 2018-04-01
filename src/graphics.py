@@ -171,55 +171,43 @@ def getmask(maskname, collidesection = None):
 
 def endofgeneration():
     variables.draw_progress_bar()
+
+# takes a function that returns a new surface and a filename and returns the newy made surface name
+def generategraphic(generatingfunction, graphicname):
+    if not graphicname in variables.generatedgraphicsused:
+        variables.generatedgraphicsused[graphicname] = 1
+    else:
+        variables.generatedgraphicsused[graphicname] += 1
     
-def pinetree():
-    variables.pinetreesused += 1
-    filename = "randompinetree" + str(variables.pinetreesused-1) + ".png"
+    filename = graphicname + str(variables.generatedgraphicsused[graphicname]-1) + ".png"
 
     if not os.path.exists("pics/" + filename):
-        pygame.image.save(rdrawtree.maketree(), "pics/" + filename)
+        pygame.image.save(generatingfunction(), "pics/" + filename)
         addtoGR(filename)
     elif variables.newworldeachloadq:
         os.remove(os.path.dirname(os.path.abspath("__file__")) + "/pics/" + filename)
-        pygame.image.save(rdrawtree.maketree(), "pics/" + filename)
+        pygame.image.save(generatingfunction(), "pics/" + filename)
         addtoGR(filename)
-    nicetreename = nicename(filename)
+
+    endofgeneration()
+    return nicename(filename)
+    
+def pinetree():
+    nicetreename = generategraphic(rdrawtree.maketree, "randompinetree")
 
     # christmas!
     if christmasp:
         rdrawtree.makechristmastree(GR[nicetreename]["img"])
-    
-    endofgeneration()
+
     return nicetreename
 
 def greyrock():
-    variables.greyrocksused += 1
-    filename = "randomgreyrock" + str(variables.greyrocksused-1) + ".png"
-
-    if not os.path.exists("pics/" + filename):
-        pygame.image.save(rdrawrock.makerock(), "pics/" + filename)
-        addtoGR(filename)
-    elif variables.newworldeachloadq:
-        os.remove(os.path.dirname(os.path.abspath("__file__")) + "/pics/" + filename)
-        pygame.image.save(rdrawrock.makerock(), "pics/" + filename)
-        addtoGR(filename)
-
-    endofgeneration()
-    return nicename(filename)
+    return generategraphic(rdrawrock.makerock, "randomgreyrock")
 
 def grassland(width, height, leftpath = True, rightpath = True, uppath = False, downpath = False):
-    variables.grasslandsused += 1
-    filename = "randomgrassland" + str(variables.grasslandsused-1) + ".png"
-
-    newland = rdrawland.makegrassland(width, height, leftpath, rightpath, uppath, downpath)
+    def callgrasslandfunction():
+        return rdrawland.makegrassland(width, height, leftpath, rightpath, uppath, downpath)
     
-    if not os.path.exists("pics/" + filename):
-        pygame.image.save(newland, "pics/" + filename)
-        addtoGR(filename)
-    elif variables.newworldeachloadq:
-        os.remove(os.path.dirname(os.path.abspath("__file__")) + "/pics/" + filename)
-        pygame.image.save(newland, "pics/" + filename)
-        addtoGR(filename)
+    return generategraphic(callgrasslandfunction, "randomgrassland")
 
-    endofgeneration()
-    return nicename(filename)
+    
