@@ -50,6 +50,9 @@ def pointinbounds(point, bounds):
 def texturepoint(surface, x, y, t, bounds):
     # each point is a list of xpos, ypos, invisibleq
     points = [[x, y, False]]
+    pointcolor = t.color
+    # vary it by the spawn variance
+    pointcolor = (pointcolor[0]+random.randint(-t.redvarianceperspawn, t.redvarianceperspawn), pointcolor[1]+random.randint(-t.greenvarianceperspawn, t.greenvarianceperspawn), pointcolor[2]+random.randint(-t.bluevarianceperspawn, t.bluevarianceperspawn))
 
     while len(points) > 0:
         p = points.pop(0)
@@ -61,9 +64,9 @@ def texturepoint(surface, x, y, t, bounds):
                 acceptedcolorq = pcolor in t.acceptedcolors or pcolorreduced in t.acceptedcolors
             
             # first check if the point is already colored, or if it is one of the colors not to paint
-            if (pcolor != t.color) and (not pcolor in t.stopcolors) and acceptedcolorq:
+            if (pcolor != pointcolor) and (not pcolor in t.stopcolors) and acceptedcolorq:
                 if not p[2]:
-                    setcolor = (t.color[0]+random.randint(-t.redvariancefactor, t.redvariancefactor), t.color[1]+random.randint(-t.greenvariancefactor, t.greenvariancefactor), t.color[2]+random.randint(-t.bluevariancefactor, t.bluevariancefactor))
+                    setcolor = (pointcolor[0]+random.randint(-t.redvariancefactor, t.redvariancefactor), pointcolor[1]+random.randint(-t.greenvariancefactor, t.greenvariancefactor), pointcolor[2]+random.randint(-t.bluevariancefactor, t.bluevariancefactor))
                     
                     surface.set_at(p[0:2], setcolor)
 

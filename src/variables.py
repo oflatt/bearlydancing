@@ -8,13 +8,13 @@ os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 
 testsmallp = False
 devmode = True
-newworldeachloadq = False
+newworldeachloadq = True
 # this overrides the generation of a new set of graphics for a new game
 newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
 dontloadmapsdict = False
 # only loads first couple of maps
-fasttestmodep = False
+fasttestmodep = True
 # adds to player level when loading
 lvcheat = 0
 

@@ -86,7 +86,7 @@ def makepatch(randomcolorsunsorted, width, height):
     texture3 = Texture(randomcolors[2], 1/9, 1/10, 9/20)
     textures = [texture1, texture2, texture3]
     for t in textures:
-        t.greenvariancefactor = 8
+        t.greenvarianceperspawn = 8
         t.addupq = True
         t.adddownq = False
         t.pickonedirp = True
@@ -96,6 +96,8 @@ def makepatch(randomcolorsunsorted, width, height):
         t.xinvisiblechance = 1/4
         t.yinvisiblechance = 1/4
         addtexture(s, t)
+    # blue rect for seeing where pathes are
+    #pygame.draw.rect(s, variables.BLUE, Rect(0,0,width,height), 1)
     return s
 
 def makegrassland(width, height, leftpath = True, rightpath = True, uppath = True, downpath = True):
@@ -144,7 +146,7 @@ def makegrassland(width, height, leftpath = True, rightpath = True, uppath = Tru
     ypos = 0
     while ypos < surface.get_height():
         addrow(ypos)
-        ypos += patchheight + randint(-spacingvariability, 0)
+        ypos += patchheight + randint(-spacingvariability, -int(spacingvariability/3))
 
     surface = addroad(surface, leftpath, rightpath, uppath, downpath)
         

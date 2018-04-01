@@ -1,6 +1,7 @@
 # This class functions as a data holder for the random texturization module. It defines how the texture is added
+from FrozenClass import FrozenClass
 
-class Texture():
+class Texture(FrozenClass):
 
     def __init__(self, color, initialchance, xchance, ychance, stopcolors = [], acceptedcolors = None):
         # these handle whether or not points are added after the initial in any of these directions
@@ -51,3 +52,9 @@ class Texture():
         self.redvariancefactor = 0
         self.greenvariancefactor = 0
         self.bluevariancefactor = 0
+        
+        self.redvarianceperspawn = 0
+        self.greenvarianceperspawn = 0
+        self.bluevarianceperspawn = 0
+
+        self._freeze()
