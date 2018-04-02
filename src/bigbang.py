@@ -50,7 +50,13 @@ if variables.testspecs != None:
 # -------- Main Program Loop -----------
 while not done:
     # add the past tick to the current time
-    variables.settings.current_time += clock.get_time()
+    if not variables.generatingbeatmapp:
+        variables.settings.current_time += clock.get_time()
+    else:
+        # set it to false, done generating
+        variables.generatingbeatmapp = False
+        # do not add the time to the clock
+        clock.get_time()
 
     currentc = None
     if variables.settings.state == "conversation":
@@ -184,22 +190,19 @@ while not done:
     if len(variables.dirtyrects) > 0 and variables.devmode:
         pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
 
-
-    def updatescreen():
-        pygame.display.update(variables.dirtyrects + variables.olddirtyrects + [Rect(10,variables.font.get_linesize(), variables.font.get_linesize()*6, variables.font.get_linesize()*6)])
         
     if len(variables.dirtyrects) > 0:
         if variables.dirtyrects[0] == Rect(0,0,variables.width,variables.height):
             pygame.display.update(Rect(0,0,variables.width, variables.height))
         else:
-            updatescreen()
+            variables.updatescreen()
     elif len(variables.olddirtyrects) > 0:
         if variables.olddirtyrects[0] == Rect(0,0,variables.width,variables.height):
             pygame.display.update(Rect(0,0,variables.width, variables.height))
         else:
-            updatescreen()
+            variables.updatescreen()
     else:
-        updatescreen()
+        variables.updatescreen()
         
     variables.olddirtyrects = variables.dirtyrects
     variables.dirtyrects = []

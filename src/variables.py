@@ -10,7 +10,7 @@ testsmallp = False
 devmode = True
 newworldeachloadq = False
 # this overrides the generation of a new set of graphics for a new game
-newworldnever = False
+newworldnever = True
 # this is for not loading the maps from the save file, to test new map changes
 dontloadmapsdict = False
 # only loads first couple of maps
@@ -80,6 +80,9 @@ def setscreen(windowmode):
         screen = pygame.display.set_mode((width, height), flags)
 
 setscreen(settings.windowmode)
+
+# this is used so that time does not continue durng the frame that it generates the beatmap
+generatingbeatmapp = False
 
 olddirtyrects = []
 dirtyrects = []
@@ -256,3 +259,6 @@ def checkkey(name, key):
     if name == "enter":
         name = "action"
     return key in settings.keydict[name]
+
+def updatescreen():
+    pygame.display.update(dirtyrects + olddirtyrects + [Rect(10,font.get_linesize(), font.get_linesize()*6, font.get_linesize()*6)])

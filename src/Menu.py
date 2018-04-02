@@ -79,19 +79,7 @@ class Menu():
         
         # blit message on top
         if self.message != None:
-            extrabuttonwidth = variables.getmenutextxoffset() / 4
-            mpic = variables.font.render(self.message, 0, variables.WHITE).convert()
-            mpic = graphics.scale_pure(mpic, variables.gettextsize())
-            mx = variables.width/2-mpic.get_width()/2
-            my = variables.height/2+mpic.get_height()*2
-            r = Rect(mx-extrabuttonwidth,
-                     my,
-                     mpic.get_width()+2*extrabuttonwidth,
-                     mpic.get_height())
-            variables.screen.fill(variables.BLACK, r)
-            variables.screen.blit(mpic, [mx, my])
-
-            variables.dirtyrects.append(r)
+            graphics.drawthismessage(self.message)
             
 
     def ontick(self):

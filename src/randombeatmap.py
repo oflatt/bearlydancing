@@ -10,6 +10,7 @@ import random, copy
 from random import randint
 import variables, math
 from notelistfunctions import *
+from graphics import drawthismessage
 
 ''' rule types for beatmaps (in specs)
 -------- general --------------
@@ -241,7 +242,7 @@ def repeatlengthfromspecs(specs):
 def addnote(notelist, time, ischord, specs, valuestouse):
     lv = specs['lv']
     l = notelist.copy()
-    duration = random_duration(time, l, specs, False)
+    duration = random_duration(time, l, specs, False, ischord)
     # if it is a chord, chance that the duration is the same as the melody
     if ischord:
         if randint(0, 100) > ((lv/1.8) + 2) ** 2:
@@ -272,7 +273,7 @@ def addlayer(notelist, time, specs, valuestouse = []):
     isr = restp(time, notelist, specs)
 
     if isr:
-        return (notelist, random_duration(time, notelist, specs, True))
+        return (notelist, random_duration(time, notelist, specs, True, False))
     else:
         oldt = time
         notedurations = []
@@ -280,16 +281,20 @@ def addlayer(notelist, time, specs, valuestouse = []):
         l = addn[0]
         notedurations.append(addn[1])
 
+        def addchord():
+            addn = addnote(l, oldt, True, specs, valuestouse)
+            notedurations.append(addn[1])
+            return addn[0]
+
         # chance to add chord notes, if it is not a rest
         if (randint(0, 150) < ((lv/2) + 2) ** 2) and not 'nochords' in specs['rules']:
-            if randint(1, 2) == 1:
-                addn = addnote(l, oldt, True, specs, valuestouse)
-                l = addn[0]
-                notedurations.append(addn[1])
-            if randint(0, 1000) < (lv + 2) ** 2:
-                addn = addnote(l, oldt, True, specs, valuestouse)
-                l = addn[0]
-                notedurations.append(addn[1])
+            if randint(1, 3) == 1:
+                l = addchord()
+            if randint(0, 1000) < (lv + 2) ** 2 and random.random() < 0.5:
+                l = addchord()
+            # and one more blanket small chance to add a note
+            if not myrand(40):
+                l = addchord()
 
         return (l, max(notedurations))
 
@@ -299,6 +304,12 @@ def random_beatmap(specs):
         print('output of:')
         print("   " + str(specs['rules']) + " lv: " + str(specs['lv']))
         print()
+
+    # first update the screen to say it is being generated
+    drawthismessage("generating new beatmap")
+    variables.updatescreen()
+    # set the variable so that time stops for a frame
+    variables.generatingbeatmapp = True
     
     variation_of_notes([])
     l = []
@@ -341,7 +352,7 @@ def random_beatmap(specs):
     l.append(Note(lastvalue, startt, randint(1,2)))
 
     # tempo is milliseconds per beat
-    tempo = (1200 * 3) / ((lv / 4.5) + 3.5)
+    tempo = (1200 * 3) / (math.sqrt(lv)*0.4+ 0.05*lv + 3.5)
     l = shorten_doubles(l)
 
     if variables.devmode:
@@ -491,14 +502,16 @@ def restp(t, l, specs):
     isr = False
     # handeling rests
     if (len(l) > 0) and not 'norests' in specs['rules']:
+        # if the last note was not a rest
         if ('rests' in specs['rules'] and l[-1].time + l[-1].duration >= t-0.05):
             if compare_around(t, 0):
-                if myrand(1):
+                if not myrand(2):
                     isr = True
             else:
                 # if not on the beat very high chance of a rest if the last note was not a rest
                 if (myrand(5)):
                     isr = True
+                    
         # 1/9 is a rest if not rests rule
         elif not myrand(8):
             isr = True
@@ -550,7 +563,7 @@ def random_value(t, ischord, unflippedlist, specs):
     else:
         return rv
 
-def random_duration(time, notelist, specs, isr):
+def random_duration(time, notelist, specs, isr, ischord):
     lv = specs['lv']
     if 'shorternotes' in specs['rules']:
         lv += 5
@@ -558,7 +571,7 @@ def random_duration(time, notelist, specs, isr):
     def halfp():
         offset = lv/200
         if 'shorternotes' in specs['rules']:
-            offset = 0.15 
+            offset = 0.2 
         return random.random() < 0.5+offset
 
     d = 1
@@ -567,9 +580,9 @@ def random_duration(time, notelist, specs, isr):
             d = d*2
         if (randint(0, 1000) < (lv + 2) ** 2):
             if halfp():
-                if (randint(1, 3) == 1):
+                if (randint(1, 20) == 1):
                     d = 3
-                else:
+                elif randint(1, 10) == 1:
                     d = d*2
 
     # so that usually it is the inverse, short notes
@@ -596,7 +609,8 @@ def random_duration(time, notelist, specs, isr):
         
     # if it is on an offbeat
     if compare_around(time, 0.5):
-        if (randint(0, 200) > lv ** 2):
+        # two third chance to get over level barrior if lv too high
+        if (randint(0, 200) > lv ** 2) or myrand(2):
             if myrand(3):
                 d = round(d-0.52)+0.5
 
@@ -624,7 +638,12 @@ def random_duration(time, notelist, specs, isr):
         # if off beat, good chance of the same length as the previous note
         elif myrand(5):
             d = notelist[-1].duration
-        
+
+    if ischord:
+        # if it is a chord, big chance to simply be the same duration as the melody
+        if myrand(4):
+            d = notelist[-1].duration
+            
     return d
 
 

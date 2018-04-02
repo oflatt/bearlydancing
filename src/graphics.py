@@ -3,6 +3,7 @@
 import pygame, os, variables, rdrawtree, rdrawland, rdrawrock
 from rdrawflower import makeflower
 from datetime import date
+from pygame import Rect
 
 today = date.today()
 christmasp = False
@@ -169,6 +170,20 @@ def getmask(maskname, collidesection = None):
     
     return MGR[maskname][collidesection]
 
+
+def drawthismessage(messagestring):
+    extrabuttonwidth = variables.getmenutextxoffset() / 4
+    mpic = getTextPic(messagestring, variables.gettextsize(), variables.WHITE)
+    mx = variables.width/2-mpic.get_width()/2
+    my = variables.height/2+mpic.get_height()*2
+    r = Rect(mx-extrabuttonwidth,
+             my,
+             mpic.get_width()+2*extrabuttonwidth,
+             mpic.get_height())
+    variables.screen.fill(variables.BLACK, r)
+    variables.screen.blit(mpic, [mx, my])
+
+    variables.dirtyrects.append(r)
 
 def endofgeneration():
     variables.draw_progress_bar()
