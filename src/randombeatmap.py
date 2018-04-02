@@ -297,7 +297,7 @@ def random_beatmap(specs):
     if variables.devmode:
         print()
         print('output of:')
-        print("   " + str(specs['rules']) + " lv: " + specs['lv'] )
+        print("   " + str(specs['rules']) + " lv: " + str(specs['lv']))
         print()
     
     variation_of_notes([])

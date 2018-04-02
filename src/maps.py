@@ -11,6 +11,7 @@ from Conversation import Conversation
 from Speak import Speak
 from variables import displayscale, fasttestmodep
 from EventRequirement import EventRequirement
+from random import randint
 
 from mapsvars import *
 
@@ -165,6 +166,7 @@ outside1 = Map(rgrassland,
                 chimneyrock])
 
 outside1.populate_with("pinetree", 3, [cleararearect])
+outside1.populate_with("flower", randint(3, 7), [cleararearect])
 
 outsidewidth = GR[rgrassland]["w"]
 outsideheight = GR[rgrassland]["h"]

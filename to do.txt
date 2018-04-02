@@ -1,7 +1,6 @@
 Bearly Dancing To-Do List
 
 gameplay
--rad turtle
 -auto-save
 -map objects and loading more safely, versioning, safely load with new content
 -ddr machine that you can play and dance against

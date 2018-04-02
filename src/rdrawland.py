@@ -114,7 +114,7 @@ def makegrassland(width, height, leftpath = True, rightpath = True, uppath = Tru
     def randompink():
         return (randint(140, 255), randint(0, 100), randint(150, 255))
     
-    randomgreens = [randint(80, 170), randint(80, 170), randint(80, 170)]
+    randomgreens = [randint(75, 150), randint(75, 150), randint(75, 150)]
     randomgreens = sorted(randomgreens, key=int)
 
     

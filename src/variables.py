@@ -8,13 +8,13 @@ os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 
 testsmallp = False
 devmode = True
-newworldeachloadq = True
+newworldeachloadq = False
 # this overrides the generation of a new set of graphics for a new game
 newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
 dontloadmapsdict = False
 # only loads first couple of maps
-fasttestmodep = True
+fasttestmodep = False
 # adds to player level when loading
 lvcheat = 0
 
@@ -125,6 +125,7 @@ TREEHEIGHT = 200
 ROCKMAXRADIUS = 12
 TREECOLLIDESECTION = [0, 18.5 / 20, 1, 1.5 / 20]
 ROCKCOLLIDESECTION = [0, 1/10, 1, 9/10]
+FLOWERCOLLIDESECTION = [0, 3/5, 1, 2/5]
 
 # battle
 healthanimationspeed = 2000# time in milliseconds for the health bar animation to go
@@ -144,7 +145,7 @@ good_value = 1
 ok_value = 0.7
 miss_value = 0
 
-all_perfect_multiplier = 1.7
+all_perfect_multiplier = 1.75
 player_advantage_multiplier = 1.3
 
 def getperfectrange():
@@ -209,7 +210,8 @@ def load_properties():
             properties = pickle.load(f)
 
 def save_properties():
-    properties.num_of_generated_graphics = num_of_generated_graphics_used()
+    # overestimate
+    properties.num_of_generated_graphics = int(num_of_generated_graphics_used() * 1.2)
     with open("properties.txt", "wb") as f:
         pickle.dump(properties, f)
 

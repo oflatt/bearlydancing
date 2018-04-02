@@ -32,6 +32,7 @@ jeremyhome = Map(rgrassland, [hole,
 dontputrockslist = [dancelion.getrect(), jmyman.getrect()]
 jeremyhome.populate_with("greyrock", randint(0, 2), dontputrockslist)
 jeremyhome.populate_with("pinetree", randint(3, 8), dontputrockslist)
+jeremyhome.populate_with("flower", randint(15, 25), dontputrockslist)
 
 jeremyhome.exitareas = [Exit("right", False, 'outside1', "left", "same"),
                         Exit("left", False, 'tutorialwin', "right", "same")]
@@ -51,6 +52,7 @@ b = GR[rgrassland]["w"] / 10
 outside2 = Map(rgrassland, [])
 outside2.populate_with("pinetree", 22)
 outside2.populate_with("greyrock", 3)
+outside2.populate_with("flower", randint(0, 1))
 
 outside2.exitareas = [
     Exit("left", False, 'outside1', "right", "same"),
@@ -66,6 +68,7 @@ outsideheight = GR[rgrassland]["h"]
 outside3 = Map(rgrassland, [])
 outside3.populate_with("greyrock", 4)
 outside3.populate_with("pinetree", 12)
+outside3.populate_with("flower", randint(0, 2))
 outside3.exitareas = [Exit("bottom", False, "outside2", "same", "top"),
                       Exit("right", False, "outside5", "left", "same")]
 outside3.enemies = enemies.woodsenemies
@@ -105,6 +108,7 @@ def make_rock_or_sheep_rocks():
 
 outside4 = Map(rgrassland, [])
 outside4.populate_with("greyrock", 40)
+outside4.populate_with("flower", randint(3, 8))
 
 # this is how many pixels away each dimension of the rock has to be to the sheep to work
 sheeptorocktolerance = 5
@@ -151,6 +155,7 @@ outside4.lvrange = [2,3]
 outside5 = Map(graphics.grassland(800, outside4height, downpath = True), [])
 outside5.populate_with("greyrock", 4)
 outside5.populate_with("pinetree", 15)
+outside5.populate_with("flower", randint(1, 3))
 outside5.enemies = enemies.woodsenemies
 outside5.lvrange = [2]
 outside5.exitareas = [Exit("left", False, "outside3", "right", "same"),
@@ -181,15 +186,16 @@ groverect = Rect(outside6width/2-grovewidth/2, outside6height-groveheight,
 
 outside6.populate_with("greyrock", 6, [groverect])
 outside6.populate_with("pinetree", 28, [groverect])
+outside6.populate_with("flower", randint(3, 7), [groverect])
 
 kewlappearconversation = Conversation("kewlappearconversation",[])
-kewlappearconversation.area = [grovetree.x, grovetree.y+grovetree.h/2, grovetree.w, grovetree.h/2]
+kewlappearconversation.area = [grovetree.x+grovetree.w/2, grovetree.y + grovetree.h*(3/4), grovetree.w/4, grovetree.h/4]
 kewlappearconversation.storyevent = "kewlappears"
 kewlappearconversation.eventrequirements = [EventRequirement("kewlappears", -1, 1)]
 kewlappearconversation.unhidethisrock = "kewlcorn"
 
 kewlbattle = conversations.kewlcornyo
-kewlbattle.area = [grovetree.x+grovetree.w/2, grovetree.y + grovetree.h*(3/4), grovetree.w/2, grovetree.h/4]
+kewlbattle.area = kewlappearconversation.area.copy()
 kewlbattle.eventrequirements = [EventRequirement("kewlappears")]
 kewlbattle.special_battle = copy.copy(enemies.kewlcorn)
 kewlbattle.special_battle.lv = 4
@@ -220,6 +226,7 @@ outside7 = Map(graphics.grassland(outside7width, 600, rightpath=False), [tp, ste
 reservedarea = [Rect(tp.x-10, 0, outside7width-tp.x, outside7width)]
 outside7.populate_with("greyrock", 6, reservedarea)
 outside7.populate_with("pinetree", 25, reservedarea)
+outside7.populate_with("flower", randint(1, 3), reservedarea)
 
 outside7.lvrange = [3, 4]
 
@@ -268,6 +275,7 @@ outside7.conversations = [conversations.tpboss1, animstarter, conversations.scar
 
 trophy = Rock("trophy", 40, 70, [0,3/4, 1, 1/4])
 tutorialwin = Map(graphics.grassland(200, 200), [trophy])
+tutorialwin.populate_with("flower", 1)
 
 conversations.trophyc.area = [39, 69, GR["trophy"]["w"]+2, GR["trophy"]["h"]+2]
 

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import pygame, os, variables, rdrawtree, rdrawland, rdrawrock
+from rdrawflower import makeflower
 from datetime import date
 
 today = date.today()
@@ -210,4 +211,5 @@ def grassland(width, height, leftpath = True, rightpath = True, uppath = False, 
     
     return generategraphic(callgrasslandfunction, "randomgrassland")
 
-    
+def flower():
+    return generategraphic(makeflower, "randomflower")

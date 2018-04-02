@@ -14,6 +14,8 @@ BASEMASK = Mask((25, 15))
 BASEMASK.fill()
 TREEMASK.draw(BASEMASK,
               (int(variables.TREEWIDTH)-13, variables.TREEHEIGHT-15))
+FLOWERMASK = Mask((5, 5))
+FLOWERMASK.fill()
 
 class Map(FrozenClass):
 
@@ -84,21 +86,41 @@ class Map(FrozenClass):
         
         greyrockp = rocktype == "greyrock" or rocktype == "grey rock" or rocktype == "rock"
         pinetreep = rocktype == "pinetree" or rocktype == "pine tree"
+        flowerp = rocktype == "flower"
 
-        yconstraints = [-int(treeh/2), height-int(treeh/2)]
-        xconstraints = [0, width-treew]
+        # set width and height of rock generated, the constraints for where they are generated,
+        # and the mask to be used for collision tests
+        rocknormwidth = None
+        rocknormheight = None
+        xconstraints = None
+        yconstraints = None
+        rmask = None
+        if pinetreep:
+            yconstraints = [-int(treeh/2), height-int(treeh/2)]
+            xconstraints = [0, width-treew]
+            rocknormwidth = treew
+            rocknormheight = treeh
+            rmask = TREEMASK
         if greyrockp:
-            xconstraints = [0, width-variables.ROCKMAXRADIUS*2]
-            yconstraints = [0, height-variables.ROCKMAXRADIUS*2]
+            rocknormwidth = variables.ROCKMAXRADIUS*2
+            rocknormheight = variables.ROCKMAXRADIUS*2
+            rmask = None # do no collision detection
+        elif flowerp:
+            rocknormwidth = FLOWERMASK.get_size()[0]
+            rocknormheight = FLOWERMASK.get_size()[1]
+            rmask = FLOWERMASK
+
+        if not pinetreep:
+            xconstraints = [0, width-rocknormwidth]
+            yconstraints = [0, height-rocknormheight]
 
         def collidewithonep(xpos, ypos, rock):
             #don't do collision with placing rocks
-            if not greyrockp:
-                rmask = TREEMASK
+            if not rmask == None:
                 currentmask = rock.get_mask()
                 overlapp = rmask.overlap(currentmask, [int(rock.x-xpos), int(rock.y-ypos)])
                 
-            # else it is a grey rock
+            # else it is a grey rock, don't do collision detection
             else:
                 overlapp = False
                 
@@ -108,13 +130,7 @@ class Map(FrozenClass):
             collisiontracker = False
 
             # check if it collides with the colliderects given to the populate function
-            if greyrockp:
-                testrect = Rect(xpos, ypos, variables.ROCKMAXRADIUS, variables.ROCKMAXRADIUS)
-            elif pinetreep:
-                testrect = Rect(xpos, ypos, variables.TREEWIDTH, variables.TREEHEIGHT)
-            else:
-                raise NotImplementedError("Unknown type of rock %s for populate_with in Map.py" % rocktype)
-            
+            testrect = Rect(xpos, ypos, rocknormwidth, rocknormheight)
             for crect in colliderects:
                 if crect.colliderect(testrect):
                     collisiontracker = True
@@ -144,8 +160,10 @@ class Map(FrozenClass):
             if not collidesp(randx, randy, newrocks):
                 if pinetreep:
                     newrocks.append(Rock(graphics.pinetree(), randx, randy, variables.TREECOLLIDESECTION))
-                if greyrockp:
+                elif greyrockp:
                     newrocks.append(Rock(graphics.greyrock(), randx, randy, variables.ROCKCOLLIDESECTION))
+                elif flowerp:
+                    newrocks.append(Rock(graphics.flower(), randx, randy, variables.FLOWERCOLLIDESECTION))
                     
         self.terrain.extend(newrocks)
 
