@@ -14,8 +14,10 @@ BASEMASK = Mask((25, 15))
 BASEMASK.fill()
 TREEMASK.draw(BASEMASK,
               (int(variables.TREEWIDTH)-13, variables.TREEHEIGHT-15))
-FLOWERMASK = Mask((5, 5))
-FLOWERMASK.fill()
+FLOWERMASK = Mask((7, 5))
+FBASE = Mask((5,5))
+FBASE.fill()
+FLOWERMASK.draw(FBASE, (1, 0))
 
 class Map(FrozenClass):
 

@@ -3,18 +3,18 @@ import pygame, random
 def makeflower():
     stemgreen = (66, 244, 131)
     flowerheight = random.choice([5, 6])
-    flowerwidth = 5
+    flowerwidth = 7
     # stem 3-4 pixels tall, flower always the same
-    s = pygame.Surface([5, flowerheight], pygame.SRCALPHA)
+    s = pygame.Surface([flowerwidth, flowerheight], pygame.SRCALPHA)
 
     ypos = flowerheight-1
-    xpos = 2
+    xpos = int(flowerwidth/2)
     while ypos>1:
         s.set_at((xpos, ypos), stemgreen)
         if random.random() < 0.5:
             xpos += random.choice([-1, 1])
         if xpos > flowerwidth-2:
-            xpos = flowerwidth-1
+            xpos = flowerwidth-2
         elif xpos<1:
             xpos = 1
         ypos -= 1

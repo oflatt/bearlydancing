@@ -14,7 +14,7 @@ newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
 dontloadmapsdict = False
 # only loads first couple of maps
-fasttestmodep = True
+fasttestmodep = False
 # adds to player level when loading
 lvcheat = 0
 
