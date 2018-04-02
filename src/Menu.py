@@ -46,7 +46,7 @@ class Menu():
         
         self.nameprompts = ["Your name:", "The sleeping bear's name:", "Increase difficulty of game by:",
                             "Confirm difficulty level "]
-        self.yesno = ChoiceButtons(["yes","no"], 1/2 + variables.gettextsize()/variables.height)
+        self.yesno = ChoiceButtons(["yes","no"], 3*variables.gettextsize()/variables.height)
         # so that it starts on "no"
         self.yesno.nextoption()
         self.tempdifficulty = 0
@@ -178,7 +178,7 @@ class Menu():
         if self.option == len(self.nameprompts)-1:
             reccomendedtext = getTextPic("The reccomended difficulty for new players is 0.", variables.gettextsize(), variables.beginningprompttextcolor)
             variables.screen.blit(reccomendedtext, [variables.width/2 - reccomendedtext.get_width()/2,
-                                                    variables.height/2 - variables.gettextsize()*3.5])
+                                                    variables.gettextsize()*0])
             self.yesno.draw()
             promptstring = promptstring + str(self.tempdifficulty) + "?"
         
@@ -201,11 +201,11 @@ class Menu():
             elif self.tempdifficulty < 16:
                 typecolor = (255-(self.tempdifficulty-13)*70, 0, 255-(self.tempdifficulty-13)*70)
             else:
-                typecolor = (0,0,0)
+                typecolor = variables.beginningprompttextcolor
                 
-        typepic = graphics.scale_pure(variables.font.render(typestring, 0, typecolor).convert(), variables.gettextsize(), "height")
-        variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.height/2 - variables.gettextsize()*1.5])
-        variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.height/2 - variables.gettextsize()/2])
+        typepic = getTextPic(typestring, variables.gettextsize(), typecolor)
+        variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.gettextsize()*1.5])
+        variables.screen.blit(typepic, [variables.width/2 - typepic.get_width()/2, variables.gettextsize()*2.5])
 
             
     def draw(self):
