@@ -24,7 +24,7 @@ class Settings(FrozenClass):
         self.keydict["escape"] = [pygame.K_ESCAPE]
 
         # normal setting stuff
-        self.windowmode = "windowed"
+        self.windowmode = "fullscreen"
         self.volume = 0.5
 
         # state can be world, battle, or conversation
