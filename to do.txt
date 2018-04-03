@@ -1,7 +1,6 @@
 Bearly Dancing To-Do List
 
 gameplay
--auto-save
 -map objects and loading more safely, versioning, safely load with new content
 -ddr machine that you can play and dance against
 -have enemy give you "wall jump"
@@ -19,16 +18,13 @@ sound
 battle
 -melodicmode:
 	-sync up durations of melodic notes, ones in a line should be shorter
-	-melodicvalue uses randomlast, maybe it should use the melody line instead, the front of each layer (chords added behind)
 	-better restp function, currently just a 1/9 chance of a rest
 -repeatbig, and aditional layer of repetition for a large phrase with variation
--repeat alternating- a-b pattern
 -repeatwithvariation more sophisticated- switch notes, offset by a beat
 -triplet chord mode
 -octaves rule
 -dual notes rule- every note doubled, 2 notes apart
 -better drum machine
--note time ordered bug with repetition
 
 -battle code is ugly and convoluted with all the time/health variables
 

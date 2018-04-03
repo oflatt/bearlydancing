@@ -2,6 +2,7 @@
 # Spirit and Jacob work on script
 import variables, pygame
 from Conversation import Conversation
+from copy import deepcopy
 from Speak import Speak
 
 everyyears = Speak("honeyside0", ["Every year the same thing. I'm going into hibernation,",
@@ -133,8 +134,7 @@ endtutorial = Conversation("endtutorial",
 prettygood = Conversation("prettygood",
                           [Speak("honeyback3",
                                  ["Hey, that wasn't bad, for your first song.",
-                                  "I think I'll hire you as my bard. I have a feeling you'll be needed again.",
-                                  "Let's go."])])
+                                  "Let's go find TP."])])
 
 letsflee = Conversation("letsflee",
                         [Speak("honeyback3",
@@ -171,7 +171,7 @@ trophyspeak = Speak("trophy",
                      "This concludes the demo version of Bearly Dancing.",
                      "Game by Oliver Flatt",
                      "Art by Sophia Flatt",
-                     "Thanks to: Dad- Matthew Flatt",
+                     "Thanks to: Dad, Mom",
                      "Jacob Valero, James Scholz, and Tessa McNamee for supporting me.",
                      "Finally, thanks to you the player.",
                      "Please give as much feedback as possible to: oflatt@gmail.com",
@@ -179,47 +179,24 @@ trophyspeak = Speak("trophy",
                      "(spam action)", ".               ", " .              ",
                      "  .             ", "   .            ", "    .           ",
                      "     .          ","      .         ", "       .        ",
-                     "        .       ",
-                     "         .      ",
-                     "          .     ",
-                     "           .    ",
-                     "            .   ",
-                     "             .  ",
-                     "              . ",
-                     "               .",
-                     "              . ",
-                     "            .   ",
-                     "          .     ",
-                     "        .       ",
-                     "      .         ",
-                     "    .           ",
-                     "  .             ",
-                     ".               ",
-                     " .              ",
-                     "  .             ",
-                     "   .            ",
-                     "    .           ",
-                     "     .          ",
-                     "      .         ",
-                     "       .        ",
-                     "        .       ",
-                     "         .      ",
-                     "          .     ",
-                     "           .    ",
-                     "            .   ",
-                     "             .  ",
-                     "              . ",
-                     "               .",
-                     "              . ",
-                     "            .   ",
-                     "          .     ",
-                     "        .       ",
-                     "      .         ",
-                     "    .           ",
-                     "  .             ",
-                     ".               ",
-                     "!               "])
+                     "        .       ", "         .      ", "          .     ","           .    ", "            .   ",
+                     "             .  ", "              . ", "               .", "              . ",
+                     "            .   ", "          .     ", "        .       ","      .         ",
+                     "    .           ", "  .             ", ".               ", " .              ",
+                     "  .             ", "   .            ", "    .           ", "     .          ",
+                     "      .         ", "       .        ", "        .       ", "         .      ",
+                     "          .     ", "           .    ", "            .   ", "             .  ",
+                     "              . ", "               .", "              . ", "            .   ",
+                     "          .     ","        .       ","      .         ","    .           ",
+                     "  .             ",".               ","!               "])
 
-trophyc = Conversation("trophyc", [trophyspeak])
-                     
+trophyc = Conversation("trophyc", [trophyspeak],
+                       [Speak("trophy", ["Play again with a higher difficulty!"])])
+
+# copy them so one save does not alter all the conversations
+def getconversation(varname):
+    g = globals()
+    c = deepcopy(g[varname])
+    return c
+
 currentconversation = None

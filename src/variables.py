@@ -10,7 +10,7 @@ testsmallp = False
 devmode = True
 newworldeachloadq = False
 # this overrides the generation of a new set of graphics for a new game
-newworldnever = True
+newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
 dontloadmapsdict = False
 # only loads first couple of maps
@@ -19,7 +19,7 @@ fasttestmodep = False
 lvcheat = 0
 
 # if None it does nothing, if it is a dictionary for "specs" it goes directly into a battle with those specs
-testspecs = None#{'maxtime' : 20, 'lv' : 25, 'rules' : ["repeatvariation", "repeatmove", "highrepeatchance"]}
+testspecs = None#{'maxtime' : 20, 'lv' : 4, 'rules' : ["alternating"]}
 
 devlosebattlekey = pygame.K_DELETE
 devwinbattlekey = pygame.K_END

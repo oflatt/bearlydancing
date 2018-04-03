@@ -5,7 +5,7 @@
 from Beatmap import Beatmap
 from Note import Note
 from Note import value_to_screenvalue
-from Note import compare_around
+from Note import compare_around, compare_numbers_around
 import random, copy
 from random import randint
 import variables, math
@@ -14,7 +14,7 @@ from graphics import drawthismessage
 
 ''' rule types for beatmaps (in specs)
 -------- general --------------
-melodic- higher chance of notes being in a row in one direction
+melodic- higher chance of notes being in a row in one direction and other things
 skippy- high chance of note value being 2 away, with continuing direction chance, only melodic
 alternating- high chance to go back to a note or be near the previous note, and if not further away, uses melodic chords
 rests- high chance of shorter notes and rests in between notes
@@ -153,7 +153,7 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
         notestoadd = variation_of_notes(notestoadd)
 
     if 'repeatmove' in specs['rules']:
-        if variables.devmode and interations == 0:
+        if variables.devmode and iterations == 0:
             print("movelength: " + str(movelength))
         notestoadd = movednotes(notestoadd, movelength)
 
@@ -165,7 +165,7 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
         oldendtime = notestoadd[-1].time + notestoadd[-1].duration
     
     # calculate when to start next note so that the first note is on the same part of the beat as it was
-    newstarttime = time + abs(oldendtime%1 - notestoadd[0].time%1)
+    newstarttime = time + abs(time%1 - notestoadd[0].time%1)
     offsetfactor = newstarttime - notestoadd[0].time
 
     # offset the notestoadd by the offsetfactor
@@ -405,7 +405,7 @@ def melodic_value(rv, depth, specs, l):
         if (depth > 1):
             secondv = random_last(1, l).value
             if ((lastv - 1 == secondv or lastv + 1 == secondv) and myrand(2)):
-                value = lastv + (lastv - secondv)
+                value = lastv + (lastv - secondv) * random.choice([1,1,2])
             else:
                 # near previous note
                 rd = randint(1, 2)
@@ -459,7 +459,7 @@ def alternating_value(rv, depth, specs, l):
         elif myrand(1):
             distance_away = randint(4, 6)
         elif myrand(1):
-         #   print('far')
+            #print('far')
             distance_away = randint(1, 7)
 
         if myrand(1):
@@ -477,6 +477,7 @@ def alternating_value(rv, depth, specs, l):
         secondv = random_last(1, l).value
         # if we actually do a alternation
         if myrand(4) and lastv != secondv:
+            #print("alternation")
             # half chance to pick same secondv note
             if myrand(1):
                 value = secondv
@@ -571,20 +572,22 @@ def random_duration(time, notelist, specs, isr, ischord):
     def halfp():
         offset = lv/200
         if 'shorternotes' in specs['rules']:
-            offset = 0.2 
+            offset = 0.2 + lv/100 
         return random.random() < 0.5+offset
 
     d = 1
     if randint(0, 50) < (lv + 2) ** 2:
         if halfp():
             d = d*2
-        if (randint(0, 1000) < (lv + 2) ** 2):
+        if (randint(0, 1000) < min((lv + 2) ** 2, 600+lv)):
             if halfp():
-                if (randint(1, 20) == 1):
-                    d = 3
-                elif randint(1, 10) == 1:
-                    d = d*2
+                d = d*2
 
+    # chance for triplet
+    if randint(0, 1000) < (lv + 10) ** 2:
+        if not myrand(9):
+            d = 3
+                
     # so that usually it is the inverse, short notes
     if random.random() < (2/3) + min(2/9, lv/20):
         d = 1 / d
@@ -595,6 +598,12 @@ def random_duration(time, notelist, specs, isr, ischord):
     if lv > 10 and d==2:
         if myrand(1):
             d -= 1
+
+    # chance for triplet if last one was a triplet (and short)
+    if len(notelist) > 0:
+        if compare_numbers_around(notelist[-1].duration, 1/3) and (compare_around(time, 2/3) or compare_around(time, 1/3)):
+            if myrand(3):
+                d = 1/3
 
     # additional chance at lower levels to be slow
     if (randint(0, 7) > lv):

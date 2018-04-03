@@ -51,7 +51,8 @@ class Menu():
         self.yesno.nextoption()
         self.tempdifficulty = 0
         
-        
+
+        self.enemyanimation = None
         self.reset()
 
         # if it is true, it is displaying the main menu

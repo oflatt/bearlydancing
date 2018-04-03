@@ -30,7 +30,7 @@ def notedepth(l):
 
 # random last is to get a random not of the ones last added, so that we don't compare parts of a chord
 # depth is how many layers of times for notes we remove
-# l is a list of notes where the earlier ones have later times
+# l is a list of notes where the earlier ones have later times, (flipped list)
 def random_last(depth, l):
     # removed is how far in the list to go to get the note
     removed = 0
@@ -59,6 +59,7 @@ def random_last(depth, l):
 
 testl = [Note(5, 1, 2), Note(6, 2, 1), Note(6, 4, 1), Note(2, 5, 2), Note(3, 6, 4),
          Note(4, 7, 3), Note(4, 7, 3)]
+
 
 # print(random_last(0, testl).value)
 # print(random_last(1, testl).value)
@@ -194,6 +195,6 @@ def valuelistfromnotes(notelist):
 def valuelistfromnotesskipchords(notelist):
     vlist = []
     for n in notelist:
-        if not n.chordp:
+        if not n.chordadditionp:
             vlist.append(n.value)
     return vlist

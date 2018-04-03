@@ -1,4 +1,5 @@
-import variables, classvar, conversations, enemies, graphics, random, pygame, copy
+import variables, classvar, enemies, graphics, random, pygame, copy
+from conversations import getconversation
 from Animation import Animation
 from graphics import scale_pure
 from graphics import GR
@@ -36,14 +37,17 @@ jeremyhome.populate_with("flower", randint(15, 25), dontputrockslist)
 
 jeremyhome.exitareas = [Exit("right", False, 'outside1', "left", "same"),
                         Exit("left", False, 'tutorialwin', "right", "same")]
-conversations.jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
+jeremy = getconversation("jeremy")
+jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"] - (honeyw / 2), GR["rabbithole"]["h"]]
-conversations.dancelionpass.area = [0, 0, b, b * 10]
-conversations.dancelionpass.isbutton = False
-conversations.dancelionpass.exitteleport = [b + honeyw / 4, "same"]
-conversations.dancelionpass.eventrequirements = [EventRequirement("beatsteve", -1, 1)]
 
-jeremyhome.conversations = [conversations.jeremy, conversations.dancelionpass]
+dancelionpass = getconversation("dancelionpass")
+dancelionpass.area = [0, 0, b, b * 10]
+dancelionpass.isbutton = False
+dancelionpass.exitteleport = [b + honeyw / 4, "same"]
+dancelionpass.eventrequirements = [EventRequirement("beatsteve", -1, 1)]
+
+jeremyhome.conversations = [jeremy, dancelionpass]
 
 # outside2######################################################################################
 rgrassland = graphics.grassland(600, 500, rightpath = False, uppath = True)
@@ -138,7 +142,7 @@ randrock.name = "sheeprock"
 
 outside4.terrain.extend(make_rock_or_sheep_rocks())
 
-sheepconversation = conversations.sheepconversation
+sheepconversation = getconversation("sheepconversation")
 sheepconversation.switchtheserocks = ["sheeprock"]
 sheepconversation.area = [randrock.x, randrock.y, randrock.w, randrock.h]
 sheepconversation.special_battle = copy.copy(enemies.sheep)
@@ -194,7 +198,7 @@ kewlappearconversation.storyevent = "kewlappears"
 kewlappearconversation.eventrequirements = [EventRequirement("kewlappears", -1, 1)]
 kewlappearconversation.unhidethisrock = "kewlcorn"
 
-kewlbattle = conversations.kewlcornyo
+kewlbattle = getconversation("kewlcornyo")
 kewlbattle.area = kewlappearconversation.area.copy()
 kewlbattle.eventrequirements = [EventRequirement("kewlappears")]
 kewlbattle.special_battle = copy.copy(enemies.kewlcorn)
@@ -232,11 +236,12 @@ outside7.lvrange = [3, 4]
 
 outside7.exitareas = [Exit("left", False, "outside6", "right", "same")]
 
-conversations.tpboss1.area = [tp.x-40, 0, outside7width-(tp.x-40), outside7height]
-conversations.tpboss1.storyevent = "tpboss1"
-conversations.tpboss1.eventrequirements = [EventRequirement("tpboss1", -1, 1)]
-conversations.tpboss1.exitteleport = [tp.x-40-honeyw-4, "same"]
-conversations.tpboss1.isbutton = False
+tpboss1 = getconversation("tpboss1")
+tpboss1.area = [tp.x-40, 0, outside7width-(tp.x-40), outside7height]
+tpboss1.storyevent = "tpboss1"
+tpboss1.eventrequirements = [EventRequirement("tpboss1", -1, 1)]
+tpboss1.exitteleport = [tp.x-40-honeyw-4, "same"]
+tpboss1.isbutton = False
 
 animstarter = Conversation("animstarter", [], switchtheserocks = ["tp", "steve"])
 animstarter.storyevent = "tpboss1leaves"
@@ -244,32 +249,33 @@ animstarter.area = [0,0,outside7width,outside7height]
 animstarter.isbutton = False
 animstarter.eventrequirements = [EventRequirement("tpboss1"), EventRequirement("tpboss1leaves", -1, 1)]
 
-conversations.scarysteve.area = conversations.tpboss1.area.copy()
-conversations.scarysteve.area[0] += 40
-conversations.scarysteve.eventrequirements = [EventRequirement("tpboss1leaves"), EventRequirement("beatsteve", -1, 1)]
-conversations.scarysteve.isbutton = False
-conversations.scarysteve.exitteleport = conversations.tpboss1.exitteleport.copy()
-conversations.scarysteve.exitteleport[0] += 40
-conversations.scarysteve.special_battle = copy.copy(enemies.steve)
-conversations.scarysteve.special_battle.lv = 5
-conversations.scarysteve.special_battle.storyeventsonwin = ["beatsteve"]
+scarysteve = getconversation("scarysteve")
+scarysteve.area = tpboss1.area.copy()
+scarysteve.area[0] += 40
+scarysteve.eventrequirements = [EventRequirement("tpboss1leaves"), EventRequirement("beatsteve", -1, 1)]
+scarysteve.isbutton = False
+scarysteve.exitteleport = tpboss1.exitteleport.copy()
+scarysteve.exitteleport[0] += 40
+scarysteve.special_battle = copy.copy(enemies.steve)
+scarysteve.special_battle.lv = 5
+scarysteve.special_battle.storyeventsonwin = ["beatsteve"]
 
-sagain = conversations.steveagain
+sagain = getconversation("steveagain")
 sagain.area = [steve.x-100-3, steve.y, steve.w+6, steve.h+10]
-sagain.special_battle = copy.copy(conversations.scarysteve.special_battle)
+sagain.special_battle = copy.copy(scarysteve.special_battle)
 sagain.eventrequirements = [EventRequirement("beatsteve")]
 
 # make the boss battle force C minor
-conversations.scarysteve.special_battle.specialscale = "C minor"
+scarysteve.special_battle.specialscale = "C minor"
 
-slose = conversations.steveloses
+slose = getconversation("steveloses")
 slose.area = [0,0,outside7width, outside7height]
 slose.isbutton = False
 slose.storyevent = "steveloseconversation"
 slose.eventrequirements = [EventRequirement("steveloseconversation", -1, 1), EventRequirement("beatsteve")]
 slose.reward = "C minor"
 
-outside7.conversations = [conversations.tpboss1, animstarter, conversations.scarysteve,slose, sagain]
+outside7.conversations = [tpboss1, animstarter, scarysteve,slose, sagain]
 
 # tutorialwin###################################################################################
 
@@ -277,7 +283,8 @@ trophy = Rock("trophy", 40, 70, [0,3/4, 1, 1/4])
 tutorialwin = Map(graphics.grassland(200, 200), [trophy])
 tutorialwin.populate_with("flower", 1)
 
-conversations.trophyc.area = [39, 69, GR["trophy"]["w"]+2, GR["trophy"]["h"]+2]
+trophyc = getconversation("trophyc")
+trophyc.area = [39, 69, GR["trophy"]["w"]+2, GR["trophy"]["h"]+2]
 
-tutorialwin.conversations = [conversations.trophyc]
+tutorialwin.conversations = [trophyc]
 tutorialwin.exitareas = [Exit("right", False, "jeremyhome", "left", "same")]
