@@ -71,7 +71,6 @@ class Battle(FrozenClass):
         specs["lv"] = self.enemy.lv
         specs["rules"].extend(self.enemy.beatmaprules)
         self.beatmaps = [randombeatmap.random_beatmap(specs)]
-        self.beatmaps[0].scale = scales[self.getscalename()]
         self.reset_time()
         self.reset_enemy()
 
@@ -106,7 +105,10 @@ class Battle(FrozenClass):
 
     def new_beatmaps(self):
         self.beatmaps = [randombeatmap.variation_of(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo)]
+
+    def initiatenewbeatmap(self):
         self.beatmaps[0].scale = scales[self.getscalename()]
+        self.beatmaps[0].notes = randombeatmap.shortendoubles(self.beatmaps[0].notes)
 
     def next_beatmap(self):
         if self.current_beatmap + 1 == len(self.beatmaps):

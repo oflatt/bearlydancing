@@ -8,6 +8,8 @@ def printnotelist(l):
         isc = ""
         if x.chordadditionp:
             isc = " +chordaddition"
+        if x.collidedwithanotherp:
+            isc = isc + " +COLLIDED"
         print("value: " + str(x.value) + " time: " + str(x.time) + " duration: " + str(x.duration) + isc)
 
 
@@ -123,6 +125,7 @@ def notecollidebesidesselfp(note, l):
         if not note == l[x]:
             if l[x].screenvalue() == value_to_screenvalue(nvalue):
                 if l[x].time+l[x].duration > ntime and l[x].time < ntime+nduration:
+                    note.collidedwithanotherp = True
                     iscopy = True
                     break
         x += 1

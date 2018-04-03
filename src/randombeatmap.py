@@ -153,7 +153,8 @@ def normalrepetition(time, movelength, listofnotes, repeatlength, specs, maxtime
         notestoadd = variation_of_notes(notestoadd)
 
     if 'repeatmove' in specs['rules']:
-        print("movelength: " + str(movelength))
+        if variables.devmode and interations == 0:
+            print("movelength: " + str(movelength))
         notestoadd = movednotes(notestoadd, movelength)
 
     if 'repeatrhythm' in specs['rules']:
@@ -353,7 +354,6 @@ def random_beatmap(specs):
 
     # tempo is milliseconds per beat
     tempo = (1200 * 3) / (math.sqrt(lv)*0.4+ 0.05*lv + 3.5)
-    l = shorten_doubles(l)
 
     if variables.devmode:
         printnotelist(l)
@@ -675,22 +675,12 @@ def variation_of_notes(old_notes):
             c = 0
 
             # check if the new value would cause it to overlap another note
-            while (c < len(l)):
-                # exit when beyond the place we are looking at
-                if (l[c].time > l[c].time + l[p].duration):
-                    break
-                # don't check for overlapping if the note is the same as the one being varied
-                elif (c == p):
-                    pass
-                elif (l[c].time + l[c].duration > oldnote.time and l[c].time < oldnote.time + oldnote.duration and l[
-                    c].screenvalue() == value_to_screenvalue(newvalue)):
-                    iscopy = True
-                    break
-                c += 1
+            potentialreplace = copy.copy(oldnote)
+            potentialreplace.newvalue(newvalue)
+            iscopy = notecollidebesidesselfp(potentialreplace, l)
                 
             if not iscopy:
                 l[p].newvalue(newvalue)
 
-    l = shorten_doubles(l)
     return (l)
 

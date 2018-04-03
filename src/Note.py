@@ -58,6 +58,7 @@ class Note:
 
         # this is for printing out notes and debugging
         self.chordadditionp = chordadditionp
+        self.collidedwithanotherp = False
 
     def screenvalue(self):
         return value_to_screenvalue(self.value)

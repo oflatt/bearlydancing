@@ -188,8 +188,6 @@ class Menu():
                 typecolor = (255, 0, 50*(self.tempdifficulty-7))
             elif self.tempdifficulty < 16:
                 typecolor = (255-(self.tempdifficulty-13)*70, 0, 255-(self.tempdifficulty-13)*70)
-            else:
-                typecolor = variables.beginningprompttextcolor
                 
         typepic = getTextPic(typestring, variables.gettextsize(), typecolor)
         variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.gettextsize()*1.5])
