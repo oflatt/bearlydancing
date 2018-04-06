@@ -17,13 +17,14 @@ soundpackkeys = ["sine", 'square', 'triangle', 'triangleh', 'sawtooth', 'sawtoot
 scales = {"C major" : [2, 2, 1, 2, 2, 2, 1],
           "C minor" : [2, 1, 2, 2, 1, 3, 1]}# list of offsets for the scale
 
-Drum_kick_heavy = pygame.mixer.Sound("drum_heavy_kick.wav")
+onedrum = pygame.mixer.Sound("onedrum.wav")
 
 channels = []
 for x in range(37):
     channels.append(pygame.mixer.Channel(x))
 
 musicchannel = pygame.mixer.Channel(37)
+soundeffectchannel = pygame.mixer.Channel(38)
 
 def play_tone(t):
     # add because values are centered on 0
@@ -36,12 +37,12 @@ def update_tone(t):
     if c.get_queue() == None:
         c.queue(all_tones[variables.settings.soundpack].loopsoundlist[t + 12])
 
-def play_sound(s):
-    if s == "drum kick heavy":
-        Drum_kick_heavy.set_volume(variables.settings.volume)
-        musicchannel.play(Drum_kick_heavy)
-
 def stop_tone(t):
     if not t == None:
         channels[t+12].stop()
+        
+def play_sound(s):
+    if s == "onedrum":
+        onedrum.set_volume(variables.settings.volume)
+        soundeffectchannel.play(onedrum)
 
