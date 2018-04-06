@@ -10,7 +10,7 @@ testsmallp = False
 devmode = True
 newworldeachloadq = False
 # this overrides the generation of a new set of graphics for a new game
-newworldnever = False
+newworldnever = True
 # this is for not loading the maps from the save file, to test new map changes
 dontloadmapsdict = False
 # only loads first couple of maps

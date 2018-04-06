@@ -17,7 +17,7 @@ soundpackkeys = ["sine", 'square', 'triangle', 'triangleh', 'sawtooth', 'sawtoot
 scales = {"C major" : [2, 2, 1, 2, 2, 2, 1],
           "C minor" : [2, 1, 2, 2, 1, 3, 1]}# list of offsets for the scale
 
-onedrum = pygame.mixer.Sound("onedrum.wav")
+onedrum = pygame.mixer.Sound("music/onedrum.wav")
 
 channels = []
 for x in range(37):
@@ -28,12 +28,12 @@ soundeffectchannel = pygame.mixer.Channel(38)
 
 def play_tone(t):
     # add because values are centered on 0
-    all_tones[variables.settings.soundpack].soundlist[t+12].set_volume(variables.settings.volume)
+    all_tones[variables.settings.soundpack].soundlist[t+12].set_volume(variables.settings.volume*(1/2)) # balance volume
     channels[t+12].play(all_tones[variables.settings.soundpack].soundlist[t + 12])
 
 def update_tone(t):
     c = channels[t+12]
-    all_tones[variables.settings.soundpack].loopsoundlist[t + 12].set_volume(variables.settings.volume)
+    all_tones[variables.settings.soundpack].loopsoundlist[t + 12].set_volume(variables.settings.volume*(1/2))
     if c.get_queue() == None:
         c.queue(all_tones[variables.settings.soundpack].loopsoundlist[t + 12])
 

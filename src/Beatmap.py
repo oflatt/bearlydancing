@@ -367,7 +367,7 @@ class Beatmap():
         if (notetime*4 >= self.drumcounter+1):
             self.drumcounter += 1
             if self.drumcounter % 4 == 0:
-                play_sound("drum kick heavy")
+                play_sound("onedrum")
 
     def reset_buttons(self):
         for x in range(8):
