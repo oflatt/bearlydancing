@@ -1,4 +1,4 @@
-import pygame, variables
+import pygame, variables, random
 from Soundpack import Soundpack
 
 # nessoundfont = "soundfonts/The_Nes_Soundfont.sf2"
@@ -59,3 +59,38 @@ def play_music(s):
 
 def stop_music():
     musicchannel.stop()
+
+
+############################################ grassland music #########################################
+grassmelodys = []
+for x in range(13):
+    grassmelodys.append(pygame.mixer.Sound("music/modmusicgrassland/melody" + str(x) + ".wav"))
+
+grassdrums = []
+for x in range(6):
+    grassmelodys.append(pygame.mixer.Sound("music/modmusicgrassland/drum" + str(x) + ".wav"))
+    
+def nextgrasslandsound():
+    return random.choice(grassmelodys)
+
+def initiatemelody():
+    sound = nextgrasslandsound()
+    sound.set_volume(variables.settings.volume)
+    musicchannel.play(sound)
+
+def initiatedrums():
+    sound = random.choice(grassdrums)
+    sound.set_volume(variables.settings.volume)
+    soundeffectchannel.play(sound)
+    
+def initiategrasslandmusic():
+    initiatemelody()
+    initiatedrums()
+
+def grasslandmusictick():
+    if not musicchannel.get_busy():
+        initiatemelody()
+    elif musicchannel.get_queue() == None:
+        sound = nextgrasslandsound()
+        sound.set_volume(variables.settings.volume)
+        musicchannel.queue(sound)

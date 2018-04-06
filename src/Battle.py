@@ -409,7 +409,8 @@ class Battle(FrozenClass):
         classvar.player.addstoryevents(self.enemy.storyeventsonwin)
         classvar.player.totalbattles += 1
         variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
-        variables.settings.state = "world"  # finally exit Battle
+        variables.settings.state = "world"
+        maps.initiatemusic()
 
     def flee(self):
         variables.settings.state = "world"
@@ -417,6 +418,7 @@ class Battle(FrozenClass):
         classvar.player.addstoryevents(self.enemy.storyeventsonflee)
         if self.enemy.lv - variables.settings.difficulty == 0:
             maps.engage_conversation(conversations.letsflee)
+        maps.initiatemusic()
 
     def onkey(self, key):
         def change_soundpack(offset):

@@ -129,6 +129,7 @@ while not done:
             maps.checkconversation()
             maps.checkexit()
             maps.current_map.on_tick()
+            maps.musictick()
         elif variables.settings.state == "battle":
             classvar.battle.ontick()
     else:
