@@ -3,7 +3,6 @@ import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, 
 from ChoiceButtons import ChoiceButtons
 from Button import Button
 from Note import Note
-from play_sound import play_sound
 from play_sound import soundpackkeys
 from play_sound import scales
 from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR
@@ -402,8 +401,7 @@ class Battle(FrozenClass):
         classvar.player.addstoryevents(self.enemy.storyeventsonlose)
         classvar.player.heal()
         variables.settings.state = "world"
-        maps.change_map_nonteleporting(maps.home_map_name)
-        classvar.player.teleport(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
+        maps.teleportplayerhome()
         classvar.player.timeslost += 1
         classvar.player.totalbattles += 1
 

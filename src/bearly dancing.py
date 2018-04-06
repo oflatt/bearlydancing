@@ -46,6 +46,11 @@ if variables.testspecs != None:
     menu.firstbootup = False
     variables.menuonq = False
 
+# play main menu music
+from play_sound import play_music
+play_music("menumusic")
+menu.enemyanimation.framerate = (60000/160)*2
+menu.enemyanimation.beginning_time = variables.settings.current_time
 
 # -------- Main Program Loop -----------
 while not done:

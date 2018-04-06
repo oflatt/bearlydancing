@@ -1,5 +1,5 @@
 import graphics, pygame, variables, copy
-from play_sound import stop_tone, play_tone, update_tone, play_sound
+from play_sound import stop_tone, play_tone, update_tone, play_effect
 from pygame import Rect
 
 padxspace = variables.width / 12
@@ -367,7 +367,7 @@ class Beatmap():
         if (notetime*4 >= self.drumcounter+1):
             self.drumcounter += 1
             if self.drumcounter % 4 == 0:
-                play_sound("onedrum")
+                play_effect("onedrum")
 
     def reset_buttons(self):
         for x in range(8):

@@ -1,9 +1,10 @@
-import graphics, variables, pygame, enemies, classvar, maps, random, stathandeling
+import graphics, variables, pygame, enemies, classvar, maps, random, stathandeling, copy
 from pygame import Rect
 from classvar import player
 from graphics import getpicbyheight, getTextPic
 from ChoiceButtons import ChoiceButtons
 from SettingsMenu import SettingsMenu
+from play_sound import stop_music, play_music
 
 
 def keytonum(key):
@@ -96,7 +97,8 @@ class Menu():
     def reset(self):
         self.option = 0
         self.state = "main"
-        self.enemyanimation = random.choice(enemies.animations)
+        newanim = copy.copy(random.choice(enemies.animations))
+        self.enemyanimation = newanim
 
     def pause(self):
         if variables.settings.state == "battle":
@@ -307,9 +309,13 @@ class Menu():
                 if self.mainmenup and self.firstbootup:
                     self.state = "name"
                     self.option = 0
+                    # play bear home music
+                    play_music("bearhome")
                 else:
                     self.mainmenup = False
                     self.resume()
+                    # stop main menu music
+                    stop_music()
             if self.getoption() == "settings":
                 self.state = "settings"
                 self.settingsmenu.newworkingcopy()

@@ -12,6 +12,7 @@ from Speak import Speak
 from variables import displayscale, fasttestmodep
 from EventRequirement import EventRequirement
 from random import randint
+from play_sound import play_music
 
 from mapsvars import *
 
@@ -147,7 +148,15 @@ def change_map(name, newx, newy):
         change_map_nonteleporting(oldmapname)
         classvar.player.soft_change_of_state()
         classvar.player.teleport(oldplayerx, oldplayery)
+    else:
+        # the map was changed, change the music
+        if name == 'honeyhome' and not oldmapname == 'letter':
+            play_music('bearhome')
 
+def teleportplayerhome():
+    maps.change_map_nonteleporting(maps.home_map_name)
+    classvar.player.teleport(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
+    play_music('bearhome')
 
 def engage_conversation(c):
     

@@ -18,6 +18,8 @@ scales = {"C major" : [2, 2, 1, 2, 2, 2, 1],
           "C minor" : [2, 1, 2, 2, 1, 3, 1]}# list of offsets for the scale
 
 onedrum = pygame.mixer.Sound("music/onedrum.wav")
+menumusic = pygame.mixer.Sound("music/menu.wav")
+bearhome = pygame.mixer.Sound("music/bearhome.wav")
 
 channels = []
 for x in range(37):
@@ -40,9 +42,20 @@ def update_tone(t):
 def stop_tone(t):
     if not t == None:
         channels[t+12].stop()
-        
-def play_sound(s):
-    if s == "onedrum":
-        onedrum.set_volume(variables.settings.volume)
-        soundeffectchannel.play(onedrum)
 
+def getsoundvar(s):
+    g = globals()
+    return g[s]
+        
+def play_effect(s):
+    sound = getsoundvar(s)
+    sound.set_volume(variables.settings.volume)
+    soundeffectchannel.play(sound)
+
+def play_music(s):
+    sound = getsoundvar(s)
+    sound.set_volume(variables.settings.volume)
+    musicchannel.play(sound, loops=-1)
+
+def stop_music():
+    musicchannel.stop()
