@@ -20,6 +20,7 @@ scales = {"C major" : [2, 2, 1, 2, 2, 2, 1],
 onedrum = pygame.mixer.Sound("music/onedrum.wav")
 menumusic = pygame.mixer.Sound("music/menu.wav")
 bearhome = pygame.mixer.Sound("music/bearhome.wav")
+engagebattle = pygame.mixer.Sound("music/encounterenemy.wav")
 
 channels = []
 for x in range(37):
@@ -63,7 +64,6 @@ def stop_music():
 def stop_effect():
     soundeffectchannel.stop()
 
-
 ############################################ grassland music #########################################
 finalgrassmelody = pygame.mixer.Sound("music/modmusicgrassland/melodyfinal.wav")
 grassmelodys = []
@@ -77,6 +77,11 @@ indexes_left = INDEXES.copy()
 grassdrums = []
 for x in range(6):
     grassdrums.append(pygame.mixer.Sound("music/modmusicgrassland/drum" + str(x) + ".wav"))
+
+def initiatedrums():
+    sound = random.choice(grassdrums)
+    sound.set_volume(variables.settings.volume)
+    soundeffectchannel.play(sound)
     
 def nextgrasslandsound():
     global indexes_left
@@ -93,11 +98,6 @@ def initiatemelody():
     sound = nextgrasslandsound()
     sound.set_volume(variables.settings.volume)
     musicchannel.play(sound)
-
-def initiatedrums():
-    sound = random.choice(grassdrums)
-    sound.set_volume(variables.settings.volume)
-    soundeffectchannel.play(sound)
     
 def initiategrasslandmusic():
     initiatemelody()
@@ -106,6 +106,7 @@ def initiategrasslandmusic():
 def grasslandmusictick():
     if not musicchannel.get_busy():
         initiatemelody()
+        initiatedrums()
     elif musicchannel.get_queue() == None:
         sound = nextgrasslandsound()
         sound.set_volume(variables.settings.volume)

@@ -228,11 +228,15 @@ def repeatlengthfromspecs(specs):
         rlength = randint(3, 5)
         if not myrand(4):
             rlength += randint(0, 4)
-        if myrand(1):
-            rlength += int(randint(0, lv)/3)
+            
+        if myrand(2):
+            rlength += int(randint(0, lv)/2)
+
+        # make 3 not very likely
         if rlength < 4:
             if myrand(2):
                 rlength += 1
+                
         if rlength%2 == 1:
             if myrand(1):
                 rlength += 1
@@ -283,7 +287,8 @@ def addlayer(notelist, time, specs, valuestouse = []):
         notedurations.append(addn[1])
 
         def addchord():
-            addn = addnote(l, oldt, True, specs, valuestouse)
+            # don't pass in valuestouse for chords
+            addn = addnote(l, oldt, True, specs, [])
             notedurations.append(addn[1])
             return addn[0]
 
@@ -353,7 +358,7 @@ def random_beatmap(specs):
     l.append(Note(lastvalue, startt, randint(1,2)))
 
     # tempo is milliseconds per beat
-    tempo = (1200 * 3) / (math.sqrt(lv)*0.4+ 0.05*lv + 3.5)
+    tempo = (1200 * 3) / (math.sqrt(lv)*0.4+ 0.08*lv + 3.5)
 
     if variables.devmode:
         printnotelist(l)
@@ -465,13 +470,17 @@ def alternating_value(rv, depth, specs, l):
         if myrand(1):
             distance_away = -distance_away
 
+        startingpoint = rv
+        if depth>1 and myrand(1):
+            startingpoint = lastv
+
         if (distance_away != 0):
-            if outsiderangeq(rv + distance_away):
+            if outsiderangeq(startingpoint + distance_away):
                 return not_alternating()
             else:
-                return rv + distance_away
+                return startingpoint + distance_away
         else:
-            return rv
+            return startingpoint
 
     if depth > 1:
         secondv = random_last(1, l).value

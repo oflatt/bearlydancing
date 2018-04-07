@@ -121,7 +121,10 @@ while not done:
     # get it again for if the key press changed the state to conversation
     if variables.settings.state == "conversation":
         currentc = maps.current_map.getconversation(conversations.currentconversation)
-                
+
+    if variables.settings.state == "world" or (variables.settings.state == "conversation" and variables.settings.backgroundstate == "world"):
+        maps.musictick()
+        
     # --- Game Logic
     if (not variables.settings.menuonq):
         if variables.settings.state == "world":
@@ -129,11 +132,11 @@ while not done:
             maps.checkconversation()
             maps.checkexit()
             maps.current_map.on_tick()
-            maps.musictick()
         elif variables.settings.state == "battle":
             classvar.battle.ontick()
     else:
         menu.ontick()
+        
 
     # get it again for if the key press changed the state to conversation
     if variables.settings.state == "conversation":

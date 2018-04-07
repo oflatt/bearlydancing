@@ -24,17 +24,17 @@ thatracoon = Conversation("thatracoon", [Speak("honeyside0", ["That raccoon...",
 honeydotspeak = Speak("honeyside3", ["..."])
 
 monster = ["Greenie Meanie: Who goes there!"]
-ohhoney4 = ["You know who it is, Meanie. TP took my quiche and I want it back."]
+ohhoney4 = ["You know who it is, Meanie. I'm looking for TP."]
 monster2 = ["No one may pass!"]
 ohhoney5 = ["So what...you want to fight?"]
-monster3 = ["No, Honey, you're a bear.", "We'll settle this with a DANCE-OFF!"]
+monster3 = ["No no, you're a bear.", "We'll settle this with a DANCE-OFF!"]
 ohhoney6 = ["Did TP put you up to this?"]
-monster4 = ["No..."]
+monster4 = ["Strong maybe."]
 ohhoney7 = ["I knew it."]
-ohhoney8 = ["Hey, who are you? You've been here the whole time.",
-            "User, is it? You have an instrument.",
-            "Good thing too, because I'm in need of a bard to get me through this dance battle.",
-            "Play the tunes, will you?"]
+ohhoney8 = ["Fine, dance-off it is.",
+            "Hey, User, why don't you do something useful?",
+            "You be the bard and play the music.",
+            "I'll handle the dancing myself."]
 
 jeremy = Conversation("jeremy",[Speak("jeremy0", ["Howdey, Honey",
                                          "Have a random piece of advice.",
@@ -66,6 +66,10 @@ dancelionpass = Conversation("dancelionpass",
                                      "Come back when they can."])],
                              [Speak("dancelion0", ["Come back when your bard can play in the key of C minor.",
                                                        "I only dance to music in that key."])])
+dancelionbattle = Conversation("dancelion",
+                               [Speak("dancelion0",
+                                      ["I am dance lion and I love the key of C minor.",
+                                       "Hit it."])])
 
 gotoforest = Conversation("gotoforest",
                           [Speak("honeyside0",
@@ -94,8 +98,8 @@ tutorialconversation1 = Conversation("tutorialconversation1",
                                             "left",
                                             bottomp = False),
                                       Speak("honeyback3",
-                                            ["It's quite simple, just press and hold the corresponding",
-                                             "key to each note for the duration of the note when it lines up.",
+                                            ["Just press and hold the corresponding key to",
+                                             "each note for the duration of the note when it lines up.",
                                              "The better you play, the better I can dance."],
                                             "left", bottomp = False),
                                       Speak("honeyback3",
@@ -128,7 +132,7 @@ releasedearly = Conversation("releasedearly",[releasedearlyspeak], speaksafter =
 
 endtutorial = Conversation("endtutorial",
                            [Speak("honeyback3",
-                                  ["Alright, it seems like you get the idea.",
+                                  ["It seems like you get the idea.",
                                    "The dance battle's going to start now, so I'll leave you to it."], bottomp = False)])
 
 prettygood = Conversation("prettygood",

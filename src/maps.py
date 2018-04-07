@@ -154,7 +154,7 @@ def change_map(name, newx, newy):
         # the map was changed, change the music
         if name == 'honeyhome' and not oldmapname == 'letter':
             play_music('bearhome')
-        elif not name in nongrasslandmaps:
+        elif not name in nongrasslandmaps and oldmapname in nongrasslandmaps:
             initiategrasslandmusic()
 
 def teleportplayerhome():

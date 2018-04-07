@@ -4,7 +4,7 @@ from classvar import player
 from graphics import getpicbyheight, getTextPic
 from ChoiceButtons import ChoiceButtons
 from SettingsMenu import SettingsMenu
-from play_sound import stop_music, play_music
+from play_sound import stop_music, play_music, play_effect
 
 
 def keytonum(key):
@@ -107,6 +107,7 @@ class Menu():
         variables.settings.menuonq = not variables.settings.menuonq
         self.reset()
         classvar.player.change_of_state()
+        
 
     def resume(self):
         if not self.mainmenup:
@@ -214,9 +215,12 @@ class Menu():
             elif key == pygame.K_BACKSPACE:
                 self.backspaceon = False
         elif self.state == "settings":
-            self.settingsmenu.onrelease(key)    
+            self.settingsmenu.onrelease(key)
 
     def onkey(self, key):
+        if self.state in ["main", "settings"]:
+            play_effect("onedrum")
+        
         if self.state == "main":
             if variables.checkkey("escape", key):
                 self.resume()
@@ -231,6 +235,7 @@ class Menu():
                 self.state = "main"
         else:
             self.onkeyname(key)
+
 
     def onkeyname(self, key):
         if variables.checkkey("enter", key) and key != pygame.K_SPACE:
@@ -309,13 +314,14 @@ class Menu():
                 if self.mainmenup and self.firstbootup:
                     self.state = "name"
                     self.option = 0
-                    # play bear home music
-                    play_music("bearhome")
                 else:
                     self.mainmenup = False
                     self.resume()
                     # stop main menu music
                     stop_music()
+                if self.mainmenup:
+                    # play bear home music
+                    play_music("bearhome")
             if self.getoption() == "settings":
                 self.state = "settings"
                 self.settingsmenu.newworkingcopy()

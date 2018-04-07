@@ -9,7 +9,6 @@ gameplay
 -recieve scales from enemies
 
 sound
--add music
 -load own sounds using the bowl pianoputer as example
 -chimney wing sounds
 -add new scales

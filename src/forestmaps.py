@@ -23,8 +23,9 @@ hole = Rock("rabbithole", b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"
 jmyman = Rock("jeremy0", b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 3 / 4, 1, 1 / 4])
 jmyman.background_range = hole.background_range.copy()
 
-dancelionanim = Animation(["dancelion0", "dancelion1"], 3000)
+dancelionanim = Animation(["dancelion0", "dancelion1"], (60000/130)*2)
 dancelion = Rock(dancelionanim, b/2, b * 4, [0, 3 / 4, 1, 1 / 4])
+dancelion.updatealways = True
 
 jeremyhome = Map(rgrassland, [hole,
                               jmyman,
@@ -47,7 +48,14 @@ dancelionpass.isbutton = False
 dancelionpass.exitteleport = [b + honeyw / 4, "same"]
 dancelionpass.eventrequirements = [EventRequirement("beatsteve", -1, 1)]
 
-jeremyhome.conversations = [jeremy, dancelionpass]
+dancelionbattle = getconversation("dancelionbattle")
+dancelionbattle.eventrequirements = [EventRequirement("beatsteve")]
+dancelionbattle.area = [dancelion.x, dancelion.y, dancelion.w+10, dancelion.h+10]
+dancelionbattle.special_battle = copy.copy(enemies.dancelion)
+dancelionbattle.special_battle.lv = 11
+dancelionbattle.special_battle.specialscale = "C minor"
+
+jeremyhome.conversations = [jeremy, dancelionpass, dancelionbattle]
 
 # outside2######################################################################################
 rgrassland = graphics.grassland(600, 500, rightpath = False, uppath = True)

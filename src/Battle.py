@@ -8,6 +8,7 @@ from play_sound import scales
 from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR
 from FrozenClass import FrozenClass
 from pygame import Rect
+from notelistfunctions import shorten_doubles
 
 
 # battle is the class that runs the battle- information about the game such as storyeventonwin is stored in enemy
@@ -105,11 +106,10 @@ class Battle(FrozenClass):
 
     def new_beatmaps(self):
         self.beatmaps = [randombeatmap.variation_of(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo)]
-        self.initiatenewbeatmap()
 
     def initiatenewbeatmap(self):
         self.beatmaps[0].scale = scales[self.getscalename()]
-        self.beatmaps[0].notes = randombeatmap.shorten_doubles(self.beatmaps[0].notes)
+        self.beatmaps[0].notes = shorten_doubles(self.beatmaps[0].notes)
 
     def next_beatmap(self):
         if self.current_beatmap + 1 == len(self.beatmaps):
@@ -118,7 +118,9 @@ class Battle(FrozenClass):
         else:
             print("should only have one beatmap in the list!")
             self.current_beatmap += 1
+            
         self.beatmaps[self.current_beatmap].reset(self.starttime, False)
+        self.initiatenewbeatmap()
         self.reset_enemy()
 
     def reset_enemy(self):
@@ -142,6 +144,7 @@ class Battle(FrozenClass):
         if self.state != "dance":
             self.enemy.animation.reset() # if not dancing, use first frame
         epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
+            
 
         if self.state != "dance":
             playerpic = getpicbyheight("honeydance0-0", variables.height/4)
@@ -151,6 +154,9 @@ class Battle(FrozenClass):
         variables.screen.blit(epic, [w - epic.get_width(), 0])
         variables.screen.blit(playerpic, [w-playerpic.get_width(), h-playerpic.get_height()])
 
+        if self.enemy.animation.updatealwaysbattle:
+            self.updatescreenforenemy()
+        
         # draw beatmap
         if self.state == "dance":
             self.beatmaps[self.current_beatmap].draw()
@@ -199,7 +205,7 @@ class Battle(FrozenClass):
             exppos = [w / 2 - (textscaled.get_width() / 2), h / 3]
             variables.screen.blit(textscaled, exppos)
             variables.dirtyrects.append(Rect(exppos[0], exppos[1], textscaled.get_width(), textscaled.get_height()))
-            text = variables.font.render("Lv " + str(classvar.player.lv()-variables.settings.difficulty), 0, variables.WHITE)
+            text = variables.font.render("Lv " + str(classvar.player.lv()), 0, variables.WHITE)
             textscaled = sscale(text)
             lvpos = [0, h / 3 - textscaled.get_height()]
             variables.screen.blit(textscaled, lvpos)
@@ -245,7 +251,10 @@ class Battle(FrozenClass):
             coordinates = [(variables.width / 2) - (ptext.get_width() / 2) - epicw, variables.getpadypos() - ptext.get_height() - 10]
             variables.screen.blit(ptext, coordinates)
             variables.dirtyrects.append(Rect(coordinates[0], coordinates[1], ptext.get_width(), ptext.get_height()))
-            
+
+    def updatescreenforenemy(self):
+        epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
+        variables.dirtyrects.append(Rect(variables.width-epic.get_width(), 0, epic.get_width(), epic.get_height()))
 
     def partofbeatlist(self):
         pofbeatlist = [0]
@@ -258,8 +267,7 @@ class Battle(FrozenClass):
     def drumbeat(self, partofbeat):
         if partofbeat in self.partofbeatlist():
             # update screen for enemy, player
-            epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
-            variables.dirtyrects.append(Rect(variables.width-epic.get_width(), 0, epic.get_width(), epic.get_height()))
+            self.updatescreenforenemy()
             playerpic = getpicbyheight("honeydance0-0", variables.height/4)
             variables.dirtyrects.append(Rect(variables.width-playerpic.get_width(), variables.height-playerpic.get_height(), playerpic.get_width(), playerpic.get_height()))
 

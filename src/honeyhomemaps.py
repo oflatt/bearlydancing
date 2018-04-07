@@ -154,7 +154,7 @@ chimneybattlec = getconversation("chimneytalk")
 chimneybattlec.area = [450+chimneyrock.w/3, 190, chimneyrock.w/3, 20]
 chimneybattlec.eventrequirements = [EventRequirement("chimneyactivation")]
 chimneye = copy.copy(enemies.chimney)
-chimneye.lv = 6
+chimneye.lv = 7
 chimneybattlec.special_battle = chimneye
 
 

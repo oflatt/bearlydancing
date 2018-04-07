@@ -13,6 +13,7 @@ class Animation():
         self.framerate = framerate
         self.beginning_time = 0
         self.loopp = loopp
+        self.updatealwaysbattle = False
 
     def current_frame(self):
         at = variables.settings.current_time-self.beginning_time
