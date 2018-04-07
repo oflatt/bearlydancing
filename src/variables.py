@@ -128,7 +128,7 @@ TREEHEIGHT = 200
 ROCKMAXRADIUS = 12
 TREECOLLIDESECTION = [0, 18.5 / 20, 1, 1.5 / 20]
 ROCKCOLLIDESECTION = [0, 1/10, 1, 9/10]
-FLOWERCOLLIDESECTION = [0, 3/5, 1, 2/5]
+FLOWERCOLLIDESECTION = [0, 1, 0, 0]
 
 # battle
 healthanimationspeed = 2000# time in milliseconds for the health bar animation to go

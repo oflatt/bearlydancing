@@ -158,8 +158,8 @@ def change_map(name, newx, newy):
             initiategrasslandmusic()
 
 def teleportplayerhome():
-    maps.change_map_nonteleporting(maps.home_map_name)
-    classvar.player.teleport(maps.current_map.startpoint[0], maps.current_map.startpoint[1])
+    change_map_nonteleporting(home_map_name)
+    classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
     play_music('bearhome')
 
 def initiatemusic():

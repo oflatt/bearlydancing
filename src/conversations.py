@@ -191,7 +191,9 @@ trophyspeak = Speak("trophy",
                      "  .             ",".               ","!               "])
 
 trophyc = Conversation("trophyc", [trophyspeak],
-                       [Speak("trophy", ["Play again with a higher difficulty!"])])
+                       [Speak("trophy", ["Play again with a higher difficulty!",
+                                         "To start again, move or rename the save0 folder,",
+                                         "Located in the same directory as the bearly dancing executable."])])
 
 # copy them so one save does not alter all the conversations
 def getconversation(varname):
