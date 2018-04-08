@@ -7,6 +7,7 @@ from Rock import Rock
 from pygame import Mask, Rect
 from initiatestate import initiatebattle
 from FrozenClass import FrozenClass
+from Animation import Animation
 
 extraarea = 50
 TREEMASK = Mask((variables.TREEWIDTH, variables.TREEHEIGHT))
@@ -18,6 +19,8 @@ FLOWERMASK = Mask((7, 5))
 FBASE = Mask((5,5))
 FBASE.fill()
 FLOWERMASK.draw(FBASE, (1, 0))
+
+interact = Animation(["interactionbutton0", "interactionbutton1"], 1000)
 
 class Map(FrozenClass):
 
@@ -249,23 +252,22 @@ class Map(FrozenClass):
                 r.draw(rockoffset)
 
         # draw button above exits and conversations
-        pw = (classvar.player.normal_width / 2) * variables.compscale
+        bwidth = 8*variables.compscale
         buttonx = classvar.player.xpos + classvar.player.normal_width / 2
-        buttony = classvar.player.ypos
-        buttonx = buttonx * variables.compscale - drawpos[0] - pw/2
-        buttony = buttony * variables.compscale - drawpos[1] - pw
+        buttony = classvar.player.ypos - 2
+        buttonx = buttonx * variables.compscale - drawpos[0] - bwidth/2
+        buttony = buttony * variables.compscale - drawpos[1] - bwidth
         e = self.checkexit()
         if not e == False and e.showbutton and e.isbutton:
-            self.draw_interaction_button(buttonx, buttony, pw)
+            self.draw_interaction_button(buttonx, buttony)
         c = self.checkconversation()
         if not c == False and c.showbutton and c.isbutton:
-            self.draw_interaction_button(buttonx, buttony, pw)
+            self.draw_interaction_button(buttonx, buttony)
 
-    def draw_interaction_button(self, xpos, ypos, width):
-        variables.dirtyrects.append(Rect(xpos, ypos, width, width))
-        pygame.draw.ellipse(variables.screen, variables.WHITE, [xpos, ypos, width, width])
-        pygame.draw.ellipse(variables.screen, variables.GREY,
-                            [xpos + width / 4, ypos + width / 4, width / 2, width / 2])
+    def draw_interaction_button(self, xpos, ypos):
+        variables.dirtyrects.append(Rect(xpos, ypos, 8*variables.compscale, 8*variables.compscale))
+        pic = getpic(interact.current_frame(), variables.compscale)
+        variables.screen.blit(pic, [xpos, ypos])
 
     def checkexit(self):
         currentexit = False

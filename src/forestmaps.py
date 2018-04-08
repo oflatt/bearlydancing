@@ -46,10 +46,10 @@ dancelionpass = getconversation("dancelionpass")
 dancelionpass.area = [0, 0, b, b * 10]
 dancelionpass.isbutton = False
 dancelionpass.exitteleport = [b + honeyw / 4, "same"]
-dancelionpass.eventrequirements = [EventRequirement("beatsteve")]
+dancelionpass.eventrequirements = [EventRequirement("beatsteve", -1, 1)]
 
 dancelionbattle = getconversation("dancelionbattle")
-dancelionbattle.eventrequirements = [EventRequirement("beatsteve", -1, 1)]
+dancelionbattle.eventrequirements = [EventRequirement("beatsteve")]
 dancelionbattle.area = [dancelion.x, dancelion.y, dancelion.w+10, dancelion.h+10]
 dancelionbattle.special_battle = copy.copy(enemies.dancelion)
 dancelionbattle.special_battle.lv = 11
