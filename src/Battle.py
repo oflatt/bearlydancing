@@ -534,11 +534,13 @@ class Battle(FrozenClass):
             if self.newenemyhealth <= 0.25:
                 self.newenemyhealth = 0
 
-        if playerlv > enemylv or (playerlv == enemylv and random.choice([True, False])) or \
-                        self.damage_multiplier > variables.perfect_value:
-            self.isplayernext = False
-        else:
-            self.isplayernext = True
-            
+        #if playerlv > enemylv or (playerlv == enemylv and random.choice([True, False])) or \
+        #                self.damage_multiplier > variables.perfect_value:
+        #    self.isplayernext = False
+        #else:
+        #    self.isplayernext = True
+        # player always attacks first
+        self.isplayernext = False
+        
         damageenemy()
         damageplayer()
