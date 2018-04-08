@@ -7,10 +7,10 @@ from sys import platform
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 
 testsmallp = False
-devmode = False
+devmode = True
 newworldeachloadq = False
 # this overrides the generation of a new set of graphics for a new game
-newworldnever = True
+newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
 dontloadmapsdict = True
 # only loads first couple of maps
@@ -25,7 +25,7 @@ devlosebattlekey = pygame.K_DELETE
 devwinbattlekey = pygame.K_END
 
 # this is the mode for the finished product- it just turns off all other development modes
-exportmode = True
+exportmode = False
 if exportmode:
     testsmallp = False
     devmode = False

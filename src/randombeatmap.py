@@ -576,7 +576,7 @@ def random_value(t, ischord, unflippedlist, specs):
 def random_duration(time, notelist, specs, isr, ischord):
     lv = specs['lv']
     if 'shorternotes' in specs['rules']:
-        lv += 5
+        lv *= 6/5
 
     def halfp():
         offset = lv/200

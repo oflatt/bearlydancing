@@ -14,17 +14,21 @@ class Animation():
         self.beginning_time = 0
         self.loopp = loopp
         self.updatealwaysbattle = False
+        self.relativeframerate = False
 
-    def current_frame(self):
+    def current_frame(self, outerframerate = None):
+        f = self.framerate
+        if outerframerate != None and self.relativeframerate:
+            f = outerframerate*self.framerate
         at = variables.settings.current_time-self.beginning_time
-        framenum = int(at/self.framerate) % len(self.pics)
-        if at>self.framerate:
+        framenum = int(at/f) % len(self.pics)
+        if at>f*len(self.pics):
             if not self.loopp:
                 framenum = -1
         if type(self.pics[framenum]) == Animation:
             # set the beginning time to the beginning of this animation's frame
-            self.pics[framenum].beginning_time = variables.settings.current_time - (at % self.framerate)
-            return self.pics[framenum].current_frame()
+            self.pics[framenum].beginning_time = variables.settings.current_time - (at % f)
+            return self.pics[framenum].current_frame(self.framerate)
         else:
             return self.pics[framenum]
 

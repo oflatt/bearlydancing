@@ -164,11 +164,11 @@ tpboss1 = Conversation("tpboss1", [Speak("honeyside0", ["...", "Tp, what are you
                                    Speak("tpwalksright0", ["I will... as soon as you get good.",
                                                            "In the mean time, beat my friend here."])])
 
-scarysteve = Conversation("scarysteve", [Speak("scarysteven0", ["Let's dance, bear."])])
-steveloses = Conversation("steveloses", [Speak("scarysteven0", ["You win. Take this.",
+scarysteve = Conversation("scarysteve", [Speak("scarysteven00", ["Let's dance, bear."])])
+steveloses = Conversation("steveloses", [Speak("scarysteven00", ["You win. Take this.",
                                                                 "By now, TP has danced his way to the cold forest."])])
 
-steveagain = Conversation("steveagain", [Speak("scarysteven0", ["Let's dance again."], options = ["yes", "no"])])
+steveagain = Conversation("steveagain", [Speak("scarysteven00", ["Let's dance again."], options = ["yes", "no"])])
 
 trophyspeak = Speak("trophy",
                     ["Congradulations!",

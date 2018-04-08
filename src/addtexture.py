@@ -83,30 +83,30 @@ def texturepoint(surface, x, y, t, bounds):
                 #now decide which points to add
                 if t.addupq and (t.backtrackmodeonq or p[1] <= y):
                     if t.yinvisiblechance == 0:
-                        invisibleq = False
+                        upinvisibleq = False
                     else:
-                        invisibleq = random.random() < t.yinvisiblechance
+                        upinvisibleq = random.random() < t.yinvisiblechance
                     if random.random() < yprob:
                         addup = True
                 if t.adddownq and (t.backtrackmodeonq or p[1] >= y):
                     if t.yinvisiblechance == 0:
-                        invisibleq = False
+                        downinvisibleq = False
                     else:
-                        invisibleq = random.random() < t.yinvisiblechance
+                        downinvisibleq = random.random() < t.yinvisiblechance
                     if random.random() < yprob:
                         adddown = True
                 if t.addleftq and (t.backtrackmodeonq or p[0] <= x):
                     if t.xinvisiblechance == 0:
-                        invisibleq = False
+                        leftinvisibleq = False
                     else:
-                        invisibleq = random.random() < t.xinvisiblechance
+                        leftinvisibleq = random.random() < t.xinvisiblechance
                     if random.random() < xprob:
                         addleft = True
                 if t.addrightq and (t.backtrackmodeonq or p[0] >= x):
                     if t.xinvisiblechance == 0:
-                        invisibleq = False
+                        rightinvisibleq = False
                     else:
-                        invisibleq = random.random() < t.xinvisiblechance
+                        rightinvisibleq = random.random() < t.xinvisiblechance
                     if random.random() < xprob:
                         addright = True
                         
@@ -125,13 +125,13 @@ def texturepoint(surface, x, y, t, bounds):
                                 addlist[i] = False
                     
                 if addlist[3]:
-                    points.append([p[0], p[1]-1, invisibleq])
+                    points.append([p[0], p[1]-1, upinvisibleq])
                 if addlist[2]:
-                    points.append([p[0], p[1]+1, invisibleq])
+                    points.append([p[0], p[1]+1, downinvisibleq])
                 if addlist[0]:
-                    points.append([p[0]-1, p[1], invisibleq])
+                    points.append([p[0]-1, p[1], leftinvisibleq])
                 if addlist[1]:
-                    points.append([p[0]+1, p[1], invisibleq])
+                    points.append([p[0]+1, p[1], rightinvisibleq])
 
 def get_bounds(surface, texture):
     b = [0, 0, surface.get_width(), surface.get_height()]

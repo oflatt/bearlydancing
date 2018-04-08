@@ -46,10 +46,10 @@ dancelionpass = getconversation("dancelionpass")
 dancelionpass.area = [0, 0, b, b * 10]
 dancelionpass.isbutton = False
 dancelionpass.exitteleport = [b + honeyw / 4, "same"]
-dancelionpass.eventrequirements = [EventRequirement("beatsteve", -1, 1)]
+dancelionpass.eventrequirements = [EventRequirement("beatsteve")]
 
 dancelionbattle = getconversation("dancelionbattle")
-dancelionbattle.eventrequirements = [EventRequirement("beatsteve")]
+dancelionbattle.eventrequirements = [EventRequirement("beatsteve", -1, 1)]
 dancelionbattle.area = [dancelion.x, dancelion.y, dancelion.w+10, dancelion.h+10]
 dancelionbattle.special_battle = copy.copy(enemies.dancelion)
 dancelionbattle.special_battle.lv = 11
@@ -229,7 +229,7 @@ tpdance = Animation(["tpwalksright0", "tpwalksright1", "tpwalksright2", "tpwalks
 tpwalking = tpdance
 tp = Rock([tpdance, tpwalking], outside7width-200, outside7height/2 - 30, None, "tp")
 
-stevedance = Animation(["scarysteven0", "scarysteven1", "scarysteven2", "scarysteven3"], 400)
+stevedance = Animation(["scarysteven00", "scarysteven01", "scarysteven02", "scarysteven03"], (60000/130)*2)
 stevewalk = stevedance
 steve = Rock([stevedance, stevewalk], outside7width+1, tp.y+tp.h*2, [0,4/5,1,1/5])
 steve.name = "steve"
@@ -270,7 +270,9 @@ scarysteve.special_battle.storyeventsonwin = ["beatsteve"]
 
 sagain = getconversation("steveagain")
 sagain.area = [steve.x-100-3, steve.y, steve.w+6, steve.h+10]
-sagain.special_battle = copy.copy(scarysteve.special_battle)
+sagainoptions = sagain.speaks[0]
+sagainoptions.special_battle = copy.copy(enemies.steve)
+sagainoptions.special_battle.lv = 5
 sagain.eventrequirements = [EventRequirement("beatsteve")]
 
 # make the boss battle force C minor

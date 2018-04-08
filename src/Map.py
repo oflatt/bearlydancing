@@ -318,8 +318,9 @@ class Map(FrozenClass):
                 chance += self.enemies[x].rarity
             return chance
 
+        print("encounterchance: " + str((math.sqrt(self.encounterchecksnotactivated) + 0.2)*variables.encounter_chance))
         # if the random chance activates
-        if random.random() / (math.sqrt(self.encounterchecksnotactivated) + 0.2) < variables.encounter_chance:
+        if random.random() < variables.encounter_chance * (math.sqrt(self.encounterchecksnotactivated) + 0.2):
             self.encounterchecksnotactivated = 0
             currentenemy = False
 
