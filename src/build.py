@@ -1,7 +1,11 @@
 from cx_Freeze import setup, Executable
+from ../setup import dependencies
 
-setup(name='Bearly Dancing',
-      version='0.1',
-      options={"build_exe": {"packages":["pygame"],}},
+dependencieswithoutself = dependencies.copy()
+dependencieswithoutself.remove("numpy")
+
+setup(name='bearly dancing',
+      version='0.0',
+      options={"build_exe": {"packages":dependencieswithoutself,"include_files":['pics/', 'music/', 'sounds/']}},
       description='A rpg dance adventure by Oliver Flatt.',
-      executables = [Executable("bigbang.py")])
+      executables = [Executable("bearly dancing.py")])
