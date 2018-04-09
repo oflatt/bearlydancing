@@ -320,30 +320,33 @@ class Map(FrozenClass):
                 chance += self.enemies[x].rarity
             return chance
 
-        print("encounterchance: " + str((math.sqrt(self.encounterchecksnotactivated) + 0.2)*variables.encounter_chance))
+        minencounterchecks = 20
         # if the random chance activates
-        if random.random() < variables.encounter_chance * (math.sqrt(self.encounterchecksnotactivated) + 0.2):
-            self.encounterchecksnotactivated = 0
-            currentenemy = False
+        if self.encounterchecksnotactivated>minencounterchecks:
+            if random.random() < variables.encounter_chance * (math.sqrt(self.encounterchecksnotactivated-20) + 0.2):
+                self.encounterchecksnotactivated = 0
+                currentenemy = False
 
-            # if all the chances are 1, just select a random enemy by default
-            if (collect_encounter_chances(len(self.enemies) - 1) == len(self.enemies)):
-                currentenemy = random.choice(self.enemies)
-            else:
-                random_factor = random.random()
-                for x in range(0, len(self.enemies)):
-                    e = self.enemies[x]
-                    # if the random factor is below all of the chances previously to now added up
-                    if random_factor < collect_encounter_chances(x):
-                        currentenemy = e
-                        break
-            
-            if currentenemy:
-                if (len(self.lvrange) > 1):
-                    currentenemy.lv = random.randint(self.lvrange[0], self.lvrange[1])
+                # if all the chances are 1, just select a random enemy by default
+                if (collect_encounter_chances(len(self.enemies) - 1) == len(self.enemies)):
+                    currentenemy = random.choice(self.enemies)
                 else:
-                    currentenemy.lv = self.lvrange[0]
-                initiatebattle(currentenemy)
+                    random_factor = random.random()
+                    for x in range(0, len(self.enemies)):
+                        e = self.enemies[x]
+                        # if the random factor is below all of the chances previously to now added up
+                        if random_factor < collect_encounter_chances(x):
+                            currentenemy = e
+                            break
+
+                if currentenemy:
+                    if (len(self.lvrange) > 1):
+                        currentenemy.lv = random.randint(self.lvrange[0], self.lvrange[1])
+                    else:
+                        currentenemy.lv = self.lvrange[0]
+                    initiatebattle(currentenemy)
+            else:
+                self.encounterchecksnotactivated += 1    
         else:
             self.encounterchecksnotactivated += 1
 
