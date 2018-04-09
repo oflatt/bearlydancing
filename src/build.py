@@ -1,8 +1,8 @@
 from cx_Freeze import setup, Executable
-from ../setup import dependencies
+from dependencies import dependencies
 
 dependencieswithoutself = dependencies.copy()
-dependencieswithoutself.remove("numpy")
+dependencieswithoutself.remove("cx-Freeze")
 
 setup(name='bearly dancing',
       version='0.0',
