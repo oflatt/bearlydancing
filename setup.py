@@ -3,7 +3,10 @@ from sys import platform
 
 installed_packages = pip.get_installed_distributions()
 flat_installed_packages = [package.project_name for package in installed_packages]
-dependencies = ["pygame", "numpy", "cx-Freeze", "dill"]
+
+import sys
+sys.path.insert(0, './src')
+from dependencies import dependencies
 
 if platform == "darwin":
     dependencies.append("pyobjc")

@@ -108,8 +108,10 @@ ORANGE = (255, 255, 0)
 LIGHTYELLOW = (235,227, 92)
 LIGHTBLUE = (66, 206, 244)
 
+pathtoself = os.path.normpath(os.path.dirname(os.path.realpath(__file__)) + os.sep + os.pardir + os.sep + os.pardir)
+
 # font
-font = pygame.font.Font(os.path.realpath('orangekidregular.ttf'), 30)
+font = pygame.font.Font(os.path.join(pathtoself, 'orangekidregular.ttf'), 30)
 
 # map stuff
 # keys are filenames like randompinetree and values are the number generated
