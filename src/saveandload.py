@@ -14,7 +14,7 @@ def loadmaps(mapdict):
 def save(me):
     # check to make the dir
     try:
-        os.makedirs(variables.savepath, exist_ok=True)
+        os.makedirs(variables.savefolderpath, exist_ok=True)
     except FileExistsError:
         pass
     

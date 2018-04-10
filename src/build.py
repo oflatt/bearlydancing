@@ -19,4 +19,5 @@ setup(name='bearly dancing',
       version='0.0',
       options={"build_exe": {"packages":dependencieswithoutself,"include_files":includefiles}},
       description='A rpg dance adventure by Oliver Flatt.',
+      icon="icon.ico",
       executables = [Executable("bearly dancing.py")])

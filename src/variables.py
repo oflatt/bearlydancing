@@ -5,8 +5,8 @@ from Properties import Properties
 from sys import platform
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
-# for mac export need the commented section
-pathtoself = os.path.normpath(os.path.dirname(os.path.realpath(__file__)))# + os.sep + os.pardir + os.sep + os.pardir)
+# for export need the commented section
+pathtoself = os.path.normpath(os.path.dirname(os.path.realpath(__file__)) + os.sep + os.pardir)# + os.sep + os.pardir)
 
 testsmallp = False
 devmode = True
@@ -27,7 +27,7 @@ devlosebattlekey = pygame.K_DELETE
 devwinbattlekey = pygame.K_END
 
 # this is the mode for the finished product- it just turns off all other development modes
-exportmode = False
+exportmode = True
 if exportmode:
     testsmallp = False
     devmode = False
@@ -61,9 +61,10 @@ width = mode[0]
 if testsmallp:
     height = int(height/2)
     width = int(width/2)
-    
-settingspath = os.path.join(pathtoself, os.path.join("save0", "bdsettings.txt"))
-savepath = os.path.join(pathtoself, os.path.join("save0", "bdsave.txt"))
+
+savefolderpath = os.path.join(pathtoself, "/save0")
+settingspath = os.path.join(savefolderpath, "bdsettings.txt")
+savepath = os.path.join(savefolderpath, "bdsave.txt")
 settings = Settings()
 if (os.path.isfile(os.path.abspath(settingspath))):
         if os.path.getsize(os.path.abspath(settingspath)) > 0:
