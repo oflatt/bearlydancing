@@ -4,6 +4,7 @@ from pygame import Rect
 
 
 variables.load_properties()
+variables.draw_loading_tips()
 variables.draw_loading_text("importing graphics (1/2)")
 pygame.display.flip()
 

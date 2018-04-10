@@ -6,7 +6,8 @@ from sys import platform
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 # for export need the commented section
-pathtoself = os.path.normpath(os.path.dirname(os.path.realpath(__file__)) + os.sep + os.pardir)# + os.sep + os.pardir)
+pathtoself = os.path.normpath(os.path.dirname(os.path.realpath(__file__)))# + os.sep + os.pardir)# + os.sep + os.pardir)
+
 
 testsmallp = False
 devmode = True
@@ -62,7 +63,8 @@ if testsmallp:
     height = int(height/2)
     width = int(width/2)
 
-savefolderpath = os.path.join(pathtoself, "/save0")
+savefolderpath = os.path.join(pathtoself, "save0/")
+print(savefolderpath)
 settingspath = os.path.join(savefolderpath, "bdsettings.txt")
 savepath = os.path.join(savefolderpath, "bdsave.txt")
 settings = Settings()
@@ -228,11 +230,20 @@ def draw_loading_text(string):
     pygame.draw.rect(screen, BLACK, Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height()*2))
     screen.blit(text, [xpos, ypos])
 
+def draw_loading_tips():
+    text = pygame.transform.scale2x(font.render("tip: use the escape key to pause the game", 0, WHITE).convert())
+    xpos = int((width / 2) - (text.get_width() / 2))
+    ypos = int((height / 2) - text.get_height() - height/10) - text.get_height()*2.5
+    pygame.draw.rect(screen, BLACK, Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height()))
+    screen.blit(text, [xpos, ypos])
+
 def draw_progress_bar():
     #clear all the events so it does not crash
     pygame.event.get()
     numused = num_of_generated_graphics_used()
     estimated = properties.num_of_generated_graphics
+
+    draw_loading_tips()
     
     if numused == 1:
         draw_loading_text("generating world (2/2)")

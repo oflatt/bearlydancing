@@ -14,10 +14,12 @@ if platform == "darwin":
     dependencieswithoutself.append('six')
     dependencieswithoutself.append('appdirs')
     dependencieswithoutself.append('packaging')
+    base = None
+else:
+    base = "Win32GUI"
     
 setup(name='bearly dancing',
       version='0.0',
       options={"build_exe": {"packages":dependencieswithoutself,"include_files":includefiles}},
       description='A rpg dance adventure by Oliver Flatt.',
-      icon="icon.ico",
-      executables = [Executable("bearly dancing.py")])
+      executables = [Executable("bearly dancing.py", icon="icon.ico", base=base)])

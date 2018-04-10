@@ -311,6 +311,9 @@ class Menu():
             self.option = (self.option + 1) % optionslength
         elif variables.checkkey("enter", key):
             if self.getoption() in ["resume", "play"]:
+                if self.mainmenup:
+                    # play bear home music
+                    play_music("bearhome")
                 if self.mainmenup and self.firstbootup:
                     self.state = "name"
                     self.option = 0
@@ -319,9 +322,6 @@ class Menu():
                     self.resume()
                     # stop main menu music
                     stop_music()
-                if self.mainmenup:
-                    # play bear home music
-                    play_music("bearhome")
             if self.getoption() == "settings":
                 self.state = "settings"
                 self.settingsmenu.newworkingcopy()
