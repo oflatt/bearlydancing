@@ -1,4 +1,4 @@
-import pygame, os, wave, math, numpy
+import pygame, os, wave, math, numpy, variables
 from math import sin
 from math import pi
 
@@ -139,7 +139,7 @@ class Soundpack():
         isexistingsounds = os.path.exists("sounds/" + wavetype + "0_" + str(shapefactor) + ".wav")
         if isexistingsounds and resetq == False:
             for x in range(37):
-                l.append(pygame.mixer.Sound("sounds/" + wavetype + str(x) + "_" + str(shapefactor) + ".wav"))
+                l.append(pygame.mixer.Sound(os.path.join(variables.pathtoself, "sounds/" + wavetype + str(x) + "_" + str(shapefactor) + ".wav")))
                 l[x].set_volume(initialvolume)
                 loopwave = self.make_wave((440 * ((2 ** (1 / 12)) ** (x - 12))), wavetype, shapefactor, True)
                 self.loopsoundlist.append(loopwave)

@@ -1,4 +1,4 @@
-import pygame, variables, random
+import pygame, variables, random, os
 from Soundpack import Soundpack
 
 # nessoundfont = "soundfonts/The_Nes_Soundfont.sf2"
@@ -17,10 +17,13 @@ soundpackkeys = ["sine", 'square', 'triangle', 'triangleh', 'sawtooth', 'sawtoot
 scales = {"C major" : [2, 2, 1, 2, 2, 2, 1],
           "C minor" : [2, 1, 2, 2, 1, 3, 1]}# list of offsets for the scale
 
-onedrum = pygame.mixer.Sound("music/onedrum.wav")
-menumusic = pygame.mixer.Sound("music/menu.wav")
-bearhome = pygame.mixer.Sound("music/bearhome.wav")
-engagebattle = pygame.mixer.Sound("music/encounterenemy.wav")
+def loadmusic(filename):
+    return pygame.mixer.Sound(os.path.join(variables.pathtoself, "music/", filename))
+
+onedrum = loadmusic("onedrum.wav")
+menumusic = loadmusic("menu.wav")
+bearhome = loadmusic("bearhome.wav")
+engagebattle = loadmusic("encounterenemy.wav")
 
 channels = []
 for x in range(37):
