@@ -248,7 +248,7 @@ class Battle(FrozenClass):
         if (self.damage_multiplier > variables.perfect_value and self.state == "attacking"):
             punscaled = variables.font.render("PERFECT!", 0, variables.WHITE)
             ptext = sscale_customfactor(punscaled, 1.5)
-            coordinates = [(variables.width / 2) - (ptext.get_width() / 2) - epicw, variables.getpadypos() - ptext.get_height() - 10]
+            coordinates = [(variables.width / 2) - (ptext.get_width() / 2) - epich, variables.getpadypos() - ptext.get_height() - 10]
             variables.screen.blit(ptext, coordinates)
             variables.dirtyrects.append(Rect(coordinates[0], coordinates[1], ptext.get_width(), ptext.get_height()))
 
