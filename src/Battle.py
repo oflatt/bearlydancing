@@ -205,7 +205,7 @@ class Battle(FrozenClass):
             exppos = [w / 2 - (textscaled.get_width() / 2), h / 3]
             variables.screen.blit(textscaled, exppos)
             variables.dirtyrects.append(Rect(exppos[0], exppos[1], textscaled.get_width(), textscaled.get_height()))
-            text = variables.font.render("Lv " + str(classvar.player.lv()), 0, variables.WHITE)
+            text = variables.font.render("Lv " + str(classvar.player.lv()-variables.settings.difficulty), 0, variables.WHITE)
             textscaled = sscale(text)
             lvpos = [0, h / 3 - textscaled.get_height()]
             variables.screen.blit(textscaled, lvpos)
