@@ -64,7 +64,6 @@ if testsmallp:
     width = int(width/2)
 
 savefolderpath = os.path.join(pathtoself, "save0/")
-print(savefolderpath)
 settingspath = os.path.join(savefolderpath, "bdsettings.txt")
 savepath = os.path.join(savefolderpath, "bdsave.txt")
 settings = Settings()

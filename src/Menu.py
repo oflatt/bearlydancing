@@ -311,17 +311,18 @@ class Menu():
             self.option = (self.option + 1) % optionslength
         elif variables.checkkey("enter", key):
             if self.getoption() in ["resume", "play"]:
-                if self.mainmenup:
-                    # play bear home music
-                    play_music("bearhome")
                 if self.mainmenup and self.firstbootup:
                     self.state = "name"
                     self.option = 0
+                    play_music("bearhome")
                 else:
+                    # stop main menu music
+                    if maps.current_map_name == "honeyhome" and self.mainmenup:
+                        play_music("bearhome")
+                    else:
+                        stop_music()
                     self.mainmenup = False
                     self.resume()
-                    # stop main menu music
-                    stop_music()
             if self.getoption() == "settings":
                 self.state = "settings"
                 self.settingsmenu.newworkingcopy()
