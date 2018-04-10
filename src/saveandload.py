@@ -13,7 +13,10 @@ def loadmaps(mapdict):
 # can't pickle pygame masks or surfaces
 def save(me):
     # check to make the dir
-    os.makedirs(os.path.dirname(variables.savepath), exist_ok=True)
+    try:
+        os.makedirs(variables.savepath, exist_ok=True)
+    except FileExistsError:
+        pass
     
     savelist = [maps.map_dict, conversations.currentconversation,
                 classvar.player, classvar.battle, maps.current_map_name]
@@ -26,8 +29,8 @@ def save(me):
 def load():
     m = Menu()
     save0path = variables.savepath
-    if (os.path.isfile(os.path.abspath(save0path))):
-        if os.path.getsize(os.path.abspath(save0path)) > 0:
+    if (os.path.isfile(save0path)):
+        if os.path.getsize(save0path) > 0:
             with open(save0path, "rb") as f:
                 loadedlist = pickle.load(f)
 

@@ -5,6 +5,8 @@ from Properties import Properties
 from sys import platform
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
+# for mac export need the commented section
+pathtoself = os.path.normpath(os.path.dirname(os.path.realpath(__file__)))# + os.sep + os.pardir + os.sep + os.pardir)
 
 testsmallp = False
 devmode = True
@@ -60,8 +62,8 @@ if testsmallp:
     height = int(height/2)
     width = int(width/2)
     
-settingspath = os.path.join("save0", "bdsettings.txt")
-savepath = os.path.join("save0", "bdsave.txt")
+settingspath = os.path.join(pathtoself, os.path.join("save0", "bdsettings.txt"))
+savepath = os.path.join(pathtoself, os.path.join("save0", "bdsave.txt"))
 settings = Settings()
 if (os.path.isfile(os.path.abspath(settingspath))):
         if os.path.getsize(os.path.abspath(settingspath)) > 0:
@@ -107,8 +109,6 @@ BLUE = (0, 0, 255)
 ORANGE = (255, 255, 0)
 LIGHTYELLOW = (235,227, 92)
 LIGHTBLUE = (66, 206, 244)
-
-pathtoself = os.path.normpath(os.path.dirname(os.path.realpath(__file__)) + os.sep + os.pardir + os.sep + os.pardir)
 
 # font
 font = pygame.font.Font(os.path.join(pathtoself, 'orangekidregular.ttf'), 30)
@@ -205,19 +205,19 @@ encounter_check_rate = 100 # rate of check in milliseconds
 encounter_chance = 0.002 # chance per check
 
 properties = Properties()
-properties_filename = "properties.txt"
+properties_path = os.path.join(pathtoself, "properties.txt")
 
 def load_properties():
     global properties
-    if os.path.isfile(os.path.abspath(properties_filename)):
-        if os.path.getsize(os.path.abspath(properties_filename)) > 0:
-            f = open(properties_filename, "rb")
+    if os.path.isfile(properties_path):
+        if os.path.getsize(properties_path) > 0:
+            f = open(properties_path, "rb")
             properties = pickle.load(f)
 
 def save_properties():
     # overestimate
     properties.num_of_generated_graphics = int(num_of_generated_graphics_used() * 1.2)
-    with open("properties.txt", "wb") as f:
+    with open(properties_path, "wb") as f:
         pickle.dump(properties, f)
 
 def draw_loading_text(string):

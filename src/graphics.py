@@ -56,7 +56,7 @@ def scale_pure(img, s, side = None):
     return pygame.transform.scale(img, [int((w/smaller) * s), int((h/smaller) * s)])
 
 def importpic(filename):
-    return pygame.image.load(os.path.join('pics', filename)).convert_alpha()
+    return pygame.image.load(os.path.join(variables.pathtoself, os.path.join('pics', filename))).convert_alpha()
 
 #simport returns a dictionary with an image and what its new dimensions would be if scaled
 def simport(filename):
@@ -75,7 +75,7 @@ SGR = {}
 # an SGR for masks
 MGR = {}
 
-picnames = os.listdir(os.path.dirname(os.path.abspath("__file__")) + "/pics")
+picnames = os.listdir(variables.pathtoself + "/pics")
 
 def nicename(filename):
     return filename.replace(".png", "").lower()
@@ -197,12 +197,12 @@ def generategraphic(generatingfunction, graphicname):
     
     filename = graphicname + str(variables.generatedgraphicsused[graphicname]-1) + ".png"
 
-    if not os.path.exists("pics/" + filename):
-        pygame.image.save(generatingfunction(), "pics/" + filename)
+    if not os.path.exists(variables.pathtoself + "/pics/" + filename):
+        pygame.image.save(generatingfunction(), variables.pathtoself + "/pics/" + filename)
         addtoGR(filename)
     elif variables.newworldeachloadq:
-        os.remove(os.path.dirname(os.path.abspath("__file__")) + "/pics/" + filename)
-        pygame.image.save(generatingfunction(), "pics/" + filename)
+        os.remove(variables.pathtoself + "/pics/" + filename)
+        pygame.image.save(generatingfunction(), variables.pathtoself + "/pics/" + filename)
         addtoGR(filename)
 
     endofgeneration()
