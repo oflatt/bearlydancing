@@ -85,7 +85,7 @@ while not done:
         if event.type == pygame.KEYDOWN:
                 
             if (not variables.settings.menuonq):
-                if variables.settings.state == "conversation":
+                if variables.settings.state == "conversation" and currentc != None:
                     message = currentc.keyevent(event.key)
                     menu.setmessage(message)
                     # check if it was exited to unhide rocks

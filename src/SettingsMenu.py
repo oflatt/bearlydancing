@@ -1,6 +1,7 @@
 import variables, pygame, copy
 from graphics import getTextPic
 from FrozenClass import FrozenClass
+from play_sound import setnewvolume
 
 
 class SettingsMenu(FrozenClass):
@@ -274,8 +275,8 @@ class SettingsMenu(FrozenClass):
                     self.notconfirm()
                 elif self.confirmoption == 0:
                     # put the working copy into effect
-                    self.exitsettingsmenu()
                     self.implementnewsettings()
+                    self.exitsettingsmenu()
                     message = "confirmed new settings"
 
             return message
@@ -299,6 +300,7 @@ class SettingsMenu(FrozenClass):
         variables.settings = self.workingcopy
 
     def exitsettingsmenu(self):
+        setnewvolume()
         self.state = "main"
         self.clearkeys()
 

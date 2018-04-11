@@ -1,6 +1,7 @@
 Bearly Dancing To-Do List
 
 gameplay
+-knomi code name- bear winks at you
 -map objects and loading more safely, versioning, safely load with new content
 -ddr machine that you can play and dance against
 -have enemy give you "wall jump"

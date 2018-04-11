@@ -195,7 +195,7 @@ def getdotwidth():
     return getmenutextxoffset() / 3
 
 #world
-playerspeed = 0.05
+playerspeed = 0.07
 if devmode:
     playerspeed *= 2
 accelpixelpermillisecond = 0.2359/1000

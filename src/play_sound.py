@@ -34,12 +34,14 @@ soundeffectchannel = pygame.mixer.Channel(38)
 
 def play_tone(t):
     # add because values are centered on 0
-    all_tones[variables.settings.soundpack].soundlist[t+12].set_volume(variables.settings.volume*(1/3)) # balance volume
+    all_tones[variables.settings.soundpack].soundlist[t+12]
+    channels[t+12].set_volume(variables.settings.volume*(1/3)) # balance volume
     channels[t+12].play(all_tones[variables.settings.soundpack].soundlist[t + 12])
 
 def update_tone(t):
     c = channels[t+12]
-    all_tones[variables.settings.soundpack].loopsoundlist[t + 12].set_volume(variables.settings.volume*(1/3))
+    all_tones[variables.settings.soundpack].loopsoundlist[t + 12]
+    c.set_volume(variables.settings.volume*(1/3))
     if c.get_queue() == None:
         c.queue(all_tones[variables.settings.soundpack].loopsoundlist[t + 12])
 
@@ -53,12 +55,12 @@ def getsoundvar(s):
         
 def play_effect(s):
     sound = getsoundvar(s)
-    sound.set_volume(variables.settings.volume)
+    soundeffectchannel.set_volume(variables.settings.volume)
     soundeffectchannel.play(sound)
 
 def play_music(s):
     sound = getsoundvar(s)
-    sound.set_volume(variables.settings.volume)
+    musicchannel.set_volume(variables.settings.volume)
     musicchannel.play(sound, loops=-1)
 
 def stop_music():
@@ -83,7 +85,7 @@ for x in range(6):
 
 def initiatedrums():
     sound = random.choice(grassdrums)
-    sound.set_volume(variables.settings.volume)
+    soundeffectchannel.set_volume(variables.settings.volume)
     soundeffectchannel.play(sound)
     
 def nextgrasslandsound():
@@ -99,7 +101,7 @@ def nextgrasslandsound():
 def initiatemelody():
     indexes_left = INDEXES.copy()
     sound = nextgrasslandsound()
-    sound.set_volume(variables.settings.volume)
+    musicchannel.set_volume(variables.settings.volume)
     musicchannel.play(sound)
     
 def initiategrasslandmusic():
@@ -112,12 +114,17 @@ def grasslandmusictick():
         initiatedrums()
     elif musicchannel.get_queue() == None:
         sound = nextgrasslandsound()
-        sound.set_volume(variables.settings.volume)
+        musicchannel.set_volume(variables.settings.volume)
         musicchannel.queue(sound)
 
     if not soundeffectchannel.get_busy():
         initiatedrums()
     elif soundeffectchannel.get_queue() == None:
         sound = random.choice(grassdrums)
-        sound.set_volume(variables.settings.volume)
+        soundeffectchannel.set_volume(variables.settings.volume)
         soundeffectchannel.queue(sound)
+
+def setnewvolume():
+    musicchannel.set_volume(variables.settings.volume)
+    soundeffectchannel.set_volume(variables.settings.volume)
+        
