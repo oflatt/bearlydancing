@@ -503,7 +503,10 @@ class Battle(FrozenClass):
 
     def addexp(self):
         self.state = "exp"
-        self.newexp = classvar.player.exp + stathandeling.exp_gained(self.enemy.lv)
+        expgained = stathandeling.exp_gained(self.enemy.lv)
+        if self.enemy.lv > classvar.player.lv():
+            expgained *= 1.5
+        self.newexp = classvar.player.exp + expgained
         self.animationtime = variables.settings.current_time
         self.oldexp = classvar.player.exp
             

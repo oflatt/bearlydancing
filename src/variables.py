@@ -137,6 +137,8 @@ FLOWERCOLLIDESECTION = [0, 1, 0, 0]
 # battle
 healthanimationspeed = 2000# time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
+numofrounds = 3
+
 def getpadypos():
     return height*(13/16)
 

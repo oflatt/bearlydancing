@@ -21,7 +21,7 @@ def exp_gained(lv):
 
 #amount of damage done to enemy
 def damage(lv):
-    return max_health(lv)/4
+    return max_health(lv)/3
 
 def percentoflevel(exp):
     expforlevel = exp - lvexp(explv(exp))
