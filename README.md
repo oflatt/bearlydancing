@@ -10,11 +10,9 @@ To play the game without development features, set exportmode in variables.py to
 
 ## Making an executable
 
-Call python build.py build.
+Make the absolute path go back one folder for Windows, and two for Mac in variables.py.
+Call python build.py build on Windows or python build.py bdist_mac for Mac.
 A folder called build should appear.
-Add the correct font to the library folder if there is an error.
-Copy the pics folder over to the folder with the exe file in it,
-which is a pain but will be fixed in the future.
 
 
 
