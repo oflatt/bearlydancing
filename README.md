@@ -17,7 +17,7 @@ A folder named build should appear.
 
 Mac:
 
-Make the absolute path go back two folders. Then call *python build.py bdist_mac*.
+Make the absolute path go back two folders. Then call *python build.py bdist_mac --iconfile icon.icns*.
 A folder named build should appear. If there are errors in copying files, it may have no effect because of a bug in cx_freeze.
 
 
