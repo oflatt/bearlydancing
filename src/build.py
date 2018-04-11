@@ -5,6 +5,7 @@ dependencieswithoutself = dependencies.copy()
 dependencieswithoutself.remove("cx-Freeze")
 
 includefiles = ['pics/', 'music/', 'sounds/', 'orangekidregular.ttf']
+myicon = "icon.ico"
 
 from sys import platform
 if platform == "darwin":
@@ -15,6 +16,7 @@ if platform == "darwin":
     dependencieswithoutself.append('appdirs')
     dependencieswithoutself.append('packaging')
     base = None
+    myicon = "icon.icns"
 else:
     base = "Win32GUI"
     
@@ -22,4 +24,4 @@ setup(name='bearly dancing',
       version='0.0',
       options={"build_exe": {"packages":dependencieswithoutself,"include_files":includefiles}},
       description='A rpg dance adventure by Oliver Flatt.',
-      executables = [Executable("bearly dancing.py", icon="icon.ico", base=base)])
+      executables = [Executable("bearly dancing.py", icon=myicon, base=base)])
