@@ -10,9 +10,15 @@ To play the game without development features, set exportmode in variables.py to
 
 ## Making an executable
 
-Make the absolute path go back one folder for Windows, and two for Mac in variables.py.
-Call python build.py build on Windows or python build.py bdist_mac for Mac.
-A folder called build should appear.
+Windows:
+
+Make the absolute path in variables.py go back one folder. Then call *python build.py build*.
+A folder named build should appear.
+
+Mac:
+
+Make the absolute path go back two folders. Then call *python build.py bdist_mac*.
+A folder named build should appear. If there are errors in copying files, it may have no effect because of a bug in cx_freeze.
 
 
 
