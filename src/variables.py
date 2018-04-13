@@ -8,7 +8,6 @@ os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 # for export need the commented section
 pathtoself = os.path.normpath(os.path.dirname(os.path.realpath(__file__)))# + os.sep + os.pardir)# + os.sep + os.pardir)
 
-
 testsmallp = False
 devmode = True
 newworldeachloadq = False
@@ -43,6 +42,11 @@ if exportmode:
 pygame.mixer.pre_init(22050, -16, 2, 128)
 pygame.mixer.init()
 pygame.init()
+
+# load icon
+icon = pygame.image.load(os.path.join(pathtoself, "icon.png"))
+pygame.display.set_icon(icon)
+
 pygame.display.set_caption('Bearly Dancing')
 pygame.mixer.set_num_channels(46)
 

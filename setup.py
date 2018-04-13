@@ -8,9 +8,6 @@ import sys
 sys.path.insert(0, './src')
 from dependencies import dependencies
 
-if platform == "darwin":
-    dependencies.append("pyobjc")
-
 def install(package):
     pip.main(['install', package])
 

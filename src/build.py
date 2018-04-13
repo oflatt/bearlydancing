@@ -4,16 +4,11 @@ from dependencies import dependencies
 dependencieswithoutself = dependencies.copy()
 dependencieswithoutself.remove("cx-Freeze")
 
-includefiles = ['pics/', 'music/', 'sounds/', 'orangekidregular.ttf']
+includefiles = ['pics/', 'music/', 'sounds/', 'orangekidregular.ttf', 'icon.png']
 
 from sys import platform
 if platform == "darwin":
-    import os
-    os.environ['TCL_LIBRARY'] = '/Library/Frameworks/Tcl.framework/Versions/8.6/Tcl'
-    os.environ['TK_LIBRARY'] = '/Library/Frameworks/Tk.framework/Versions/8.6/Tk'
-    dependencieswithoutself.append('six')
-    dependencieswithoutself.append('appdirs')
-    dependencieswithoutself.append('packaging')
+    dependencieswithoutself.append("AppKit")
     base = None
 else:
     base = "Win32GUI"
