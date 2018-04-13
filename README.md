@@ -1,4 +1,5 @@
-# Bearly Dancing ![](https://github.com/oflatt/portfolio-gifs/blob/master/beardance.gif)
+# Bearly Dancing
+![](https://github.com/oflatt/portfolio-gifs/blob/master/beardance.gif)
 A rhythm rpg with randomly generated beatmaps, written in python using the pygame library. Journey through a quirky world, playing the music for dance battles between a bear and his foes.
 
 ## Setting up the environment
