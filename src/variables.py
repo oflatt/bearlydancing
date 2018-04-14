@@ -57,21 +57,21 @@ pygame.display.set_icon(icon)
 pygame.display.set_caption('Bearly Dancing')
 pygame.mixer.set_num_channels(46)
 
+modes = pygame.display.list_modes()
+mode = modes[0]
+ratio = mode[0]/mode[1]
+
 if platform == 'win32':
     import ctypes
     ctypes.windll.user32.SetProcessDPIAware()
 elif platform == 'darwin':
     import AppKit
     AppKit.NSMenu.setMenuBarVisible_(False)
-    
-modes = pygame.display.list_modes()
-mode = modes[0]
-ratio = mode[0]/mode[1]
-for m in modes:
-    if m[0]/m[1] == ratio:
-        if m[0]<1800:
-            mode = m
-            break
+    for m in modes:
+        if m[0]/m[1] == ratio:
+            if m[0]<1800:
+                mode = m
+                break
 
 #(ctypes.windll.user32.GetSystemMetrics(0),ctypes.windll.user32.GetSystemMetrics(1))
 # Set the width and height of the screen [width,height]
