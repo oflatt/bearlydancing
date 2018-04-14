@@ -6,7 +6,14 @@ from sys import platform
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 # for export need the commented section
-pathtoself = os.path.normpath(os.path.dirname(os.path.realpath(__file__)))# + os.sep + os.pardir + os.sep + os.pardir)
+try:
+    from pathtoself import pathtoself
+except ImportError:
+    try:
+        from pathtoselfwindows import pathtoself
+    except ImportError:
+        from pathtoselfmac import pathtoself
+
 
 
 testsmallp = False
@@ -49,9 +56,9 @@ pygame.mixer.set_num_channels(46)
 if platform == 'win32':
     import ctypes
     ctypes.windll.user32.SetProcessDPIAware()
-#elif platform == 'darwin':
-#    import AppKit
-#    AppKit.NSMenu.setMenuBarVisible_(False)
+elif platform == 'darwin':
+    import AppKit
+    AppKit.NSMenu.setMenuBarVisible_(False)
     
 modes = pygame.display.list_modes()
 mode = modes[0]
