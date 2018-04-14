@@ -70,18 +70,18 @@ def stop_effect():
     soundeffectchannel.stop()
 
 ############################################ grassland music #########################################
-finalgrassmelody = pygame.mixer.Sound("music/modmusicgrassland/melodyfinal.wav")
+finalgrassmelody = pygame.mixer.Sound(os.path.join(variables.pathtoself, "music/modmusicgrassland/melodyfinal.wav"))
 grassmelodys = []
 INDEXES = []
 for x in range(13):
-    grassmelodys.append(pygame.mixer.Sound("music/modmusicgrassland/melody" + str(x) + ".wav"))
+    grassmelodys.append(pygame.mixer.Sound(os.path.join(variables.pathtoself, "music/modmusicgrassland/melody" + str(x) + ".wav")))
     INDEXES.append(x)
     
 indexes_left = INDEXES.copy()
 
 grassdrums = []
 for x in range(6):
-    grassdrums.append(pygame.mixer.Sound("music/modmusicgrassland/drum" + str(x) + ".wav"))
+    grassdrums.append(pygame.mixer.Sound(os.path.join(variables.pathtoself, "music/modmusicgrassland/drum" + str(x) + ".wav")))
 
 def initiatedrums():
     sound = random.choice(grassdrums)

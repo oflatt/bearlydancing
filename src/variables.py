@@ -6,7 +6,14 @@ from sys import platform
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 # for export need the commented section
-pathtoself = os.path.normpath(os.path.dirname(os.path.realpath(__file__)))# + os.sep + os.pardir)# + os.sep + os.pardir)
+try:
+    from pathtoself import pathtoself
+except ImportError:
+    try:
+        from pathtoselfwindows import pathtoself
+    except ImportError:
+        from pathtoselfmac import pathtoself
+
 
 testsmallp = False
 devmode = True
@@ -58,7 +65,15 @@ elif platform == 'darwin':
     AppKit.NSMenu.setMenuBarVisible_(False)
     
 modes = pygame.display.list_modes()
-mode = modes[0]#(ctypes.windll.user32.GetSystemMetrics(0),ctypes.windll.user32.GetSystemMetrics(1))
+mode = modes[0]
+ratio = mode[0]/mode[1]
+for m in modes:
+    if m[0]/m[1] == ratio:
+        if m[0]<1800:
+            mode = m
+            break
+
+#(ctypes.windll.user32.GetSystemMetrics(0),ctypes.windll.user32.GetSystemMetrics(1))
 # Set the width and height of the screen [width,height]
 height = mode[1]
 width = mode[0]
@@ -81,10 +96,10 @@ screen = None
 def setscreen(windowmode):
     global screen
     if windowmode == "windowed":
-        flags = pygame.NOFRAME | pygame.DOUBLEBUF
+        flags = pygame.NOFRAME | pygame.DOUBLEBUF | pygame.HWSURFACE
         screen = pygame.display.set_mode((width, height), flags)
     if windowmode == "fullscreen":
-        flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
+        flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
         screen = pygame.display.set_mode((width, height), flags)
 
 setscreen(settings.windowmode)
