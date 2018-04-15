@@ -52,7 +52,7 @@ dancelionbattle = getconversation("dancelionbattle")
 dancelionbattle.eventrequirements = [EventRequirement("beatsteve")]
 dancelionbattle.area = [dancelion.x, dancelion.y, dancelion.w+10, dancelion.h+10]
 dancelionbattle.special_battle = copy.copy(enemies.dancelion)
-dancelionbattle.special_battle.lv = 11
+dancelionbattle.special_battle.lv = 6
 dancelionbattle.special_battle.specialscale = "C minor"
 
 jeremyhome.conversations = [jeremy, dancelionpass, dancelionbattle]
