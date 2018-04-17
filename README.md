@@ -12,13 +12,13 @@ To play the game without development features, set exportmode in variables.py to
 
 Windows:
 
-Make the absolute path in variables.py go back one folder. Then call *python build.py build*.
+Call **python build.py build**.
 A folder named build should appear.
 
 Mac:
 
-Make the absolute path go back two folders. Then call *python build.py bdist_mac --iconfile icon.icns*.
-A folder named build should appear. If there are errors in copying files, it may have no effect because of a bug in cx_freeze.
+Call **python build.py bdist_mac --iconfile icon.icns**.
+A folder named build should appear. If there are errors in copying files (such as wav or png) or errors in included libraries, there may be no effect.
 
 
 
