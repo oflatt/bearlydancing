@@ -74,6 +74,9 @@ dancelion = Enemy(counter, 1, "dance lion", ["alternating", "repeatvariation", "
 
 woodsenemies = [perp, spoe, croc, bugo, radturtle]
 
+# if none picks random one, if an enemy engages enemy
+devbattletest = bugo
+
 def random_enemy(area):
     if area == "woods":
         return random.choice(woodsenemies)

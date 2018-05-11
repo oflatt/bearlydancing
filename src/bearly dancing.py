@@ -38,6 +38,7 @@ done = False
 # if the testspecs are set, use it and initiate a battle
 from initiatestate import initiatebattle
 from enemies import random_enemy
+from enemies import devbattletest
 import copy
 if variables.testspecs != None:
     testenemy = copy.copy(random_enemy("woods"))
@@ -83,8 +84,14 @@ while not done:
 
         # User pressed down on a key
         if event.type == pygame.KEYDOWN:
-                
-            if (not variables.settings.menuonq):
+            # check for dev battle key
+            if variables.devmode and event.key == variables.devengagebattlekey and variables.settings.state == "world":
+                if devbattletest == None:
+                    initiatebattle(random_enemy())
+                else:
+                    initiatebattle(devbattletest)
+            
+            elif (not variables.settings.menuonq):
                 if variables.settings.state == "conversation" and currentc != None:
                     message = currentc.keyevent(event.key)
                     menu.setmessage(message)

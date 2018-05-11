@@ -7,6 +7,7 @@ def initiatebattle(enemy):
     variables.settings.state = "battle"
     classvar.player.change_of_state()
     enemy.sethealth()
+    enemy.enterbattle()
     classvar.player.heal()
     classvar.battle = Battle(enemy)
 

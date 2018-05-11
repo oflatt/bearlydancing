@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import pygame, os, variables, rdrawtree, rdrawland, rdrawrock
+import pygame, os, variables, rdrawtree, rdrawland, rdrawrock, random
 from rdrawflower import makeflower
 from datetime import date
 from pygame import Rect
@@ -188,6 +188,51 @@ def drawthismessage(messagestring):
 def endofgeneration():
     variables.draw_progress_bar()
 
+
+
+def randombogoface():
+    # first clear the scaled pics for bugo
+    if "bugo0" in SGR:
+        del SGR["bugo0"]
+    if "bugo1" in SGR:
+        del SGR["bugo1"]
+    
+    frame1 = GR["bugo0"]["img"]
+    frame2 = GR["bugo1"]["img"]
+    
+    xoffset = 8
+    yoffset = 7
+
+    backgroundcolor = frame1.get_at([xoffset-1, yoffset])
+    mouthcolor = frame1.get_at([8,5])
+    
+    smile = pygame.Surface([5, 2], pygame.SRCALPHA)
+    smile.fill(backgroundcolor)
+
+    def mirrorset(point):
+        smile.set_at(point, mouthcolor)
+        smile.set_at((5-1-point[0], point[1]), mouthcolor)
+
+    # check the points besides the middle points
+    if random.random() < 1/3:
+        mirrorset((0,0))
+    if random.random() < 1/3:
+        mirrorset((0,1))
+
+    if random.random() < 1/2:
+        mirrorset((1, 0))
+    if random.random() < 1/2:
+        mirrorset((1, 1))
+
+    if random.random() < 1/2:
+        smile.set_at((2, 0), mouthcolor)
+    if random.random() < 1/2:
+        smile.set_at((2, 1), mouthcolor)
+
+    frame1.blit(smile, (xoffset, yoffset))
+
+
+    
 # takes a function that returns a new surface and a filename and returns the newy made surface name
 def generategraphic(generatingfunction, graphicname):
     if not graphicname in variables.generatedgraphicsused:

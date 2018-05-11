@@ -27,3 +27,7 @@ class Enemy(FrozenClass):
 
     def sethealth(self):
         self.health = stathandeling.max_health(self.lv)
+
+    def enterbattle(self):
+        if self.name == "bogo":
+            graphics.randombogoface()
