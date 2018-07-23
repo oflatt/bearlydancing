@@ -11,10 +11,15 @@ def loadmaps(mapdict):
 
 
 # can't pickle pygame masks or surfaces
-def save(me):
+def save(manualp):
     # check to make the dir
     try:
         os.makedirs(variables.savefolderpath, exist_ok=True)
+    except FileExistsError:
+        pass
+
+    try:
+        os.makedirs(variables.manualsavebackuppath, exist_ok=True)
     except FileExistsError:
         pass
     
@@ -24,6 +29,14 @@ def save(me):
         pickle.dump(savelist, f)
     with open(variables.settingspath, "wb") as f:
         pickle.dump(variables.settings, f)
+
+    if(manualp):
+        with open(os.path.join(variables.manualsavebackuppath, "bdsave.txt"), "wb") as f:
+            pickle.dump(savelist, f)
+        with open(os.path.join(variables.manualsavebackuppath, "bdsettings.txt"), "wb") as f:
+            pickle.dump(variables.settings, f)
+
+    
         
 # returns a menu
 def load():

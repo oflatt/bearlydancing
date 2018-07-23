@@ -304,6 +304,11 @@ def addlayer(notelist, time, specs, valuestouse = []):
 
         return (l, max(notedurations))
 
+def maxtimefromspecs(specs):
+    maxtime = specs['maxtime']
+    return maxtime + specs['lv']*2
+
+    
 def random_beatmap(specs):
     if variables.devmode:
         print()
@@ -320,8 +325,7 @@ def random_beatmap(specs):
     variation_of_notes([])
     l = []
     lv = specs['lv']
-    maxtime = specs['maxtime']
-    maxtime = maxtime + lv * 2
+    maxtime = maxtimefromspecs(specs);
     time = 1
     # repeatlength used in repeat rule for how many notes back to copy
     repeatlength = None

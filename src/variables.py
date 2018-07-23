@@ -21,7 +21,7 @@ newworldeachloadq = False
 # this overrides the generation of a new set of graphics for a new game
 newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
-dontloadmapsdict = True
+dontloadmapsdict = False
 # only loads first couple of maps
 fasttestmodep = False
 # adds to player level when loading
@@ -84,6 +84,7 @@ if testsmallp:
     width = int(width/2)
 
 savefolderpath = os.path.join(pathtoself, "save0/")
+manualsavebackuppath = os.path.join(pathtoself, "savebackup/");
 settingspath = os.path.join(savefolderpath, "bdsettings.txt")
 savepath = os.path.join(savefolderpath, "bdsave.txt")
 settings = Settings()
@@ -91,6 +92,7 @@ if (os.path.isfile(os.path.abspath(settingspath))):
         if os.path.getsize(os.path.abspath(settingspath)) > 0:
             with open(settingspath, "rb") as f:
                 settings = pickle.load(f)
+settings.menuonq = True
 
 
 screen = None
@@ -157,15 +159,15 @@ FLOWERCOLLIDESECTION = [0, 1, 0, 0]
 # battle
 healthanimationspeed = 2000# time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
-numofrounds = 3
+numofrounds = 2
 
 def getpadypos():
     return height*(13/16)
 
 # lv and rules are added later
 maxdifficulty = 200
-generic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : []}
-melodic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : ['melodic']}
+generic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : []}
+melodic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : ['melodic']}
 maxvalue = 14
 minvalue = -7
 

@@ -46,7 +46,7 @@ if variables.testspecs != None:
     testenemy.beatmaprules = variables.testspecs['rules']
     initiatebattle(testenemy)
     menu.firstbootup = False
-    variables.menuonq = False
+    variables.settings.menuonq = False
 
 # play main menu music
 from play_sound import play_music
@@ -79,7 +79,7 @@ while not done:
                 if menu.getoption() == "exit":
                     done = True
                 elif menu.getoption() == "save":
-                    save(menu)
+                    save(True)
                     menu.saved()
 
         # User pressed down on a key
