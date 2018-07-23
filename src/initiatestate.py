@@ -16,5 +16,6 @@ def initiatebattle(enemy):
     play_effect("engagebattle")
     stop_music()
 
-    save(False);
-    
+    if variables.settings.autosavep:
+        save(False);
+        variables.saved = True

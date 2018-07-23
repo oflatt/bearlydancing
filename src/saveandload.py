@@ -36,6 +36,7 @@ def save(manualp):
         with open(os.path.join(variables.manualsavebackuppath, "bdsettings.txt"), "wb") as f:
             pickle.dump(variables.settings, f)
 
+
     
         
 # returns a menu

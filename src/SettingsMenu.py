@@ -22,7 +22,7 @@ class SettingsMenu(FrozenClass):
 
         self.workingcopy = variables.settings # a copy is created with the first edit
 
-        self.optionsbeforebindings = ["mode", "volume"]
+        self.optionsbeforebindings = ["mode", "volume", "autosave"]
         self.windowmodes = ["fullscreen", "windowed"]
         self.optionsafterbindings = ["back"]
         
@@ -65,7 +65,15 @@ class SettingsMenu(FrozenClass):
                                 pygame.draw.rect(variables.screen, variables.BLUE, (xpos-2, ypos+2, pic.get_width()+4, pic.get_height()+2), 2)
                             xpos += variables.getmenutextxoffset() + pic.get_width()
                             i += 1
-                            
+                    elif keytype == "autosave":
+                        xpos = variables.getmenutextxoffset()*2 + title.get_width()
+                        text = "off"
+                        if self.workingcopy.autosavep:
+                            text = "on"
+                        pic = getTextPic(text, variables.gettextsize(), variables.WHITE)
+                        variables.screen.blit(pic, (xpos, ypos))
+                        if self.workingcopy.autosavep:
+                            pygame.draw.rect(variables.screen, variables.BLUE, (xpos-2, ypos+2, pic.get_width()+4, pic.get_height()+2), 1)
                 else:
                     if i == self.option-self.scroll:
                         self.drawline(keytype, ypos, selectedoption = self.bindingoption)
@@ -192,6 +200,8 @@ class SettingsMenu(FrozenClass):
                 bindingslength = 0
             if optionslist[self.option] == "mode":
                 bindingslength = len(self.windowmodes)
+            if optionslist[self.option] == "autosave":
+                bindingslength = 1
             
             if variables.checkkey("up", key):
                 self.uptime = variables.settings.current_time
@@ -240,6 +250,8 @@ class SettingsMenu(FrozenClass):
                     message = self.initiateconfirm()
                 elif optionslist[self.option] == "mode":
                     self.changewindowmode()
+                elif optionslist[self.option] == "autosave":
+                    self.workingcopy.autosavep = not self.workingcopy.autosavep
                 elif self.bindingoption == 0:
                     self.deleteonebinding()
                 elif self.bindingoption == bindingslength-1:

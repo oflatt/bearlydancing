@@ -26,12 +26,12 @@ class Settings(FrozenClass):
         # normal setting stuff
         self.windowmode = "fullscreen"
         self.volume = 0.5
+        self.autosavep = True
 
         # state can be world, battle, or conversation
         self.state = "world"
         self.backgroundstate = "world"
         self.menuonq = True
-        self.easymodeq = False
 
         #possible soundpacks can be seen by listing the keys in all_sounds in play_sound
         self.soundpack = "sine"

@@ -210,6 +210,8 @@ beginningprompttextcolor = BLUE
 menuscrollspeed = 150 # in milliseconds
 confirmduration = 11 # in seconds
 maxbindings = 50
+# keeps track of if we saved to display the symbol
+saved = False
 
 def getmenutextyspace():
     return gettextsize() * 1.5

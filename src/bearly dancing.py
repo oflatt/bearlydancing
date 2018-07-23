@@ -80,7 +80,7 @@ while not done:
                     done = True
                 elif menu.getoption() == "save":
                     save(True)
-                    menu.saved()
+                    variables.saved = True
 
         # User pressed down on a key
         if event.type == pygame.KEYDOWN:
@@ -149,6 +149,11 @@ while not done:
     # get it again for if the key press changed the state to conversation
     if variables.settings.state == "conversation":
         currentc = maps.current_map.getconversation(conversations.currentconversation)
+
+    # draw saved
+    if(variables.saved):
+        menu.saved()
+        variables.saved = False
         
     # --- Drawing Code
     def draw_world():
