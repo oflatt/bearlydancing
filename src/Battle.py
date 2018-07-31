@@ -49,7 +49,9 @@ class Battle(FrozenClass):
 
         # drawing buttons
         # extra space around dance to leave space for synth options
-        self.battlechoice = ChoiceButtons(["   DANCE!   ", "Flee", variables.settings.soundpack, self.getscalename()], 13 / 16)
+        self.battlechoice = ChoiceButtons(["   DANCE!   ", "leave", variables.settings.soundpack, self.getscalename()], 13 / 16)
+
+        self.retrychoice = ChoiceButtons(["retry", "go home"], 13/16)
 
         # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
         self.pausetime = 0
@@ -59,6 +61,15 @@ class Battle(FrozenClass):
         self.playercurrentanim = 0
 
         self._freeze()
+
+    def startnew(self):
+        self.enemy.sethealth()
+        classvar.player.heal()
+        
+        self.state = "dance"
+        self.setfirstbeatmap()
+        # clear screen
+        variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
 
     def getscalename(self):
         if self.enemy.specialscale != None:
@@ -173,18 +184,19 @@ class Battle(FrozenClass):
             self.battlechoice.draw()
 
         elif self.state == "lose" or self.state == "win":
-            text = None
+
             # button
-            if self.state == "lose":
-                text = "go home in shame"
+            if self.state == "win":
+                conttext = "continue"
+                # button coordinates are multipliers of screen width and height
+                continuebutton = Button(1 / 2, b/h, conttext, variables.gettextsize()/h)
+                continuebutton.iscentered = True
+                continuebutton.draw(True)
             else:
-                text = "continue"
-            # button coordinates are multipliers of screen width and height
-            continuebutton = Button(1 / 2, b/h, text, variables.gettextsize()/h)
-            continuebutton.iscentered = True
-            continuebutton.draw(True)
+                self.retrychoice.draw()
 
             # text
+            text = None
             if self.state == "lose":
                 text = variables.font.render("you lost...", 0, variables.WHITE)
             else:
@@ -452,10 +464,7 @@ class Battle(FrozenClass):
         elif self.state == "choose":
             if variables.checkkey("enter", key):
                 if self.battlechoice.current_option == 0:
-                    self.state = "dance"
-                    self.setfirstbeatmap()
-                    # clear screen
-                    variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
+                    self.startnew()
                 elif self.battlechoice.current_option == 1:
                     self.flee()
                 elif self.battlechoice.current_option == 2:
@@ -476,8 +485,14 @@ class Battle(FrozenClass):
                 elif variables.checkkey("down", key) and self.battlechoice.current_option == 3:
                     change_scale(1)
 
-        elif self.state == "lose" and variables.checkkey("enter", key):
-            self.lose()
+        elif self.state == "lose":
+            if  variables.checkkey("enter", key):
+                if self.retrychoice.getoption() == "retry":
+                    self.startnew()
+                else:
+                    self.lose()
+            else:
+                self.retrychoice.leftrightonkey(key)
         elif self.state == "win" and variables.checkkey("enter", key):
             self.addexp()
         elif self.state == "got exp" and variables.checkkey("enter", key):
