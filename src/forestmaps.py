@@ -185,7 +185,7 @@ grovetree = Rock(graphics.pinetree(),
                  outside6width/2-variables.TREEWIDTH/2,
                  outside6height-(groveheight/2)-(variables.TREEHEIGHT/2),
                  variables.TREECOLLIDESECTION)
-kewlcorn = Rock("kewlcorn0", grovetree.x+variables.TREEWIDTH/2+5, grovetree.y+variables.TREEHEIGHT/4, [0.5, 0.5, 0.5, 0.5])
+kewlcorn = Rock("kewlcorn0", grovetree.x+variables.TREEWIDTH/2+5, grovetree.y+variables.TREEHEIGHT/4, None)
 kewlcorn.name = "kewlcorn"
 kewlcorn.background_range.y += variables.TREEHEIGHT*(3/4)-kewlcorn.h+1
 kewlcorn.hide()
