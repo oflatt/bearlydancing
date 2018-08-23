@@ -29,6 +29,10 @@ menu = load()
 
 maps.new_scale_offset()
 
+# for skipsteve add the event
+if variables.skipsteve:
+    classvar.player.addstoryevent("beatsteve")
+
 #clear all the events so it does not mess up the game when it loads
 pygame.event.get()
 

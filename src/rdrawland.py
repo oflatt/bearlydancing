@@ -154,4 +154,5 @@ def makegrassland(width, height, leftpath = True, rightpath = True, uppath = Tru
 
 def makesnowland(width, height):
     surface = pygame.Surface([width, height], pygame.SRCALPHA)
-    
+    surface.fill((210, 210, 210))
+    return surface

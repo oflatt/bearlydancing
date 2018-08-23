@@ -37,7 +37,7 @@ jeremyhome.populate_with("pinetree", randint(3, 8), dontputrockslist)
 jeremyhome.populate_with("flower", randint(15, 25), dontputrockslist)
 
 jeremyhome.exitareas = [Exit("right", False, 'outside1', "left", "same"),
-                        Exit("left", False, 'tutorialwin', "right", "same")]
+                        Exit("left", False, 'snowentrance', "right", "same")]
 jeremy = getconversation("jeremy")
 jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"] - (honeyw / 2), GR["rabbithole"]["h"]]

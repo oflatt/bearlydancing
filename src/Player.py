@@ -127,19 +127,20 @@ class Player(FrozenClass):
         if(not self.olddrawx == None):
             m = maps.current_map
             background = getpic(m.finalimage, variables.compscale)
-            feetw = self.collidesection[2]*variables.compscale*0.75
+            feetw = self.collidesection[2]*variables.compscale
+            pathradius = feetw*0.25
             footoffsetx = self.collidesection[0]*variables.compscale+feetw/2
             footoffsety = self.collidesection[1]*variables.compscale
             greysnow = (110,110,100)
             olddrawcomp = (int(self.olddrawx+self.oldmapdrawx+footoffsetx), int(self.olddrawy+self.oldmapdrawy+footoffsety))
-            pygame.draw.line(background, greysnow, olddrawcomp, (int(self.drawx+self.mapdrawx+footoffsetx), int(self.drawy+self.mapdrawy+footoffsety)), int(feetw))
-            pygame.draw.circle(background, greysnow, olddrawcomp, int(feetw/2))
+            pygame.draw.line(background, greysnow, olddrawcomp, (int(self.drawx+self.mapdrawx+footoffsetx), int(self.drawy+self.mapdrawy+footoffsety)), int(pathradius*2))
+            pygame.draw.circle(background, greysnow, olddrawcomp, int(pathradius))
 
-            particlebandwidth = feetw/9
+            particlebandwidth = pathradius/4.5
             # draw a particle
             def randsnowparticle(xpos, ypos):
                 angle = uniform(0, 2*math.pi)
-                mag = uniform(feetw/2 - particlebandwidth/2, feetw/2 + particlebandwidth/2)
+                mag = uniform(pathradius - particlebandwidth/2, pathradius + particlebandwidth/2)
                 rgrey = randint(20, 255)
                 dotx = xpos + math.cos(angle)*mag-variables.compscale/2
                 doty = ypos + math.sin(angle)*mag-variables.compscale/2
@@ -150,7 +151,7 @@ class Player(FrozenClass):
                 for x in range(10):
                     randsnowparticle(olddrawcomp[0], olddrawcomp[1])
 
-            dirtyradius = feetw/2 + particlebandwidth*1.2
+            dirtyradius = pathradius + particlebandwidth*1.2
             variables.dirtyrects.append(Rect(self.olddrawx+footoffsetx-dirtyradius, self.olddrawy+footoffsety-dirtyradius, dirtyradius*2, dirtyradius*2))
         
         variables.screen.blit(self.current_pic_scaled(), [self.drawx, self.drawy])

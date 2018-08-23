@@ -20,6 +20,7 @@ from honeyhomemaps import *
 
 if not fasttestmodep:
     from forestmaps import *
+    from snowmaps import *
 
 # teleportation and stuff#######################################################################
 home_map = honeyhome

@@ -33,7 +33,7 @@ class Map(FrozenClass):
         self.base = base
         # terrain is a list of Rock
         self.terrain = terrain
-        # final image is an actual image, not a dict
+        # final image is the name of the image for the background
         self.finalimage = base
 
         self.set_map_scale_offset()
@@ -58,6 +58,7 @@ class Map(FrozenClass):
         self.map_height = GR[base]["h"]
         self.reset_screenxoffset()
         self.playerenabledp = True
+        
         self._freeze()
 
     def set_map_scale_offset(self):
