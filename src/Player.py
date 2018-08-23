@@ -28,6 +28,8 @@ class Player(FrozenClass):
         self.oldmapdrawx = 0
         self.mapdrawy = 0
         self.oldmapdrawy = 0
+        self.oldsnowpos = (None, None)
+        
         self.lastxupdate = 0
         self.lastyupdate = 0
         self.timeslost = 0
@@ -54,6 +56,10 @@ class Player(FrozenClass):
 
         # a dictionary mapping events (strings) to the number of times it has happened
         self.storyevents = {}
+
+        # a list of points for snow clumps
+        # snow clumps are a tuple with x, y, then radius
+        self.feetsnowclumps = []
         
         self._freeze()
 
@@ -66,6 +72,9 @@ class Player(FrozenClass):
             self.xpos = x
         if not y == "same":
             self.ypos = y
+
+    def snowclumpradius(self):
+        return int(self.normal_width*variables.compscale*0.25)
 
     def update_drawpos(self):
         self.oldmapdrawx = self.mapdrawx
@@ -122,43 +131,103 @@ class Player(FrozenClass):
         self.mapdrawx = int(self.mapdrawx)
         self.mapdrawy = int(self.mapdrawy)
 
-    def draw(self):
-        # for snow draw trail
-        if(not self.olddrawx == None):
-            m = maps.current_map
-            background = getpic(m.finalimage, variables.compscale)
-            feetw = self.collidesection[2]*variables.compscale
-            pathradius = feetw*0.25
-            footoffsetx = self.collidesection[0]*variables.compscale+feetw/2
-            footoffsety = self.collidesection[1]*variables.compscale
-            greysnow = (110,110,100)
-            olddrawcomp = (int(self.olddrawx+self.oldmapdrawx+footoffsetx), int(self.olddrawy+self.oldmapdrawy+footoffsety))
-            pygame.draw.line(background, greysnow, olddrawcomp, (int(self.drawx+self.mapdrawx+footoffsetx), int(self.drawy+self.mapdrawy+footoffsety)), int(pathradius*2))
-            pygame.draw.circle(background, greysnow, olddrawcomp, int(pathradius))
+    def drawsnowtrail(self):
+        m = maps.current_map
+        background = getpic(m.finalimage, variables.compscale)
+        feetw = self.collidesection[2]*variables.compscale
+        pathradius = feetw*0.3
+        footoffsetx = self.collidesection[0]*variables.compscale+feetw/2
+        footoffsety = self.collidesection[1]*variables.compscale - self.collidesection[3]*variables.compscale*0.5
+        greysnow = (150,150,140)
+        newdrawcomp = (int(self.drawx+self.mapdrawx+footoffsetx), int(self.drawy+self.mapdrawy+footoffsety))
+        
+        if self.oldsnowpos == (None, None):
+            self.oldsnowpos = newdrawcomp
+        
+        # first draw a circle at current pos
+        pygame.draw.circle(background, (greysnow[0]+50, greysnow[1]+50, greysnow[2]+50), newdrawcomp, int(pathradius))
 
-            particlebandwidth = pathradius/4.5
-            # draw a particle
-            def randsnowparticle(xpos, ypos):
-                angle = uniform(0, 2*math.pi)
-                mag = uniform(pathradius - particlebandwidth/2, pathradius + particlebandwidth/2)
-                rgrey = randint(20, 255)
-                dotx = xpos + math.cos(angle)*mag-variables.compscale/2
-                doty = ypos + math.sin(angle)*mag-variables.compscale/2
+        particlebandwidth = pathradius/4.5
+        
+        # draw a particle
+        def randsnowparticle(xpos, ypos):
+            angle = uniform(0, 2*math.pi)
+            mag = uniform(pathradius - particlebandwidth/2, pathradius + particlebandwidth/2)
+            rgrey = randint(100, 255)
+            dotx = xpos + math.cos(angle)*mag-variables.compscale/2
+            doty = ypos + math.sin(angle)*mag-variables.compscale/2
+
+            pygame.draw.rect(background, (rgrey, rgrey, rgrey),  Rect(dotx, doty, variables.compscale, variables.compscale))
+
+        
+        
+        # draw the particles on the circle
+        for x in range(10):
+            randsnowparticle(newdrawcomp[0], newdrawcomp[1])
+
+        # draw a line for the ditch over circle and particles
+        linestart = self.oldsnowpos
+        lineend = newdrawcomp
+        linewidth = pathradius*2-particlebandwidth*2
+
+        # draw a little circle to smooth edges
+        pygame.draw.circle(background, greysnow, lineend, int(linewidth/2))
+        pygame.draw.circle(background, greysnow, linestart, int(linewidth/2))
+
+            
+        leftb = (self.xpos+self.collidesection[0])*variables.compscale
+        rightb = leftb + feetw
+        topb = (self.ypos + self.collidesection[1]+self.collidesection[3]/2)*variables.compscale - feetw/3
+        bottomb = ((self.ypos + self.collidesection[1]+self.collidesection[3]/2)*variables.compscale) + feetw/20
+        # snow clumps at feet
+        i = 0
+        xchange = self.xpos - self.oldxpos
+        ychange = self.ypos-self.oldypos
+        while(i<len(self.feetsnowclumps)):
+            p = self.feetsnowclumps[i]
+            if p[2] < self.snowclumpradius():
+                self.feetsnowclumps[i] = (p[0]+ xchange*variables.compscale, p[1]+ychange*variables.compscale, p[2]+self.snowclumpradius()/500)
                 
-                pygame.draw.rect(background, (rgrey, rgrey, rgrey),  Rect(dotx, doty, variables.compscale, variables.compscale))
+            if p[0]<leftb or p[0]>rightb or p[1]<topb or p[1]>bottomb:
+                del self.feetsnowclumps[i]
+                i-=1
+                
+            i+=1
 
-            if self.ismoving():
-                for x in range(10):
-                    randsnowparticle(olddrawcomp[0], olddrawcomp[1])
-
-            dirtyradius = pathradius + particlebandwidth*1.2
-            variables.dirtyrects.append(Rect(self.olddrawx+footoffsetx-dirtyradius, self.olddrawy+footoffsety-dirtyradius, dirtyradius*2, dirtyradius*2))
+        if(len(self.feetsnowclumps) < 7):
+            if uniform(0, 110)>93+len(self.feetsnowclumps):
+                self.feetsnowclumps.append((randint(int(leftb), int(rightb)), randint(int(topb), int(bottomb)), uniform(self.snowclumpradius()/2, self.snowclumpradius())))
+            
+        
+        # set the old snow pos to current pos
+        self.oldsnowpos = newdrawcomp
+        
+    def draw(self):
+        mapbasename = maps.current_map.finalimage
+        snowp = mapbasename[0:14] == "randomsnowland"
         
         variables.screen.blit(self.current_pic_scaled(), [self.drawx, self.drawy])
         if self.mapdrawx != self.oldmapdrawx or self.mapdrawy != self.oldmapdrawy:
             variables.dirtyrects = [Rect(0,0,variables.width, variables.height)]
         else:
-            variables.dirtyrects.append(Rect(self.drawx-variables.compscale*3, self.drawy-variables.compscale*3, self.normal_width*variables.compscale+6*variables.compscale, self.normal_height*variables.compscale + 6 * variables.compscale))
+            if snowp:
+                # bigger dirtyrect for the snow balls
+                variables.dirtyrects.append(Rect(self.drawx - self.snowclumpradius()*1.5,
+                                                 self.drawy,
+                                                 self.normal_width*variables.compscale+self.snowclumpradius()*3,
+                                                 self.normal_height*variables.compscale + self.snowclumpradius()*3))
+            else:
+                variables.dirtyrects.append(Rect(self.drawx-variables.compscale*3, self.drawy-variables.compscale*3, self.normal_width*variables.compscale+6*variables.compscale, self.normal_height*variables.compscale + 6 * variables.compscale))
+
+        # for snow draw trail
+        if snowp:
+            if not self.olddrawx == None and self.ismoving():
+                self.drawsnowtrail()
+
+            
+            # now draw snow clumps on bear
+            for p in self.feetsnowclumps:
+                pygame.draw.circle(variables.screen, (200, 200, 200), (int(p[0])-self.mapdrawx, int(p[1])-self.mapdrawy), int(p[2]))
 
     def change_animation(self):
         oldanimation = self.current_animation
@@ -180,19 +249,19 @@ class Player(FrozenClass):
         if variables.checkkey("left", k):
             self.leftpresstime = variables.settings.current_time
             self.xspeed = -s
-            self.lastxupdate = t
+            self.lastxupdate = t-16
         if variables.checkkey("right", k):
             self.rightpresstime = variables.settings.current_time
-            self.lastxupdate = t
+            self.lastxupdate = t-16
             self.xspeed = s
         if variables.checkkey("up", k):
             self.uppresstime = variables.settings.current_time
             self.yspeed = -s
-            self.lastyupdate = t
+            self.lastyupdate = t-16
         if variables.checkkey("down", k):
             self.downpresstime = variables.settings.current_time
             self.yspeed = s
-            self.lastyupdate = t
+            self.lastyupdate = t-16
         self.change_animation()
 
     def keyrelease(self, k):
@@ -323,6 +392,7 @@ class Player(FrozenClass):
         self.olddrawy = None
         self.drawx = None
         self.drawy = None
+        self.oldsnowpos = (None, None)
         
     def ismoving(self):
         return not (self.xspeed==0 and self.yspeed==0)
