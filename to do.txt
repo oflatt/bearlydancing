@@ -4,7 +4,6 @@ gameplay
 -knomi code name- bear winks at you
 -map objects and loading more safely, versioning, safely load with new content
 -ddr machine that you can play and dance against
--have enemy give you "wall jump"
 -recieve synths from enemies
 -recieve waves from enemies
 -recieve scales from enemies
@@ -29,9 +28,8 @@ battle
 -battle code is ugly and convoluted with all the time/health variables
 
 graphics
--collide with path maybe for placing objects
 -shift pixels for wind? give life to the game
--randomly generated faces for bugo- simple one half of smile, pixels are expressive
+
 
 Sophie:
 -tent snow

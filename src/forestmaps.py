@@ -187,7 +187,7 @@ grovetree = Rock(graphics.pinetree(),
                  variables.TREECOLLIDESECTION)
 kewlcorn = Rock("kewlcorn0", grovetree.x+variables.TREEWIDTH/2+5, grovetree.y+variables.TREEHEIGHT/4, None)
 kewlcorn.name = "kewlcorn"
-kewlcorn.background_range.y += variables.TREEHEIGHT*(3/4)-kewlcorn.h+1
+kewlcorn.background_range = Rect(0,kewlcorn.y+ variables.TREEHEIGHT*(3/4)-kewlcorn.h+1,9999999,9999999)
 kewlcorn.hide()
 
 outside6 = Map(graphics.grassland(outside6width, outside6height), [grovetree, kewlcorn])

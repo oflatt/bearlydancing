@@ -1,5 +1,7 @@
 #!/usr/bin/python
-import pygame, variables, maps, stathandeling
+import pygame, variables, maps, stathandeling, math
+from random import randint
+from random import uniform
 from graphics import GR, getpic, getmask
 from Animation import Animation
 from pygame import Rect
@@ -20,6 +22,8 @@ class Player(FrozenClass):
         self.oldypos = 0
         self.drawx = 0
         self.drawy = 0
+        self.olddrawx = None
+        self.olddrawy = None
         self.mapdrawx = 0
         self.oldmapdrawx = 0
         self.mapdrawy = 0
@@ -66,6 +70,9 @@ class Player(FrozenClass):
     def update_drawpos(self):
         self.oldmapdrawx = self.mapdrawx
         self.oldmapdrawy = self.mapdrawy
+        self.olddrawx = self.drawx
+        self.olddrawy = self.drawy
+        
         x = self.xpos * variables.compscale
         y = self.ypos * variables.compscale
         m = maps.current_map
@@ -116,6 +123,36 @@ class Player(FrozenClass):
         self.mapdrawy = int(self.mapdrawy)
 
     def draw(self):
+        # for snow draw trail
+        if(not self.olddrawx == None):
+            m = maps.current_map
+            background = getpic(m.finalimage, variables.compscale)
+            feetw = self.collidesection[2]*variables.compscale*0.75
+            footoffsetx = self.collidesection[0]*variables.compscale+feetw/2
+            footoffsety = self.collidesection[1]*variables.compscale
+            greysnow = (110,110,100)
+            olddrawcomp = (int(self.olddrawx+self.oldmapdrawx+footoffsetx), int(self.olddrawy+self.oldmapdrawy+footoffsety))
+            pygame.draw.line(background, greysnow, olddrawcomp, (int(self.drawx+self.mapdrawx+footoffsetx), int(self.drawy+self.mapdrawy+footoffsety)), int(feetw))
+            pygame.draw.circle(background, greysnow, olddrawcomp, int(feetw/2))
+
+            particlebandwidth = feetw/9
+            # draw a particle
+            def randsnowparticle(xpos, ypos):
+                angle = uniform(0, 2*math.pi)
+                mag = uniform(feetw/2 - particlebandwidth/2, feetw/2 + particlebandwidth/2)
+                rgrey = randint(20, 255)
+                dotx = xpos + math.cos(angle)*mag-variables.compscale/2
+                doty = ypos + math.sin(angle)*mag-variables.compscale/2
+                
+                pygame.draw.rect(background, (rgrey, rgrey, rgrey),  Rect(dotx, doty, variables.compscale, variables.compscale))
+
+            if self.ismoving():
+                for x in range(10):
+                    randsnowparticle(olddrawcomp[0], olddrawcomp[1])
+
+            dirtyradius = feetw/2 + particlebandwidth*1.2
+            variables.dirtyrects.append(Rect(self.olddrawx+footoffsetx-dirtyradius, self.olddrawy+footoffsety-dirtyradius, dirtyradius*2, dirtyradius*2))
+        
         variables.screen.blit(self.current_pic_scaled(), [self.drawx, self.drawy])
         if self.mapdrawx != self.oldmapdrawx or self.mapdrawy != self.oldmapdrawy:
             variables.dirtyrects = [Rect(0,0,variables.width, variables.height)]
@@ -280,8 +317,11 @@ class Player(FrozenClass):
         return getpic(c, variables.compscale)
 
     def new_scale_offset(self):
-        pass
-
+        # stop a streak from happening with path in snow
+        self.olddrawx = None
+        self.olddrawy = None
+        self.drawx = None
+        self.drawy = None
         
     def ismoving(self):
         return not (self.xspeed==0 and self.yspeed==0)
