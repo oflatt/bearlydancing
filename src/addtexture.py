@@ -28,7 +28,7 @@ def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None,
         point = pointlist.pop(0)
         if point[0] >= 0 and point[0] < s.get_width() and point[1]>0 and point[1] < s.get_height():
             s.set_at(point, fillcolor)
-        #if there is still a point to the left in the boudns
+        #if there is still a point to the left in the bounds
         if point[0] > bounds[0]:
             if paintoverp(s.get_at([point[0] - 1, point[1]])):
                 pointlist.insert(0, [point[0] - 1, point[1]])

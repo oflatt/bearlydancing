@@ -20,7 +20,7 @@ devmode = True
 skipsteve = True
 newworldeachloadq = False
 # this overrides the generation of a new set of graphics for a new game
-newworldnever = True
+newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
 dontloadmapsdict = False
 # only loads first couple of maps
@@ -150,6 +150,8 @@ def num_of_generated_graphics_used():
     return s
 
 basemapsize = 360
+
+snowcolor = (220, 220, 220)
 
 TREEWIDTH = 100
 TREEHEIGHT = 200

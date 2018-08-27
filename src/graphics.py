@@ -234,7 +234,7 @@ def randombogoface():
 
     
 # takes a function that returns a new surface and a filename and returns the newy made surface name
-def generategraphic(generatingfunction, graphicname):
+def generategraphic(generatingfunction, graphicname, newworldoverride = False):
     if not graphicname in variables.generatedgraphicsused:
         variables.generatedgraphicsused[graphicname] = 1
     else:
@@ -245,7 +245,7 @@ def generategraphic(generatingfunction, graphicname):
     if not os.path.exists(variables.pathtoself + "/pics/" + filename):
         pygame.image.save(generatingfunction(), variables.pathtoself + "/pics/" + filename)
         addtoGR(filename)
-    elif variables.newworldeachloadq:
+    elif variables.newworldeachloadq or newworldoverride:
         os.remove(variables.pathtoself + "/pics/" + filename)
         pygame.image.save(generatingfunction(), variables.pathtoself + "/pics/" + filename)
         addtoGR(filename)
@@ -275,7 +275,7 @@ def snowland(width, height):
     def callsnowland():
         return rdrawland.makesnowland(width, height)
 
-    return generategraphic(callsnowland, "randomsnowland")
+    return generategraphic(callsnowland, "randomsnowland", True)
 
 def flower():
     return generategraphic(makeflower, "randomflower")

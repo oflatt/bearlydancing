@@ -138,14 +138,12 @@ class Player(FrozenClass):
         pathradius = feetw*0.3
         footoffsetx = self.collidesection[0]*variables.compscale+feetw/2
         footoffsety = self.collidesection[1]*variables.compscale - self.collidesection[3]*variables.compscale*0.5
-        greysnow = (150,150,140)
+        greysnow = (variables.snowcolor[0]-10, variables.snowcolor[1]-10, variables.snowcolor[2]-10)
         newdrawcomp = (int(self.drawx+self.mapdrawx+footoffsetx), int(self.drawy+self.mapdrawy+footoffsety))
         
         if self.oldsnowpos == (None, None):
             self.oldsnowpos = newdrawcomp
         
-        # first draw a circle at current pos
-        pygame.draw.circle(background, (greysnow[0]+50, greysnow[1]+50, greysnow[2]+50), newdrawcomp, int(pathradius))
 
         particlebandwidth = pathradius/4.5
         
@@ -153,7 +151,7 @@ class Player(FrozenClass):
         def randsnowparticle(xpos, ypos):
             angle = uniform(0, 2*math.pi)
             mag = uniform(pathradius - particlebandwidth/2, pathradius + particlebandwidth/2)
-            rgrey = randint(100, 255)
+            rgrey = randint(160, 245)
             dotx = xpos + math.cos(angle)*mag-variables.compscale/2
             doty = ypos + math.sin(angle)*mag-variables.compscale/2
 
@@ -213,9 +211,9 @@ class Player(FrozenClass):
             if snowp:
                 # bigger dirtyrect for the snow balls
                 variables.dirtyrects.append(Rect(self.drawx - self.snowclumpradius()*1.5,
-                                                 self.drawy,
+                                                 self.drawy-variables.compscale*5,
                                                  self.normal_width*variables.compscale+self.snowclumpradius()*3,
-                                                 self.normal_height*variables.compscale + self.snowclumpradius()*3))
+                                                 self.normal_height*variables.compscale + self.snowclumpradius()*3+variables.compscale*5))
             else:
                 variables.dirtyrects.append(Rect(self.drawx-variables.compscale*3, self.drawy-variables.compscale*3, self.normal_width*variables.compscale+6*variables.compscale, self.normal_height*variables.compscale + 6 * variables.compscale))
 
@@ -227,7 +225,7 @@ class Player(FrozenClass):
             
             # now draw snow clumps on bear
             for p in self.feetsnowclumps:
-                pygame.draw.circle(variables.screen, (200, 200, 200), (int(p[0])-self.mapdrawx, int(p[1])-self.mapdrawy), int(p[2]))
+                pygame.draw.circle(variables.screen, (variables.snowcolor[0] + 10, variables.snowcolor[1]+10, variables.snowcolor[2]+10), (int(p[0])-self.mapdrawx, int(p[1])-self.mapdrawy), int(p[2]))
 
     def change_animation(self):
         oldanimation = self.current_animation

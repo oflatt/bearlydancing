@@ -1,4 +1,4 @@
-import pygame, variables, random
+import pygame, variables, random, math
 from pygame import draw
 from random import randint
 from Texture import Texture
@@ -154,5 +154,42 @@ def makegrassland(width, height, leftpath = True, rightpath = True, uppath = Tru
 
 def makesnowland(width, height):
     surface = pygame.Surface([width, height], pygame.SRCALPHA)
-    surface.fill((210, 210, 210))
+    surface.fill(variables.snowcolor)
+    currentcolorincrease = 5
+    
+    def makehill(hillx, hilly, hillradiusin):
+        hillradius = hillradiusin
+        currentshade = variables.snowcolor[0]
+        sharpness = random.uniform(0.15, 0.8)+currentcolorincrease*0.01
+        while currentshade < variables.snowcolor[0]+currentcolorincrease and hillradius >= 10:
+            circlethreshold(surface, hillx, hilly, hillradius, (currentshade, currentshade, currentshade))
+            hillradius -= 1
+            currentshade += sharpness
+        # draw filled in circle at end
+        circlethreshold(surface, hillx, hilly, hillradius, (currentshade, currentshade, currentshade))
+        pygame.draw.circle(surface, (currentshade, currentshade, currentshade), (hillx, hilly), hillradius)
+        if(random.uniform(0,1)>0.4+hillradiusin*0.25/(width)):
+            makehill(hillx+randint(0, int(width/10)), hilly+randint(0, int(height/10)), hillradiusin)
+
+    for x in range(randint(4, 8)):
+        makehill(randint(0, width), randint(0, height), randint(int(width/20), int(width/3)))
+        if currentcolorincrease<15 and randint(0, int(currentcolorincrease)) <3:
+            currentcolorincrease += random.uniform(1, 5)
+
+    
     return surface
+
+def circlethreshold(surface, x, y, radius, color):
+    steps = math.pi * radius * 3.5
+    currentstep = 0
+    
+    while currentstep<=steps:
+        angle = currentstep*2*math.pi/steps
+        fillx = int(math.cos(angle)*radius)+x
+        filly = int(math.sin(angle)*radius)+y
+        if fillx >= 0 and fillx < surface.get_width() and filly>=0 and filly<surface.get_height():
+            currentcolor = surface.get_at((fillx, filly))
+            if color[0] > currentcolor[0]:
+                surface.set_at((fillx, filly), color)
+                    
+        currentstep += 1
