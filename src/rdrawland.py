@@ -158,16 +158,18 @@ def makesnowland(width, height):
     currentcolorincrease = 5
     
     def makehill(hillx, hilly, hillradiusin):
+        shadowdir = random.uniform(0, math.pi*2)
+        shadowr = random.uniform(math.pi/5, math.pi)/2
+        
         hillradius = hillradiusin
         currentshade = variables.snowcolor[0]
-        sharpness = random.uniform(0.15, 0.8)+currentcolorincrease*0.01
-        while currentshade < variables.snowcolor[0]+currentcolorincrease and hillradius >= 10:
-            circlethreshold(surface, hillx, hilly, hillradius, (currentshade, currentshade, currentshade))
+        sharpness = random.uniform(0.1, 0.55)+currentcolorincrease*0.01
+        while hillradius > 0:
+            circlethreshold(surface, hillx, hilly, hillradius, (currentshade, currentshade, currentshade), shadowdir, shadowr)
             hillradius -= 1
-            currentshade += sharpness
-        # draw filled in circle at end
-        circlethreshold(surface, hillx, hilly, hillradius, (currentshade, currentshade, currentshade))
-        pygame.draw.circle(surface, (currentshade, currentshade, currentshade), (hillx, hilly), hillradius)
+            if currentshade < variables.snowcolor[0]+currentcolorincrease:
+                currentshade += sharpness
+    
         if(random.uniform(0,1)>0.4+hillradiusin*0.25/(width)):
             makehill(hillx+randint(0, int(width/10)), hilly+randint(0, int(height/10)), hillradiusin)
 
@@ -179,17 +181,28 @@ def makesnowland(width, height):
     
     return surface
 
-def circlethreshold(surface, x, y, radius, color):
+def circlethreshold(surface, x, y, radius, color, shadowdir, shadowr):
     steps = math.pi * radius * 3.5
     currentstep = 0
+    differencec = color[0] - variables.snowcolor[0]
     
     while currentstep<=steps:
+        colortouse = color
+        
         angle = currentstep*2*math.pi/steps
+        anglediff = abs(angle-shadowdir)
+        if anglediff > math.pi:
+            anglediff = math.pi*2-anglediff
+        if shadowdir != None:
+            if anglediff <= shadowr:
+                colordarkened = color[0]-(1 - anglediff/shadowr)*differencec*1.2
+                colortouse = (colordarkened, colordarkened, colordarkened)
+        
         fillx = int(math.cos(angle)*radius)+x
         filly = int(math.sin(angle)*radius)+y
         if fillx >= 0 and fillx < surface.get_width() and filly>=0 and filly<surface.get_height():
             currentcolor = surface.get_at((fillx, filly))
-            if color[0] > currentcolor[0]:
-                surface.set_at((fillx, filly), color)
+            if colortouse[0] > currentcolor[0]:
+                surface.set_at((fillx, filly), colortouse)
                     
         currentstep += 1

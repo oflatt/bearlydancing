@@ -151,7 +151,7 @@ def num_of_generated_graphics_used():
 
 basemapsize = 360
 
-snowcolor = (220, 220, 220)
+snowcolor = (210, 210, 210)
 
 TREEWIDTH = 100
 TREEHEIGHT = 200
