@@ -1,5 +1,6 @@
 import pygame, variables, copy, random, math
 from addtexture import addtexture, fillpolygon
+from rdrawrock import addlump
 from pygame import draw
 from random import randint
 from Texture import Texture
@@ -39,8 +40,75 @@ def addpoints(l, leftbound, rightbound, maxvariation):
 
     return cl
 
+def snowclump(surfacefinal, x, y, addrad = False):
+    swidth = 50
+    surface = pygame.Surface([swidth, swidth], pygame.SRCALPHA)
+    fillcolor = (variables.snowcolor[0]-10, variables.snowcolor[1]-10, variables.snowcolor[2]-10)
+    
+    numofpoints = 15
+    points = []
+    radius = randint(4, 11)
+    for t in range(numofpoints):
+        radians = (t/numofpoints)*2*math.pi
+        xpos = (radius+1.5)*math.cos(radians)
+        ypos = radius*math.sin(radians)
+        points.append([xpos, ypos])
 
-def drawlayer(p, yoffset, leftbound, rightbound, istoplayer=False):
+    # squish bottom
+    addlump(points, int(numofpoints/2), numofpoints, randint(4, 5))
+
+    numoflumps = randint(1, 3)
+    for nonused in range(numoflumps):
+        addtoy = True
+        lumplength = randint(int(numofpoints/5), int(numofpoints/2))
+        startpoint = randint(-1, int(numofpoints/2)+2-lumplength)
+        if randint(0, 4) == 1:
+            addtoy = False
+            startpoint = randint(-int(numofpoints/5), int(numofpoints/2)+int(numofpoints/5)-lumplength)
+        addlump(points, startpoint, startpoint + lumplength, randint(1, 4), addtoy)
+
+    # get bottom points for the shadow
+    shadowpoints = []
+    for p in points:
+        if p[1] > 5:
+            shadowpoints.append((p[0], p[1]))
+    shadowcolor = (variables.snowcolor[0]-20, variables.snowcolor[1]-20, variables.snowcolor[2]-20)
+    tallest = 1
+    for p in points:
+        if -p[1] > tallest:
+            tallest = -p[1]
+    primarys = shadowpoints.copy()
+    if len(shadowpoints) > 0:
+        shadowr = shadowpoints[0][0]
+        for i in range(len(primarys)):
+            radians = (i/len(primarys))*math.pi
+            xpos = primarys[len(primarys)-1-i][0]
+            ypos = -math.sin(radians)*(tallest*2/3) + 4
+            shadowpoints.append((xpos, ypos))
+
+    pointstranslated = []
+    if addrad:
+        x = x + radius
+    for p in points:
+        pointstranslated.append((p[0]+swidth/2, p[1]+swidth/2))
+    shadowpointstranslated = []
+    for p in shadowpoints:
+        shadowpointstranslated.append((p[0]+swidth/2, p[1]+swidth/2))
+    pygame.draw.polygon(surface, variables.snowcolor, pointstranslated,  1)
+    fillpoint = (int(swidth/2),swidth-1)
+    while surface.get_at(fillpoint)[3] == 0 and fillpoint[1] > 0:
+        fillpoint = (fillpoint[0], fillpoint[1]-1)
+    fillpoint = (fillpoint[0], fillpoint[1]-1)
+    fillpolygon(surface, fillpoint, fillcolor, stopcolors = [variables.snowcolor])
+
+    if(len(shadowpoints)>1):
+        pygame.draw.polygon(surface, shadowcolor, shadowpointstranslated,  1)
+        fillpolygon(surface, fillpoint, (shadowcolor[0]-10, shadowcolor[1]-10,shadowcolor[2]-10), stopcolors = [shadowcolor, variables.snowcolor])
+     
+    surfacefinal.blit(surface, [x-swidth/2, y-swidth/2])
+    
+
+def drawlayer(p, yoffset, leftbound, rightbound, toplayerp=False, addsnowp = False):
     boundwidth = rightbound - leftbound
     halflen = int((rightbound - leftbound) / 2) - 1
     middlebound = halflen + leftbound
@@ -48,7 +116,7 @@ def drawlayer(p, yoffset, leftbound, rightbound, istoplayer=False):
     spikeupper = 92 + yoffset
     spikewmin = 4
     spikewmax = 8
-    # highest point unless istoplayer is true
+    # highest point unless toplayerp is true
     topy = 65 + yoffset
 
     # starts with a lower point
@@ -68,7 +136,7 @@ def drawlayer(p, yoffset, leftbound, rightbound, istoplayer=False):
         rightpoints.append([spikex, randint(100 + yoffset, spikelower)])
 
     fourth = int(boundwidth / 4)
-    if istoplayer:
+    if toplayerp:
         # with the top layer, it's taller and has points in the middle
         rightpoints.extend(
             [[rightbound - fourth, 70 + yoffset],
@@ -105,6 +173,15 @@ def drawlayer(p, yoffset, leftbound, rightbound, istoplayer=False):
 
     fillpolygon(p, startingpoint, TREEFILLCOLOR, [insidecolorbefore],
                 fillbounds= [leftbound, 0, rightbound-leftbound, TREEHEIGHT])
+
+    if addsnowp:
+        for tpoint in rightpoints:
+            if(tpoint[1] > 100+yoffset and tpoint[1]<spikelower and tpoint[0] > leftbound+fourth/2 and tpoint[0] < rightbound - fourth/2):
+                if randint(0, 4) == 0:
+                    snowclump(p, tpoint[0], tpoint[1])
+        if toplayerp: # add snow cap sometimes
+            if(randint(0, 2) < 2):
+                snowclump(p, middlebound + randint(int(-fourth*2/3), int(fourth*2/3)), randint(52, 65)+yoffset+4, addrad = True)
 
 
 def drawtrunk(surface):
@@ -180,7 +257,7 @@ def drawtrunk(surface):
 
     draw.polygon(surface, TRUNKCOLOR, pl)
 
-def maketree():
+def maketree(snowp = False):
     p = pygame.Surface([TREEWIDTH, TREEHEIGHT], pygame.SRCALPHA)
     l = pygame.Surface([TREEWIDTH, TREEHEIGHT], pygame.SRCALPHA)
     l2 = pygame.Surface([TREEWIDTH, TREEHEIGHT], pygame.SRCALPHA)
@@ -200,13 +277,13 @@ def maketree():
 
     yoffset = randint(30, 40) + treeshortener
     if randint(0, 8) > 0:
-        drawlayer(l, yoffset, 0, TREEWIDTH)
+        drawlayer(l, yoffset, 0, TREEWIDTH, addsnowp = False)
     yoffset += randint(-25, -15)
-    drawlayer(l2, yoffset, 5, TREEWIDTH - 5)
+    drawlayer(l2, yoffset, 5, TREEWIDTH - 5, addsnowp = snowp)
     yoffset += randint(-25, -15)
-    drawlayer(l3, yoffset, 10, TREEWIDTH - 10)
+    drawlayer(l3, yoffset, 10, TREEWIDTH - 10, addsnowp = snowp)
     yoffset += randint(-25, -15)
-    drawlayer(l4, yoffset, 15, TREEWIDTH - 15, True)
+    drawlayer(l4, yoffset, 15, TREEWIDTH - 15, True, snowp)
 
     p.blit(l, [0, 0])
     p.blit(l2, [0, 0])

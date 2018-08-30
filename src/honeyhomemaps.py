@@ -153,7 +153,7 @@ secretchimneyactivation.eventrequirements = [EventRequirement("chimneyactivation
 chimneybattlec = getconversation("chimneytalk")
 chimneybattlec.area = [450+chimneyrock.w/3, 190, chimneyrock.w/3, 20]
 chimneybattlec.eventrequirements = [EventRequirement("chimneyactivation")]
-chimneye = copy.copy(enemies.chimney)
+chimneye = copy.copy(enemies.enemies["chimney"])
 chimneye.lv = 7
 chimneybattlec.special_battle = chimneye
 
@@ -185,7 +185,7 @@ outside1c.area = [treerock.x, 0, outsidewidth, outsideheight]
 outside1c.isbutton = False
 outside1c.eventrequirements = [EventRequirement("beat meanie", -1, 1)]
 
-outside1c.special_battle = copy.copy(enemies.greenie)
+outside1c.special_battle = copy.copy(enemies.enemies["mean green"])
 # lv of 0 triggers tutorial
 outside1c.special_battle.lv = 0
 outside1c.special_battle.storyeventsonwin = ["beat meanie"]
@@ -207,7 +207,7 @@ gotoforest.eventrequirements = [EventRequirement("beat meanie", -1, 1)]
 want2go = getconversation("want2go")
 want2go.area = [meangreenrock.x - 5, meangreenrock.y - 5, meangreenrock.w+10, meangreenrock.h+10]
 want2gospeak = want2go.speaks[0]
-want2gospeak.special_battle = copy.copy(enemies.greenie)
+want2gospeak.special_battle = copy.copy(enemies.enemies["mean green"])
 want2gospeak.special_battle.lv = 1
 want2go.eventrequirements = [EventRequirement("beat meanie")]
 

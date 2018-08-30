@@ -18,11 +18,11 @@ except ImportError:
 testsmallp = False
 devmode = True
 skipsteve = True
-newworldeachloadq = False
+newworldeachloadq = True
 # this overrides the generation of a new set of graphics for a new game
 newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
-dontloadmapsdict = False
+dontloadmapsdict = True
 # only loads first couple of maps
 fasttestmodep = False
 # adds to player level when loading
@@ -151,7 +151,7 @@ def num_of_generated_graphics_used():
 
 basemapsize = 360
 
-snowcolor = (210, 210, 210)
+snowcolor = (200, 200, 200)
 
 TREEWIDTH = 100
 TREEHEIGHT = 200

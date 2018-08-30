@@ -1,11 +1,26 @@
 import random
 from Texture import Texture
 
+def reducergb(t):
+    return (t[0], t[1], t[2])
+
+def rgbsimple(l):
+    if l == None:
+        return l
+    newl = []
+    for i in range(len(l)):
+        newl.append((l[i][0],l[i][1],l[i][2]))
+    return newl
+
 # fills a polygon with a point in the polygon
 # s is the surface, firstpoint is the starting point, fillcolor is the color to fill
 # checkcolors is a list of colors that will be overridden
 # bounds is a list x y width height of where the points can color, inclusive
 def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None, fillbounds = None):
+    firstpoint = [int(firstpoint[0]), int(firstpoint[1])]
+    fillcolor = reducergb(fillcolor)
+    checkcolors = rgbsimple(checkcolors)
+    stopcolors = rgbsimple(stopcolors)
     if fillbounds == None:
         bounds = [0, 0, s.get_width(), s.get_height()]
     else:
@@ -13,6 +28,7 @@ def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None,
     pointlist = [firstpoint]
 
     def paintoverp(c):
+        c = reducergb(c)
         stopp = False
         if checkcolors != None:
             if not c in checkcolors:
@@ -26,19 +42,19 @@ def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None,
     
     while len(pointlist) != 0:
         point = pointlist.pop(0)
-        if point[0] >= 0 and point[0] < s.get_width() and point[1]>0 and point[1] < s.get_height():
-            s.set_at(point, fillcolor)
+        s.set_at(point, fillcolor)
+        
         #if there is still a point to the left in the bounds
         if point[0] > bounds[0]:
             if paintoverp(s.get_at([point[0] - 1, point[1]])):
                 pointlist.insert(0, [point[0] - 1, point[1]])
-        if point[0] < bounds[0]+bounds[2]:
+        if point[0] < bounds[0]+bounds[2]-1:
             if paintoverp(s.get_at([point[0] + 1, point[1]])):
                 pointlist.insert(0, [point[0] + 1, point[1]])
         if point[1] > bounds[1]:
             if paintoverp(s.get_at([point[0], point[1] - 1])):
                 pointlist.insert(0, [point[0], point[1] - 1])
-        if point[1] < bounds[1]+bounds[3]:
+        if point[1] < bounds[1]+bounds[3]-1:
             if paintoverp(s.get_at([point[0], point[1] + 1])):
                 pointlist.insert(0, [point[0], point[1] + 1])
 

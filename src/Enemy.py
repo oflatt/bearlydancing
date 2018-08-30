@@ -9,7 +9,6 @@ class Enemy(FrozenClass):
     def __init__(self, animationnum, rarity, name, beatmaprules):
         self.lv = 0
         self.animationnum = animationnum
-        self.reset()
         self.rarity = rarity
         self.name = name
         self.beatmaprules = beatmaprules

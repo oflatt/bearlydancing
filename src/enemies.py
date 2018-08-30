@@ -33,52 +33,70 @@ for a in stevehat:
 steveanimation = Animation(["scarysteven00", "scarysteven01", "scarysteven02", "scarysteven03", "scarysteven04"]+stevewave+stevehat, defaultanimspeed)
 steveanimation.updatealwaysbattle = True
             
-animations = [Animation(["sheep0", "sheep1", "sheep2", "sheep3"], defaultanimspeed/2),
-              Animation(["meangreen0", "meangreen1"], defaultanimspeed),
-              Animation(["purpleperp0", "purpleperp1", "purpleperp2", "purpleperp3"], defaultanimspeed),
-              Animation(["spoe0", "spoe1"], defaultanimspeed),
-              Animation(["croc0", "croc1"], defaultanimspeed),
-              Animation(["kewlcorn0", "kewlcorn1", "kewlcorn2", "kewlcorn3"], defaultanimspeed),
-              Animation(["bugo0","bugo1"], defaultanimspeed),
-              chimneyanimation,
-              steveanimation,
-              Animation(["radturtle0", "radturtle1"], defaultanimspeed),
-              Animation(["dancelion0", "dancelion1"], defaultanimspeed)]
+animations = []
+
+enemies = {}
+
+counter = 0
+def addEnemy(name, rules, animation):
+    global counter
+    animations.append(animation)
+    enemies[name] = Enemy(counter, 1, name, rules)
+    counter += 1
+
+def getenemies(listofnames):
+    l = []
+    for n in listofnames:
+        l.append(enemies[n])
+    return l
 
 # refer to randombeatmap for the definitions for beatmap rules
 # we use an animation number because the actual animation cannot be saved
-counter = 0
-# sheep is a simple random one
-sheep = Enemy(counter, 1, "sheep", [])
-counter += 1
-# just tutorial enemy
-greenie = Enemy(counter, 1, "mean greenie", ["melodic", "repeat", "rests"])
-counter += 1
-perp = Enemy(counter, 1, "perp", ["alternating"])
-counter += 1
-spoe = Enemy(counter, 1, "spoe", ["rests", "skippy", "melodic", "repeatvariation"])
-counter += 1
-croc = Enemy(counter, 1, "croc", ["melodic", "repeatmove"])
-counter += 1
-kewlcorn = Enemy(counter, 1, "kewlcorn", ["repeatvalues", "highrepeatchance"])
-counter += 1
-bugo = Enemy(counter, 1, "bogo", ["repeatvariation", "repeatmove", "highrepeatchance"])
-counter += 1
-chimney = Enemy(counter, 1, "chimney", ["repeatrhythm", "melodic", "highrepeatchance"])
-counter += 1
-steve = Enemy(counter, 1, "scary steven", ["norests", "nochords", "shorternotes", "melodic", "repeatspaceinbetween", "repeatonlybeginning", "nodoublerepeats"])
-counter += 1
-radturtle = Enemy(counter, 1, "rad turtle", ["repeatmove", "repeatspaceinbetween", "nodoublerepeats"])
-counter += 1
-dancelion = Enemy(counter, 1, "dance lion", ["alternating", "repeatvariation", "repeatonlybeginning", "nodoublerepeats"])
 
-woodsenemies = [perp, spoe, croc, bugo, radturtle]
+# sheep is a simple random one
+addEnemy("sheep", [],
+         Animation(["sheep0", "sheep1", "sheep2", "sheep3"], defaultanimspeed/2))
+
+# just tutorial enemy
+addEnemy("mean green", ["melodic", "repeat", "rests"],
+         Animation(["meangreen0", "meangreen1"], defaultanimspeed))
+
+addEnemy("perp", ["alternating"],
+         Animation(["purpleperp0", "purpleperp1", "purpleperp2", "purpleperp3"], defaultanimspeed))
+
+addEnemy("spoe", ["rests", "skippy", "melodic", "repeatvariation"],
+         Animation(["spoe0", "spoe1"], defaultanimspeed))
+
+addEnemy("croc", ["melodic", "repeatmove"],
+         Animation(["croc0", "croc1"], defaultanimspeed))
+
+addEnemy("kewlcorn", ["repeatvalues", "highrepeatchance"],
+         Animation(["kewlcorn0", "kewlcorn1", "kewlcorn2", "kewlcorn3"], defaultanimspeed))
+
+addEnemy("bogo", ["repeatvariation", "repeatmove", "highrepeatchance"],
+         Animation(["bugo0","bugo1"], defaultanimspeed))
+
+addEnemy("chimney", ["repeatrhythm", "melodic", "highrepeatchance"],
+         chimneyanimation)
+
+addEnemy("scary steven", ["norests", "nochords", "shorternotes", "melodic", "repeatspaceinbetween", "repeatonlybeginning", "nodoublerepeats"],
+         steveanimation)
+
+addEnemy("rad turtle", ["repeatmove", "repeatspaceinbetween", "nodoublerepeats"],
+         Animation(["radturtle0", "radturtle1"], defaultanimspeed))
+
+addEnemy("dance lion", ["alternating", "repeatvariation", "repeatonlybeginning", "nodoublerepeats"],
+          Animation(["dancelion0", "dancelion1"], defaultanimspeed))
+
+addEnemy("pile o' snow", [],
+         Animation(["pileo'snow0", "pileo'snow1"], defaultanimspeed))
+
+
+woodsenemies = getenemies(["perp", "spoe", "croc", "bogo", "rad turtle"])
+snowenemies = getenemies(["pile o' snow"])
 
 # if none picks random one, if an enemy engages enemy
-devbattletest = bugo
+devbattletest = enemies["bogo"]
 
 def random_enemy(area):
-    if area == "woods":
-        return random.choice(woodsenemies)
-    else:
-        return random.choice(woodsenemies)
+    return random.choice(woodsenemies)

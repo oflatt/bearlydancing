@@ -91,7 +91,7 @@ class Map(FrozenClass):
         y_min_distance = 8
         
         greyrockp = rocktype == "greyrock" or rocktype == "grey rock" or rocktype == "rock"
-        pinetreep = rocktype == "pinetree" or rocktype == "pine tree"
+        pinetreep = rocktype == "pinetree" or rocktype == "pine tree" or rocktype == "snowpinetree"
         flowerp = rocktype == "flower"
 
         # set width and height of rock generated, the constraints for where they are generated,
@@ -165,7 +165,10 @@ class Map(FrozenClass):
             randx = random.randint(xconstraints[0], xconstraints[1])
             if not collidesp(randx, randy, newrocks):
                 if pinetreep:
-                    newrocks.append(Rock(graphics.pinetree(), randx, randy, variables.TREECOLLIDESECTION))
+                    if rocktype == "snowpinetree":
+                        newrocks.append(Rock(graphics.snowpinetree(), randx, randy, variables.TREECOLLIDESECTION))
+                    else:
+                        newrocks.append(Rock(graphics.pinetree(), randx, randy, variables.TREECOLLIDESECTION))
                 elif greyrockp:
                     newrocks.append(Rock(graphics.greyrock(), randx, randy, variables.ROCKCOLLIDESECTION))
                 elif flowerp:

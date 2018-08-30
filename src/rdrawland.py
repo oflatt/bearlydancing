@@ -159,24 +159,23 @@ def makesnowland(width, height):
     
     def makehill(hillx, hilly, hillradiusin):
         shadowdir = random.uniform(0, math.pi*2)
-        shadowr = random.uniform(math.pi/5, math.pi)/2
+        shadowrmin = random.uniform(math.pi/5, math.pi*2/3)/2
+        shadowrmax = shadowrmin + random.uniform(math.pi/10, math.pi/2)/2
         
         hillradius = hillradiusin
         currentshade = variables.snowcolor[0]
         sharpness = random.uniform(0.1, 0.55)+currentcolorincrease*0.01
         while hillradius > 0:
+            shadowr = shadowrmin + (shadowrmax-shadowrmin)*(hillradius/hillradiusin)
             circlethreshold(surface, hillx, hilly, hillradius, (currentshade, currentshade, currentshade), shadowdir, shadowr)
             hillradius -= 1
             if currentshade < variables.snowcolor[0]+currentcolorincrease:
                 currentshade += sharpness
-    
-        if(random.uniform(0,1)>0.4+hillradiusin*0.25/(width)):
-            makehill(hillx+randint(0, int(width/10)), hilly+randint(0, int(height/10)), hillradiusin)
 
-    for x in range(randint(4, 8)):
+    for x in range(randint(3, 7)):
         makehill(randint(0, width), randint(0, height), randint(int(width/20), int(width/3)))
-        if currentcolorincrease<15 and randint(0, int(currentcolorincrease)) <3:
-            currentcolorincrease += random.uniform(1, 5)
+        if currentcolorincrease<35 and randint(0, int(currentcolorincrease)) <3:
+            currentcolorincrease += random.uniform(1, 10)
 
     
     return surface
@@ -195,7 +194,7 @@ def circlethreshold(surface, x, y, radius, color, shadowdir, shadowr):
             anglediff = math.pi*2-anglediff
         if shadowdir != None:
             if anglediff <= shadowr:
-                colordarkened = color[0]-(1 - anglediff/shadowr)*differencec*1.2
+                colordarkened = color[0]-(1 - anglediff/shadowr)*differencec
                 colortouse = (colordarkened, colordarkened, colordarkened)
         
         fillx = int(math.cos(angle)*radius)+x

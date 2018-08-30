@@ -2,7 +2,6 @@ import graphics, variables, pygame, enemies, classvar, maps, os, conversations
 from copy import deepcopy
 from Menu import Menu
 from Battle import Battle
-from enemies import greenie
 import dill as pickle
 from stathandeling import explv, lvexp
 

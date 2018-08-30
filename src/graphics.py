@@ -262,6 +262,17 @@ def pinetree():
 
     return nicetreename
 
+def snowpinetree():
+    def makesnowtree():
+        return rdrawtree.maketree(True)
+    nicetreename = generategraphic(makesnowtree, "randomsnowpinetree")
+
+    # christmas!
+    if christmasp:
+        rdrawtree.makechristmastree(GR[nicetreename]["img"])
+
+    return nicetreename
+
 def greyrock():
     return generategraphic(rdrawrock.makerock, "randomgreyrock")
 
@@ -275,7 +286,7 @@ def snowland(width, height):
     def callsnowland():
         return rdrawland.makesnowland(width, height)
 
-    return generategraphic(callsnowland, "randomsnowland", True)
+    return generategraphic(callsnowland, "randomsnowland")
 
 def flower():
     return generategraphic(makeflower, "randomflower")

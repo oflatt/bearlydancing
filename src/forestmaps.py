@@ -51,7 +51,7 @@ dancelionpass.eventrequirements = [EventRequirement("beatsteve", -1, 1)]
 dancelionbattle = getconversation("dancelionbattle")
 dancelionbattle.eventrequirements = [EventRequirement("beatsteve")]
 dancelionbattle.area = [dancelion.x, dancelion.y, dancelion.w+10, dancelion.h+10]
-dancelionbattle.special_battle = copy.copy(enemies.dancelion)
+dancelionbattle.special_battle = copy.copy(enemies.enemies["dance lion"])
 dancelionbattle.special_battle.lv = 6
 dancelionbattle.special_battle.specialscale = "C minor"
 
@@ -153,7 +153,7 @@ outside4.terrain.extend(make_rock_or_sheep_rocks())
 sheepconversation = getconversation("sheepconversation")
 sheepconversation.switchtheserocks = ["sheeprock"]
 sheepconversation.area = [randrock.x, randrock.y, randrock.w, randrock.h]
-sheepconversation.special_battle = copy.copy(enemies.sheep)
+sheepconversation.special_battle = copy.copy(enemies.enemies["sheep"])
 sheepconversation.special_battle.lv = 3
 
 outside4.conversations = [sheepconversation]
@@ -209,7 +209,7 @@ kewlappearconversation.unhidethisrock = "kewlcorn"
 kewlbattle = getconversation("kewlcornyo")
 kewlbattle.area = kewlappearconversation.area.copy()
 kewlbattle.eventrequirements = [EventRequirement("kewlappears")]
-kewlbattle.special_battle = copy.copy(enemies.kewlcorn)
+kewlbattle.special_battle = copy.copy(enemies.enemies["kewlcorn"])
 kewlbattle.special_battle.lv = 4
 
 outside6.conversations = [kewlappearconversation, kewlbattle]
@@ -264,14 +264,14 @@ scarysteve.eventrequirements = [EventRequirement("tpboss1leaves"), EventRequirem
 scarysteve.isbutton = False
 scarysteve.exitteleport = tpboss1.exitteleport.copy()
 scarysteve.exitteleport[0] += 40
-scarysteve.special_battle = copy.copy(enemies.steve)
+scarysteve.special_battle = copy.copy(enemies.enemies["scary steven"])
 scarysteve.special_battle.lv = 5
 scarysteve.special_battle.storyeventsonwin = ["beatsteve"]
 
 sagain = getconversation("steveagain")
 sagain.area = [steve.x-100-3, steve.y, steve.w+6, steve.h+10]
 sagainoptions = sagain.speaks[0]
-sagainoptions.special_battle = copy.copy(enemies.steve)
+sagainoptions.special_battle = copy.copy(enemies.enemies["scary steven"])
 sagainoptions.special_battle.lv = 5
 sagain.eventrequirements = [EventRequirement("beatsteve")]
 
