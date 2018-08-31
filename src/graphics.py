@@ -282,9 +282,9 @@ def grassland(width, height, leftpath = True, rightpath = True, uppath = False, 
     
     return generategraphic(callgrasslandfunction, "randomgrassland")
 
-def snowland(width, height):
+def snowland(width, height, grasstosnowp = False):
     def callsnowland():
-        return rdrawland.makesnowland(width, height)
+        return rdrawland.makesnowland(width, height, grasstosnowp)
 
     return generategraphic(callsnowland, "randomsnowland")
 

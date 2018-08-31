@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import pygame, variables, maps, stathandeling, math
+from variables import sign
 from random import randint
 from random import uniform
 from graphics import GR, getpic, getmask
@@ -138,67 +139,81 @@ class Player(FrozenClass):
         pathradius = feetw*0.3
         footoffsetx = self.collidesection[0]*variables.compscale+feetw/2
         footoffsety = self.collidesection[1]*variables.compscale - self.collidesection[3]*variables.compscale*0.5
-        greysnow = (variables.snowcolor[0]-10, variables.snowcolor[1]-10, variables.snowcolor[2]-10)
-        newdrawcomp = (int(self.drawx+self.mapdrawx+footoffsetx), int(self.drawy+self.mapdrawy+footoffsety))
         
-        if self.oldsnowpos == (None, None):
+        standingpos = (int(self.xpos*variables.compscale+footoffsetx), int(self.ypos*variables.compscale+footoffsety))
+        forwardpos = (int(self.xpos*variables.compscale+footoffsetx+sign(self.xspeed)*pathradius), int(self.ypos*variables.compscale+footoffsety+sign(self.yspeed)*pathradius))
+        
+        standingcolor = background.get_at(standingpos)
+        
+        if forwardpos[0]>=background.get_width() or forwardpos[0] < 0 or forwardpos[1]>=background.get_height() or forwardpos[1]<0:
+            forwardcolor = (1,2,3)
+        else:
+            forwardcolor = background.get_at(forwardpos)
+
+        if standingcolor[0] == standingcolor[1] == standingcolor[2] and forwardcolor[0] == forwardcolor[1] == forwardcolor[2]:
+            greysnow = (variables.snowcolor[0]-10, variables.snowcolor[1]-10, variables.snowcolor[2]-10)
+            newdrawcomp = (int(self.drawx+self.mapdrawx+footoffsetx), int(self.drawy+self.mapdrawy+footoffsety))
+
+            if self.oldsnowpos == (None, None):
+                self.oldsnowpos = newdrawcomp
+
+
+            particlebandwidth = pathradius/4.5
+
+            # draw a particle
+            def randsnowparticle(xpos, ypos):
+                angle = uniform(0, 2*math.pi)
+                mag = uniform(pathradius - particlebandwidth/2, pathradius + particlebandwidth/2)
+                rgrey = randint(160, 245)
+                dotx = xpos + math.cos(angle)*mag-variables.compscale/2
+                doty = ypos + math.sin(angle)*mag-variables.compscale/2
+
+                pygame.draw.rect(background, (rgrey, rgrey, rgrey),  Rect(dotx, doty, variables.compscale, variables.compscale))
+
+
+
+            # draw the particles on the circle
+            for x in range(10):
+                randsnowparticle(newdrawcomp[0], newdrawcomp[1])
+
+            # draw a line for the ditch over circle and particles
+            linestart = self.oldsnowpos
+            lineend = newdrawcomp
+            linewidth = pathradius*2-particlebandwidth*2
+
+            # draw a little circle to smooth edges
+            pygame.draw.circle(background, greysnow, lineend, int(linewidth/2))
+            pygame.draw.circle(background, greysnow, linestart, int(linewidth/2))
+
+
+            leftb = (self.xpos+self.collidesection[0])*variables.compscale
+            rightb = leftb + feetw
+            topb = (self.ypos + self.collidesection[1]+self.collidesection[3]/2)*variables.compscale - feetw/3
+            bottomb = ((self.ypos + self.collidesection[1]+self.collidesection[3]/2)*variables.compscale) + feetw/20
+            # snow clumps at feet
+            i = 0
+            xchange = self.xpos - self.oldxpos
+            ychange = self.ypos-self.oldypos
+            while(i<len(self.feetsnowclumps)):
+                p = self.feetsnowclumps[i]
+                if p[2] < self.snowclumpradius():
+                    self.feetsnowclumps[i] = (p[0]+ xchange*variables.compscale, p[1]+ychange*variables.compscale, p[2]+self.snowclumpradius()/500)
+
+                if p[0]<leftb or p[0]>rightb or p[1]<topb or p[1]>bottomb:
+                    del self.feetsnowclumps[i]
+                    i-=1
+
+                i+=1
+
+            if(len(self.feetsnowclumps) < 7):
+                if uniform(0, 110)>93+len(self.feetsnowclumps):
+                    self.feetsnowclumps.append((randint(int(leftb), int(rightb)), randint(int(topb), int(bottomb)), uniform(self.snowclumpradius()/2, self.snowclumpradius())))
+
+
+            # set the old snow pos to current pos
             self.oldsnowpos = newdrawcomp
-        
-
-        particlebandwidth = pathradius/4.5
-        
-        # draw a particle
-        def randsnowparticle(xpos, ypos):
-            angle = uniform(0, 2*math.pi)
-            mag = uniform(pathradius - particlebandwidth/2, pathradius + particlebandwidth/2)
-            rgrey = randint(160, 245)
-            dotx = xpos + math.cos(angle)*mag-variables.compscale/2
-            doty = ypos + math.sin(angle)*mag-variables.compscale/2
-
-            pygame.draw.rect(background, (rgrey, rgrey, rgrey),  Rect(dotx, doty, variables.compscale, variables.compscale))
-
-        
-        
-        # draw the particles on the circle
-        for x in range(10):
-            randsnowparticle(newdrawcomp[0], newdrawcomp[1])
-
-        # draw a line for the ditch over circle and particles
-        linestart = self.oldsnowpos
-        lineend = newdrawcomp
-        linewidth = pathradius*2-particlebandwidth*2
-
-        # draw a little circle to smooth edges
-        pygame.draw.circle(background, greysnow, lineend, int(linewidth/2))
-        pygame.draw.circle(background, greysnow, linestart, int(linewidth/2))
-
-            
-        leftb = (self.xpos+self.collidesection[0])*variables.compscale
-        rightb = leftb + feetw
-        topb = (self.ypos + self.collidesection[1]+self.collidesection[3]/2)*variables.compscale - feetw/3
-        bottomb = ((self.ypos + self.collidesection[1]+self.collidesection[3]/2)*variables.compscale) + feetw/20
-        # snow clumps at feet
-        i = 0
-        xchange = self.xpos - self.oldxpos
-        ychange = self.ypos-self.oldypos
-        while(i<len(self.feetsnowclumps)):
-            p = self.feetsnowclumps[i]
-            if p[2] < self.snowclumpradius():
-                self.feetsnowclumps[i] = (p[0]+ xchange*variables.compscale, p[1]+ychange*variables.compscale, p[2]+self.snowclumpradius()/500)
-                
-            if p[0]<leftb or p[0]>rightb or p[1]<topb or p[1]>bottomb:
-                del self.feetsnowclumps[i]
-                i-=1
-                
-            i+=1
-
-        if(len(self.feetsnowclumps) < 7):
-            if uniform(0, 110)>93+len(self.feetsnowclumps):
-                self.feetsnowclumps.append((randint(int(leftb), int(rightb)), randint(int(topb), int(bottomb)), uniform(self.snowclumpradius()/2, self.snowclumpradius())))
-            
-        
-        # set the old snow pos to current pos
-        self.oldsnowpos = newdrawcomp
+        else:
+            self.feetsnowclumps = []
         
     def draw(self):
         mapbasename = maps.current_map.finalimage

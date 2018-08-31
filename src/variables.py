@@ -22,7 +22,7 @@ newworldeachloadq = True
 # this overrides the generation of a new set of graphics for a new game
 newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
-dontloadmapsdict = True
+dontloadmapsdict = False
 # only loads first couple of maps
 fasttestmodep = False
 # adds to player level when loading
@@ -40,13 +40,13 @@ exportmode = False
 if exportmode:
     testsmallp = False
     devmode = False
+    skipsteve = False
     newworldnever = False
     newworldeachloadq = False
     dontloadmapsdict = False
     fasttestmodep = False
-    testspecs = None
     lvcheat = 0
-    skipsteve = False
+    testspecs = None
 
 # Setup
 pygame.mixer.pre_init(22050, -16, 2, 128)
@@ -305,3 +305,5 @@ def checkkey(name, key):
 
 def updatescreen():
     pygame.display.update(dirtyrects + olddirtyrects + [Rect(10,font.get_linesize(), font.get_linesize()*6, font.get_linesize()*6)])
+
+sign = lambda x: (1, -1)[x < 0]

@@ -40,14 +40,19 @@ def addpoints(l, leftbound, rightbound, maxvariation):
 
     return cl
 
-def snowclump(surfacefinal, x, y, addrad = False):
-    swidth = 50
+def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
+    basecolor = variables.snowcolor
+    if groundp:
+        basecolor = (basecolor[0]-20, basecolor[1]-20, basecolor[2]-20)
+    swidth = 76
     surface = pygame.Surface([swidth, swidth], pygame.SRCALPHA)
-    fillcolor = (variables.snowcolor[0]-10, variables.snowcolor[1]-10, variables.snowcolor[2]-10)
+    fillcolor = (basecolor[0]-10, basecolor[1]-10, basecolor[2]-10)
     
     numofpoints = 15
     points = []
     radius = randint(4, 11)
+    if groundp:
+        radius = radius * 2
     for t in range(numofpoints):
         radians = (t/numofpoints)*2*math.pi
         xpos = (radius+1.5)*math.cos(radians)
@@ -67,12 +72,15 @@ def snowclump(surfacefinal, x, y, addrad = False):
             startpoint = randint(-int(numofpoints/5), int(numofpoints/2)+int(numofpoints/5)-lumplength)
         addlump(points, startpoint, startpoint + lumplength, randint(1, 4), addtoy)
 
+    shadowthreshold = radius*2/3
     # get bottom points for the shadow
     shadowpoints = []
     for p in points:
-        if p[1] > 5:
+        if p[1] > shadowthreshold:
             shadowpoints.append((p[0], p[1]))
-    shadowcolor = (variables.snowcolor[0]-20, variables.snowcolor[1]-20, variables.snowcolor[2]-20)
+    shadowcolor = (basecolor[0]-20, basecolor[1]-20, basecolor[2]-20)
+    if groundp:
+        shadowcolor = (fillcolor[0]-2, fillcolor[1]-2, fillcolor[2]-2)
     tallest = 1
     for p in points:
         if -p[1] > tallest:
@@ -83,27 +91,27 @@ def snowclump(surfacefinal, x, y, addrad = False):
         for i in range(len(primarys)):
             radians = (i/len(primarys))*math.pi
             xpos = primarys[len(primarys)-1-i][0]
-            ypos = -math.sin(radians)*(tallest*2/3) + 4
+            ypos = -math.sin(radians)*(tallest*1/3) + shadowthreshold
             shadowpoints.append((xpos, ypos))
 
     pointstranslated = []
     if addrad:
-        x = x + radius
+        y = y + radius
     for p in points:
         pointstranslated.append((p[0]+swidth/2, p[1]+swidth/2))
     shadowpointstranslated = []
     for p in shadowpoints:
         shadowpointstranslated.append((p[0]+swidth/2, p[1]+swidth/2))
-    pygame.draw.polygon(surface, variables.snowcolor, pointstranslated,  1)
+    pygame.draw.polygon(surface, basecolor, pointstranslated,  1)
     fillpoint = (int(swidth/2),swidth-1)
     while surface.get_at(fillpoint)[3] == 0 and fillpoint[1] > 0:
         fillpoint = (fillpoint[0], fillpoint[1]-1)
     fillpoint = (fillpoint[0], fillpoint[1]-1)
-    fillpolygon(surface, fillpoint, fillcolor, stopcolors = [variables.snowcolor])
+    fillpolygon(surface, fillpoint, fillcolor, stopcolors = [basecolor])
 
     if(len(shadowpoints)>1):
         pygame.draw.polygon(surface, shadowcolor, shadowpointstranslated,  1)
-        fillpolygon(surface, fillpoint, (shadowcolor[0]-10, shadowcolor[1]-10,shadowcolor[2]-10), stopcolors = [shadowcolor, variables.snowcolor])
+        fillpolygon(surface, fillpoint, (shadowcolor[0]-10, shadowcolor[1]-10,shadowcolor[2]-10), stopcolors = [shadowcolor, basecolor])
      
     surfacefinal.blit(surface, [x-swidth/2, y-swidth/2])
     

@@ -4,6 +4,7 @@ from random import randint
 from Texture import Texture
 from addtexture import addtexture
 from pygame import Rect
+from rdrawtree import snowclump
 
 dirtcolor = (70, 71, 14)
 pathwidth = 16
@@ -152,9 +153,27 @@ def makegrassland(width, height, leftpath = True, rightpath = True, uppath = Tru
         
     return surface
 
-def makesnowland(width, height):
-    surface = pygame.Surface([width, height], pygame.SRCALPHA)
-    surface.fill(variables.snowcolor)
+def makesnowland(width, height, grasstosnowp = False):
+    surface = None
+    if grasstosnowp:
+        surface = makegrassland(width, height)
+        for x in range(20):
+            surface.fill((variables.snowcolor[0]-(20-x),variables.snowcolor[0]-(20-x),variables.snowcolor[0]-(20-x)), Rect(width/4 - 1 - x,0, 1, height))
+        surface.fill(variables.snowcolor, Rect(0, 0, width/4-20, height))
+        # now make darker pertrusion into grass
+        pertrusionx = 10
+        for yp in range(height):
+            for xp in range(pertrusionx):
+                surface.set_at((int(width/4+xp), yp), (variables.snowcolor[0]-20-xp*2, variables.snowcolor[0]-20-xp*2, variables.snowcolor[0]-20-xp*2))
+            pertrusionx += randint(-2, 2)
+            if pertrusionx < 1:
+                pertrusionx = 1
+            if pertrusionx > 20:
+                pertrusionx = 20
+    else:
+        surface = pygame.Surface([width, height], pygame.SRCALPHA)
+        surface.fill(variables.snowcolor)
+
     currentcolorincrease = 5
     
     def makehill(hillx, hilly, hillradiusin):
@@ -173,7 +192,16 @@ def makesnowland(width, height):
                 currentshade += sharpness
 
     for x in range(randint(3, 7)):
-        makehill(randint(0, width), randint(0, height), randint(int(width/20), int(width/3)))
+        hillx = randint(0, width)
+        hilly = randint(0, height)
+        hillr = randint(int(width/20), int(width/3))
+        if grasstosnowp and hillx+hillr>width/4 + 25:
+            snowclump(surface, hillx, hilly, groundp = True)
+            snowclump(surface, randint(int(width/4 + 25), width), randint(0, height), groundp = True)
+            snowclump(surface, randint(int(width/4 + 25), int(width/2)), randint(0, height), groundp = True)
+            snowclump(surface, randint(int(width/4 + 25), int(width/2)), randint(0, height), groundp = True)
+        else:
+            makehill(hillx, hilly, hillr)
         if currentcolorincrease<35 and randint(0, int(currentcolorincrease)) <3:
             currentcolorincrease += random.uniform(1, 10)
 
@@ -181,7 +209,7 @@ def makesnowland(width, height):
     return surface
 
 def circlethreshold(surface, x, y, radius, color, shadowdir, shadowr):
-    steps = math.pi * radius * 3.5
+    steps = math.pi * radius * 2.5
     currentstep = 0
     differencec = color[0] - variables.snowcolor[0]
     
