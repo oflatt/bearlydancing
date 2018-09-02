@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, copy, conversations
+import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, copy, conversations, play_sound
 from ChoiceButtons import ChoiceButtons
 from Button import Button
 from Note import Note
@@ -9,7 +9,7 @@ from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR
 from FrozenClass import FrozenClass
 from pygame import Rect
 from notelistfunctions import shorten_doubles
-
+from Soundpack import max_sample
 
 # battle is the class that runs the battle- information about the game such as storyeventonwin is stored in enemy
 class Battle(FrozenClass):
@@ -183,6 +183,18 @@ class Battle(FrozenClass):
             variables.screen.blit(enemynamescaled, [w / 2 - (enemynamescaled.get_width() / 2), h / 2])
 
             self.battlechoice.draw()
+            # draw the wave above the battlechoice
+            wavex = self.battlechoice.buttons[-2].x * variables.width
+            # the height of the wave
+            waveamp = self.battlechoice.buttons[-2].height()
+            wavelen = self.battlechoice.buttons[-2].width()*3/4
+            wavey = self.battlechoice.buttons[-2].y*variables.height-waveamp
+            loopbuffer = play_sound.all_tones[variables.settings.soundpack].loopbuffers[0]
+            skiplen = (len(loopbuffer)/25)/wavelen
+            for waveoffset in range(int(wavelen)):
+                variables.screen.set_at((int(wavex+waveoffset),int(wavey+(loopbuffer[int(waveoffset*skiplen)][0]/max_sample)*waveamp)), variables.WHITE)
+                
+            variables.dirtyrects.append(Rect(wavex, wavey-waveamp, waveoffset, waveamp*2))
 
         elif self.state == "lose" or self.state == "win":
 
