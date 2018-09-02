@@ -138,7 +138,7 @@ class Player(FrozenClass):
         feetw = self.collidesection[2]*variables.compscale
         pathradius = feetw*0.3
         footoffsetx = self.collidesection[0]*variables.compscale+feetw/2
-        footoffsety = self.collidesection[1]*variables.compscale - self.collidesection[3]*variables.compscale*0.5
+        footoffsety = self.collidesection[1]*variables.compscale
         
         standingpos = (int(self.xpos*variables.compscale+footoffsetx), int(self.ypos*variables.compscale+footoffsety))
         forwardpos = (int(self.xpos*variables.compscale+footoffsetx+sign(self.xspeed)*pathradius), int(self.ypos*variables.compscale+footoffsety+sign(self.yspeed)*pathradius))

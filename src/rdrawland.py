@@ -156,7 +156,7 @@ def makegrassland(width, height, leftpath = True, rightpath = True, uppath = Tru
 def makesnowland(width, height, grasstosnowp = False):
     surface = None
     if grasstosnowp:
-        surface = makegrassland(width, height)
+        surface = makegrassland(width, height, uppath = False, downpath = False)
         for x in range(20):
             surface.fill((variables.snowcolor[0]-(20-x),variables.snowcolor[0]-(20-x),variables.snowcolor[0]-(20-x)), Rect(width/4 - 1 - x,0, 1, height))
         surface.fill(variables.snowcolor, Rect(0, 0, width/4-20, height))
@@ -205,7 +205,6 @@ def makesnowland(width, height, grasstosnowp = False):
         if currentcolorincrease<35 and randint(0, int(currentcolorincrease)) <3:
             currentcolorincrease += random.uniform(1, 10)
 
-    
     return surface
 
 def circlethreshold(surface, x, y, radius, color, shadowdir, shadowr):

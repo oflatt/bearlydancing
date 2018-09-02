@@ -265,7 +265,7 @@ def pinetree():
 def snowpinetree():
     def makesnowtree():
         return rdrawtree.maketree(True)
-    nicetreename = generategraphic(makesnowtree, "randomsnowpinetree")
+    nicetreename = generategraphic(makesnowtree, "randomsnowpinetree", True)
 
     # christmas!
     if christmasp:

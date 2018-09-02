@@ -22,6 +22,7 @@ class Battle(FrozenClass):
 
         # copy the enemy first to avoid editing originals
         self.enemy = copy.copy(enemy)
+        self.enemy.reset()
         # offset enemy lv by difficulty
         self.enemy.lv += variables.settings.difficulty
         

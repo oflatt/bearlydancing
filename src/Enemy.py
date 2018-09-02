@@ -17,6 +17,8 @@ class Enemy(FrozenClass):
         self.storyeventsonlose = None
         self.storyeventsonflee = None
         self.specialscale = None
+        # reset needs to be called before enemy is used
+        self.animation = None
         
         self._freeze()
 

@@ -112,7 +112,8 @@ def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
     if(len(shadowpoints)>1):
         pygame.draw.polygon(surface, shadowcolor, shadowpointstranslated,  1)
         fillpolygon(surface, fillpoint, (shadowcolor[0]-10, shadowcolor[1]-10,shadowcolor[2]-10), stopcolors = [shadowcolor, basecolor])
-     
+
+    surface.set_at(fillpoint, (255,0,0))
     surfacefinal.blit(surface, [x-swidth/2, y-swidth/2])
     
 
