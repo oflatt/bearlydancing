@@ -98,22 +98,26 @@ def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
     if addrad:
         y = y + radius
     for p in points:
-        pointstranslated.append((p[0]+swidth/2, p[1]+swidth/2))
+        newpx = min(p[0]+swidth/2, swidth-1)
+        newpy = min(p[1]+swidth/2, swidth-1)
+        pointstranslated.append((newpx, newpy))
     shadowpointstranslated = []
     for p in shadowpoints:
         shadowpointstranslated.append((p[0]+swidth/2, p[1]+swidth/2))
     pygame.draw.polygon(surface, basecolor, pointstranslated,  1)
+    
     fillpoint = (int(swidth/2),swidth-1)
     while surface.get_at(fillpoint)[3] == 0 and fillpoint[1] > 0:
         fillpoint = (fillpoint[0], fillpoint[1]-1)
-    fillpoint = (fillpoint[0], fillpoint[1]-1)
+    while surface.get_at(fillpoint)[3] != 0 and fillpoint[1] > 0:
+        fillpoint = (fillpoint[0], fillpoint[1]-1)
+    
     fillpolygon(surface, fillpoint, fillcolor, stopcolors = [basecolor])
 
     if(len(shadowpoints)>1):
         pygame.draw.polygon(surface, shadowcolor, shadowpointstranslated,  1)
         fillpolygon(surface, fillpoint, (shadowcolor[0]-10, shadowcolor[1]-10,shadowcolor[2]-10), stopcolors = [shadowcolor, basecolor])
 
-    surface.set_at(fillpoint, (255,0,0))
     surfacefinal.blit(surface, [x-swidth/2, y-swidth/2])
     
 

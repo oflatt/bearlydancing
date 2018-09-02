@@ -245,7 +245,7 @@ def generategraphic(generatingfunction, graphicname, newworldoverride = False):
     if not os.path.exists(variables.pathtoself + "/pics/" + filename):
         pygame.image.save(generatingfunction(), variables.pathtoself + "/pics/" + filename)
         addtoGR(filename)
-    elif variables.newworldeachloadq or newworldoverride:
+    elif variables.newworldeachloadq or (newworldoverride and variables.allownewworldoverridep):
         os.remove(variables.pathtoself + "/pics/" + filename)
         pygame.image.save(generatingfunction(), variables.pathtoself + "/pics/" + filename)
         addtoGR(filename)

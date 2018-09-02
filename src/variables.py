@@ -18,9 +18,12 @@ except ImportError:
 testsmallp = False
 devmode = True
 skipsteve = True
-newworldeachloadq = True
+# generates a new world on load no matter what
+newworldeachloadq = False
+# allows specific graphics functions to override and make new generated graphics
+allownewworldoverridep = True
 # this overrides the generation of a new set of graphics for a new game
-newworldnever = False
+newworldnever = True
 # this is for not loading the maps from the save file, to test new map changes
 dontloadmapsdict = False
 # only loads first couple of maps
@@ -43,6 +46,7 @@ if exportmode:
     skipsteve = False
     newworldnever = False
     newworldeachloadq = False
+    allownewworldoverridep = False
     dontloadmapsdict = False
     fasttestmodep = False
     lvcheat = 0

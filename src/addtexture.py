@@ -39,6 +39,9 @@ def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None,
         if c == fillcolor:
             stopp = True
         return not stopp
+
+    if not paintoverp(s.get_at(pointlist[0])):
+        pointlist = []
     
     while len(pointlist) != 0:
         point = pointlist.pop(0)
