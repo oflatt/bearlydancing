@@ -179,11 +179,11 @@ def makesnowland(width, height, grasstosnowp = False):
     def makehill(hillx, hilly, hillradiusin):
         shadowdir = random.uniform(0, math.pi*2)
         shadowrmin = random.uniform(math.pi/5, math.pi*2/3)/2
-        shadowrmax = shadowrmin + random.uniform(math.pi/10, math.pi/2)/2
+        shadowrmax = shadowrmin*random.uniform(1.6, 2.2)
         
         hillradius = hillradiusin
         currentshade = variables.snowcolor[0]
-        sharpness = random.uniform(0.1, 0.55)+currentcolorincrease*0.01
+        sharpness = currentcolorincrease * random.uniform(1.5, 2)/hillradius
         while hillradius > 0:
             shadowr = shadowrmin + (shadowrmax-shadowrmin)*(hillradius/hillradiusin)
             circlethreshold(surface, hillx, hilly, hillradius, (currentshade, currentshade, currentshade), shadowdir, shadowr)
@@ -202,8 +202,10 @@ def makesnowland(width, height, grasstosnowp = False):
             snowclump(surface, randint(int(width/4 + 25), int(width/2)), randint(0, height), groundp = True)
         else:
             makehill(hillx, hilly, hillr)
-        if currentcolorincrease<35 and randint(0, int(currentcolorincrease)) <3:
-            currentcolorincrease += random.uniform(1, 10)
+        if randint(0, int(currentcolorincrease)) <3:
+            currentcolorincrease += random.uniform(2, 15)
+            if currentcolorincrease > 35:
+                currentcolorincrease = 35
 
     return surface
 

@@ -5,7 +5,7 @@ from Button import Button
 from Note import Note
 from play_sound import soundpackkeys
 from play_sound import scales
-from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR
+from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR, getTextPic
 from FrozenClass import FrozenClass
 from pygame import Rect
 from notelistfunctions import shorten_doubles
@@ -183,18 +183,32 @@ class Battle(FrozenClass):
             variables.screen.blit(enemynamescaled, [w / 2 - (enemynamescaled.get_width() / 2), h / 2])
 
             self.battlechoice.draw()
+            
             # draw the wave above the battlechoice
             wavex = self.battlechoice.buttons[-2].x * variables.width
             # the height of the wave
-            waveamp = self.battlechoice.buttons[-2].height()
+            waveamp = (self.battlechoice.buttons[-2].height()*3/4) * 0.5
+            wavescalar = waveamp*0.8/(play_sound.currentsoundpack().volumelist[-1][1]*max_sample)
             wavelen = self.battlechoice.buttons[-2].width()*3/4
             wavey = self.battlechoice.buttons[-2].y*variables.height-waveamp
             loopbuffer = play_sound.all_tones[variables.settings.soundpack].loopbuffers[0]
             skiplen = (len(loopbuffer)/25)/wavelen
             for waveoffset in range(int(wavelen)):
-                variables.screen.set_at((int(wavex+waveoffset),int(wavey+(loopbuffer[int(waveoffset*skiplen)][0]/max_sample)*waveamp)), variables.WHITE)
+                variables.screen.fill(variables.BLUE, Rect(int(wavex+waveoffset), int(wavey), variables.displayscale, variables.displayscale))
+                variables.screen.fill(variables.WHITE, Rect(int(wavex+waveoffset),int(wavey+(loopbuffer[int(waveoffset*skiplen)][0]*wavescalar)), variables.displayscale, variables.displayscale))
                 
             variables.dirtyrects.append(Rect(wavex, wavey-waveamp, waveoffset, waveamp*2))
+
+            # draw the scale above battlechoice
+            firstscalex = self.battlechoice.buttons[-1].x * variables.width
+            scalex = firstscalex
+            scaley = self.battlechoice.buttons[-1].y*variables.height - self.battlechoice.buttons[-1].height()
+            scaleintervals = play_sound.scales[self.getscalename()]
+            for i in scaleintervals:
+                tpic = getTextPic(str(i)+" ", variables.gettextsize(), variables.WHITE)
+                variables.screen.blit(tpic, (scalex, scaley))
+                scalex += tpic.get_width()
+            variables.dirtyrects.append(Rect(firstscalex, scaley, self.battlechoice.buttons[-1].height(), scalex-firstscalex))
 
         elif self.state == "lose" or self.state == "win":
 

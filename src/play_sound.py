@@ -6,13 +6,15 @@ from Soundpack import Soundpack
 
 # each soundpack is a list of sounds from A3 to A6
 # value of 0 corresponds to A4, -12 is A3
-all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 25, False),
-             "triangle": Soundpack("triangle", 8),
-             "triangleh": Soundpack("triangle", 30), "sawtooth": Soundpack("sawtooth", 4),
-             "sawtoothh": Soundpack("sawtooth", 30)}
+all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 25),
+             "triangle": Soundpack("triangle", 30), "sawtooth": Soundpack("sawtooth", 30),
+             "sawsoft": Soundpack("sawtooth", 4)}
+
+def currentsoundpack():
+    return all_tones[variables.settings.soundpack]
 
 # all possible soundpacks
-soundpackkeys = ["sine", 'square', 'triangle', 'triangleh', 'sawtooth', 'sawtoothh']
+soundpackkeys = ["sine", 'square', 'triangle', 'sawtooth', 'sawsoft']
 
 scales = {"C major" : [2, 2, 1, 2, 2, 2, 1],
           "C minor" : [2, 1, 2, 2, 1, 3, 1]}# list of offsets for the scale

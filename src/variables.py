@@ -238,7 +238,7 @@ accelpixelpermillisecond *= floatinessagainstreality
     
 #encountering enemies
 encounter_check_rate = 100 # rate of check in milliseconds
-encounter_chance = 0.002 # chance per check
+encounter_chance = 0.004 # chance per check
 
 properties = Properties()
 properties_path = os.path.join(pathtoself, "properties.txt")

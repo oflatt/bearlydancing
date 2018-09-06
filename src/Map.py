@@ -327,7 +327,7 @@ class Map(FrozenClass):
         minencounterchecks = 20
         # if the random chance activates
         if self.encounterchecksnotactivated>minencounterchecks:
-            if random.random() < variables.encounter_chance * (math.sqrt(self.encounterchecksnotactivated-minencounterchecks) + 0.2):
+            if random.random() < variables.encounter_chance * math.sqrt(self.encounterchecksnotactivated-minencounterchecks):
                 self.encounterchecksnotactivated = 0
                 currentenemy = False
 
