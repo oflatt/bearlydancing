@@ -3,7 +3,6 @@ import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, 
 from ChoiceButtons import ChoiceButtons
 from Button import Button
 from Note import Note
-from play_sound import soundpackkeys
 from play_sound import scales
 from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR, getTextPic
 from FrozenClass import FrozenClass
@@ -469,8 +468,8 @@ class Battle(FrozenClass):
 
     def onkey(self, key):
         def change_soundpack(offset):
-            i = soundpackkeys.index(variables.settings.soundpack)
-            variables.settings.soundpack = soundpackkeys[(i + offset) % len(soundpackkeys)]
+            i = classvar.player.soundpacks.index(variables.settings.soundpack)
+            variables.settings.soundpack = classvar.player.soundpacks[(i + offset) % len(classvar.player.soundpacks)]
             self.battlechoice.buttons[-2].assign_text(variables.settings.soundpack)
 
         def change_scale(offset):

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import pygame, variables, maps, stathandeling, math
+import pygame, variables, maps, stathandeling, math, play_sound
 from variables import sign
 from random import randint
 from random import uniform
@@ -7,6 +7,7 @@ from graphics import GR, getpic, getmask
 from Animation import Animation
 from pygame import Rect
 from FrozenClass import FrozenClass
+
 
 class Player(FrozenClass):
 
@@ -54,6 +55,9 @@ class Player(FrozenClass):
 
         # a list of all the scales the player has
         self.scales = ["C major"]
+
+        # a list of all the soundpacks the player has
+        self.soundpacks = ["sine"]
 
         # a dictionary mapping events (strings) to the number of times it has happened
         self.storyevents = {}
@@ -445,5 +449,9 @@ class Player(FrozenClass):
             return 0
 
     def addreward(self, reward):
-        if not reward in self.scales:
-            self.scales.append(reward)
+        if reward in play_sound.scales:
+            if not reward in self.scales:
+                self.scales.append(reward)
+        elif reward in play_sound.soundpackkeys:
+            if not reward in self.soundpacks:
+                self.soundpacks.append(reward)

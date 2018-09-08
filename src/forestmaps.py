@@ -187,7 +187,7 @@ grovetree = Rock(graphics.pinetree(),
                  variables.TREECOLLIDESECTION)
 kewlcorn = Rock("kewlcorn0", grovetree.x+variables.TREEWIDTH/2+5, grovetree.y+variables.TREEHEIGHT/4, None)
 kewlcorn.name = "kewlcorn"
-kewlcorn.background_range = Rect(0,kewlcorn.y+ variables.TREEHEIGHT*(3/4)-kewlcorn.h+1,9999999,9999999)
+kewlcorn.background_range = Rect(0,kewlcorn.y+ variables.TREEHEIGHT*(3/4),9999999,9999999)
 kewlcorn.hide()
 
 outside6 = Map(graphics.grassland(outside6width, outside6height), [grovetree, kewlcorn])
@@ -211,8 +211,16 @@ kewlbattle.area = kewlappearconversation.area.copy()
 kewlbattle.eventrequirements = [EventRequirement("kewlappears")]
 kewlbattle.special_battle = copy.copy(enemies.enemies["kewlcorn"])
 kewlbattle.special_battle.lv = 4
+kewlbattle.special_battle.storyeventsonwin = ["beatkewl"]
 
-outside6.conversations = [kewlappearconversation, kewlbattle]
+beatkewlc = getconversation("beatkewlc")
+beatkewlc.storyevent = "beatkewlc"
+beatkewlc.eventrequirements = [EventRequirement("beatkewl"), EventRequirement("beatkewlc", -1, 1)]
+beatkewlc.area = [0,0,10000, 10000]
+beatkewlc.isbutton = False
+
+
+outside6.conversations = [kewlappearconversation, kewlbattle, beatkewlc]
 
 outside6.enemies = enemies.woodsenemies
 outside6.lvrange = [3]

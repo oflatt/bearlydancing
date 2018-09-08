@@ -14,7 +14,7 @@ def currentsoundpack():
     return all_tones[variables.settings.soundpack]
 
 # all possible soundpacks
-soundpackkeys = ["sine", 'square', 'triangle', 'sawtooth', 'sawsoft']
+soundpackkeys = list(all_tones.keys())
 
 scales = {"C major" : [2, 2, 1, 2, 2, 2, 1],
           "C minor" : [2, 1, 2, 2, 1, 3, 1]}# list of offsets for the scale

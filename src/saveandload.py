@@ -46,8 +46,10 @@ def load():
         if os.path.getsize(save0path) > 0:
             with open(save0path, "rb") as f:
                 loadedlist = pickle.load(f)
-
-                mapsdict, conversations.currentconversation, classvar.player, classvar.battle, maps.current_map_name = loadedlist
+                tempplayer = None
+                mapsdict, conversations.currentconversation, tempplayer, classvar.battle, maps.current_map_name = loadedlist
+                if not variables.dontloadplayer:
+                    classvar.player = tempplayer
                 if variables.lvcheat != 0:
                     classvar.player.exp = lvexp(explv(classvar.player.exp)+variables.lvcheat)
                 if not variables.dontloadmapsdict:

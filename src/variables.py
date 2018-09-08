@@ -25,7 +25,9 @@ allownewworldoverridep = True
 # this overrides the generation of a new set of graphics for a new game
 newworldnever = True
 # this is for not loading the maps from the save file, to test new map changes
-dontloadmapsdict = False
+dontloadmapsdict = True
+# this is to get a fresh player with no player attributes
+dontloadplayer = True
 # only loads first couple of maps
 fasttestmodep = False
 # adds to player level when loading
@@ -48,6 +50,7 @@ if exportmode:
     newworldeachloadq = False
     allownewworldoverridep = False
     dontloadmapsdict = False
+    dontloadplayer = False
     fasttestmodep = False
     lvcheat = 0
     testspecs = None
