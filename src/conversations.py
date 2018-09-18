@@ -202,6 +202,9 @@ trophyc = Conversation("trophyc", [trophyspeak],
 beatkewlc = Conversation("beatkewl", [Speak("kewlcorn0", ["Wow, that was cool!",
                                                           "This is cool too, you can have it."])])
 
+beatchimneyc = Conversation("beatchimney", [Speak("flyingchimney4", ["...",
+                                                                     "*The chimney drops something.*"])])
+
 # copy them so one save does not alter all the conversations
 def getconversation(varname):
     g = globals()

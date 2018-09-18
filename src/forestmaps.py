@@ -211,14 +211,9 @@ kewlbattle.area = kewlappearconversation.area.copy()
 kewlbattle.eventrequirements = [EventRequirement("kewlappears")]
 kewlbattle.special_battle = copy.copy(enemies.enemies["kewlcorn"])
 kewlbattle.special_battle.lv = 4
-kewlbattle.special_battle.storyeventsonwin = ["beatkewl"]
 
 beatkewlc = getconversation("beatkewlc")
-beatkewlc.storyevent = "beatkewlc"
-beatkewlc.eventrequirements = [EventRequirement("beatkewl"), EventRequirement("beatkewlc", -1, 1)]
-beatkewlc.area = [0,0,10000, 10000]
-beatkewlc.isbutton = False
-
+makeconversationreward(beatkewlc, kewlbattle.special_battle, "triangle")
 
 outside6.conversations = [kewlappearconversation, kewlbattle, beatkewlc]
 

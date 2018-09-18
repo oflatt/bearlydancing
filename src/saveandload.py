@@ -50,6 +50,11 @@ def load():
                 mapsdict, conversations.currentconversation, tempplayer, classvar.battle, maps.current_map_name = loadedlist
                 if not variables.dontloadplayer:
                     classvar.player = tempplayer
+                else:
+                    classvar.player.xpos = tempplayer.xpos
+                    classvar.player.ypos = tempplayer.ypos
+                    for x in range(50):
+                        classvar.player.addstoryevent("bed")
                 if variables.lvcheat != 0:
                     classvar.player.exp = lvexp(explv(classvar.player.exp)+variables.lvcheat)
                 if not variables.dontloadmapsdict:

@@ -17,7 +17,8 @@ def currentsoundpack():
 soundpackkeys = list(all_tones.keys())
 
 scales = {"C major" : [2, 2, 1, 2, 2, 2, 1],
-          "C minor" : [2, 1, 2, 2, 1, 3, 1]}# list of offsets for the scale
+          "C minor" : [2, 1, 2, 2, 1, 3, 1],
+          "chromatic" : [1, 1, 1, 6, 1, 1, 1]}# list of offsets for the scale
 
 def loadmusic(filename):
     return pygame.mixer.Sound(os.path.join(variables.pathtoself, "music/", filename))

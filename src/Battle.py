@@ -207,7 +207,7 @@ class Battle(FrozenClass):
                 tpic = getTextPic(str(i)+" ", variables.gettextsize(), variables.WHITE)
                 variables.screen.blit(tpic, (scalex, scaley))
                 scalex += tpic.get_width()
-            variables.dirtyrects.append(Rect(firstscalex, scaley, self.battlechoice.buttons[-1].height(), scalex-firstscalex))
+            variables.dirtyrects.append(Rect(firstscalex, scaley, scalex-firstscalex, self.battlechoice.buttons[-1].height()))
 
         elif self.state == "lose" or self.state == "win":
 
@@ -329,7 +329,7 @@ class Battle(FrozenClass):
         while not self.currentplayerframename() in GR:
             maxanimnumber = self.playercurrentanim-1
             self.playercurrentanim = random.randint(0, maxanimnumber)
-        
+
 
     # for things like the attack animation
     def ontick(self):
@@ -451,6 +451,7 @@ class Battle(FrozenClass):
         classvar.player.timeslost += 1
         classvar.player.totalbattles += 1
 
+        
     def win(self):
         classvar.player.addstoryevents(self.enemy.storyeventsonwin)
         classvar.player.totalbattles += 1

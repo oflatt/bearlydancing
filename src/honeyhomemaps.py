@@ -157,6 +157,8 @@ chimneye = copy.copy(enemies.enemies["chimney"])
 chimneye.lv = 7
 chimneybattlec.special_battle = chimneye
 
+beatchimneyc = getconversation("beatchimneyc")
+makeconversationreward(beatchimneyc, chimneybattlec.special_battle, "chromatic")
 
 outside1 = Map(rgrassland,
                [houserock,
@@ -213,6 +215,7 @@ want2go.eventrequirements = [EventRequirement("beat meanie")]
 
 outside1.conversations = [outside1c, gotoforest, goodc, want2go, secretchimneyactivation, chimneybattlec, getconversation("letsflee"), getconversation("losetochimney"),
                           getconversation("tutorialconversation1"), getconversation("pressanow"),
-                          getconversation("endtutorial"), getconversation("releaseanow"), getconversation("releasedearly")]
+                          getconversation("endtutorial"), getconversation("releaseanow"), getconversation("releasedearly"),
+                          beatchimneyc]
 
 outside1.colliderects = [Rect(houserock.x-3, houserock.y+houserock.collidesection[1], 3, houserock.collidesection[3])]

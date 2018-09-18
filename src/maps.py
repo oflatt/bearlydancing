@@ -231,6 +231,7 @@ def unhiderock(rockname):
     current_map.unhiderock(rockname)
 
 def playerenabledp():
+    # just check if they have gotten out of bed at the beginning- from honeyhomemaps
     return not outofbed.activatedp()
 
 # calls the grassland music when appropriate
