@@ -1,5 +1,6 @@
 import pygame
 import variables
+from FrozenClass import FrozenClass
 
 
 def value_to_screenvalue(v):
@@ -36,9 +37,9 @@ def beatshape(time):
     else:
         return "round"
 
-class Note:
+class Note(FrozenClass):
 
-    def __init__(self, value, time, duration, chordadditionp = False):
+    def __init__(self, value, time, duration, chordadditionp = False, accidentalp = False):
         # value is the placement in the current scale (instrument) that the note is, 0 is the first note, can go neg
         self.value = value
         
@@ -56,9 +57,14 @@ class Note:
         # drawing
         self.height_offset = 0
 
+        # raises the note one half step up
+        self.accidentalp = accidentalp
+        
         # this is for printing out notes and debugging
         self.chordadditionp = chordadditionp
         self.collidedwithanotherp = False
+
+        self._freeze()
 
     def screenvalue(self):
         return value_to_screenvalue(self.value)
@@ -135,6 +141,10 @@ class Note:
                     pygame.draw.ellipse(ellipsesurface, color,
                                         [0, -20, width, mheight+40])
                     variables.screen.blit(ellipsesurface, [p[0], y])
+
+                # now draw pink line if it is an accidental
+                if self.accidentalp:
+                    pygame.draw.rect(variables.screen, variables.PINK, [p[0]+width/4, y, width/2, mheight])
                 
 
         # subtract height from y because the pos is the bottom of the rectangle

@@ -267,7 +267,7 @@ def addnote(notelist, time, ischord, specs, valuestouse):
     if ischord:
         l.insert(len(l) - 1, Note(rv, time, duration, True))
     else:
-        l.append(Note(rv, time, duration))
+        l.append(Note(rv, time, duration, accidentalp = True))
 
     return (l, duration)
 

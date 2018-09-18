@@ -142,6 +142,7 @@ BLUE = (0, 0, 255)
 ORANGE = (255, 255, 0)
 LIGHTYELLOW = (235,227, 92)
 LIGHTBLUE = (66, 206, 244)
+PINK = (226, 40, 255)
 
 # font
 font = pygame.font.Font(os.path.join(pathtoself, 'orangekidregular.ttf'), 30)

@@ -4,21 +4,19 @@ gameplay
 -knomi code name- bear winks at you
 -map objects and loading more safely, versioning, safely load with new content
 -ddr machine that you can play and dance against
--recieve synths from enemies
 -recieve waves from enemies
 -recieve scales from enemies
 
 sound
 -load own sounds using the bowl pianoputer as example
--chimney wing sounds
--add new scales
+      -random generation of wave?
 -different drums for different enemies
 
 battle
 -melodicmode:
 	-sync up durations of melodic notes, ones in a line should be shorter
 	-better restp function, currently just a 1/9 chance of a rest
--repeatbig, and aditional layer of repetition for a large phrase with variation
+-repeatbig, an aditional layer of repetition for a large phrase with variation
 -repeatwithvariation more sophisticated- switch notes, offset by a beat
 -triplet chord mode
 -octaves rule
