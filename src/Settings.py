@@ -20,8 +20,10 @@ class Settings(FrozenClass):
         self.keydict["note6"] = [pygame.K_k]
         self.keydict["note7"] = [pygame.K_l]
         self.keydict["note8"] = [pygame.K_SEMICOLON]
-
+        self.keydict["notemodifier"] = [pygame.K_SPACE]
+        
         self.keydict["escape"] = [pygame.K_ESCAPE]
+
 
         # normal setting stuff
         self.windowmode = "fullscreen"

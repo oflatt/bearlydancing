@@ -253,6 +253,8 @@ def addnote(notelist, time, ischord, specs, valuestouse):
         if randint(0, 100) > ((lv/1.8) + 2) ** 2:
             duration = l[-1].duration
 
+    accidentalp = random.choice([True, False])
+
     # so you can specify a value
     if len(valuestouse)==0:
         rv = random_value(time, ischord, l, specs)
@@ -265,9 +267,9 @@ def addnote(notelist, time, ischord, specs, valuestouse):
         
     # chord notes added before the main note to make it easier to compare to the melody
     if ischord:
-        l.insert(len(l) - 1, Note(rv, time, duration, True))
+        l.insert(len(l) - 1, Note(rv, time, duration, True, accidentalp = accidentalp))
     else:
-        l.append(Note(rv, time, duration, accidentalp = True))
+        l.append(Note(rv, time, duration, accidentalp = accidentalp))
 
     return (l, duration)
 

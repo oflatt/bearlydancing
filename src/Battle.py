@@ -323,7 +323,7 @@ class Battle(FrozenClass):
 
     def newplayeranimation(self):
         self.playerframe = 0
-        maxanimnumber = classvar.player.lv() - variables.settings.difficulty
+        maxanimnumber = max(1, classvar.player.lv() - variables.settings.difficulty)
         self.playercurrentanim = random.randint(0, maxanimnumber)
         # if this number is too large because an animation for that level does not exist, pick a new one lower than it
         while not self.currentplayerframename() in GR:
