@@ -25,9 +25,9 @@ allownewworldoverridep = True
 # this overrides the generation of a new set of graphics for a new game
 newworldnever = True
 # this is for not loading the maps from the save file, to test new map changes
-dontloadmapsdict = True
+dontloadmapsdict = False
 # this is to get a fresh player with no player attributes
-dontloadplayer = True
+dontloadplayer = False
 # only loads first couple of maps
 fasttestmodep = False
 # adds to player level when loading
@@ -172,6 +172,8 @@ FLOWERCOLLIDESECTION = [0, 1, 0, 0]
 healthanimationspeed = 2000# time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
 numofrounds = 2
+
+accidentallvthreshhold=8
 
 def getpadypos():
     return height*(13/16)

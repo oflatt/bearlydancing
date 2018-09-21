@@ -22,8 +22,8 @@ def save(manualp):
     except FileExistsError:
         pass
     
-    savelist = [maps.map_dict, conversations.currentconversation,
-                classvar.player, classvar.battle, maps.current_map_name]
+    savelist = [maps.map_dict, conversations.currentconversation.name,
+                classvar.player, classvar.battle, maps.current_map_name, conversations.floatingconversations]
     with open(variables.savepath, "wb") as f:
         pickle.dump(savelist, f)
     with open(variables.settingspath, "wb") as f:
@@ -47,7 +47,7 @@ def load():
             with open(save0path, "rb") as f:
                 loadedlist = pickle.load(f)
                 tempplayer = None
-                mapsdict, conversations.currentconversation, tempplayer, classvar.battle, maps.current_map_name = loadedlist
+                mapsdict, tempcname, tempplayer, classvar.battle, maps.current_map_name, conversations.floatingconversations = loadedlist
                 if not variables.dontloadplayer:
                     classvar.player = tempplayer
                 else:
@@ -59,6 +59,10 @@ def load():
                     classvar.player.exp = lvexp(explv(classvar.player.exp)+variables.lvcheat)
                 if not variables.dontloadmapsdict:
                     loadmaps(mapsdict)
+                    if tempcname in conversations.floatingconversations.keys():
+                        conversations.currentconversation = conversations.floatingconversations[tempckey]
+                    else:
+                        conversations.currentconversation = maps.map_dict[maps.current_map_name].getconversation(tempcname)
 
                 maps.change_map_nonteleporting(maps.current_map_name)
                 # don't start at beginning

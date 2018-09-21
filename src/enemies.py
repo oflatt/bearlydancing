@@ -58,7 +58,7 @@ addEnemy("sheep", [],
          Animation(["sheep0", "sheep1", "sheep2", "sheep3"], defaultanimspeed/2))
 
 # just tutorial enemy
-addEnemy("mean green", ["melodic", "repeat", "rests"],
+addEnemy("mean green", ["melodic", "repeat", "rests", "noaccidentals"],
          Animation(["meangreen0", "meangreen1"], defaultanimspeed))
 
 addEnemy("perp", ["alternating"],

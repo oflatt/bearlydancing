@@ -213,9 +213,8 @@ want2gospeak.special_battle = copy.copy(enemies.enemies["mean green"])
 want2gospeak.special_battle.lv = 1
 want2go.eventrequirements = [EventRequirement("beat meanie")]
 
-outside1.conversations = [outside1c, gotoforest, goodc, want2go, secretchimneyactivation, chimneybattlec, getconversation("letsflee"), getconversation("losetochimney"),
-                          getconversation("tutorialconversation1"), getconversation("pressanow"),
-                          getconversation("endtutorial"), getconversation("releaseanow"), getconversation("releasedearly"),
+outside1.conversations = [outside1c, gotoforest, goodc, want2go, secretchimneyactivation,
+                          chimneybattlec, getconversation("letsflee"), getconversation("losetochimney"),
                           beatchimneyc]
 
 outside1.colliderects = [Rect(houserock.x-3, houserock.y+houserock.collidesection[1], 3, houserock.collidesection[3])]

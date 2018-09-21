@@ -69,9 +69,6 @@ while not done:
         # do not add the time to the clock
         clock.get_time()
 
-    currentc = None
-    if variables.settings.state == "conversation":
-        currentc = maps.current_map.getconversation(conversations.currentconversation)
     
     # --- Event Processing- this is like keyPressed
     for event in pygame.event.get():
@@ -96,12 +93,12 @@ while not done:
                     initiatebattle(devbattletest)
             
             elif (not variables.settings.menuonq):
-                if variables.settings.state == "conversation" and currentc != None:
-                    message = currentc.keyevent(event.key)
+                if variables.settings.state == "conversation" and conversations.currentconversation != None:
+                    message = conversations.currentconversation.keyevent(event.key)
                     menu.setmessage(message)
                     # check if it was exited to unhide rocks
                     if variables.settings.state == "world":
-                        maps.unhiderock(currentc.unhidethisrock)
+                        maps.unhiderock(conversations.currentconversation.unhidethisrock)
                 elif variables.settings.state == "world":
                     if maps.playerenabledp() and maps.current_map.playerenabledp:
                         classvar.player.keypress(event.key)
@@ -125,15 +122,12 @@ while not done:
                         classvar.player.keyrelease(event.key)
                 elif variables.settings.state == "battle":
                     classvar.battle.onrelease(event.key)
-                elif variables.settings.state == "conversation" and currentc != None:
-                    currentc.keyrelease(event.key)
+                elif variables.settings.state == "conversation" and conversations.currentconversation != None:
+                    conversations.currentconversation.keyrelease(event.key)
             else:
                 menu.onrelease(event.key)
 
-    # get it again for if the key press changed the state to conversation
-    if variables.settings.state == "conversation":
-        currentc = maps.current_map.getconversation(conversations.currentconversation)
-
+    
     if variables.settings.state == "world" or (variables.settings.state == "conversation" and variables.settings.backgroundstate == "world"):
         maps.musictick()
         
@@ -150,12 +144,8 @@ while not done:
         menu.ontick()
         
 
-    # get it again for if the key press changed the state to conversation
-    if variables.settings.state == "conversation":
-        currentc = maps.current_map.getconversation(conversations.currentconversation)
-
     # draw saved
-    if(variables.saved):
+    if (variables.saved):
         menu.saved()
         variables.saved = False
         
@@ -189,7 +179,7 @@ while not done:
             else:
                 variables.screen.fill(variables.BLACK)
                 classvar.battle.draw()
-            currentc.draw()
+            conversations.currentconversation.draw()
         elif variables.settings.state == "world":
             draw_world()
         elif variables.settings.state == "battle":

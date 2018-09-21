@@ -167,7 +167,19 @@ def initiatemusic():
     if not current_map_name in nongrasslandmaps:
         initiategrasslandmusic()
     
-def engage_conversation(c):
+def engage_conversation(cname, floatingconversationp = False):
+    if not type(cname) == str:
+        raise ValueError("engage_conversation takes a string for the name of the conversation in the current map")
+
+    c = None
+    # a floating conversation is one in the floatingconversations dict in conversations module,
+    # these are not tied to any map (tutorial conversations)
+    if not floatingconversationp:
+        c = current_map.getconversation(cname)
+    else:
+        c = conversations.floatingconversations[cname]
+
+    conversations.currentconversation = c
     
     classvar.player.change_of_state()
     classvar.player.addstoryevent(c.storyevent)
@@ -178,9 +190,8 @@ def engage_conversation(c):
         
         
     variables.settings.state = "conversation"
-    conversations.currentconversation = c.name
     
-    current = current_map.getconversation(c.name)
+    current = c
     current.updatescreenp = True
 
     if current.switchtheserocks != None:
@@ -195,7 +206,7 @@ def engage_conversation(c):
 def engage_exit(e):
     classvar.player.addstoryevent(e.storyevent)
     change_map(e.name, e.newx, e.newy)
-        
+
 def on_key(key):
     if variables.checkkey("enter", key):
         e = current_map.checkexit()
@@ -205,7 +216,7 @@ def on_key(key):
         #print(classvar.player.storyevents)
         # check for conversations first
         if not c == False:
-            engage_conversation(c)
+            engage_conversation(c.name)
         elif not e == False:
             engage_exit(e)
 
@@ -221,7 +232,7 @@ def checkconversation():
     c = current_map.checkconversation()
     if not c == False:
         if c.isbutton == False:
-            engage_conversation(c)
+            engage_conversation(c.name)
 
 def changerock(rockname):
     current_map.changerock(rockname)

@@ -205,10 +205,21 @@ beatkewlc = Conversation("beatkewl", [Speak("kewlcorn0", ["Wow, that was cool!",
 beatchimneyc = Conversation("beatchimney", [Speak("flyingchimney4", ["...",
                                                                      "*The chimney drops something.*"])])
 
+floatingconversations = {}
+
+def addfloating(c):
+    floatingconversations[c.name] = c
+addfloating(tutorialconversation1)
+addfloating(pressanow)
+addfloating(endtutorial)
+addfloating(releaseanow)
+addfloating(releasedearly)
+    
 # copy them so one save does not alter all the conversations
 def getconversation(varname):
     g = globals()
     c = deepcopy(g[varname])
     return c
 
+# this is the conversation object currently being displayed
 currentconversation = None
