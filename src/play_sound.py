@@ -38,9 +38,9 @@ soundeffectchannel = pygame.mixer.Channel(38)
 def play_tone(tonein):
     t = tonein
     if t+12>=len(all_tones[variables.settings.soundpack].soundlist):
-        t = len(all_tones[variables.settings.soundpack].soundlist)-1
+        t = len(all_tones[variables.settings.soundpack].soundlist)-1-12
     elif t+12 < 0:
-        t = 0
+        t = 0-12
     # add because values are centered on 0
     all_tones[variables.settings.soundpack].soundlist[t+12]
     channels[t+12].set_volume(variables.settings.volume*(1/3)) # balance volume
