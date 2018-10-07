@@ -28,6 +28,8 @@ class Battle(FrozenClass):
         # state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
         self.tutorialstate = None
+        self.tutorialconversations = None
+        
         
         # if the enemy's level is 0 and there have been no battles, the tutorial is triggered
         self.tutorialp = self.enemy.lv - variables.settings.difficulty == 0 and classvar.player.totalbattles == 0
@@ -43,13 +45,22 @@ class Battle(FrozenClass):
             # if we do activate the accidentaltutorial, set the tutorial and all the conversations
             self.tutorialp = True
 
-        #if self.tutorialp:
-        #    if not accidentaltutorialp:
+        if self.tutorialp:
+            if not self.accidentaltutorialp:
                 # set all the conversations for the tutorial
-        #    else:
-                # set all the accidental conversations    
+                self.tutorialconversations = ["tutorialconversation1",
+                                              "pressanow",
+                                              "releaseanow",
+                                              "endtutorial",
+                                              "releasedearly"]
+            else:
+                # set all the accidental conversations
+                self.tutorialconversations = ["tutorialconversation1",
+                                              "pressanow",
+                                              "releaseanow",
+                                              "endtutorial",
+                                              "releasedearly"]
         
-        self.atutorialstate = None
         
         # for attacking animation
         self.isplayernext = False  # if the player is currently being damaged
@@ -104,21 +115,7 @@ class Battle(FrozenClass):
         self.initiatenewbeatmap()
         self.reset_time()
         self.reset_enemy()
-
-        if self.accidentaltutorialp:
-            
-            #add an accidentalnote
-            b = self.beatmaps[0]
-            b.notes.insert(0, Note(0, b.notes[0].time, 2))
-            b.notes[0].accidentalp = True;
-
-            # first add ten to give space for the new notes
-            for note in b.notes:
-                note.time += 24
-            b.notes[0].time -= 12
-            # insert the note that tests if they know what they are doing
-            b.notes.insert(0, Note(0, 1, 1, accidentalp=True))
-            
+        
         if self.tutorialp:
             self.tutorialstate = "starting"
             # if it is the tutorial, add two notes for the player to fail on, and change first note to a
@@ -400,24 +397,24 @@ class Battle(FrozenClass):
                         self.deletetutorialnote()
                 else:
                     self.tutorialstate = "first note"
-                    currentb.showkeys()
-                    maps.engage_conversation("tutorialconversation1", True)
+                    currentb.showkeys(self.accidentaltutorialp)
+                    maps.engage_conversation(self.tutorialconversations[0], True)
         elif self.tutorialstate == "first note":
             fnote = currentb.notes[0]
             if fnote.pos[1] >= variables.getpadypos() and fnote.time > variables.settings.notes_per_screen + 2:
                 self.tutorialstate = "release note"
-                maps.engage_conversation("pressanow", True)
+                maps.engage_conversation(self.tutorialconversations[1], True)
         elif self.tutorialstate == "release note":
             fnote = currentb.notes[0]
             if fnote.pos[1] - fnote.height(currentb.tempo) > variables.getpadypos() and fnote.time > 10:
                 self.tutorialstate = "finished first"
-                maps.engage_conversation("releaseanow", True)
+                maps.engage_conversation(self.tutorialconversations[2], True)
         elif self.tutorialstate == "finished first":
             fnote = currentb.notes[0]
             if fnote.time >= 24:
                 self.tutorialstate = "done"
                 currentb.scores = []
-                maps.engage_conversation("endtutorial", True)
+                maps.engage_conversation(self.tutorialconversations[3], True)
         
     # for things like the attack animation
     def ontick(self):
@@ -582,7 +579,7 @@ class Battle(FrozenClass):
                     if self.tutorialstate == "first note":
                         pass
                     elif self.tutorialstate == "release note":
-                        maps.engage_conversation("releasedearly", True)
+                        maps.engage_conversation(self.tutorialconversations[4], True)
                     else:
                         releasep = True
                 else:

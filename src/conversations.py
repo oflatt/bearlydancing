@@ -106,11 +106,11 @@ tutorialconversation1 = Conversation("tutorialconversation1",
                                             ["Oh look, a note. I'll tell you when to play it."],
                                             "left", bottomp = False)])
 
-holdthis = "Obviously, you'll want to press and hold \"" + pygame.key.name(variables.settings.keydict["note1"][0]) + "\" now."
+holdthis = "You'll want to press and hold \"" + pygame.key.name(variables.settings.keydict["note1"][0]) + "\" now."
 
 pressaspeak = Speak("honeyback3", [holdthis,
                                    "Hold the note until it ends,",
-                                   "because otherwise you will miss it."], bottomp = False)
+                                   "otherwise you will miss it."], bottomp = False)
 
 pressaspeak.specialexitkeys = ["note1"]
 
@@ -214,6 +214,9 @@ addfloating(pressanow)
 addfloating(endtutorial)
 addfloating(releaseanow)
 addfloating(releasedearly)
+addfloating(losetochimney)
+addfloating(letsflee)
+
     
 # copy them so one save does not alter all the conversations
 def getconversation(varname):

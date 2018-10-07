@@ -28,7 +28,7 @@ class Settings(FrozenClass):
         self.keydict["note5modified"] = [pygame.K_i]
         self.keydict["note6modified"] = [pygame.K_o]
         self.keydict["note7modified"] = [pygame.K_p]
-        self.keydict["note8modified"] = [pygame.K_[]
+        self.keydict["note8modified"] = [pygame.K_LEFTBRACKET]
         
         self.keydict["escape"] = [pygame.K_ESCAPE]
 

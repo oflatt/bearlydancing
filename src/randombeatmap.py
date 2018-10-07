@@ -254,7 +254,7 @@ def makeaccidentalp(specs):
     if lv<athreshhold:
         return False
     else:
-        return random.random() < min(1/3, (math.sqrt(lv-athreshhold)+1)/20)
+        return random.random() < min(1/3, (math.sqrt(lv-athreshhold)+1)/40)
 
         
 # returns a tuple with a new list and the duration of the new note

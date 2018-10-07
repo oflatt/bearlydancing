@@ -28,6 +28,8 @@ newworldnever = True
 dontloadmapsdict = False
 # this is to get a fresh player with no player attributes
 dontloadplayer = False
+# get a fresh settings file
+dontloadsettings = False
 # only loads first couple of maps
 fasttestmodep = False
 # adds to player level when loading
@@ -51,6 +53,7 @@ if exportmode:
     allownewworldoverridep = False
     dontloadmapsdict = False
     dontloadplayer = False
+    dontloadsettings = True
     fasttestmodep = False
     lvcheat = 0
     testspecs = None
@@ -97,7 +100,8 @@ manualsavebackuppath = os.path.join(pathtoself, "savebackup/");
 settingspath = os.path.join(savefolderpath, "bdsettings.txt")
 savepath = os.path.join(savefolderpath, "bdsave.txt")
 settings = Settings()
-if (os.path.isfile(os.path.abspath(settingspath))):
+if not dontloadsettings:
+    if (os.path.isfile(os.path.abspath(settingspath))):
         if os.path.getsize(os.path.abspath(settingspath)) > 0:
             with open(settingspath, "rb") as f:
                 settings = pickle.load(f)
