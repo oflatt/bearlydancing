@@ -249,6 +249,7 @@ class Beatmap():
                     if s == variables.miss_value:
                         self.notes[np].ison = False
                         self.setfeedback(self.notes[np].screenvalue(), "miss")
+                        self.appendscore(variables.miss_value)
 
         # returns the value for the sound produced
         def check_place(v, modifiedp):

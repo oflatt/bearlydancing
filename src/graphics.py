@@ -129,9 +129,9 @@ def difficultytocolor(colorfactor):
     elif colorfactor < 3:
         typecolor = (255, 255, 0)
     elif colorfactor < 8:
-        typecolor = (255, 255-(colorfactor - 2)*50, 0)
+        typecolor = (255, 255-(colorfactor - 2)*42, 0)
     elif colorfactor < 16:
-        typecolor = (255, 0, 30*(colorfactor-7))
+        typecolor = (255, 0, 28*(colorfactor))
     else:
         typecolor = (255,min((colorfactor-15)*25, 255), 255)
     return typecolor

@@ -374,6 +374,7 @@ class Battle(FrozenClass):
             # update screen for enemy, player
             self.updatescreenforenemy()
             playerpic = getpicbyheight("honeydance0-0", variables.height/4)
+            # player dirty rect
             variables.dirtyrects.append(Rect(variables.width-playerpic.get_width(), variables.height-playerpic.get_height(), playerpic.get_width(), playerpic.get_height()))
 
         # change player pic
@@ -663,3 +664,9 @@ class Battle(FrozenClass):
         
         damageenemy()
         damageplayer()
+
+        # set the player animation back to default
+        self.playerframe = 0
+        self.playercurrentanim = 0
+        # player dirty rect
+        variables.dirtyrects.append(Rect(variables.width-playerpic.get_width(), variables.height-playerpic.get_height(), playerpic.get_width(), playerpic.get_height()))
