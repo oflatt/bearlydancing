@@ -47,7 +47,7 @@ def load():
             with open(save0path, "rb") as f:
                 loadedlist = pickle.load(f)
                 tempplayer = None
-                mapsdict, tempcname, tempplayer, classvar.battle, maps.current_map_name, conversations.floatingconversations = loadedlist
+                mapsdict, tempcname, tempplayer, classvar.battle, maps.current_map_name, floatingtemp = loadedlist
                 if not variables.dontloadplayer:
                     classvar.player = tempplayer
                 else:
@@ -58,6 +58,7 @@ def load():
                 if variables.lvcheat != 0:
                     classvar.player.exp = lvexp(explv(classvar.player.exp)+variables.lvcheat)
                 if not variables.dontloadmapsdict:
+                    conversations.floatingconversations = floatingtemp
                     loadmaps(mapsdict)
                     if tempcname in conversations.floatingconversations.keys():
                         conversations.currentconversation = conversations.floatingconversations[tempckey]

@@ -14,7 +14,10 @@ class Speak(FrozenClass):
         self.pic = pic
 
         # dialogue is a list of strings, one per line
-        self.dialogue = dialogue
+        if type(dialogue) == str:
+            self.dialogue = [dialogue]
+        else:
+            self.dialogue = dialogue
         self.side = side
         # a list of keys that work to exit the conversation- keys acceced in settings keydict
         self.specialexitkeys = None

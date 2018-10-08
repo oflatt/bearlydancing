@@ -55,11 +55,11 @@ class Battle(FrozenClass):
                                               "releasedearly"]
             else:
                 # set all the accidental conversations
-                self.tutorialconversations = ["tutorialconversation1",
-                                              "pressanow",
-                                              "releaseanow",
+                self.tutorialconversations = ["accidentaltutorialintro",
+                                              "presswnow",
+                                              "releasewnow",
                                               "endtutorial",
-                                              "releasedearly"]
+                                              "releasedwearly"]
         
         
         # for attacking animation
@@ -575,7 +575,7 @@ class Battle(FrozenClass):
         releasep = False
         if self.state == "dance":
             if self.tutorialp:
-                if variables.checkkey("note1", key):
+                if (variables.checkkey("note1", key) and not self.accidentaltutorialp)  or (variables.checkkey("note1modified", key) and self.accidentaltutorialp):
                     if self.tutorialstate == "first note":
                         pass
                     elif self.tutorialstate == "release note":

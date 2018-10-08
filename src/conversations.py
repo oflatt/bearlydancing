@@ -106,7 +106,15 @@ tutorialconversation1 = Conversation("tutorialconversation1",
                                             ["Oh look, a note. I'll tell you when to play it."],
                                             "left", bottomp = False)])
 
+accidentaltutorialintro = Conversation("accidentaltutorialintro",
+                                       [Speak("honeyback3", "Woah, what was that?", side="left", bottomp=False),
+                                        Speak("honeyback3", "I think it was the dreaded, the terrible, the-", side="left", bottomp=False),
+                                        Speak("honeyback3", "ACCIDENTAL!", side="left", bottomp=False),
+                                        Speak("honeyback3", ["You better be ready, here comes another one.", "There is a whole new set of keys down there. Take note."],  side="left", bottomp=False)])
+
 holdthis = "You'll want to press and hold \"" + pygame.key.name(variables.settings.keydict["note1"][0]) + "\" now."
+
+
 
 pressaspeak = Speak("honeyback3", [holdthis,
                                    "Hold the note until it ends,",
@@ -115,6 +123,15 @@ pressaspeak = Speak("honeyback3", [holdthis,
 pressaspeak.specialexitkeys = ["note1"]
 
 pressanow = Conversation("pressanow",[pressaspeak])
+
+
+holdthisw = "Hold \"" + pygame.key.name(variables.settings.keydict["note1modified"][0]) + "\" now."
+
+presswspeak = Speak("honeyback3", [holdthisw], bottomp = False)
+
+presswspeak.specialexitkeys = ["note1modified"]
+
+presswnow = Conversation("presswnow",[presswspeak])
 
 releaseaspeak = Speak("honeyback3", ["Alright, release the key now."], bottomp = False)
 releaseaspeak.specialexitkeys = ["note1"]
@@ -130,6 +147,23 @@ releasedearlyagainspeak.specialexitkeys = ["note1"]
 
 releasedearly = Conversation("releasedearly",[releasedearlyspeak], speaksafter = [releasedearlyagainspeak])
 
+# releasedw version
+releasewspeak = Speak("honeyback3", ["Alright, release the key now."], bottomp = False)
+releasewspeak.specialexitkeys = ["note1modified"]
+releasewspeak.releaseexit = True
+
+releasewnow = Conversation("releasewnow",[releasewspeak])
+
+releasedwearlyspeak = Speak("honeyback3", ["You released too early.",
+                                          "Hold the note until the end."], bottomp = False)
+releasedwearlyagainspeak = Speak("honeyback3", ["You released too early again."], bottomp = False)
+releasedwearlyspeak.specialexitkeys = ["note1modified"]
+releasedwearlyagainspeak.specialexitkeys = ["note1modified"]
+
+releasedwearly = Conversation("releasedwearly",[releasedwearlyspeak], speaksafter = [releasedwearlyagainspeak])
+
+
+
 endtutorial = Conversation("endtutorial",
                            [Speak("honeyback3",
                                   ["It seems like you get the idea.",
@@ -139,6 +173,8 @@ prettygood = Conversation("prettygood",
                           [Speak("honeyback3",
                                  ["Hey, that wasn't bad, for your first song.",
                                   "Let's go find TP."])])
+
+
 
 letsflee = Conversation("letsflee",
                         [Speak("honeyback3",
@@ -214,8 +250,16 @@ addfloating(pressanow)
 addfloating(endtutorial)
 addfloating(releaseanow)
 addfloating(releasedearly)
+
+addfloating(accidentaltutorialintro)
+addfloating(presswnow)
+addfloating(releasewnow)
+addfloating(releasedwearly)
+
 addfloating(losetochimney)
 addfloating(letsflee)
+
+
 
     
 # copy them so one save does not alter all the conversations
