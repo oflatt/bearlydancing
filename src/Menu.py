@@ -1,7 +1,7 @@
 import graphics, variables, pygame, enemies, classvar, maps, random, stathandeling, copy
 from pygame import Rect
 from classvar import player
-from graphics import getpicbyheight, getTextPic, getpic
+from graphics import getpicbyheight, getTextPic, getpic, difficultytocolor
 from ChoiceButtons import ChoiceButtons
 from SettingsMenu import SettingsMenu
 from play_sound import stop_music, play_music, play_effect
@@ -186,18 +186,7 @@ class Menu():
         typecolor = variables.BLACK
         if self.option == 2:
             typestring = str(self.tempdifficulty)
-            if self.tempdifficulty == 0:
-                typecolor = (0, 255, 0)
-            elif self.tempdifficulty == 1:
-                typecolor = (150, 255, 0)
-            elif self.tempdifficulty == 2:
-                typecolor = (255, 255, 0)
-            elif self.tempdifficulty < 8:
-                typecolor = (255, 255-(self.tempdifficulty - 2)*50, 0)
-            elif self.tempdifficulty < 13:
-                typecolor = (255, 0, 50*(self.tempdifficulty-7))
-            elif self.tempdifficulty < 16:
-                typecolor = (255-(self.tempdifficulty-13)*70, 0, 255-(self.tempdifficulty-13)*70)
+            typecolor = difficultytocolor(self.tempdifficulty/20.0)
                 
         typepic = getTextPic(typestring, variables.gettextsize(), typecolor)
         variables.screen.blit(textpic, [variables.width/2 - textpic.get_width()/2, variables.gettextsize()*1.5])

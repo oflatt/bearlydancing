@@ -34,8 +34,12 @@ class Beatmap():
         self.feedback = []
         self.setfeedbacktocontrols(False)
 
+        self.currentcombo = 0;
+        self.roundmaxcombo = 0;
+
         self.drumcounter = 0
 
+        
     def setfeedbacktocontrols(self, modifiedp):
         self.feedback = []
         for x in range(8):
@@ -61,6 +65,8 @@ class Beatmap():
 
     def reset(self, battlestarttime, beginningq):
         self.scores = []
+        self.roundmaxcombo = 0
+        self.currentcombo = 0
         synctime = self.tempo - ((variables.settings.current_time - battlestarttime) % self.tempo)
         self.starttime = variables.settings.current_time + synctime
         self.showkeys()
@@ -68,6 +74,15 @@ class Beatmap():
             self.notes = copy.deepcopy(self.originalnotes)
         self.drumcounter = 0
 
+    def appendscore(self, score):
+        self.scores.append(score)
+        if score == variables.miss_value:
+            self.currentcombo = 0
+        else:
+            self.currentcombo += 1
+            if self.currentcombo>self.roundmaxcombo:
+                self.roundmaxcombo = self.currentcombo
+        
     def draw(self):
         w = variables.width / 20
         ew = w * 1.25
@@ -301,7 +316,7 @@ class Beatmap():
                         self.notes[np].height_offset = self.notes[np].pos[1] - variables.getpadypos()
                         self.notes[np].ison = False
 
-                    self.scores.append(final_note_score)
+                    self.appendscore(final_note_score)
 
                     if final_note_score == variables.miss_value:
                         self.setfeedback(self.notes[np].screenvalue(), "miss")
@@ -313,7 +328,7 @@ class Beatmap():
                         self.setfeedback(self.notes[np].screenvalue(), "perfect")
             # released before a note, penalty for randomly playing notes not written
             #else:
-            #    self.scores.append(variables.miss_value)
+            #    self.appendscore(variables.miss_value)
             #    self.setfeedback(self.notes[np].screenvalue(), "miss")
 
         def check_place(v):
@@ -321,7 +336,7 @@ class Beatmap():
             if not np == None:
                 check_note(np)
             else:
-                self.scores.append(variables.miss_value)
+                self.appendscore(variables.miss_value)
                 self.setfeedback(v, "miss")
 
         for x in range(8):
@@ -362,7 +377,7 @@ class Beatmap():
                 if self.notes[x].ison:
                     self.setfeedback(self.notes[np].screenvalue(), "miss")
                     self.notes[x].ison = False
-                    self.scores.append(variables.miss_value)
+                    self.appendscore(variables.miss_value)
                 elif self.notes[x].pos[1] < 0:
                     # if you are in a part of the list before the screen, don't keep checking
                     # (assuming the list of notes must be ordered by time, of course)

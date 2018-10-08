@@ -4,7 +4,7 @@ from ChoiceButtons import ChoiceButtons
 from Button import Button
 from Note import Note
 from play_sound import scales
-from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR, getTextPic
+from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR, getTextPic, difficultytocolor
 from FrozenClass import FrozenClass
 from pygame import Rect
 from notelistfunctions import shorten_doubles
@@ -18,6 +18,9 @@ class Battle(FrozenClass):
         self.current_beatmap = 0
         self.damage_multiplier = 1
         self.beatmaps = []
+
+        # keeps track of combo carrying over from last round
+        self.runningcombo = 0
 
         # copy the enemy first to avoid editing originals
         self.enemy = copy.copy(enemy)
@@ -164,6 +167,9 @@ class Battle(FrozenClass):
         self.beatmaps[0].notes = shorten_doubles(self.beatmaps[0].notes)
 
     def next_beatmap(self):
+        # first set the carry over for the combo
+        self.runningcombo = self.runningcombo + self.beatmaps[self.current_beatmap].currentcombo
+        
         if self.current_beatmap + 1 == len(self.beatmaps):
             self.new_beatmaps()
             self.current_beatmap = 0
@@ -185,6 +191,10 @@ class Battle(FrozenClass):
         return "honeydance" + str(self.playercurrentanim) + "-" + str(self.playerframe)
 
     def draw(self):
+        if self.current_beatmap<len(self.beatmaps):
+            currentb = self.beatmaps[self.current_beatmap]
+        else:
+            currentb = None
         h = variables.height
         w = variables.width
         b = h * 13 / 16
@@ -205,6 +215,22 @@ class Battle(FrozenClass):
         
         variables.screen.blit(epic, [w - epic.get_width(), 0])
         variables.screen.blit(playerpic, [w-playerpic.get_width(), h-playerpic.get_height()])
+
+        if currentb != None:
+            # now draw the combo if necessary
+            if len(currentb.scores)>currentb.currentcombo:
+                self.runningcombo = 0
+            totalcombo = self.runningcombo + currentb.currentcombo
+            if totalcombo >= 10:
+                combocolor = difficultytocolor((totalcombo-9)/len(currentb.originalnotes))
+                combopic = getTextPic("COMBO: " + str(totalcombo), variables.gettextsize(), combocolor)
+                combox = w-combopic.get_width()
+                combodif = combox-(w-playerpic.get_width())
+                if combodif > 0:
+                    combox = combox-combodif/2
+                comborect = Rect(combox, h-playerpic.get_height()-variables.gettextsize()*1.5, combopic.get_width(), combopic.get_height())
+                variables.screen.blit(combopic, comborect)
+                variables.dirtyrects.append(comborect)
 
         if self.enemy.animation.updatealwaysbattle:
             self.updatescreenforenemy()
@@ -371,7 +397,7 @@ class Battle(FrozenClass):
             maxanimnumber = self.playercurrentanim-1
             self.playercurrentanim = random.randint(0, maxanimnumber)
 
-    def deletetutorialnote():
+    def deletetutorialnote(self):
         # get rid of the third turorial note
         b = self.beatmaps[0]
         deletedp = False
@@ -600,6 +626,7 @@ class Battle(FrozenClass):
             
     # "damages" player and enemy after a round and before the animation
     def trade(self, scores):
+        currentb = self.beatmaps[self.current_beatmap]
         self.damage_multiplier = sum(scores) / len(scores)
         self.damage_multiplier *= variables.player_advantage_multiplier
         
@@ -607,6 +634,7 @@ class Battle(FrozenClass):
         if (not (variables.miss_value in scores)):
             self.damage_multiplier *= variables.all_perfect_multiplier
 
+        combomultiplier = 1 + (self.runningcombo + currentb.roundmaxcombo) / len(currentb.originalnotes) * variables.player_combo_multiplier
         
         playerlv = classvar.player.lv()
         enemylv = self.enemy.lv

@@ -194,8 +194,11 @@ good_value = 1
 ok_value = 0.7
 miss_value = 0
 
+
 all_perfect_multiplier = 1.75
-player_advantage_multiplier = 1.3
+player_advantage_multiplier = 1.2
+# combo multiplier is calculated by  one plus the length of the max combo over the total number of notes, and then it is multiplied by this factor
+player_combo_multiplier = 0.25
 
 def getperfectrange():
     return height/100

@@ -116,6 +116,26 @@ addsurfaceGR(DOWNARROW, "downarrow")
 addsurfaceGR(RIGHTARROW, "rightarrow")
 
 
+# for the color of difficulty and combos
+# input is a number 0 to 1, where 1 corresponds to the max
+def difficultytocolor(colorfactor):
+    maxnum = 20
+    colorfactor = colorfactor*maxnum
+    typecolor = None
+    if colorfactor < 1:
+        typecolor = (0, 255, 0)
+    elif colorfactor < 2:
+        typecolor = (150, 255, 0)
+    elif colorfactor < 3:
+        typecolor = (255, 255, 0)
+    elif colorfactor < 8:
+        typecolor = (255, 255-(colorfactor - 2)*50, 0)
+    elif colorfactor < 16:
+        typecolor = (255, 0, 30*(colorfactor-7))
+    else:
+        typecolor = (255,min((colorfactor-15)*25, 255), 255)
+    return typecolor
+
 # this function returns a surface. If no scale is provided, it takes from GR.
 # if a scale is provided, it takes the scaled picture from SGR or scales the picture, adds it to SGR, and returns the pic
 # scale is multiplied by the displayscale by default, this means for rocks scale is the map scale
