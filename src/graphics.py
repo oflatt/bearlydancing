@@ -93,7 +93,10 @@ def addsurfaceGR(s, name, dimensions = None):
 def rendertext(text, color, textheight):
     return scale_pure(variables.font.render(text, 0, color).convert(), textheight, "height")
     
-def getTextPic(text, textheight, color = variables.BLACK):
+def getTextPic(text, textheight, color = variables.BLACK, savep = True):
+    if not savep:
+        return rendertext(text, color, textheight)
+    
     if not text in TextGR:
         TextGR[text] = {}
     if not textheight in TextGR[text]:
@@ -103,9 +106,18 @@ def getTextPic(text, textheight, color = variables.BLACK):
         
     return TextGR[text][textheight][color]
 
+# add all the pics in the pic folder
 for x in picnames:
     if x != "" and x[0] != ".":
         addtoGR(x)
+
+# count the number of player animations
+numofplayerframes = 0
+while "honeydance" + str(numofplayerframes) + "-0" in GR:
+    numofplayerframes += 1
+numofspecialmoveeffects = 0
+while "specialmoveeffect" + str(numofspecialmoveeffects) in GR:
+    numofspecialmoveeffects += 1
 
 # down arrow used for conversations
 DOWNARROW = pygame.Surface([5, 8], pygame.SRCALPHA)
@@ -131,7 +143,7 @@ def difficultytocolor(colorfactor):
     elif colorfactor < 8:
         typecolor = (255, 255-(colorfactor - 2)*42, 0)
     elif colorfactor < 16:
-        typecolor = (255, 0, 28*(colorfactor))
+        typecolor = (255, 0, 28*(colorfactor-7))
     else:
         typecolor = (255,min((colorfactor-15)*25, 255), 255)
     return typecolor

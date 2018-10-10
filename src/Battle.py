@@ -3,12 +3,13 @@ import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, 
 from ChoiceButtons import ChoiceButtons
 from Button import Button
 from Note import Note
-from play_sound import scales
-from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR, getTextPic, difficultytocolor
+from play_sound import scales, play_effect
+from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR, getTextPic, difficultytocolor, numofspecialmoveeffects, numofplayerframes
 from FrozenClass import FrozenClass
 from pygame import Rect
 from notelistfunctions import shorten_doubles
 from Soundpack import max_sample
+
 
 # battle is the class that runs the battle- information about the game such as storyeventonwin is stored in enemy
 class Battle(FrozenClass):
@@ -93,6 +94,11 @@ class Battle(FrozenClass):
         self.playerframe = 0
         self.playercurrentanim = 0
 
+        # the frame of the current special move effect
+        self.currentspecialmove = 0
+        # if we are currently doing a special move
+        self.specialmovep = False
+
         self._freeze()
 
     def startnew(self):
@@ -159,6 +165,12 @@ class Battle(FrozenClass):
             self.beatmaps[self.current_beatmap].unpause()
         self.reset_enemy()
 
+    def getcombo(self):
+        currentb = self.beatmaps[self.current_beatmap]
+        if len(currentb.scores)>currentb.currentcombo:
+            self.runningcombo = 0
+        return self.runningcombo + currentb.currentcombo
+
     def new_beatmaps(self):
         self.beatmaps = [randombeatmap.variation_of(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo)]
 
@@ -190,6 +202,48 @@ class Battle(FrozenClass):
     def currentplayerframename(self):
         return "honeydance" + str(self.playercurrentanim) + "-" + str(self.playerframe)
 
+    # returns the picture for the player and the rect for position in a tuple
+    def getplayerpicandrect(self):
+        playerpic = None
+        if self.state != "dance":
+            playerpic = getpicbyheight("honeydance0-0", variables.height/4)
+        else:
+            playerpic = getpicbyheight(self.currentplayerframename(), variables.height/4)
+        playery = variables.height-playerpic.get_height()*1.5
+        playerrect = Rect(variables.width-playerpic.get_width(), playery, playerpic.get_width(), variables.height-playery)
+        return (playerpic, playerrect)
+
+    def drawspecialmove(self):
+        if self.specialmovep:
+            playerr = self.getplayerpicandrect()[1]
+            playerr.height = variables.height - playerr.y
+            effectpic = getpicbyheight("specialmoveeffect" + str(self.currentspecialmove), playerr.height)
+            variables.screen.blit(effectpic, playerr)
+
+    def drawcombo(self):
+        currentb=self.beatmaps[self.current_beatmap]
+        totalcombo = self.getcombo()
+        if totalcombo >= 10:
+            combocolor = difficultytocolor(((totalcombo-9)/2)/len(currentb.originalnotes))
+            # find combo height based on the last time it was increased
+            comboheight = variables.gettextsize()
+            deltatcombo = variables.settings.current_time-currentb.timeoflastcomboaddition
+            # threshhold in millis for making the resizing text animation
+            comboanimthreshhold = 100
+            if deltatcombo < comboanimthreshhold:
+                comboheight *= 1 + (1 - deltatcombo/comboanimthreshhold)*0.5
+
+            playerpicandrect = self.getplayerpicandrect()
+                
+            combopic = getTextPic("COMBO: " + str(totalcombo), comboheight, combocolor)
+            combox = variables.width-combopic.get_width()
+            combodif = combox-(variables.width-playerpicandrect[1].width)
+            if combodif > 0:
+                combox = combox-combodif/2
+            comborect = Rect(combox, playerpicandrect[1].y-comboheight*1.5, combopic.get_width(), combopic.get_height())
+            variables.screen.blit(combopic, comborect)
+            variables.dirtyrects.append(comborect)
+            
     def draw(self):
         if self.current_beatmap<len(self.beatmaps):
             currentb = self.beatmaps[self.current_beatmap]
@@ -208,29 +262,19 @@ class Battle(FrozenClass):
         epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
             
 
-        if self.state != "dance":
-            playerpic = getpicbyheight("honeydance0-0", variables.height/4)
-        else:
-            playerpic = getpicbyheight(self.currentplayerframename(), variables.height/4)
+        playerpicandrect = self.getplayerpicandrect()
         
         variables.screen.blit(epic, [w - epic.get_width(), 0])
-        variables.screen.blit(playerpic, [w-playerpic.get_width(), h-playerpic.get_height()])
+
+        # draw the player
+        if self.state == "dance":
+            # draw the special animation behind the player
+            self.drawspecialmove()
+        variables.screen.blit(playerpicandrect[0], playerpicandrect[1])
 
         if currentb != None:
             # now draw the combo if necessary
-            if len(currentb.scores)>currentb.currentcombo:
-                self.runningcombo = 0
-            totalcombo = self.runningcombo + currentb.currentcombo
-            if totalcombo >= 10:
-                combocolor = difficultytocolor((totalcombo-9)/len(currentb.originalnotes))
-                combopic = getTextPic("COMBO: " + str(totalcombo), variables.gettextsize(), combocolor)
-                combox = w-combopic.get_width()
-                combodif = combox-(w-playerpic.get_width())
-                if combodif > 0:
-                    combox = combox-combodif/2
-                comborect = Rect(combox, h-playerpic.get_height()-variables.gettextsize()*1.5, combopic.get_width(), combopic.get_height())
-                variables.screen.blit(combopic, comborect)
-                variables.dirtyrects.append(comborect)
+            self.drawcombo()
 
         if self.enemy.animation.updatealwaysbattle:
             self.updatescreenforenemy()
@@ -363,6 +407,7 @@ class Battle(FrozenClass):
 
     def partofbeatlist(self):
         pofbeatlist = [0]
+        # list of honey animations that should be double speed
         doublespeedlist = [2,3,4,5,7]
         if self.playercurrentanim in doublespeedlist:
             # double speed of animation 3 (spin)
@@ -370,16 +415,44 @@ class Battle(FrozenClass):
         return pofbeatlist
             
     def drumbeat(self, partofbeat):
+        # play the drum
+        if partofbeat == 0:
+            play_effect("onedrum")
+
+            # chance for a special move based on combo
+            specialmovechance = (self.getcombo()/2)/len(self.beatmaps[self.current_beatmap].originalnotes)
+            if self.getcombo()%10 == 0:
+                specialmovechance *= 3.5
+            elif self.getcombo()%5 == 0:
+                specialmovechance *= 2
+
+            if random.random() < specialmovechance:
+                self.newplayerspecialmove()
+            else:
+                self.specialmovep = False
+            
+        elif partofbeat == 2:
+            drumchance = self.getcombo()/len(self.beatmaps[self.current_beatmap].originalnotes)
+            if random.random() <drumchance:
+                play_effect("onedrum")
+        else:
+            drumchance = self.getcombo()/len(self.beatmaps[self.current_beatmap].originalnotes)
+            drumchance = drumchance/4
+            if random.random() <drumchance:
+                play_effect("onedrum")
+        
+
+        # player dirty rect and enemy dirty rect on beat
         if partofbeat in self.partofbeatlist():
+
             # update screen for enemy, player
             self.updatescreenforenemy()
-            playerpic = getpicbyheight("honeydance0-0", variables.height/4)
             # player dirty rect
-            variables.dirtyrects.append(Rect(variables.width-playerpic.get_width(), variables.height-playerpic.get_height(), playerpic.get_width(), playerpic.get_height()))
+            variables.dirtyrects.append(self.getplayerpicandrect()[1])
 
         # change player pic
         self.nextplayerpic(partofbeat)
-
+        
     def nextplayerpic(self, partofbeat):
         if partofbeat in self.partofbeatlist():
             self.playerframe += 1
@@ -392,11 +465,14 @@ class Battle(FrozenClass):
     def newplayeranimation(self):
         self.playerframe = 0
         maxanimnumber = max(1, classvar.player.lv() - variables.settings.difficulty)
+        maxanimnumber = min(numofplayerframes-1, maxanimnumber)
         self.playercurrentanim = random.randint(0, maxanimnumber)
-        # if this number is too large because an animation for that level does not exist, pick a new one lower than it
-        while not self.currentplayerframename() in GR:
-            maxanimnumber = self.playercurrentanim-1
-            self.playercurrentanim = random.randint(0, maxanimnumber)
+
+    def newplayerspecialmove(self):
+        maxanimnumber = numofspecialmoveeffects-1
+        self.currentspecialmove = random.randint(0, maxanimnumber)
+        self.specialmovep = True
+        
 
     def deletetutorialnote(self):
         # get rid of the third turorial note
@@ -417,8 +493,14 @@ class Battle(FrozenClass):
     def tutorialdancetick(self,currentb, dt):
         if self.tutorialstate == "starting":
             if currentb.notetime() > 4:
+                skiptutorialp = False
+                if self.accidentaltutorialp:
+                    skiptutorialp = len(currentb.scores) == 1 and currentb.scores[0] >= variables.ok_value
+                else:
+                    skiptutorialp = len(currentb.scores) == 2 and (currentb.scores[0] + currentb.scores[1])/2 >= variables.ok_value
+                
                 #exit the tutorial if the got the first two notes perfectly
-                if len(currentb.scores) == 2 and (currentb.scores[0] + currentb.scores[1])/2 >= variables.ok_value:
+                if skiptutorialp:
                         self.tutorialp = False
                         # get rid of the third turorial note
                         self.deletetutorialnote()
@@ -557,7 +639,7 @@ class Battle(FrozenClass):
                 self.win()
         if self.state == 'dance':
             if self.tutorialp:
-                if not self.tutorialstate == "first note" or not variables.checkkey("note1", key):
+                if not self.tutorialstate == "first note" or (not variables.checkkey("note1", key) and not variables.checkkey("note1modified", key)):
                     self.beatmaps[self.current_beatmap].onkey(key)
             else:
                 self.beatmaps[self.current_beatmap].onkey(key)
@@ -669,4 +751,5 @@ class Battle(FrozenClass):
         self.playerframe = 0
         self.playercurrentanim = 0
         # player dirty rect
-        variables.dirtyrects.append(Rect(variables.width-playerpic.get_width(), variables.height-playerpic.get_height(), playerpic.get_width(), playerpic.get_height()))
+        playerpic = getpicbyheight("honeydance0-0", variables.height/4)
+        variables.dirtyrects.append(self.getplayerpicandrect()[1])

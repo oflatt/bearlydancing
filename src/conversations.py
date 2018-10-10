@@ -269,4 +269,4 @@ def getconversation(varname):
     return c
 
 # this is the conversation object currently being displayed
-currentconversation = None
+currentconversation = Conversation("placeholder", [])

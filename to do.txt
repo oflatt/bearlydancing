@@ -3,16 +3,19 @@ Bearly Dancing To-Do List
 gameplay
 -knomi code name- bear winks at you
 -map objects and loading more safely, versioning, safely load with new content
+-random star character- one side of leg longer than other so it looks funny
 -ddr machine that you can play and dance against
--recieve waves from enemies
--recieve scales from enemies
 
 sound
 -load own sounds using the bowl pianoputer as example
       -random generation of wave?
 -different drums for different enemies
+- save to midi, sheet music
+- different volume envelopes
 
 battle
+- repetition overhaul- set pattern beforehand, aba ect.
+- sway octave with different enemies
 -melodicmode:
 	-sync up durations of melodic notes, ones in a line should be shorter
 	-better restp function, currently just a 1/9 chance of a rest
@@ -21,6 +24,7 @@ battle
 -triplet chord mode
 -octaves rule
 -dual notes rule- every note doubled, 2 notes apart
+
 -better drum machine
 
 -battle code is ugly and convoluted with all the time/health variables

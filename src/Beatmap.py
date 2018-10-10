@@ -36,6 +36,7 @@ class Beatmap():
 
         self.currentcombo = 0;
         self.roundmaxcombo = 0;
+        self.timeoflastcomboaddition = 0;
 
         self.drumcounter = 0
 
@@ -80,6 +81,7 @@ class Beatmap():
             self.currentcombo = 0
         else:
             self.currentcombo += 1
+            self.timeoflastcomboaddition = variables.settings.current_time
             if self.currentcombo>self.roundmaxcombo:
                 self.roundmaxcombo = self.currentcombo
         
@@ -336,9 +338,11 @@ class Beatmap():
             np = self.get_note_place_from_value_end(v)
             if not np == None:
                 check_note(np)
-            else:
-                self.appendscore(variables.miss_value)
-                self.setfeedback(v, "miss")
+
+            # this would make it a miss if there is no note
+            #else:
+            #    self.appendscore(variables.miss_value)
+            #    self.setfeedback(v, "miss")
 
         for x in range(8):
             if variables.checkkey("note" + str(x+1), key):
@@ -400,9 +404,7 @@ class Beatmap():
         # play a drum sound if it is on the beat, drumcounter increases 4 times per beat
         if (notetime*4 >= self.drumcounter+1):
             self.drumcounter += 1
-            if self.drumcounter % 4 == 0:
-                play_effect("onedrum")
-
+            
     def reset_buttons(self):
         for x in range(8):
             self.held_keys[x] = None
