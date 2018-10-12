@@ -1,4 +1,4 @@
-import pygame, os, pickle
+import pygame, os, pickle, copy
 from pygame import Rect
 from Settings import Settings
 from Properties import Properties
@@ -188,6 +188,12 @@ generic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : []}
 melodic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : ['melodic']}
 maxvalue = 14
 minvalue = -7
+
+def enemytospecs(enemy):
+    specs = copy.deepcopy(generic_specs)
+    specs["lv"] = enemy.lv
+    specs["rules"].extend(enemy.beatmaprules)
+    return specs
 
 perfect_value = 1.75
 good_value = 1

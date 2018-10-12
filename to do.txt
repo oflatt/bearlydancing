@@ -14,16 +14,22 @@ sound
 - different volume envelopes
 
 battle
-- repetition overhaul- set pattern beforehand, aba ect.
 - sway octave with different enemies
 -melodicmode:
 	-sync up durations of melodic notes, ones in a line should be shorter
 	-better restp function, currently just a 1/9 chance of a rest
 -repeatbig, an aditional layer of repetition for a large phrase with variation
+- repeatsmall, micro repetitions of value or rhythm or both
 -repeatwithvariation more sophisticated- switch notes, offset by a beat
 -triplet chord mode
 -octaves rule
 -dual notes rule- every note doubled, 2 notes apart
+
+Knob ideas for the beatmap generator
+
+- sway pitch to higher or lower for different enemies
+- sway probabilities for repeating at different lengths, and the size of these repetitions
+- triplet mode only for some enemies
 
 -better drum machine
 

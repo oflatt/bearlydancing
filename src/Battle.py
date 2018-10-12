@@ -117,9 +117,7 @@ class Battle(FrozenClass):
             return classvar.player.scales[variables.settings.scaleindex]
 
     def setfirstbeatmap(self):
-        specs = copy.deepcopy(variables.generic_specs)
-        specs["lv"] = self.enemy.lv
-        specs["rules"].extend(self.enemy.beatmaprules)
+        specs = variables.enemytospecs(self.enemy)
         self.beatmaps = [randombeatmap.random_beatmap(specs)]
         self.initiatenewbeatmap()
         self.reset_time()
@@ -172,7 +170,7 @@ class Battle(FrozenClass):
         return self.runningcombo + currentb.currentcombo
 
     def new_beatmaps(self):
-        self.beatmaps = [randombeatmap.variation_of(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo)]
+        self.beatmaps = [randombeatmap.variation_of_notes_to_beatmap(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo, variables.enemytospecs(self.enemy))]
 
     def initiatenewbeatmap(self):
         self.beatmaps[0].scale = scales[self.getscalename()]
@@ -224,7 +222,7 @@ class Battle(FrozenClass):
         currentb=self.beatmaps[self.current_beatmap]
         totalcombo = self.getcombo()
         if totalcombo >= 10:
-            combocolor = difficultytocolor(((totalcombo-9)/2)/len(currentb.originalnotes))
+            combocolor = difficultytocolor(((totalcombo-9)/variables.numofrounds)/len(currentb.originalnotes))
             # find combo height based on the last time it was increased
             comboheight = variables.gettextsize()
             deltatcombo = variables.settings.current_time-currentb.timeoflastcomboaddition
@@ -420,7 +418,13 @@ class Battle(FrozenClass):
             play_effect("onedrum")
 
             # chance for a special move based on combo
-            specialmovechance = (self.getcombo()/2)/len(self.beatmaps[self.current_beatmap].originalnotes)
+            specialmovechance = (self.getcombo())/len(self.beatmaps[self.current_beatmap].originalnotes)
+            specialmovechance *= (1.0/4.0)
+
+            # not before combo reaches 10
+            if self.getcombo() < 10:
+                specialmovechance = 0
+                
             if self.getcombo()%10 == 0:
                 specialmovechance *= 3.5
             elif self.getcombo()%5 == 0:

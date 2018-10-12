@@ -60,7 +60,7 @@ class Note(FrozenClass):
         # raises the note one half step up
         self.accidentalp = accidentalp
         
-        # this is for printing out notes and debugging
+        # this is for generating notes and debugging
         self.chordadditionp = chordadditionp
         self.collidedwithanotherp = False
 

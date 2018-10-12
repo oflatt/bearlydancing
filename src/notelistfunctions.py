@@ -3,6 +3,16 @@ from Note import value_to_screenvalue
 from Note import compare_numbers_around
 from Note import Note
 
+from random import randint
+
+# if n is 2, then there is a 2/3 chance of true
+def myrand(n):
+    if random.random() < n/(n+1):
+        return True
+    else:
+        return False
+
+
 def printnotelist(l):
     for x in l:
         isc = ""
@@ -64,7 +74,7 @@ testl = [Note(5, 1, 2), Note(6, 2, 1), Note(6, 4, 1), Note(2, 5, 2), Note(3, 6, 
 # print(random_last(0, testl).value)
 # print(random_last(1, testl).value)
 
-# returns a list of the notes for the first layer
+# returns a list of the notes for the first layer, the one most recent in time
 # a layer is notes that share the same time, so a melody note and its chords
 def getfirstlayer(notelist, startingpoint = 0):
     l = []
@@ -79,14 +89,22 @@ def getfirstlayer(notelist, startingpoint = 0):
     return l
 
 # notelist is ordered early notes first
-def getlastnlayers(notelist, n, startingpoint = 0):
+# startingpoint in these funcions is how many notes to skip, not layers
+# skiplayers is how many layers back to skip before starting to take layers
+def getlastnlayers(notelist, n, startingpoint = 0, skiplayers = 0):
     i = startingpoint
     l = []
+    toskip = skiplayers
     layers = 0
     while i <= len(notelist)-1 and layers<n:
-        layers += 1
         nextlayer = getfirstlayer(notelist, i)
-        l = nextlayer + l
+
+        if toskip <=0:
+            layers += 1
+            l = nextlayer + l
+        else:
+            toskip -= 1
+        
         i += len(nextlayer)
 
     return l
@@ -162,6 +180,10 @@ def notechordorderedp(l):
             if not n.time == l[i+1].time:
                 orderedp = False
                 break
+        # if it should have been a chord addition note
+        elif n.time == l[i+1].time:
+            orderedp = False
+            break
     return orderedp
 
 # checks to make sure when one note is an accidental, all other notes at that time are also accidentals
@@ -209,3 +231,11 @@ def valuelistfromnotesskipchords(notelist):
         if not n.chordadditionp:
             vlist.append(n.value)
     return vlist
+
+# does not copy notes
+def listskipchords(notelist):
+    l = []
+    for n in notelist:
+        if not n.chordadditionp:
+            l.append(n)
+    return l
