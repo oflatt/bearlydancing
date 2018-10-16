@@ -1,7 +1,9 @@
 # random_beatmap is the entrypoint- values and durations are calculated separetly
+
+#    contracts
 # the note list in the end should be ordered early notes first
 # notes added on generatively- each "layer" has the main melody note at the end of the list, chord notes inserted before it
-
+# no note should have a time plus duration longer than current time
 from Beatmap import Beatmap
 from Note import Note
 from Note import value_to_screenvalue
@@ -9,7 +11,7 @@ from Note import compare_around, compare_numbers_around
 from notelistvariation import variation_of_notes
 from notelistfunctions import *
 from graphics import drawthismessage
-from notelistrepetition import repetition, repeatp, repetitiondepth, repeatlengthfromspecs
+from notelistrepetition import repetition, repeatp, repetitiondepth, getrepeatduration
 from notelistrandomvalue import random_value
 
 import random, copy
@@ -39,7 +41,7 @@ repeatvalues- like repeat, but uses only the values from last few notes and comp
 ----- modifiers ---------------
 highrepeatchance- makes the initial chance for a repeat to start very high
 repeatonlybeginning- makes notestoadd in repetition only take from the start of the list
-repeatspaceinbetween- makes it extremely likely to repeat every other repeatlength, so that you get a repetition with normally generated notes in between
+repeatspaceinbetween- makes it extremely likely to repeat every other repeatduration, so that you get a repetition with normally generated notes in between
 nodoublerepeats- stops one repeat repeating again
 noaccidentals- makes no "modified" notes, no accidentals that are one pitch above
 
@@ -47,11 +49,6 @@ noaccidentals- makes no "modified" notes, no accidentals that are one pitch abov
 ----- defaults ----------------
 -If no ending specified, it throws in a tonic at the end
 '''
-
-ruletypes = ['melodic', 'skippy', 'alternating', 'rests', 'repeat',
-             'repeatmove', 'repeatvariation', 'repeatvalues', 'highrepeatchance',
-             'repeatrhythm', 'norests', 'nochords', 'shorternotes', 'repeatonlybeginning',
-             'repeatspaceinbetween', 'nodoublerepeats', 'noaccidentals']
 
 
 testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
@@ -61,8 +58,8 @@ testmap = [Beatmap((1200 * 3) / 4, [Note(0, 1, 0.2), Note(0, 1.3, 0.1), Note(0, 
                                     Note(0, 6, 0.4), Note(0, 6.5, 0.4), Note(0, 7, 0.4), Note(0, 7.5, 0.4), Note(0, 8, 0.4)])]
 
 
-def makeaccidentalp(specs):
-    if "noaccidentals" in specs['rules']:
+def makeaccidentalp(specs, l):
+    if hasrule("noaccidentals", specs):
         return False
     
     lv = specs['lv']
@@ -71,7 +68,15 @@ def makeaccidentalp(specs):
     if lv<athreshhold:
         return False
     else:
-        return random.random() < min(1/3, (math.sqrt(lv-athreshhold)+1)/40)
+        chancemultiplier = 1
+        notestocheck = 8
+        accidentalcounter = 0
+        # get how many accidentals were in the past 8 notes
+        for i in range(min(8, len(l))):
+            if l[-i].accidentalp:
+                accidentalcounter += 1
+        chancemultiplier -= 1/(notestocheck) * accidentalcounter
+        return random.random() < min(1/3, (math.sqrt(lv-athreshhold)+1)/40)*chancemultiplier
 
         
 # returns a tuple with a new list and the duration of the new note
@@ -80,10 +85,6 @@ def addnote(notelist, time, ischord, specs, valuestouse, accidentalp):
     lv = specs['lv']
     l = notelist.copy()
     duration = random_duration(time, l, specs, False, ischord)
-    # if it is a chord, chance that the duration is the same as the melody
-    if ischord:
-        if randint(0, 100) > ((lv/1.8) + 2) ** 2:
-            duration = l[-1].duration
 
 
     # so you can specify a value
@@ -113,7 +114,7 @@ def addlayer(notelist, time, specs, valuestouse = []):
     if isr:
         return (notelist, random_duration(time, notelist, specs, True, False))
     else:
-        accidentalp = makeaccidentalp(specs)
+        accidentalp = makeaccidentalp(specs, notelist)
         oldt = time
         notedurations = []
         addn = addnote(notelist, oldt, False, specs, valuestouse, accidentalp)
@@ -127,7 +128,7 @@ def addlayer(notelist, time, specs, valuestouse = []):
             return addn[0]
 
         # chance to add chord notes, if it is not a rest
-        if (randint(0, 150) < ((lv/2) + 2) ** 2) and not 'nochords' in specs['rules']:
+        if (randint(0, 150) < ((lv/2) + 2) ** 2) and not hasrule('nochords',specs):
             if randint(1, 3) == 1:
                 l = addchord()
             if randint(0, 1000) < (lv + 2) ** 2 and random.random() < 0.5:
@@ -159,14 +160,13 @@ def random_beatmap(specs):
     l = []
     lv = specs['lv']
     maxtime = maxtimefromspecs(specs);
-    time = 1
-    # repeatlength used in repeat rule for how many notes back to copy
-    repeatlength = None
+    time = 0
+    # repeatduration used in repeat rule for how much time back to copy
+    repeatduration = None
     repeatmodep = False
     for r in specs['rules']:
         if r[0:6] == 'repeat':
             repeatmodep = True
-            repeatlength = repeatlengthfromspecs(specs)
             break
 
     # masterloop for adding on notes
@@ -174,12 +174,13 @@ def random_beatmap(specs):
         addlayerp = False
         if repeatmodep:
             # chance to do a repetition
-            if repeatp(l, repeatlength, specs):
+            if repeatp(l, specs, time, maxtime):
                 # how many layers of notes to skip before the area of notes being repeated
-                skipdepth = repetitiondepth(l, repeatlength, specs, maxtime)
+                repeatduration = getrepeatduration(l, specs, maxtime, time)
+                skipdepth = repetitiondepth(l, repeatduration, specs, maxtime, time)
                 # repetition entry
-                # add on the last repeatlength notes again, varied
-                r = repetition(time, randint(-4, 4), l, repeatlength, specs, maxtime, skipdepth)
+                # add on the last repeatduration notes again, varied
+                r = repetition(time, randint(-4, 4), l, repeatduration, specs, maxtime, skipdepth)
                 l = r['list']
                 time = r['time']
             else:
@@ -223,9 +224,9 @@ def random_beatmap(specs):
 def restp(t, l, specs):
     isr = False
     # handeling rests
-    if (len(l) > 0) and not 'norests' in specs['rules']:
+    if (len(l) > 0) and not hasrule('norests', specs):
         # if the last note was not a rest
-        if ('rests' in specs['rules'] and l[-1].time + l[-1].duration >= t-0.05):
+        if (hasrule('rests', specs) and l[-1].time + l[-1].duration >= t-0.05):
             if compare_around(t, 0):
                 if not myrand(2):
                     isr = True
@@ -243,12 +244,12 @@ def restp(t, l, specs):
 
 def random_duration(time, notelist, specs, isr, ischord):
     lv = specs['lv']
-    if 'shorternotes' in specs['rules']:
+    if hasrule('shorternotes', specs):
         lv *= 6/5
 
     def halfp():
         offset = lv/200
-        if 'shorternotes' in specs['rules']:
+        if hasrule('shorternotes', specs):
             offset = 0.2 + lv/100 
         return random.random() < 0.5+offset
 
@@ -288,7 +289,7 @@ def random_duration(time, notelist, specs, isr, ischord):
 
         
     # rests rule
-    if 'rests' in specs['rules'] and not specs['lv'] in [0,1]:
+    if hasrule('rests', specs) and not specs['lv'] in [0,1]:
         # good chance to make it half as long
         if myrand(4) and d>0.25:
             d = d / 2
@@ -317,7 +318,7 @@ def random_duration(time, notelist, specs, isr, ischord):
                 d = math.ceil(d-0.01)
 
     # rests rule and it is a rest
-    if 'rests' in specs['rules'] and isr:
+    if hasrule('rests', specs) and isr:
         if compare_around(time, 0):
             if not myrand(2):
                 d = notelist[-1].duration
@@ -327,7 +328,12 @@ def random_duration(time, notelist, specs, isr, ischord):
 
     if ischord:
         # if it is a chord, big chance to simply be the same duration as the melody
-        if myrand(4):
+        if ischord:
+            if randint(0, 100) > ((lv/1.8) + 2) ** 2:
+                d = notelist[-1].duration
+
+        # also don't make it longer than the melody
+        if d > notelist[-1].duration:
             d = notelist[-1].duration
             
     return d

@@ -182,10 +182,13 @@ accidentallvthreshhold=8
 def getpadypos():
     return height*(13/16)
 
-# lv and rules are added later
 maxdifficulty = 200
+# maxtime is changed in the code, the goal for how long the song should be
+# lv is the level of the enemy
+# rules are the rules for generating a beatmap
 generic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : []}
-melodic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : ['melodic']}
+melodic_specs = generic_specs.copy()
+melodic_specs['rules'] = ["melodic"]
 maxvalue = 14
 minvalue = -7
 
@@ -201,7 +204,7 @@ ok_value = 0.7
 miss_value = 0
 
 
-all_perfect_multiplier = 1.75
+all_perfect_multiplier = 1.3
 player_advantage_multiplier = 1.2
 # combo multiplier is calculated by  one plus the length of the max combo over the total number of notes, and then it is multiplied by this factor
 player_combo_multiplier = 0.25

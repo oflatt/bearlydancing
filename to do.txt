@@ -21,9 +21,13 @@ battle
 -repeatbig, an aditional layer of repetition for a large phrase with variation
 - repeatsmall, micro repetitions of value or rhythm or both
 -repeatwithvariation more sophisticated- switch notes, offset by a beat
+
+rules ides
 -triplet chord mode
 -octaves rule
 -dual notes rule- every note doubled, 2 notes apart
+- long chord mode with a note being held with stuff around it
+
 
 Knob ideas for the beatmap generator
 

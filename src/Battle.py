@@ -494,6 +494,11 @@ class Battle(FrozenClass):
             if note.time >= 24:
                 note.time -= 12
 
+    def exittutorial(self):
+        self.tutorialp = False
+        if self.accidentaltutorialp:
+            classvar.player.addstoryevent("accidentaltutorial")
+
     def tutorialdancetick(self,currentb, dt):
         if self.tutorialstate == "starting":
             if currentb.notetime() > 4:
@@ -505,9 +510,9 @@ class Battle(FrozenClass):
                 
                 #exit the tutorial if the got the first two notes perfectly
                 if skiptutorialp:
-                        self.tutorialp = False
-                        # get rid of the third turorial note
-                        self.deletetutorialnote()
+                    self.exittutorial()
+                    # get rid of the third turorial note
+                    self.deletetutorialnote()
                 else:
                     self.tutorialstate = "first note"
                     currentb.showkeys(self.accidentaltutorialp)
@@ -528,6 +533,7 @@ class Battle(FrozenClass):
                 self.tutorialstate = "done"
                 currentb.scores = []
                 maps.engage_conversation(self.tutorialconversations[3], True)
+                self.exittutorial()
         
     # for things like the attack animation
     def ontick(self):

@@ -5,6 +5,17 @@ from Note import Note
 
 from random import randint
 
+ruletypes = ['melodic', 'skippy', 'alternating', 'rests', 'repeat',
+             'repeatmove', 'repeatvariation', 'repeatvalues', 'highrepeatchance',
+             'repeatrhythm', 'norests', 'nochords', 'shorternotes', 'repeatonlybeginning',
+             'repeatspaceinbetween', 'nodoublerepeats', 'noaccidentals']
+
+def hasrule(rule, specs):
+    if not rule in ruletypes:
+        raise ValueError("rule " + rule + " does not exist")
+    else:
+        return rule in specs['rules']
+
 # if n is 2, then there is a 2/3 chance of true
 def myrand(n):
     if random.random() < n/(n+1):
@@ -86,6 +97,14 @@ def getfirstlayer(notelist, startingpoint = 0):
         else:
             break
         i -= 1
+    return l
+
+def getnoteswithintime(notelist, starttime, endtime):
+    l = []
+    for n in notelist:
+        if n.time >= starttime and n.time <= endtime:
+            l.append(n)
+    
     return l
 
 # notelist is ordered early notes first

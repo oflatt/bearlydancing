@@ -46,14 +46,24 @@ def play_tone(tonein):
     channels[t+12].set_volume(variables.settings.volume*(1/3)) # balance volume
     channels[t+12].play(all_tones[variables.settings.soundpack].soundlist[t + 12])
 
-def update_tone(t):
+def update_tone(tonein):
+    t = tonein
+    if t+12>=len(all_tones[variables.settings.soundpack].soundlist):
+        t = len(all_tones[variables.settings.soundpack].soundlist)-1-12
+    elif t+12 < 0:
+        t = 0-12
     c = channels[t+12]
     all_tones[variables.settings.soundpack].loopsoundlist[t + 12]
     c.set_volume(variables.settings.volume*(1/3))
     if c.get_queue() == None:
         c.queue(all_tones[variables.settings.soundpack].loopsoundlist[t + 12])
 
-def stop_tone(t):
+def stop_tone(tonein):
+    t = tonein
+    if t+12>=len(all_tones[variables.settings.soundpack].soundlist):
+        t = len(all_tones[variables.settings.soundpack].soundlist)-1-12
+    elif t+12 < 0:
+        t = 0-12
     if not t == None:
         channels[t+12].stop()
 
