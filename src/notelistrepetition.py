@@ -198,16 +198,18 @@ def repeatp(notelist, specs, ctime, maxtime):
     
     chancemultiplier = 1
     if hasrule('repeatspaceinbetween', specs):
-        chancemultiplier = chancemultiplier*0.75
+        chancemultiplier = chancemultiplier*0.7
     elif hasrule('highrepeatchance', specs):
         chancemultiplier *= 1.3
-    
+
+    timerandomchance = 0
     if ctime % 2 == 0:
-        return random.random() < (1/6 + math.sqrt(getremainderlog(ctime, 2))/10) * chancemultiplier
+        timerandomchance = (1/10 + math.pow(getremainderlog(ctime, 2)/10, 0.6))
     elif ctime % 1 == 0:
-        return random.random() < (1 / (maxtime*3)) * chancemultiplier
+        timerandomchance = (1 / (maxtime*3))
     else:
-        return random.random() < (1/(maxtime*5))*chancemultiplier
+        timerandomchance = (1/(maxtime*5))
+    return random.random() < timerandomchance * chancemultiplier
         
     
 # how much time to skip before grabbing notes to repeat with

@@ -75,8 +75,9 @@ def makeaccidentalp(specs, l):
         for i in range(min(8, len(l))):
             if l[-i].accidentalp:
                 accidentalcounter += 1
-        chancemultiplier -= 1/(notestocheck) * accidentalcounter
-        return random.random() < min(1/3, (math.sqrt(lv-athreshhold)+1)/40)*chancemultiplier
+        chancemultiplier -= (1/(notestocheck)) * accidentalcounter
+        levelchance = min(1/3, (math.pow(lv-athreshhold, 0.7)+1)/40)
+        return random.random() < levelchance*chancemultiplier
 
         
 # returns a tuple with a new list and the duration of the new note
