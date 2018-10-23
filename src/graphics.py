@@ -4,6 +4,7 @@ import pygame, os, variables, rdrawtree, rdrawland, rdrawrock, random
 from rdrawflower import makeflower
 from datetime import date
 from pygame import Rect
+import string
 
 today = date.today()
 christmasp = False
@@ -56,7 +57,14 @@ def scale_pure(img, s, side = None):
     return pygame.transform.scale(img, [int((w/smaller) * s), int((h/smaller) * s)])
 
 def importpic(filename):
-    return pygame.image.load(os.path.join(variables.pathtoself, os.path.join('pics', filename))).convert_alpha()
+    pic = pygame.image.load(os.path.join(variables.pathtoself, os.path.join('pics', filename)))
+    # a list of types of pictures with no alpha in them
+    backgrounds = ["randomgrassland", "randomsnowland"]
+    
+    if typename(filename) in backgrounds:
+        return pic.convert()
+    else:
+        return pic.convert_alpha()
 
 #simport returns a dictionary with an image and what its new dimensions would be if scaled
 def simport(filename):
@@ -79,6 +87,9 @@ picnames = os.listdir(variables.pathtoself + "/pics")
 
 def nicename(filename):
     return filename.replace(".png", "").lower()
+
+def typename(filename):
+    return nicename(filename).rstrip(string.digits)
 
 def addtoGR(filename):
     p = simport(filename)
