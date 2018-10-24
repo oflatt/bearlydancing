@@ -124,6 +124,7 @@ setscreen(settings.windowmode)
 generatingbeatmapp = False
 
 olddirtyrects = []
+# keep track of areas of the screen to update. Blitting is done regardless of dirty rects, but when a dirtyrect is appended to this list it is updated twice- this frame and next
 dirtyrects = []
 #screen = pygame.Surface([height, width])
 

@@ -1,22 +1,31 @@
 import pygame, os, wave, math, numpy, variables
 from math import sin
 from math import pi
+from FrozenClass import FrozenClass
 
-initialvolume = 1
 max_sample = 2 ** (16 - 1) - 1
 bellvolume = [[0, 0], [100, 1], [600, 0.15]]
+sample_rate = 44100
 
-class Soundpack():
+class Soundpack(FrozenClass):
     
 
     def __init__(self, wavetype, shapefactor, resetq=False):
-        self.soundlist = []
-        self.loopsoundlist = []
+        # list of buffers for different frequencies of notes
+        # each buffer is a perfectly loopable sample of the wave, normalized
         self.loopbuffers = []
+
+        # how long in milliseconds the sound from each loopbuffer is
+        self.loopbufferdurationmillis = []
+        # this volume envelope to use
         self.volumelist = bellvolume
+        # finally, generate all the loopbuffers
         self.make_soundpack(wavetype, shapefactor, resetq)
 
-    #durationplayed in is milliseconds
+        
+        self._freeze()
+
+    # durationplayed is in milliseconds
     def tone_volume(self, durationplayed):
         listplace = 0
         while True:
@@ -86,12 +95,9 @@ class Soundpack():
         return sval
 
     # min refinement of 1 which means sine wave, and bigger numbers will take longer unless it is above 25 or so
-    def make_wave(self, frequency, wavetype, shapefactor, loopq = False):
+    def make_wave(self, frequency, wavetype, shapefactor):
         loopduration = (1 / frequency) * 50  # in seconds
-        duration = self.volumelist[-1][0]/1000 + loopduration
-        if loopq:
-            duration = loopduration
-        sample_rate = 44100
+        duration = loopduration
 
         n_samples = int(round(duration * sample_rate))
 
@@ -123,50 +129,22 @@ class Soundpack():
         for s in range(n_samples):
             t = float(s) / sample_rate  # time in seconds
             volume = self.volumelist[-1][1]
-            if loopq == False:
-                volume = self.tone_volume(t * 1000)
             sval = (get_sval(t) / normalizevalue) * volume 
             buf[s][0] = sval # left
             buf[s][1] = sval # right
 
-        if loopq:
-            self.loopbuffers.append(buf)
-            
-        return pygame.sndarray.make_sound(buf)
+        return (buf, duration)
 
     def make_soundpack(self, wavetype, shapefactor, resetq):
-        l = []
-        isexistingsounds = os.path.exists("sounds/" + wavetype + "0_" + str(shapefactor) + ".wav")
-        if isexistingsounds and resetq == False:
-            for x in range(37):
-                l.append(pygame.mixer.Sound(os.path.join(variables.pathtoself, "sounds/" + wavetype + str(x) + "_" + str(shapefactor) + ".wav")))
-                l[x].set_volume(initialvolume)
-                loopwave = self.make_wave((440 * ((2 ** (1 / 12)) ** (x - 12))), wavetype, shapefactor, True)
-                self.loopsoundlist.append(loopwave)
-                self.loopsoundlist[x].set_volume(initialvolume)
-        else:
-            try:
-                os.makedirs("sounds")
-            except OSError:
-                pass
-            for x in range(36 + 1):
-                currentfrequency = 440 * ((2 ** (1 / 12)) ** (x - 12))
-                
-                s = self.make_wave(currentfrequency, wavetype, shapefactor)
-                s.set_volume(initialvolume)
+        for x in range(37):
+            loopbuf = self.make_wave((440 * ((2 ** (1 / 12)) ** (x - 12))), wavetype, shapefactor)
+            
+            self.loopbuffers.append(loopbuf[0])
+            self.loopbufferdurationmillis.append(loopbuf[1]*1000)
 
-                # save it for future loading
-                sfile = wave.open("sounds/" + wavetype + str(x) + "_" + str(shapefactor) + ".wav", "w")
-                sfile.setframerate(22050)
-                sfile.setnchannels(2)
-                sfile.setsampwidth(2)
-                sfile.writeframesraw(s.get_raw())
-                sfile.close()
 
-                l.append(s)
-
-                loopwave = self.make_wave(currentfrequency, wavetype, shapefactor, True)
-                loopwave.set_volume(initialvolume)
-                self.loopsoundlist.append(loopwave)
-                
-        self.soundlist = l
+    # get the buffer with the volume envelope applied at time in milliseconds
+    # index is which loopbuffer for the frequency to play
+    # time is time in milliseconds since start of the note played
+    def getbufferattime(self, index, time):
+        return self.loopbuffers[index]

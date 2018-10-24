@@ -32,40 +32,53 @@ channels = []
 for x in range(37):
     channels.append(pygame.mixer.Channel(x))
 
+# stores time in milliseconds of the current end of the music queued on the channel
+# none if not playing
+channeltimes = [None]*37
+
 musicchannel = pygame.mixer.Channel(37)
 soundeffectchannel = pygame.mixer.Channel(38)
 
+def buffertosound(b):
+    return pygame.sndarray.make_sound(b)
+
 def play_tone(tonein):
     t = tonein
-    if t+12>=len(all_tones[variables.settings.soundpack].soundlist):
-        t = len(all_tones[variables.settings.soundpack].soundlist)-1-12
+    # make t always in range if out of range
+    if t+12>=len(all_tones[variables.settings.soundpack].loopbuffers):
+        t = len(all_tones[variables.settings.soundpack].loopbuffers)-1-12
     elif t+12 < 0:
         t = 0-12
+
     # add because values are centered on 0
-    all_tones[variables.settings.soundpack].soundlist[t+12]
-    channels[t+12].set_volume(variables.settings.volume*(1/3)) # balance volume
-    channels[t+12].play(all_tones[variables.settings.soundpack].soundlist[t + 12])
+    sp = all_tones[variables.settings.soundpack]
+    channels[t+12].set_volume(variables.settings.volume*(1/3)*sp.tone_volume(0)) # balance volume
+    channels[t+12].play(buffertosound(sp.getbufferattime(t+12, 0)))
+    channeltimes[t+12] = sp.loopbufferdurationmillis[t+12]
 
 def update_tone(tonein):
     t = tonein
-    if t+12>=len(all_tones[variables.settings.soundpack].soundlist):
-        t = len(all_tones[variables.settings.soundpack].soundlist)-1-12
+    if t+12>=len(all_tones[variables.settings.soundpack].loopbuffers):
+        t = len(all_tones[variables.settings.soundpack].loopbuffers)-1-12
     elif t+12 < 0:
         t = 0-12
     c = channels[t+12]
-    all_tones[variables.settings.soundpack].loopsoundlist[t + 12]
-    c.set_volume(variables.settings.volume*(1/3))
+    sp = all_tones[variables.settings.soundpack]
+    
+    c.set_volume(variables.settings.volume*(1/3)*sp.tone_volume(channeltimes[t+12]))
     if c.get_queue() == None:
-        c.queue(all_tones[variables.settings.soundpack].loopsoundlist[t + 12])
+        c.queue(buffertosound(sp.getbufferattime(t+12, channeltimes[t+12])))
+        channeltimes[t+12] += sp.loopbufferdurationmillis[t+12]
 
 def stop_tone(tonein):
     t = tonein
-    if t+12>=len(all_tones[variables.settings.soundpack].soundlist):
-        t = len(all_tones[variables.settings.soundpack].soundlist)-1-12
+    if t+12>=len(all_tones[variables.settings.soundpack].loopbuffers):
+        t = len(all_tones[variables.settings.soundpack].loopbuffers)-1-12
     elif t+12 < 0:
         t = 0-12
     if not t == None:
         channels[t+12].stop()
+        channeltimes[t+12] = None
 
 def getsoundvar(s):
     g = globals()
