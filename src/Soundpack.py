@@ -1,10 +1,11 @@
 import pygame, os, wave, math, numpy, variables
 from math import sin
 from math import pi
+import random
 from FrozenClass import FrozenClass
 
 max_sample = 2 ** (16 - 1) - 1
-bellvolume = [[0, 0], [100, 1], [600, 0.15]]
+bellvolume = [[0, 0], [100, 1], [600, 0.5]]
 sample_rate = 44100
 
 class Soundpack(FrozenClass):
@@ -94,6 +95,38 @@ class Soundpack(FrozenClass):
 
         return sval
 
+    def randomicefunction(self):
+        # how wound up the wave is
+        dinterval = random.uniform(1, 4)
+        # how dramatic the humps are, sharpness
+        cpower = random.uniform(0.7, 1.5)
+        # shifts humps in wave
+        bshift = random.uniform(0, 2*math.pi)
+        
+        def sfunction(t, f, shapefactor):
+            sval = 0
+
+            for n in range(shapefactor):
+                thissum = (dinterval*n + 1)
+                coeff = math.pow(-1, n) / math.pow(thissum, cpower)
+                sval += math.sin(2 * pi * f * t * thissum + bshift*n)*coeff
+            return sval
+
+        return sfunction
+
+    def chooserandfunction(self):
+        return random.choice([self.randomicefunction(), self.sawtoothsval, self.squaresval, self.trianglesval])
+    
+    # combine square, triangle, saw with different weights
+    def newrandomwavefunction(self):
+        rfunction = self.chooserandfunction()
+        rfunction2 = self.chooserandfunction()
+        rfunction3 = self.chooserandfunction()
+        def sfunction(t, f, shapefactor):
+            # add harmonics
+            return rfunction(t,f,shapefactor) + (1/4)*rfunction2(2*t, f, shapefactor) + (1/8)*rfunction3(4*t, f, shapefactor)
+        return sfunction
+
     # min refinement of 1 which means sine wave, and bigger numbers will take longer unless it is above 25 or so
     def make_wave(self, frequency, wavetype, shapefactor):
         loopduration = (1 / frequency) * 50  # in seconds
@@ -103,6 +136,10 @@ class Soundpack(FrozenClass):
 
         # setup our numpy array to handle 16 bit ints, which is what we set our mixer to expect with "bits"
         buf = numpy.zeros((n_samples, 2), dtype=numpy.int16)
+
+        randfunction = None
+        if wavetype == "random":
+            randfunction = self.newrandomwavefunction()
 
         def get_sval(t):
             sval = 0
@@ -115,6 +152,10 @@ class Soundpack(FrozenClass):
                 sval = self.trianglesval(t, frequency, shapefactor)
             elif wavetype == "sawtooth":
                 sval = self.sawtoothsval(t, frequency, shapefactor)
+            elif wavetype == "random":
+                sval = randfunction(t, frequency, shapefactor)
+            else:
+                raise Exception("unknow wavetype " + wavetype)
 
             return int(round(max_sample * sval))
 

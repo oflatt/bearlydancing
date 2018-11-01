@@ -275,4 +275,10 @@ def getrepeatduration(l, specs, maxtime, currenttime):
     # good chance to even it out by taking off the rounded bit
     if myrand(3):
         duration = duration - (currenttime - rounded)
+
+    if duration <= 0:
+        if rounded != 0:
+            duration = rounded
+        else:
+            duration = 2
     return duration

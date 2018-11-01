@@ -5,6 +5,8 @@ gameplay
 -map objects and loading more safely, versioning, safely load with new content
 -random star character- one side of leg longer than other so it looks funny
 -ddr machine that you can play and dance against
+- make jeremy fightable after completion of snow area
+- story needs more jokes, more references- nani, you beat my best brother jeremy???!
 
 sound
 -load own sounds using the bowl pianoputer as example
@@ -27,13 +29,12 @@ rules ides
 -octaves rule
 -dual notes rule- every note doubled, 2 notes apart
 - long chord mode with a note being held with stuff around it
-
+- triplet mode only for some enemies
 
 Knob ideas for the beatmap generator
 
 - sway pitch to higher or lower for different enemies
 - sway probabilities for repeating at different lengths, and the size of these repetitions
-- triplet mode only for some enemies
 
 -better drum machine
 

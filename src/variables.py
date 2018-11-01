@@ -17,7 +17,10 @@ except ImportError:
 
 testsmallp = False
 devmode = True
+# skip the fight with steve, add the event to the player
 skipsteve = True
+# adds all the soundpacks and keys to the player
+addallrewards = True
 # generates a new world on load no matter what
 newworldeachloadq = False
 # allows specific graphics functions to override and make new generated graphics
@@ -48,6 +51,7 @@ if exportmode:
     testsmallp = False
     devmode = False
     skipsteve = False
+    addallrewards = False
     newworldnever = False
     newworldeachloadq = False
     allownewworldoverridep = False

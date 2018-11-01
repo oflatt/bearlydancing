@@ -8,7 +8,7 @@ from Soundpack import Soundpack
 # value of 0 corresponds to A4, -12 is A3
 all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 25),
              "triangle": Soundpack("triangle", 30), "sawtooth": Soundpack("sawtooth", 30),
-             "sawsoft": Soundpack("sawtooth", 4)}
+             "random":Soundpack("random", 8)}
 
 def currentsoundpack():
     return all_tones[variables.settings.soundpack]
@@ -52,7 +52,7 @@ def play_tone(tonein):
 
     # add because values are centered on 0
     sp = all_tones[variables.settings.soundpack]
-    channels[t+12].set_volume(variables.settings.volume*(1/3)*sp.tone_volume(0)) # balance volume
+    channels[t+12].set_volume(variables.settings.volume*sp.tone_volume(0)) # balance volume
     channels[t+12].play(buffertosound(sp.getbufferattime(t+12, 0)))
     channeltimes[t+12] = sp.loopbufferdurationmillis[t+12]
 
@@ -64,8 +64,11 @@ def update_tone(tonein):
         t = 0-12
     c = channels[t+12]
     sp = all_tones[variables.settings.soundpack]
+
+    if channeltimes[t+12] == None:
+        channeltimes[t+12] = 0
     
-    c.set_volume(variables.settings.volume*(1/3)*sp.tone_volume(channeltimes[t+12]))
+    c.set_volume(variables.settings.volume*sp.tone_volume(channeltimes[t+12]))
     if c.get_queue() == None:
         c.queue(buffertosound(sp.getbufferattime(t+12, channeltimes[t+12])))
         channeltimes[t+12] += sp.loopbufferdurationmillis[t+12]

@@ -4,6 +4,7 @@ from Menu import Menu
 from Battle import Battle
 import dill as pickle
 from stathandeling import explv, lvexp
+from play_sound import soundpackkeys, scales
 
 def loadmaps(mapdict):
     maps.set_new_maps(mapdict)
@@ -55,8 +56,15 @@ def load():
                     classvar.player.ypos = tempplayer.ypos
                     for x in range(50):
                         classvar.player.addstoryevent("bed")
+                        
                 if variables.lvcheat != 0:
                     classvar.player.exp = lvexp(explv(classvar.player.exp)+variables.lvcheat)
+                if variables.addallrewards:
+                    for k in soundpackkeys:
+                        classvar.player.addreward(k)
+                    for k in scales.keys():
+                        classvar.player.addreward(k)
+                    
                 if not variables.dontloadmapsdict:
                     conversations.floatingconversations = floatingtemp
                     loadmaps(mapsdict)
