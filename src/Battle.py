@@ -43,7 +43,7 @@ class Battle(FrozenClass):
 
         # accidental tutorial will never be in the same battle as the normal tutorial
         # or if there are no accidentals in the beatmap
-        if "noaccidentals" in self.enemy.beatmaprules or self.tutorialp:
+        if "noaccidentals" in self.enemy.beatmapspecs["rules"] or self.tutorialp:
             self.accidentaltutorialp = False
         elif self.accidentaltutorialp:
             # if we do activate the accidentaltutorial, set the tutorial and all the conversations
@@ -117,7 +117,8 @@ class Battle(FrozenClass):
             return classvar.player.scales[variables.settings.scaleindex]
 
     def setfirstbeatmap(self):
-        specs = variables.enemytospecs(self.enemy)
+        self.enemy.beatmapspecs["lv"] = self.enemy.lv
+        specs = self.enemy.beatmapspecs
         self.beatmaps = [randombeatmap.random_beatmap(specs)]
         self.initiatenewbeatmap()
         self.reset_time()
@@ -170,7 +171,7 @@ class Battle(FrozenClass):
         return self.runningcombo + currentb.currentcombo
 
     def new_beatmaps(self):
-        self.beatmaps = [randombeatmap.variation_of_notes_to_beatmap(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo, variables.enemytospecs(self.enemy))]
+        self.beatmaps = [randombeatmap.variation_of_notes_to_beatmap(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo, self.enemy.beatmapspecs)]
 
     def initiatenewbeatmap(self):
         self.beatmaps[0].scale = scales[self.getscalename()]
@@ -296,7 +297,7 @@ class Battle(FrozenClass):
             wavex = self.battlechoice.buttons[-2].x * variables.width
             # the height of the wave
             waveamp = (self.battlechoice.buttons[-2].height()*3/4) * 0.5
-            wavescalar = waveamp*0.8/(play_sound.currentsoundpack().volumelist[-1][1]*max_sample)
+            wavescalar = waveamp*0.8/(max_sample)
             wavelen = self.battlechoice.buttons[-2].width()*3/4
             wavey = self.battlechoice.buttons[-2].y*variables.height-waveamp
             loopbuffer = play_sound.all_tones[variables.settings.soundpack].loopbuffers[0]

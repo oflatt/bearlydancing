@@ -42,7 +42,7 @@ soundeffectchannel = pygame.mixer.Channel(38)
 def buffertosound(b):
     return pygame.sndarray.make_sound(b)
 
-def play_tone(tonein):
+def play_tone(tonein, volenvelope):
     t = tonein
     # make t always in range if out of range
     if t+12>=len(all_tones[variables.settings.soundpack].loopbuffers):
@@ -52,11 +52,11 @@ def play_tone(tonein):
 
     # add because values are centered on 0
     sp = all_tones[variables.settings.soundpack]
-    channels[t+12].set_volume(variables.settings.volume*sp.tone_volume(0)) # balance volume
+    channels[t+12].set_volume(variables.settings.volume*sp.tone_volume(0, volenvelope)) # balance volume
     channels[t+12].play(buffertosound(sp.getbufferattime(t+12, 0)))
     channeltimes[t+12] = sp.loopbufferdurationmillis[t+12]
 
-def update_tone(tonein):
+def update_tone(tonein, volenvelope):
     t = tonein
     if t+12>=len(all_tones[variables.settings.soundpack].loopbuffers):
         t = len(all_tones[variables.settings.soundpack].loopbuffers)-1-12
@@ -68,7 +68,7 @@ def update_tone(tonein):
     if channeltimes[t+12] == None:
         channeltimes[t+12] = 0
     
-    c.set_volume(variables.settings.volume*sp.tone_volume(channeltimes[t+12]))
+    c.set_volume(variables.settings.volume*sp.tone_volume(channeltimes[t+12], volenvelope))
     if c.get_queue() == None:
         c.queue(buffertosound(sp.getbufferattime(t+12, channeltimes[t+12])))
         channeltimes[t+12] += sp.loopbufferdurationmillis[t+12]

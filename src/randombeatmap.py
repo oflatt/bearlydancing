@@ -51,11 +51,10 @@ noaccidentals- makes no "modified" notes, no accidentals that are one pitch abov
 '''
 
 
-testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
-testmapb = [Beatmap((1200 * 3) / 4, [Note(0, 1, 1), Note(0, 4, 1), Note(0, 5, 1), Note(1, 6, 1)])]
+testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)], variables.generic_specs)]
 testmap = [Beatmap((1200 * 3) / 4, [Note(0, 1, 0.2), Note(0, 1.3, 0.1), Note(0, 2, 0.4), Note(0, 2.5, 0.4), Note(0, 3, 0.4),
                                     Note(0, 3.5, 0.4), Note(0, 4, 0.4), Note(0, 4.5, 0.4), Note(0, 5, 0.4), Note(0, 5.5, 0.4),
-                                    Note(0, 6, 0.4), Note(0, 6.5, 0.4), Note(0, 7, 0.4), Note(0, 7.5, 0.4), Note(0, 8, 0.4)])]
+                                    Note(0, 6, 0.4), Note(0, 6.5, 0.4), Note(0, 7, 0.4), Note(0, 7.5, 0.4), Note(0, 8, 0.4)], variables.generic_specs)]
 
 
 def makeaccidentalp(specs, l):
@@ -219,7 +218,7 @@ def random_beatmap(specs):
         if not rule in ruletypes:
             thrownoteerror('rule ' + str(rule) + ' unknown')
         
-    return Beatmap(tempo, l)
+    return Beatmap(tempo, l, specs)
 
 
 def restp(t, l, specs):
@@ -343,5 +342,5 @@ def random_duration(time, notelist, specs, isr, ischord):
 # used to get a variation for the next round of a dance
 def variation_of_notes_to_beatmap(old_notes, tempo, specs):
     newnotes = variation_of_notes(old_notes, specs)
-    newb = Beatmap(tempo, newnotes)
+    newb = Beatmap(tempo, newnotes, specs)
     return newb

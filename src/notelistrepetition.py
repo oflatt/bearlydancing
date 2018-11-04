@@ -118,9 +118,8 @@ def normalrepetition(time, movelength, listofnotes, repeatduration, specs, maxti
     if hasrule('repeatrhythm', specs):
         notestoadd = newvaluesfornotes(notestoadd, specs)
 
-    oldendtime = time
-    if hasrule('repeatonlybeginning', specs):
-        oldendtime = notestoadd[-1].time + notestoadd[-1].duration
+        
+    
         
     newstarttime = time
     
@@ -128,7 +127,8 @@ def normalrepetition(time, movelength, listofnotes, repeatduration, specs, maxti
         return {'time': newstarttime+repeatduration, 'list': l}
     
     offsetfactor = repeatduration + skipduration
-
+    if hasrule('repeatonlybeginning', specs):
+        offsetfactor = time - repeatduration
     
     # offset the notestoadd by the offsetfactor
     for n in notestoadd:

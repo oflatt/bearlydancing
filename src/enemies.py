@@ -38,10 +38,10 @@ animations = []
 enemies = {}
 
 counter = 0
-def addEnemy(name, rules, animation):
+def addEnemy(name, rules, animation, volumeenvelope = None):
     global counter
     animations.append(animation)
-    enemies[name] = Enemy(counter, 1, name, rules)
+    enemies[name] = Enemy(counter, 1, name, rules, volumeenvelope)
     counter += 1
 
 def getenemies(listofnames):
@@ -80,7 +80,7 @@ addEnemy("chimney", ["repeatrhythm", "melodic", "highrepeatchance"],
          chimneyanimation)
 
 addEnemy("scary steven", ["norests", "nochords", "shorternotes", "melodic", "repeatspaceinbetween", "repeatonlybeginning", "nodoublerepeats"],
-         steveanimation)
+         steveanimation, "flat")
 
 addEnemy("rad turtle", ["repeatmove", "repeatspaceinbetween", "nodoublerepeats"],
          Animation(["radturtle0", "radturtle1"], defaultanimspeed))

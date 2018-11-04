@@ -8,7 +8,9 @@ middleoffset = padxspace / 2
 
 class Beatmap():
 
-    def __init__(self, tempo, notes):
+    def __init__(self, tempo, notes, specs):
+        self.enemyspecs = specs
+        
         # tempo in how many milliseconds per beat.
         self.tempo = tempo
         self.originalnotes = notes
@@ -277,7 +279,7 @@ class Beatmap():
             v = simple_value_in_key(v)
             if self.spacepressedp or modifiedp:
                 v += 1
-            play_tone(v)
+            play_tone(v, self.enemyspecs["volumeenvelope"])
             if modifiedp:
                 self.modifierheldkeys[kp] = v
             else:
@@ -348,12 +350,14 @@ class Beatmap():
             if variables.checkkey("note" + str(x+1), key):
                 # do the same for both modified and unmodified keys for check place, only start matters
                 check_place(x)
-                stop_tone(self.held_keys[x])
+                if self.held_keys[x] != None:
+                    stop_tone(self.held_keys[x])
                 self.held_keys[x] = None
                 break
             elif variables.checkkey("note" + str(x+1) + "modified", key):
                 check_place(x)
-                stop_tone(self.modifierheldkeys[x])
+                if self.modifierheldkeys[x] != None:
+                    stop_tone(self.modifierheldkeys[x])
                 self.modifierheldkeys[x] = None
                 break
          
@@ -391,12 +395,12 @@ class Beatmap():
         # update played notes for looping
         for k in self.held_keys:
             if not k == None:
-                update_tone(k)
+                update_tone(k, self.enemyspecs["volumeenvelope"])
 
          # update played notes for looping
         for k in self.modifierheldkeys:
             if not k == None:
-                update_tone(k)
+                update_tone(k, self.enemyspecs["volumeenvelope"])
 
         # handle the drum machine
         # now dt is based on starttime

@@ -11,7 +11,7 @@ gameplay
 sound
 -load own sounds using the bowl pianoputer as example
       -random generation of wave?
--different drums for different enemies
+- different drums for different enemies, multiple drum samples
 - save to midi, sheet music
 - different volume envelopes
 

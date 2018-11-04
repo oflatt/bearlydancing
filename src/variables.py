@@ -191,17 +191,11 @@ maxdifficulty = 200
 # maxtime is changed in the code, the goal for how long the song should be
 # lv is the level of the enemy
 # rules are the rules for generating a beatmap
-generic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : []}
+generic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : [], 'volumeenvelope': 'bell'}
 melodic_specs = generic_specs.copy()
 melodic_specs['rules'] = ["melodic"]
 maxvalue = 14
 minvalue = -7
-
-def enemytospecs(enemy):
-    specs = copy.deepcopy(generic_specs)
-    specs["lv"] = enemy.lv
-    specs["rules"].extend(enemy.beatmaprules)
-    return specs
 
 perfect_value = 1.75
 good_value = 1

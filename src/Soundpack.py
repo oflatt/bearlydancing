@@ -5,8 +5,11 @@ import random
 from FrozenClass import FrozenClass
 
 max_sample = 2 ** (16 - 1) - 1
-bellvolume = [[0, 0], [100, 1], [600, 0.5]]
-sample_rate = 44100
+sample_rate = 22050
+
+# volume envelopes are lists of times and what volume it should be at that time
+volumeenvelopes = {"bell" : VolumeEnvelope([[0, 0.05], [200, 1], [800, 0.3]], 600, 0.1),
+                   "flat" : VolumeEnvelope([[0, 0.5]], 300, 0.2)}
 
 class Soundpack(FrozenClass):
     
@@ -15,11 +18,11 @@ class Soundpack(FrozenClass):
         # list of buffers for different frequencies of notes
         # each buffer is a perfectly loopable sample of the wave, normalized
         self.loopbuffers = []
+        self.tempbuffers = []
 
         # how long in milliseconds the sound from each loopbuffer is
         self.loopbufferdurationmillis = []
-        # this volume envelope to use
-        self.volumelist = bellvolume
+        
         # finally, generate all the loopbuffers
         self.make_soundpack(wavetype, shapefactor, resetq)
 
@@ -27,23 +30,27 @@ class Soundpack(FrozenClass):
         self._freeze()
 
     # durationplayed is in milliseconds
-    def tone_volume(self, durationplayed):
+    def tone_volume(self, durationplayed, volumeenvelopename):
+        volen = volumeenvelopes[volumeenvelopename]
+        volumelist = volumeenvelopes[volumeenvelopename].timevollist
         listplace = 0
         while True:
-            if listplace + 1 >= len(self.volumelist):
+            if listplace + 1 >= len(volumelist):
                 break
-            elif durationplayed >= self.volumelist[listplace + 1][0]:
+            elif durationplayed >= volumelist[listplace + 1][0]:
                 listplace += 1
             else:
                 break
 
-        dt = durationplayed - self.volumelist[listplace][0]
-        if listplace == len(self.volumelist)-1:
-            volume = self.volumelist[listplace][1]
+        dt = durationplayed - volumelist[listplace][0]
+        if listplace == len(volumelist)-1:
+            volume = volumelist[listplace][1]
+            timesinceend = durationplayed-volumelist[-1][0]
+            volume = volume + math.sin(2*math.pi*timesinceend/volen.endoscilationrate)*volen.endoscilationvolume
         else:
-            timebetween = (self.volumelist[listplace+1][0]-self.volumelist[listplace][0])
-            ydifference = (self.volumelist[listplace+1][1]-self.volumelist[listplace][1])
-            initial = self.volumelist[listplace][1]
+            timebetween = (volumelist[listplace+1][0]-volumelist[listplace][0])
+            ydifference = (volumelist[listplace+1][1]-volumelist[listplace][1])
+            initial = volumelist[listplace][1]
             volume = initial + ydifference * (dt/timebetween)
 
         return volume
@@ -155,7 +162,7 @@ class Soundpack(FrozenClass):
             elif wavetype == "random":
                 sval = randfunction(t, frequency, shapefactor)
             else:
-                raise Exception("unknow wavetype " + wavetype)
+                raise Exception("unknown wavetype " + wavetype)
 
             return int(round(max_sample * sval))
 
@@ -169,8 +176,7 @@ class Soundpack(FrozenClass):
 
         for s in range(n_samples):
             t = float(s) / sample_rate  # time in seconds
-            volume = self.volumelist[-1][1]
-            sval = (get_sval(t) / normalizevalue) * volume 
+            sval = (get_sval(t) / normalizevalue)
             buf[s][0] = sval # left
             buf[s][1] = sval # right
 
@@ -181,6 +187,7 @@ class Soundpack(FrozenClass):
             loopbuf = self.make_wave((440 * ((2 ** (1 / 12)) ** (x - 12))), wavetype, shapefactor)
             
             self.loopbuffers.append(loopbuf[0])
+            self.tempbuffers.append(numpy.zeros((int(loopbuf[0].size/2), 2), dtype=numpy.int16))
             self.loopbufferdurationmillis.append(loopbuf[1]*1000)
 
 
@@ -188,4 +195,9 @@ class Soundpack(FrozenClass):
     # index is which loopbuffer for the frequency to play
     # time is time in milliseconds since start of the note played
     def getbufferattime(self, index, time):
-        return self.loopbuffers[index]
+        obuf = self.loopbuffers[index]
+        #buf = self.tempbuffers[index]
+        #for i in range(int(obuf.size/2)):
+        #    obuf[i][0] = buf[i][0]*0.5
+        #    obuf[i][1] = buf[i][1]*0.5
+        return obuf
