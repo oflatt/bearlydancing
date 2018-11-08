@@ -63,9 +63,11 @@ if exportmode:
     testspecs = None
 
 # Setup
-pygame.mixer.pre_init(22050, -16, 2, 128)
+pygame.mixer.pre_init(22050, -16, 2, 256)
 pygame.mixer.init()
 pygame.init()
+
+pygame.mixer.set_reserved(38)
 
 # load icon
 icon = pygame.image.load(os.path.join(pathtoself, "icon.png"))

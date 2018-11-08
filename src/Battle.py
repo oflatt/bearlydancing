@@ -304,7 +304,7 @@ class Battle(FrozenClass):
             skiplen = (len(loopbuffer)/25)/wavelen
             for waveoffset in range(int(wavelen)):
                 variables.screen.fill(variables.BLUE, Rect(int(wavex+waveoffset), int(wavey), variables.displayscale, variables.displayscale))
-                variables.screen.fill(variables.WHITE, Rect(int(wavex+waveoffset),int(wavey+(loopbuffer[int(waveoffset*skiplen)][0]*wavescalar)), variables.displayscale, variables.displayscale))
+                variables.screen.fill(variables.WHITE, Rect(int(wavex+waveoffset),int(wavey+(loopbuffer[int(waveoffset*skiplen)]*wavescalar)), variables.displayscale, variables.displayscale))
                 
             variables.dirtyrects.append(Rect(wavex, wavey-waveamp, waveoffset, waveamp*2))
 

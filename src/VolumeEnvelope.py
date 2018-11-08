@@ -1,3 +1,4 @@
+import math
 from FrozenClass import FrozenClass
 
 class VolumeEnvelope(FrozenClass):
@@ -9,3 +10,27 @@ class VolumeEnvelope(FrozenClass):
         self.endoscilationrate = endoscilationrate
         # how much the volume changes over time at end
         self.endoscilationvolume = endoscilationvolume
+
+    # durationplayed is in milliseconds
+    def tone_volume(self, durationplayed):
+        listplace = 0
+        while True:
+            if listplace + 1 >= len(self.timevollist):
+                break
+            elif durationplayed >= self.timevollist[listplace + 1][0]:
+                listplace += 1
+            else:
+                break
+
+        dt = durationplayed - self.timevollist[listplace][0]
+        if listplace == len(self.timevollist)-1:
+            volume = self.timevollist[listplace][1]
+            timesinceend = durationplayed-self.timevollist[-1][0]
+            volume = volume + math.sin(2*math.pi*timesinceend/self.endoscilationrate)*self.endoscilationvolume
+        else:
+            timebetween = (self.timevollist[listplace+1][0]-self.timevollist[listplace][0])
+            ydifference = (self.timevollist[listplace+1][1]-self.timevollist[listplace][1])
+            initial = self.timevollist[listplace][1]
+            volume = initial + ydifference * (dt/timebetween)
+
+        return volume
