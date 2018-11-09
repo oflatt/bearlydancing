@@ -53,10 +53,17 @@ def play_tone(tonein, volenvelope):
     # add because values are centered on 0
     sp = all_tones[variables.settings.soundpack]
     channels[t+12].set_volume(variables.settings.volume) # balance volume
-    channels[t+12].play(buffertosound(sp.getbufferattime(t+12, 0, volenvelope)))
+    channels[t+12].play(buffertosound(sp.getbufferattime(t+12, 0, volenvelope, True)))
     channeltimes[t+12] = sp.loopbufferdurationmillis[t+12]
 
-def update_tone(tonein, volenvelope):
+# tonein is a index of the tone to play
+# volenvelope is the name of the volenvelope to use
+# numofupdatetonessofar is how many times we have called it so far
+# this allows us to put a cap on the number of
+# volumeenvelopes to apply, since it is expensive
+def update_tone(tonein, volenvelope, numofupdatetonessofar):
+    updatevolenvelopep = numofupdatetonessofar < variables.settings.maxvolumeenvelopesperframe
+    
     t = tonein
     if t+12>=len(all_tones[variables.settings.soundpack].loopbuffers):
         t = len(all_tones[variables.settings.soundpack].loopbuffers)-1-12
@@ -70,7 +77,7 @@ def update_tone(tonein, volenvelope):
     
     c.set_volume(variables.settings.volume)
     if c.get_queue() == None:
-        c.queue(buffertosound(sp.getbufferattime(t+12, channeltimes[t+12], volenvelope)))
+        c.queue(buffertosound(sp.getbufferattime(t+12, channeltimes[t+12], volenvelope, updatevolenvelopep)))
         channeltimes[t+12] += sp.loopbufferdurationmillis[t+12]
 
 def stop_tone(tonein):

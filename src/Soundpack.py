@@ -8,11 +8,14 @@ from VolumeEnvelope import VolumeEnvelope
 max_sample = 2 ** (16 - 1) - 1
 sample_rate = 22050
 
+defaultvol = 0.5
+
 # volume envelopes are lists of times and what volume it should be at that time
 volumeenvelopes = {"bell" : VolumeEnvelope([[0, 0.05], [200, 1], [800, 0.3]], 200, 0.1),
-                   "flat" : VolumeEnvelope([[0, 0.5]], 300, 0.2)}
+                   "flat" : VolumeEnvelope([[0, defaultvol]], 300, 0.2)}
 
 # volbuffers are a pair containing the volume buffer of the beginning of the volume envelope and the volume buffer for the looped section
+# each buffer is a 1d numpy array with float16
 volbuffers = {}
 
 for k in volumeenvelopes:
@@ -24,10 +27,11 @@ for k in volumeenvelopes:
         firstbuf[s] = envelope.tone_volume(t*1000)
 
     n_samples2 = int(round(envelope.endoscilationrate/1000*sample_rate))
-    secondbuf = numpy.zeros(n_samples2, dtype=numpy.int16)
+    secondbuf = numpy.zeros(n_samples2, dtype=numpy.float16)
     for s in range(n_samples2):
         t = float(s+n_samples)/sample_rate
         secondbuf[s] = envelope.tone_volume(t*1000)
+        
     volbuffers[k] = (firstbuf, secondbuf)
 
     
@@ -42,9 +46,13 @@ class Soundpack(FrozenClass):
 
         # have the first ones precomputed for startup time
         self.firstbuffers = []
+        self.secondbuffers = []
 
         # buffers to fill and pass along, 2d arrays
         self.tempbuffers = []
+
+        # buffer to return when there are too many playing
+        self.defaultbuffers = []
         
         # how long in milliseconds the sound from each loopbuffer is
         self.loopbufferdurationmillis = []
@@ -186,19 +194,33 @@ class Soundpack(FrozenClass):
             loopbuf = self.make_wave((440 * ((2 ** (1 / 12)) ** (x - 12))), wavetype, shapefactor)
             
             self.loopbuffers.append(loopbuf[0])
+
+            defaultbuf = numpy.zeros((int(loopbuf[0].size), 2), dtype=numpy.int16)
+            for i in range(loopbuf[0].size):
+                defaultbuf[i][0] = loopbuf[0][i]*defaultvol
+                defaultbuf[i][1] = defaultbuf[i][0]
+
+            self.defaultbuffers.append(defaultbuf)
             
             self.tempbuffers.append(numpy.zeros((int(loopbuf[0].size), 2), dtype=numpy.int16))
-            self.firstbuffers.append(self.getbufferattime(x, 0, "bell"))
-            
             self.loopbufferdurationmillis.append(loopbuf[1]*1000)
+            
+            self.firstbuffers.append(self.getbufferattime(x, 0, "bell", True))
+            self.secondbuffers.append(self.getbufferattime(x, self.loopbufferdurationmillis[x], "bell", True))
 
 
     # get the buffer with the volume envelope applied at time in milliseconds
     # index is which loopbuffer for the frequency to play
     # time is time in milliseconds since start of the note played
-    def getbufferattime(self, index, time, volenvelope):
+    def getbufferattime(self, index, time, volenvelope, applyvolenvelopep):
+        if not applyvolenvelopep:
+            # if we don't apply the envelope, just return the default
+            return self.defaultbuffers[index]
+    
         if time == 0 and len(self.firstbuffers)>index:
             return self.firstbuffers[index]
+        elif time < self.loopbufferdurationmillis[index]+1 and len(self.secondbuffers)>index:
+            return self.secondbuffers[index]
         
         obuf = self.loopbuffers[index]
         buf = self.tempbuffers[index]

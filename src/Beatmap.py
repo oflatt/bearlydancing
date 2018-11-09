@@ -392,15 +392,18 @@ class Beatmap():
                     # (assuming the list of notes must be ordered by time, of course)
                     break
 
+        numofupdatetones = 0
         # update played notes for looping
         for k in self.held_keys:
             if not k == None:
-                update_tone(k, self.enemyspecs["volumeenvelope"])
+                numofupdatetones += 1
+                update_tone(k, self.enemyspecs["volumeenvelope"], numofupdatetones)
 
          # update played notes for looping
         for k in self.modifierheldkeys:
             if not k == None:
-                update_tone(k, self.enemyspecs["volumeenvelope"])
+                numofupdatetones += 1
+                update_tone(k, self.enemyspecs["volumeenvelope"], numofupdatetones)
 
         # handle the drum machine
         # now dt is based on starttime

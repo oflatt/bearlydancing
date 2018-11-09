@@ -23,10 +23,11 @@ class VolumeEnvelope(FrozenClass):
                 break
 
         dt = durationplayed - self.timevollist[listplace][0]
-        if listplace == len(self.timevollist)-1:
+        if listplace >= len(self.timevollist)-1:
             volume = self.timevollist[listplace][1]
             timesinceend = durationplayed-self.timevollist[-1][0]
             volume = volume + math.sin(2*math.pi*timesinceend/self.endoscilationrate)*self.endoscilationvolume
+            print(volume)
         else:
             timebetween = (self.timevollist[listplace+1][0]-self.timevollist[listplace][0])
             ydifference = (self.timevollist[listplace+1][1]-self.timevollist[listplace][1])

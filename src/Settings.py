@@ -52,6 +52,10 @@ class Settings(FrozenClass):
         # the number of (length 1) notes that can be shown on screen at once before the pad
         self.notes_per_screen = 6
 
+        # maximum number of volume envelopes to apply per frame,
+        # since it is expensive
+        self.maxvolumeenvelopesperframe = 3
+
         self.username = "Greg"
         self.bearname = "Honey"
 
