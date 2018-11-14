@@ -279,7 +279,8 @@ class Beatmap():
             v = simple_value_in_key(v)
             if self.spacepressedp or modifiedp:
                 v += 1
-            play_tone(v, self.enemyspecs["volumeenvelope"])
+            play_tone(v, self.enemyspecs["volumeenvelope"], self.numofupdatetones)
+            self.numofupdatetones += 1
             if modifiedp:
                 self.modifierheldkeys[kp] = v
             else:
@@ -392,18 +393,18 @@ class Beatmap():
                     # (assuming the list of notes must be ordered by time, of course)
                     break
 
-        numofupdatetones = 0
+        
         # update played notes for looping
         for k in self.held_keys:
             if not k == None:
-                update_tone(k, self.enemyspecs["volumeenvelope"], numofupdatetones)
-                numofupdatetones += 1
+                update_tone(k, self.enemyspecs["volumeenvelope"], self.numofupdatetones)
+                self.numofupdatetones += 1
 
          # update played notes for looping
         for k in self.modifierheldkeys:
             if not k == None:
-                update_tone(k, self.enemyspecs["volumeenvelope"], numofupdatetones)
-                numofupdatetones += 1
+                update_tone(k, self.enemyspecs["volumeenvelope"], self.numofupdatetones)
+                self.numofupdatetones += 1
 
         # handle the drum machine
         # now dt is based on starttime
@@ -411,6 +412,9 @@ class Beatmap():
         # play a drum sound if it is on the beat, drumcounter increases 4 times per beat
         if (notetime*4 >= self.drumcounter+1):
             self.drumcounter += 1
+
+        # reset numofupdatetones for next frame
+        self.numofupdatetones = 0
             
     def reset_buttons(self):
         for x in range(8):

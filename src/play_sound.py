@@ -45,7 +45,7 @@ soundeffectchannel = pygame.mixer.Channel(38)
 def buffertosound(b):
     return pygame.sndarray.make_sound(b)
 
-def play_tone(tonein, volenvelope):
+def play_tone(tonein, volenvelope, numofupdatetonessofar):
     t = tonein
     # make t always in range if out of range
     if t+12>=len(all_tones[variables.settings.soundpack].loopbuffers):
@@ -58,7 +58,7 @@ def play_tone(tonein, volenvelope):
     channels[t+12].set_volume(variables.settings.volume) # balance volume
     buf = sp.getbufferattime(t+12, 0, volenvelope, True)
     channels[t+12].play(buffertosound(buf))
-    displaywave(buf, t+12, 0)
+    displaywave(buf, t+12, numofupdatetonessofar)
  
     channeltimes[t+12] = sp.loopbufferdurationmillis[t+12]
 
@@ -101,35 +101,46 @@ def stop_tone(tonein):
         stopdisplaywave(t+12)
 
 displaytuples = [None] * 37
-displaywavex = 0
+furthestdisplaywavex = 0
+nextdisplaywavey = 0
         
 def displaywave(buf, channel, drawnsofar):
-    global displaywavex
-    t = displaytuples[channel]
-    waveamp = variables.gettextsize()
-    if t == None:
-        # init a new display tuple
-        displaytuples[channel] = (0, random.randint(waveamp, int(variables.getpadypos() -waveamp)), (random.randint(0,255), random.randint(0,255), random.randint(0,255)))
-        t = displaytuples[channel]
-
-    wavex = displaywavex
-    wavey = t[1]
+    global furthestdisplaywavex, nextdisplaywavey
     # make it so that each second crosses .2 of the width of the screen
     wavelen = (buf.size/2)/variables.sample_rate * 0.2 * variables.width
+    t = displaytuples[channel]
+    waveamp = variables.gettextsize() * 0.7
+    if t == None:
+        if nextdisplaywavey < waveamp:
+            nextdisplaywavey = waveamp
+            
+        # init a new display tuple
+        displaytuples[channel] = (furthestdisplaywavex-wavelen, nextdisplaywavey, (random.randint(0,255), random.randint(0,255), random.randint(0,255)))
+        
+        nextdisplaywavey += waveamp*2
+        if nextdisplaywavey > int(variables.getpadypos() -waveamp):
+            nextdisplaywavey = waveamp
+            
+        t = displaytuples[channel]
+
+    wavex = t[0]
+    wavey = t[1]
     skiplen = len(buf)/wavelen
     drawwave(buf, skiplen, wavex, wavey, waveamp, wavelen, t[2], False)
 
     # now just update once and let it stay on screen
     pygame.display.update(Rect(wavex, wavey-waveamp, wavelen, waveamp*2))
 
-    displaytuples[channel] = (wavex+wavelen, wavey, t[2])
-
-    if drawnsofar == 0:
-        displaywavex = (displaywavex + wavelen)
-        maxwavex = (variables.width*9/12)
-        if displaywavex > maxwavex:
-            displaywavex -= maxwavex
-            variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
+    maxwavex = (variables.width*9/12)
+    newwavex = wavex+wavelen
+    if newwavex > maxwavex:
+        newwavex = 0
+        furthestdisplaywavex = newwavex
+        variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
+    
+    displaytuples[channel] = (newwavex, wavey, t[2])
+    if newwavex > furthestdisplaywavex:
+        furthestdisplaywavex = newwavex    
         
         
 
