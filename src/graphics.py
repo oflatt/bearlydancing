@@ -231,7 +231,25 @@ def drawthismessage(messagestring):
 def endofgeneration():
     variables.draw_progress_bar()
 
+max_sample = 2 ** (16 - 1) - 1
+def drawwave(loopbuffer, skiplen, wavex, wavey, waveamp, wavelen, color, dirtyrectp = True):
+    wavescalar = waveamp*0.8/(max_sample)
+    oldpos = (wavex, wavey)
+    for waveoffset in range(int(wavelen)):
+        loopscale = loopbuffer[int(waveoffset*skiplen)]
+        if len(loopbuffer.shape) > 1:
+            # when it is a 2d buffer, just use one side
+            loopscale = loopscale[0]
+        
+        variables.screen.fill(variables.BLUE, Rect(int(wavex+waveoffset), int(wavey), variables.displayscale, variables.displayscale))
+        newpos = (int(wavex+waveoffset),int(wavey+(loopscale*wavescalar)))
+        pygame.draw.line(variables.screen, color, oldpos, newpos)
+        oldpos = newpos
+        #variables.screen.fill(color, Rect, variables.displayscale, variables.displayscale))
 
+    if dirtyrectp:
+        variables.dirtyrects.append(Rect(wavex, wavey-waveamp, waveoffset, waveamp*2))
+    
 
 def randombogoface():
     # first clear the scaled pics for bugo

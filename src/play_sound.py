@@ -1,5 +1,8 @@
 import pygame, variables, random, os
+from graphics import drawwave
 from Soundpack import Soundpack
+
+from pygame import Rect
 
 # nessoundfont = "soundfonts/The_Nes_Soundfont.sf2"
 
@@ -53,7 +56,10 @@ def play_tone(tonein, volenvelope):
     # add because values are centered on 0
     sp = all_tones[variables.settings.soundpack]
     channels[t+12].set_volume(variables.settings.volume) # balance volume
-    channels[t+12].play(buffertosound(sp.getbufferattime(t+12, 0, volenvelope, True)))
+    buf = sp.getbufferattime(t+12, 0, volenvelope, True)
+    channels[t+12].play(buffertosound(buf))
+    displaywave(buf, t+12, 0)
+ 
     channeltimes[t+12] = sp.loopbufferdurationmillis[t+12]
 
 # tonein is a index of the tone to play
@@ -69,6 +75,7 @@ def update_tone(tonein, volenvelope, numofupdatetonessofar):
         t = len(all_tones[variables.settings.soundpack].loopbuffers)-1-12
     elif t+12 < 0:
         t = 0-12
+
     c = channels[t+12]
     sp = all_tones[variables.settings.soundpack]
 
@@ -77,8 +84,10 @@ def update_tone(tonein, volenvelope, numofupdatetonessofar):
     
     c.set_volume(variables.settings.volume)
     if c.get_queue() == None:
-        c.queue(buffertosound(sp.getbufferattime(t+12, channeltimes[t+12], volenvelope, updatevolenvelopep)))
+        buf = sp.getbufferattime(t+12, channeltimes[t+12], volenvelope, updatevolenvelopep)
+        c.queue(buffertosound(buf))
         channeltimes[t+12] += sp.loopbufferdurationmillis[t+12]
+        displaywave(buf, t+12, numofupdatetonessofar)
 
 def stop_tone(tonein):
     t = tonein
@@ -89,6 +98,43 @@ def stop_tone(tonein):
     if not t == None:
         channels[t+12].stop()
         channeltimes[t+12] = None
+        stopdisplaywave(t+12)
+
+displaytuples = [None] * 37
+displaywavex = 0
+        
+def displaywave(buf, channel, drawnsofar):
+    global displaywavex
+    t = displaytuples[channel]
+    waveamp = variables.gettextsize()
+    if t == None:
+        # init a new display tuple
+        displaytuples[channel] = (0, random.randint(waveamp, int(variables.getpadypos() -waveamp)), (random.randint(0,255), random.randint(0,255), random.randint(0,255)))
+        t = displaytuples[channel]
+
+    wavex = displaywavex
+    wavey = t[1]
+    # make it so that each second crosses .2 of the width of the screen
+    wavelen = (buf.size/2)/variables.sample_rate * 0.2 * variables.width
+    skiplen = len(buf)/wavelen
+    drawwave(buf, skiplen, wavex, wavey, waveamp, wavelen, t[2], False)
+
+    # now just update once and let it stay on screen
+    pygame.display.update(Rect(wavex, wavey-waveamp, wavelen, waveamp*2))
+
+    displaytuples[channel] = (wavex+wavelen, wavey, t[2])
+
+    if drawnsofar == 0:
+        displaywavex = (displaywavex + wavelen)
+        maxwavex = (variables.width*9/12)
+        if displaywavex > maxwavex:
+            displaywavex -= maxwavex
+            variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
+        
+        
+
+def stopdisplaywave(channel):
+    displaytuples[channel] = None
 
 def getsoundvar(s):
     g = globals()

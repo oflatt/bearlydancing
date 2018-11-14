@@ -4,9 +4,9 @@ from math import pi
 import random
 from FrozenClass import FrozenClass
 from VolumeEnvelope import VolumeEnvelope
+from variables import sample_rate
 
 max_sample = 2 ** (16 - 1) - 1
-sample_rate = 22050
 
 defaultvol = 0.5
 
@@ -246,5 +246,6 @@ class Soundpack(FrozenClass):
             buf[i][1] = buf[i][0]
             i += 1
             vi += 1
-        
+
+            
         return buf

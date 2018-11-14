@@ -4,7 +4,7 @@ from ChoiceButtons import ChoiceButtons
 from Button import Button
 from Note import Note
 from play_sound import scales, play_effect
-from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR, getTextPic, difficultytocolor, numofspecialmoveeffects, numofplayerframes
+from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR, getTextPic, difficultytocolor, numofspecialmoveeffects, numofplayerframes, drawwave
 from FrozenClass import FrozenClass
 from pygame import Rect
 from notelistfunctions import shorten_doubles
@@ -297,16 +297,12 @@ class Battle(FrozenClass):
             wavex = self.battlechoice.buttons[-2].x * variables.width
             # the height of the wave
             waveamp = (self.battlechoice.buttons[-2].height()*3/4) * 0.5
-            wavescalar = waveamp*0.8/(max_sample)
+            
             wavelen = self.battlechoice.buttons[-2].width()*3/4
             wavey = self.battlechoice.buttons[-2].y*variables.height-waveamp
             loopbuffer = play_sound.all_tones[variables.settings.soundpack].loopbuffers[0]
             skiplen = (len(loopbuffer)/25)/wavelen
-            for waveoffset in range(int(wavelen)):
-                variables.screen.fill(variables.BLUE, Rect(int(wavex+waveoffset), int(wavey), variables.displayscale, variables.displayscale))
-                variables.screen.fill(variables.WHITE, Rect(int(wavex+waveoffset),int(wavey+(loopbuffer[int(waveoffset*skiplen)]*wavescalar)), variables.displayscale, variables.displayscale))
-                
-            variables.dirtyrects.append(Rect(wavex, wavey-waveamp, waveoffset, waveamp*2))
+            drawwave(loopbuffer, skiplen, wavex, wavey, waveamp, wavelen, (255,255,255))
 
             # draw the scale above battlechoice
             firstscalex = self.battlechoice.buttons[-1].x * variables.width

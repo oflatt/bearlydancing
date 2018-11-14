@@ -27,11 +27,11 @@ class VolumeEnvelope(FrozenClass):
             volume = self.timevollist[listplace][1]
             timesinceend = durationplayed-self.timevollist[-1][0]
             volume = volume + math.sin(2*math.pi*timesinceend/self.endoscilationrate)*self.endoscilationvolume
-            print(volume)
         else:
+            # move between two list places using a sin wave
             timebetween = (self.timevollist[listplace+1][0]-self.timevollist[listplace][0])
             ydifference = (self.timevollist[listplace+1][1]-self.timevollist[listplace][1])
             initial = self.timevollist[listplace][1]
-            volume = initial + ydifference * (dt/timebetween)
+            volume = initial + ydifference * math.sin(math.pi/2 * dt/timebetween)
 
         return volume
