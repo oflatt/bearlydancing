@@ -1,4 +1,4 @@
-import pygame, os, wave, math, numpy, variables
+import pygame, os, wave, math, numpy, variables, copy
 from math import sin
 from math import pi
 import random
@@ -11,8 +11,8 @@ max_sample = 2 ** (16 - 1) - 1
 defaultvol = 0.5
 
 # volume envelopes are lists of times and what volume it should be at that time
-volumeenvelopes = {"bell" : VolumeEnvelope([[0, 0.05], [200, 1], [800, 0.3]], 200, 0.1),
-                   "flat" : VolumeEnvelope([[0, defaultvol]], 300, 0.2)}
+volumeenvelopes = {"bell" : VolumeEnvelope([[0, 0.05], [200, 1], [800, 0.3]], 200, 0.05),
+                   "flat" : VolumeEnvelope([[0, defaultvol]], 1000, 0.1)}
 
 # volbuffers are a pair containing the volume buffer of the beginning of the volume envelope and the volume buffer for the looped section
 # each buffer is a 1d numpy array with float16
@@ -45,8 +45,9 @@ class Soundpack(FrozenClass):
         self.loopbuffers = []
 
         # have the first ones precomputed for startup time
-        self.firstbuffers = []
-        self.secondbuffers = []
+        # a dictionary of volenvelopes as keys and lists of 2d buffers as values
+        self.firstbuffers = {}
+        self.secondbuffers = {}
 
         # buffers to fill and pass along, 2d arrays
         self.tempbuffers = []
@@ -204,27 +205,36 @@ class Soundpack(FrozenClass):
             
             self.tempbuffers.append(numpy.zeros((int(loopbuf[0].size), 2), dtype=numpy.int16))
             self.loopbufferdurationmillis.append(loopbuf[1]*1000)
-            
-            self.firstbuffers.append(self.getbufferattime(x, 0, "bell", True))
-            self.secondbuffers.append(self.getbufferattime(x, self.loopbufferdurationmillis[x], "bell", True))
+
+            # add all the first buffers
+            for k in volumeenvelopes:
+                if not k in self.firstbuffers:
+                    self.firstbuffers[k] = []
+                    self.secondbuffers[k] = []
+                    
+                firstbuf = self.getbufferattime(x, 0, k, True)
+                secondbuf = self.getbufferattime(x, self.loopbufferdurationmillis[x], k, True)
+                self.firstbuffers[k].append(copy.deepcopy(firstbuf))
+                self.secondbuffers[k].append(copy.deepcopy(secondbuf))
 
 
     # get the buffer with the volume envelope applied at time in milliseconds
     # index is which loopbuffer for the frequency to play
     # time is time in milliseconds since start of the note played
     def getbufferattime(self, index, time, volenvelope, applyvolenvelopep):
+        
         if not applyvolenvelopep:
             # if we don't apply the envelope, just return the default
             return self.defaultbuffers[index]
     
-        if time == 0 and len(self.firstbuffers)>index:
-            return self.firstbuffers[index]
-        elif time < self.loopbufferdurationmillis[index]+1 and len(self.secondbuffers)>index:
-            return self.secondbuffers[index]
+        if time == 0 and len(self.firstbuffers[volenvelope])>index:
+            return self.firstbuffers[volenvelope][index]
+        elif time < self.loopbufferdurationmillis[index]+1 and len(self.secondbuffers[volenvelope])>index:
+            return self.secondbuffers[volenvelope][index]
         
         obuf = self.loopbuffers[index]
         buf = self.tempbuffers[index]
-    
+
         timeindex = int(time/1000 * sample_rate)
         voltuple = volbuffers[volenvelope]
         volbuf1 = voltuple[0]

@@ -83,11 +83,13 @@ def update_tone(tonein, volenvelope, numofupdatetonessofar):
         channeltimes[t+12] = 0
     
     c.set_volume(variables.settings.volume)
+
     if c.get_queue() == None:
         buf = sp.getbufferattime(t+12, channeltimes[t+12], volenvelope, updatevolenvelopep)
         c.queue(buffertosound(buf))
         channeltimes[t+12] += sp.loopbufferdurationmillis[t+12]
         displaywave(buf, t+12, numofupdatetonessofar)
+        firstbuf = sp.getbufferattime(t+12, 0, volenvelope, True)
 
 def stop_tone(tonein):
     t = tonein
