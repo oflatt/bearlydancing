@@ -128,7 +128,7 @@ def normalrepetition(time, movelength, listofnotes, repeatduration, specs, maxti
     
     offsetfactor = repeatduration + skipduration
     if hasrule('repeatonlybeginning', specs):
-        offsetfactor = time - repeatduration
+        offsetfactor = time
     
     # offset the notestoadd by the offsetfactor
     for n in notestoadd:

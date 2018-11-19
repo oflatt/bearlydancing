@@ -62,6 +62,11 @@ if exportmode:
     lvcheat = 0
     testspecs = None
 
+# only print if devmode is on
+def devprint(s):
+    if devmode:
+        print(s)
+    
 # Setup
 sample_rate = 22050
 pygame.mixer.pre_init(sample_rate, -16, 2, 512)
