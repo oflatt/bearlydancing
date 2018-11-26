@@ -1,14 +1,16 @@
 # bearly dancing ![](https://github.com/oflatt/portfolio-gifs/blob/master/beardance.gif)
 A rhythm rpg with randomly generated beatmaps, written in python using the pygame library. Journey through a quirky world, playing the music for dance battles between a bear and his foes.
 
-## Setting up the environment
+## setting up the environment
 
 Download a version of python 3.
-Run setup.py. Do not run setup.py from IDLE, because there seems to be a bug that causes ultra-slow download speeds.
+Run python setup.py. If the pip library is missing, run pip install pip.
+
+Do not run setup.py from IDLE- there seems to be a bug that causes ultra-slow download speeds.
 
 To play the game without development features, set exportmode in variables.py to True.
 
-## Making an executable
+## building an executable
 
 Windows:
 
