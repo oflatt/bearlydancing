@@ -1,14 +1,29 @@
 import variables
 from notelistfunctions import *
 
-import random, copy
+import random, copy, math
 from random import randint
+
+def centerwithspecs(lowerbound, upperbound, specs):
+    crange = (lowerbound - upperbound)
+    center = lowerbound + crange/2
+
+    if hasrule("highervalues", specs):
+        center += crange/3
+    elif hasrule("lowervalues", specs):
+        center -= crange/3
+    return center
+
+def randtrianglevalwithspecs(lowerbound, upperbound, specs, defaulttrianglep = False):
+    center = centerwithspecs(lowerbound, upperbound, specs)
+        
+    return int(round(random.triangular(lowerbound, upperbound, center)))
 
 def random_value(t, ischord, unflippedlist, specs):
     # flip l because it's easier to look at it that way
     l = unflippedlist[::-1]
 
-    rv = randint(variables.minvalue, variables.maxvalue)
+    rv = randtrianglevalwithspecs(variables.minvalue, variables.maxvalue, specs)
     depth = notedepth(l)
 
     def melodicchord(rv):
@@ -34,10 +49,14 @@ def random_value(t, ischord, unflippedlist, specs):
 
     if ('melodic' in specs['rules']) and not (ischord) and depth > 0:
         rv = melodic_value(rv, depth, specs, l)
+        
     elif ('melodic' in specs['rules']) and ischord and not rv == 'rest' and depth>0:
+        
         rv = melodicchord(rv)
+        
     elif ('alternating' in specs['rules']) and not (ischord) and depth > 0:
         rv = alternating_value(rv, depth, specs, l)
+        
     elif ('alternating' in specs['rules']) and ischord and depth>0:
         rv = melodicchord(rv)
 
@@ -49,10 +68,22 @@ def random_value(t, ischord, unflippedlist, specs):
     else:
         return rv
 
-
+# picks a sign for the moveby value based upon if highervalues or lowervalues is in the rules of the specs
+def movebywithspecs(currentv, moveby, specs):
+    center = centerwithspecs(variables.minvalue, variables.maxvalue, specs)
+    # bias towards the center
+    offby = abs(currentv - center) / (variables.maxvalue - variables.minvalue)
+    towardssign = center - currentv
+    moveby = abs(moveby)
+    strengthofbias = 0.6
+    if random.random() > 0.5-offby*strengthofbias:
+        return int(currentv + math.copysign(moveby, towardssign))
+    else:
+        return int(currentv + math.copysign(moveby, -towardssign))
+    
 # assume depth>0
 def melodic_value(rv, depth, specs, l):
-    value = rv
+    value = None
     lastv = l[-1].value
 
     # have a big chance of 2 away if 'skippy' rule is on
@@ -66,15 +97,9 @@ def melodic_value(rv, depth, specs, l):
                 else:
                     value = lastv - 2
             else:
-                if myrand(1):
-                    value = lastv + 2
-                else:
-                    value = lastv - 2
+                value = movebywithspecs(rv, 2, specs)
         else:
-            if myrand(1):
-                value = lastv + 2
-            else:
-                value = lastv - 2
+            value = movebywithspecs(rv, 2, specs)
 
     # 2/3 * 3/4 chance of being 1 or 2 away from previous note
     elif myrand(2) and myrand(3):
@@ -86,22 +111,16 @@ def melodic_value(rv, depth, specs, l):
             else:
                 # near previous note
                 rd = randint(1, 2)
-                if (myrand(1)):
-                    rd = -rd
-                value = lastv + rd
+                value = movebywithspecs(rv, rd, specs)
         else:
             # near previous note
             rd = randint(1, 2)
-            if (myrand(1)):
-                rd = -rd
-            value = lastv + rd
+            value = movebywithspecs(rv, rd, specs)
 
     #1/3 chance to be within 6
     elif not myrand(2):
         rd = randint(1, 6)
-        if (myrand(1)):
-            rd = -rd
-        value = lastv + rd
+        value = movebywithspecs(rv, rd, specs)
     # otherwise use the random value
     else:
         value = rv
@@ -113,6 +132,7 @@ def melodic_value(rv, depth, specs, l):
             # 2/3 chance to go back one note
             if (myrand(2)):
                 value = lastv - 1
+        # jump in opposite direction
         elif (lastv < secondv - 2):
             if (myrand(2)):
                 value = lastv + 1
@@ -150,7 +170,7 @@ def alternating_value(rv, depth, specs, l):
             if outsiderangeq(startingpoint + distance_away):
                 return not_alternating()
             else:
-                return startingpoint + distance_away
+                return movebywithspecs(startingpoint, distance_away, specs)
         else:
             return startingpoint
 
@@ -166,10 +186,10 @@ def alternating_value(rv, depth, specs, l):
             else:
                 # within one
                 if myrand(3):
-                    value = secondv + random.choice([1, -1])
+                    value = movebywithspecs(secondv, 1, specs)
                 # otherwise within 2
                 else:
-                    value = secondv + random.choice([1, 2, -1, -2])
+                    value = movebywithspecs(secondv, random.choice([1, 2]), specs)
         else:
             value = not_alternating()
     else:

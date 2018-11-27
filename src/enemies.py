@@ -73,13 +73,13 @@ addEnemy("croc", ["melodic", "repeatmove"],
 addEnemy("kewlcorn", ["repeatvalues", "highrepeatchance"],
          Animation(["kewlcorn0", "kewlcorn1", "kewlcorn2", "kewlcorn3"], defaultanimspeed))
 
-addEnemy("bogo", ["repeatvariation", "repeatmove", "highrepeatchance"],
+addEnemy("bogo", ["repeatvariation", "repeatmove", "highrepeatchance", "highervalues"],
          Animation(["bugo0","bugo1"], defaultanimspeed))
 
 addEnemy("chimney", ["repeatrhythm", "melodic", "highrepeatchance"],
          chimneyanimation)
 
-addEnemy("scary steven", ["norests", "nochords", "shorternotes", "melodic", "repeatspaceinbetween", "repeatonlybeginning", "nodoublerepeats"],
+addEnemy("scary steven", ["norests", "nochords", "shorternotes", "melodic", "repeatspaceinbetween", "repeatonlybeginning", "nodoublerepeats", "lowervalues"],
          steveanimation, "flat")
 
 addEnemy("rad turtle", ["repeatmove", "repeatspaceinbetween", "nodoublerepeats"],

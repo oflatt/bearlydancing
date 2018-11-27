@@ -7,38 +7,37 @@ gameplay
 -ddr machine that you can play and dance against
 - make jeremy fightable after completion of snow area
 - story needs more jokes, more references- nani, you beat my best brother jeremy???!
+-different volume envelopes
 
 sound
 -load own sounds using the bowl pianoputer as example
       -random generation of wave?
 - different drums for different enemies, multiple drum samples
 - save to midi, sheet music
-- different volume envelopes
 
 battle
-- sway octave with different enemies
--melodicmode:
+- battle code is ugly and convoluted with all the time/health variables
+
+- melodicmode:
 	-sync up durations of melodic notes, ones in a line should be shorter
 	-better restp function, currently just a 1/9 chance of a rest
--repeatbig, an aditional layer of repetition for a large phrase with variation
-- repeatsmall, micro repetitions of value or rhythm or both
--repeatwithvariation more sophisticated- switch notes, offset by a beat
+- repeatwithvariation more sophisticated- switch notes, offset by a beat. Different types of repeatwithvariation?
 
-rules ides
--triplet chord mode
--octaves rule
--dual notes rule- every note doubled, 2 notes apart
+rules ideas
+- triplet chord mode
+- dual notes rule- every note doubled, 2 notes apart
 - long chord mode with a note being held with stuff around it
 - triplet mode only for some enemies
+- repeating with variation chance to redo all of the rest of the notes, especially halfway through or power of 2
 
 Knob ideas for the beatmap generator
 
 - sway pitch to higher or lower for different enemies
+  - idea of center?
+  - triangle modified probability distruibution?
 - sway probabilities for repeating at different lengths, and the size of these repetitions
 
--better drum machine
 
--battle code is ugly and convoluted with all the time/health variables
 
 graphics
 -shift pixels for wind? give life to the game

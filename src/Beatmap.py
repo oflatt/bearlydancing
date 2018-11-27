@@ -264,6 +264,7 @@ class Beatmap():
             return placeandvalue[1]
 
         def simple_value_in_key(v):
+            
             av = abs(v)
             sound_value = 0
             if (v < 0):

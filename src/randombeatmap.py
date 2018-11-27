@@ -28,6 +28,8 @@ rests- high chance of shorter notes and rests in between notes
 norests- no rests are possible
 nochords- no added chord notes possible
 shorternotes- add more of a chance for the shorter notes
+highervlaues- bias values higher
+lowervalues- bias values lower
 
 ------- repeat ----------------
 repeat- repeats sections with variations- all of the following can combine except repeatvalues
@@ -213,6 +215,8 @@ def random_beatmap(specs):
         thrownoteerror('notes collided')
     if not noteaccidentalsconsistantp(l):
         thrownoteerror('accidental note at same time as non accidental')
+    if not notevaluesintegersp(l):
+        thrownoteerror('not all values in note list were integers')
 
     for rule in specs['rules']:
         if not rule in ruletypes:

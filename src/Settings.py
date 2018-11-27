@@ -54,7 +54,7 @@ class Settings(FrozenClass):
 
         # maximum number of volume envelopes to apply per frame,
         # since it is expensive
-        self.maxvolumeenvelopesperframe = 3
+        self.maxvolumeenvelopesperframe = 1
 
         self.username = "Greg"
         self.bearname = "Honey"

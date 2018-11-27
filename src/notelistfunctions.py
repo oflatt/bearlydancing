@@ -8,7 +8,8 @@ from random import randint
 ruletypes = ['melodic', 'skippy', 'alternating', 'rests', 'repeat',
              'repeatmove', 'repeatvariation', 'repeatvalues', 'highrepeatchance',
              'repeatrhythm', 'norests', 'nochords', 'shorternotes', 'repeatonlybeginning',
-             'repeatspaceinbetween', 'nodoublerepeats', 'noaccidentals']
+             'repeatspaceinbetween', 'nodoublerepeats', 'noaccidentals',
+             'highervalues', 'lowervalues']
 
 def hasrule(rule, specs):
     if not rule in ruletypes:
@@ -214,6 +215,12 @@ def noteaccidentalsconsistantp(l):
         if compare_numbers_around(n.time, n2.time, 0.05):
             if not n.accidentalp == n2.accidentalp:
                 return False
+    return True
+
+def notevaluesintegersp(l):
+    for n in l:
+        if not isinstance(n.value, int):
+            return False
     return True
 
 def thrownoteerror(errorstring):
