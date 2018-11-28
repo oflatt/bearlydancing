@@ -5,6 +5,7 @@ from Texture import Texture
 from addtexture import addtexture
 from pygame import Rect
 from rdrawtree import snowclump
+from rdrawrock import addlump
 
 dirtcolor = (70, 71, 14)
 pathwidth = 16
@@ -101,19 +102,16 @@ def makepatch(randomcolorsunsorted, width, height):
     #pygame.draw.rect(s, variables.BLUE, Rect(0,0,width,height), 1)
     return s
 
-def makegrassland(width, height, leftpath = True, rightpath = True, uppath = True, downpath = True):
-    patchwidth = randint(15, 30)
-    patchheight = randint(15, 30)
+# currently brownchance is unused
+def patchlist(patchwidth, patchheight, pinkmodeonq, brownchance = False):
     patches = []
     numofpatches = randint(5, 10)
 
-    pinkmodeonq = False
-    if random.random() < 0.005:
-        pinkmodeonq = True
-
-
     def randompink():
         return (randint(140, 255), randint(0, 100), randint(150, 255))
+    def randombrown():
+        lightness = randint(40, 65)
+        return (lightness+10, lightness, lightness)
     
     randomgreens = [randint(75, 150), randint(75, 150), randint(75, 150)]
     randomgreens = sorted(randomgreens, key=int)
@@ -122,13 +120,26 @@ def makegrassland(width, height, leftpath = True, rightpath = True, uppath = Tru
     randomcolors = []
     if pinkmodeonq:
         randomcolors = [randompink(), randompink(), randompink()]
+    elif brownchance and random.random() < 0.3:
+        randomcolors = [randombrown(), randombrown(), randombrown()]
     else:
         for x in range(3):
             randomcolors.append((round(randomgreens[x]/3), randomgreens[x], 8))
 
     for x in range(numofpatches):
         patches.append(makepatch(randomcolors, patchwidth, patchheight))
+    return patches
+
+def makegrassland(width, height, leftpath = True, rightpath = True, uppath = True, downpath = True):
+    pinkmodeonq = False
+    if random.random() < 0.005:
+        pinkmodeonq = True
     
+    patchwidth = randint(15, 30)
+    patchheight = randint(15, 30)
+    patches = patchlist(patchwidth, patchheight, pinkmodeonq)
+
+    # make surface and fill it in
     surface = pygame.Surface([width, height], pygame.SRCALPHA)
     if pinkmodeonq:
         backgroundcolor = (255, 119, 228)
@@ -136,12 +147,43 @@ def makegrassland(width, height, leftpath = True, rightpath = True, uppath = Tru
         backgroundcolor = (77, 112, 30)
     surface.fill(backgroundcolor)
 
+    addpatches(surface, patches, patchwidth, patchheight)
+
+    numblobs = random.randint(2+ int(width/height)*2, 5 + int(width/height)*2)
+    for b in range(numblobs):
+        blobsurface = pygame.Surface([width, height])
+        bloblist = randomblob(width, height)
+        pygame.draw.polygon(blobsurface, (255, 255, 255), bloblist, 0)
+
+        patchwidth = randint(10, 25)
+        patchheight = randint(10, 25)
+        patches = patchlist(patchwidth, patchheight, pinkmodeonq)
+        addpatches(surface, patches, patchwidth, patchheight, blobsurface)
+        
+        
+    
+    surface = addroad(surface, leftpath, rightpath, uppath, downpath)
+        
+    return surface
+
+# adds the patches to the surface
+# maskhitbox is a surface with a black area for where not to fill
+def addpatches(surface, patches, patchwidth, patchheight, maskhitbox = None):
     # now add the patches to the land
     spacingvariability = round(patchwidth/4)
     def addrow(ypos):
         xpos = 0
         while xpos < surface.get_width():
-            surface.blit(random.choice(patches), [xpos, ypos])
+            # check the mask
+            blitp = False
+            if maskhitbox == None:
+                blitp = True
+            else:
+                if maskhitbox.get_at((xpos, ypos)) != (0,0,0, 255):
+                    blitp = True
+            
+            if blitp:
+                surface.blit(random.choice(patches), [xpos, ypos])
             xpos += patchwidth + randint(-spacingvariability, 0)
 
     ypos = 0
@@ -149,9 +191,7 @@ def makegrassland(width, height, leftpath = True, rightpath = True, uppath = Tru
         addrow(ypos)
         ypos += patchheight + randint(-spacingvariability, -int(spacingvariability/3))
 
-    surface = addroad(surface, leftpath, rightpath, uppath, downpath)
-        
-    return surface
+
 
 def makesnowland(width, height, grasstosnowp = False):
     surface = None
@@ -234,3 +274,31 @@ def circlethreshold(surface, x, y, radius, color, shadowdir, shadowr):
                 surface.set_at((fillx, filly), colortouse)
                     
         currentstep += 1
+
+# given a width and a height, make a random polygon in the space
+# returns a list of lists [x, y]
+def randomblob(swidth, sheight):
+    initialradius = random.randint(int(sheight/20), int(sheight/6))
+    pointlist = []
+    numofpoints = 80
+    for t in range(numofpoints):
+        radians = (t/numofpoints) * 2 * math.pi
+        xpos = initialradius * math.cos(radians)
+        ypos = initialradius * math.sin(radians)
+        pointlist.append([xpos, ypos])
+
+    # add some lumps
+    numoflumps = random.randint(4, 8)
+    for l in range(numoflumps):
+        startpoint = random.randint(0, numofpoints)
+        addlump(pointlist, startpoint,
+                startpoint+random.randint(int(numofpoints/4), int(numofpoints/2)),
+                initialradius*random.uniform(-0.5, 2),
+                random.choice([True, False]))
+        
+    center = (random.randint(0, swidth), random.randint(0, sheight))
+    for p in pointlist:
+        p[0] += center[0]
+        p[1] += center[1]
+
+    return pointlist

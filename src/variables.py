@@ -22,11 +22,11 @@ skipsteve = True
 # adds all the soundpacks and keys to the player
 addallrewards = True
 # generates a new world on load no matter what
-newworldeachloadq = False
+newworldeachloadq = True
 # allows specific graphics functions to override and make new generated graphics
 allownewworldoverridep = True
 # this overrides the generation of a new set of graphics for a new game
-newworldnever = True
+newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
 dontloadmapsdict = True
 # this is to get a fresh player with no player attributes
@@ -34,7 +34,7 @@ dontloadplayer = False
 # get a fresh settings file
 dontloadsettings = False
 # only loads first couple of maps
-fasttestmodep = False
+fasttestmodep = True
 # adds to player level when loading
 lvcheat = 0
 
@@ -297,8 +297,17 @@ def draw_loading_tips():
     xpos = int((width / 2) - (text.get_width() / 2))
     ypos = int((height / 2) - text.get_height() - height/10) - text.get_height()*2.5
     pygame.draw.rect(screen, BLACK, Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height()))
-    screen.blit(text, [xpos, ypos])
+    screen.blit(text, [xpos, ypos]) 
 
+def draw_graphic_name(name):
+    text = font.render(name, 0, WHITE).convert()
+    xpos = int((width / 2) - (text.get_width() / 2))
+    ypos = int((height -text.get_height() - height/20))
+    textrect = Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height())
+    pygame.draw.rect(screen, BLACK, textrect)
+    screen.blit(text, [xpos, ypos])
+    pygame.display.update(textrect)
+    
 def draw_progress_bar():
     #clear all the events so it does not crash
     pygame.event.get()

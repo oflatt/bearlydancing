@@ -8,6 +8,7 @@ gameplay
 - make jeremy fightable after completion of snow area
 - story needs more jokes, more references- nani, you beat my best brother jeremy???!
 -different volume envelopes
+- zoom button, rescaling funciton
 
 sound
 -load own sounds using the bowl pianoputer as example
@@ -24,7 +25,7 @@ battle
 - repeatwithvariation more sophisticated- switch notes, offset by a beat. Different types of repeatwithvariation?
 
 rules ideas
-- mode with chance to add space and then a three note chord
+
 - dual notes rule- every note doubled, 2 notes apart
 - triplet mode only for some enemies
 - repeating with variation chance to redo all of the rest of the notes, especially halfway through or power of 2

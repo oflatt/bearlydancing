@@ -1,4 +1,4 @@
-import pygame, variables, copy, random, math
+import pygame, variables, copy, random, math, time
 from addtexture import addtexture, fillpolygon
 from rdrawrock import addlump
 from pygame import draw
@@ -183,9 +183,10 @@ def drawlayer(p, yoffset, leftbound, rightbound, toplayerp=False, addsnowp = Fal
     startingpoint = [middlebound, int((100 + yoffset - topy) / 2) + topy]
     insidecolorbefore = p.get_at(startingpoint)
     draw.polygon(p, TREEOUTLINECOLOR, rightpoints, 1)  # outline
-
+    timebefore = time.time()
     fillpolygon(p, startingpoint, TREEFILLCOLOR, [insidecolorbefore],
                 fillbounds= [leftbound, 0, rightbound-leftbound, TREEHEIGHT])
+    print(time.time() - timebefore)
 
     if addsnowp:
         for tpoint in rightpoints:
@@ -287,7 +288,7 @@ def maketree(snowp = False):
         treeshortener += randint(0, 10)
     
     drawtrunk(p)
-
+    
     yoffset = randint(30, 40) + treeshortener
     if randint(0, 8) > 0:
         drawlayer(l, yoffset, 0, TREEWIDTH, addsnowp = False)
@@ -302,7 +303,7 @@ def maketree(snowp = False):
     p.blit(l2, [0, 0])
     p.blit(l3, [0, 0])
     p.blit(l4, [0, 0])
-
+    
     # first texturize the green part of the tree
     moss1 = Texture(TREECOLOR1, 1/12, 1/21, 4/7, acceptedcolors = [TREEFILLCOLOR])
     moss2 = Texture(TREECOLOR2, 1/70, 1/21, 4/7, acceptedcolors = [TREEFILLCOLOR])
@@ -313,7 +314,7 @@ def maketree(snowp = False):
     addtexture(p, moss1)
     addtexture(p, moss2)
     addtexture(p, moss3)
-
+    
     # then texture the bark
     bark1 = Texture((46, 35, 35), 1/40, 1/160, 18/20, acceptedcolors = [TRUNKCOLOR])
     bark2 = Texture((45, 32, 32), 1/100, 1/160, 18/20, acceptedcolors = [TRUNKCOLOR])

@@ -231,6 +231,9 @@ def drawthismessage(messagestring):
 def endofgeneration():
     variables.draw_progress_bar()
 
+def startofgeneration(nameofgraphic):
+    variables.draw_graphic_name(nameofgraphic)
+    
 max_sample = 2 ** (16 - 1) - 1
 def drawwave(loopbuffer, skiplen, wavex, wavey, waveamp, wavelen, color, dirtyrectp = True):
     wavescalar = waveamp*0.8/(max_sample)
@@ -296,6 +299,8 @@ def randombogoface():
     
 # takes a function that returns a new surface and a filename and returns the newy made surface name
 def generategraphic(generatingfunction, graphicname, newworldoverride = False):
+    startofgeneration(graphicname)
+    
     if not graphicname in variables.generatedgraphicsused:
         variables.generatedgraphicsused[graphicname] = 1
     else:
