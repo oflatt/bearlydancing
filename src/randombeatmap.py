@@ -30,6 +30,7 @@ nochords- no added chord notes possible
 shorternotes- add more of a chance for the shorter notes
 highervlaues- bias values higher
 lowervalues- bias values lower
+seperatedchordchance- chance to have a rest and then a chord with three notes in it
 
 ------- repeat ----------------
 repeat- repeats sections with variations- all of the following can combine except repeatvalues
@@ -107,12 +108,36 @@ def addnote(notelist, time, ischord, specs, valuestouse, accidentalp):
 
     return (l, duration)
 
+# returns none if not a special layer, otherwise returns a new list and duration of the layer in a tuple
+def speciallayer(notelist, time, specs):
+
+    if hasrule("seperatedchordchance", specs) and not myrand(4+specs['lv']/2):
+        notelist = notelist.copy()
+        restdur = random_duration(time, notelist, specs, True, False)
+        notedur = random_duration(time, notelist, specs, False, False)
+        val1 = random_value(time+restdur, False, notelist, specs)
+        notelist.append(Note(val1, time+restdur, notedur, False))
+        val2 = random_value(time+restdur, True, notelist, specs)
+        notelist.insert(-1, Note(val2, time+restdur, notedur, True))
+        val3 = random_value(time+restdur, True, notelist, specs)
+        notelist.insert(-1, Note(val3, time+restdur, notedur, True))
+        return (notelist, restdur+notedur)
+
+    return None
+
+
 # returns a new list and the duration of the layer in a tuple
 # valuestouse is a list of values to use instead of calling random_value, for use in repeatvaluesrepetition
 def addlayer(notelist, time, specs, valuestouse = []):
     lv = specs['lv']
     isr = restp(time, notelist, specs)
 
+    # if there is a special layer, do that instead
+    if len(valuestouse) == 0:
+        sl = speciallayer(notelist, time, specs)
+        if sl != None:
+            return sl
+    
     if isr:
         return (notelist, random_duration(time, notelist, specs, True, False))
     else:

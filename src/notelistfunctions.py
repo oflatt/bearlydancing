@@ -9,7 +9,8 @@ ruletypes = ['melodic', 'skippy', 'alternating', 'rests', 'repeat',
              'repeatmove', 'repeatvariation', 'repeatvalues', 'highrepeatchance',
              'repeatrhythm', 'norests', 'nochords', 'shorternotes', 'repeatonlybeginning',
              'repeatspaceinbetween', 'nodoublerepeats', 'noaccidentals',
-             'highervalues', 'lowervalues']
+             'highervalues', 'lowervalues',
+             'seperatedchordchance']
 
 def hasrule(rule, specs):
     if not rule in ruletypes:

@@ -24,11 +24,15 @@ battle
 - repeatwithvariation more sophisticated- switch notes, offset by a beat. Different types of repeatwithvariation?
 
 rules ideas
-- triplet chord mode
+- mode with chance to add space and then a three note chord
 - dual notes rule- every note doubled, 2 notes apart
-- long chord mode with a note being held with stuff around it
 - triplet mode only for some enemies
 - repeating with variation chance to redo all of the rest of the notes, especially halfway through or power of 2
+- two simple melodies, then both at same time
+- left hand repeats while right is a song
+- long chord mode with a note being held with stuff around it
+
+
 
 Knob ideas for the beatmap generator
 

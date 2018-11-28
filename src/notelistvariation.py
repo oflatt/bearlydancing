@@ -5,8 +5,6 @@ from notelistfunctions import *
 import random, copy
 from random import randint
 
-
-
 # future work: add the addition of chords to variation of notes
 def variation_of_notes(old_notes, specs):
     # print('called variation of notes, old notes:')

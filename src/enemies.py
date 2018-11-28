@@ -88,7 +88,7 @@ addEnemy("rad turtle", ["repeatmove", "repeatspaceinbetween", "nodoublerepeats"]
 addEnemy("dance lion", ["alternating", "repeatvariation", "repeatonlybeginning", "nodoublerepeats"],
           Animation(["dancelion0", "dancelion1"], defaultanimspeed))
 
-addEnemy("pile o' snow", [],
+addEnemy("pile o' snow", ["melodic", "repeat", "repeatvariation", "seperatedchordchance"],
          Animation(["pileo'snow0", "pileo'snow1"], defaultanimspeed))
 
 
