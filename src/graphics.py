@@ -57,6 +57,7 @@ def scale_pure(img, s, side = None):
     return pygame.transform.scale(img, [int((w/smaller) * s), int((h/smaller) * s)])
 
 def importpic(filename):
+    
     pic = pygame.image.load(os.path.join(variables.pathtoself, os.path.join('pics', filename)))
     # a list of types of pictures with no alpha in them
     backgrounds = ["randomgrassland", "randomsnowland"]

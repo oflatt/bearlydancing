@@ -1,27 +1,5 @@
-import random, pygame, time
+import random, pygame
 from Texture import Texture
-from pygame import Color
-
-def reducergb(t):
-    return (t[0], t[1], t[2])
-
-def rgbsimple(l):
-    if l == None:
-        return l
-    newl = []
-    for i in range(len(l)):
-        newl.append((l[i][0],l[i][1],l[i][2]))
-    return newl
-
-
-def setsarray(sarray, x, y, color):
-    sarray[x][y][0] = color[0]
-    sarray[x][y][1] = color[1]
-    sarray[x][y][2] = color[2]
-
-
-def comparenonalpha(c1, c2):
-    return c1[0] == c2[0] and c1[1] == c2[1] and c1[2]==c2[2]
 
 # fills a polygon with a point in the polygon
 # s is the surface, firstpoint is the starting point, fillcolor is the color to fill
@@ -29,12 +7,15 @@ def comparenonalpha(c1, c2):
 # bounds is a list x y width height of where the points can color, inclusive
 def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None, fillbounds = None):
 
-    sarray = pygame.surfarray.pixels3d(s)
-    sarrayalpha = pygame.surfarray.pixels_alpha(s)
-    
-    alphatoset = 255
-    if len(fillcolor) > 3:
-        alphatoset = fillcolor[3]
+    sarray = pygame.PixelArray(s)
+    # map rgb and make unsigned
+    fillcolor = s.map_rgb(fillcolor) & 0xffffffff
+    if checkcolors != None:
+        for i in range(len(checkcolors)):
+            checkcolors[i] = s.map_rgb(checkcolors[i]) & 0xffffffff
+    if stopcolors != None:
+        for i in range(len(stopcolors)):
+            stopcolors[i] = s.map_rgb(stopcolors[i]) & 0xffffffff
     
     firstpoint = [int(firstpoint[0]), int(firstpoint[1])]
     if fillbounds == None:
@@ -43,13 +24,25 @@ def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None,
         bounds = fillbounds
     pointlist = [firstpoint]
 
+    paintovercache = {}
+    #def paintoverp(c):
+     #   if not c in paintovercache:
+      #      paintovercache[c] = paintoverpnonmemo(c)
+       # return paintovercache[c]
+    global times
+    times = 1
     def paintoverp(c):
-        c = reducergb(c)
+        global times
+        times += 1
+        if times > 80000:
+            print("exit")
+            return False
+
         stopp = False
         if checkcolors != None:
             incolors = False
             for check in checkcolors:
-                if comparenonalpha(check, c):
+                if check==c:
                     incolors = True
                     break
 
@@ -58,44 +51,45 @@ def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None,
                 
         if stopcolors != None:
             for check in stopcolors:
-                if comparenonalpha(check, c):
+                if check == c:
                     stopp = True
                     break
 
-        if comparenonalpha(c,fillcolor):
+        if c==fillcolor:
             stopp = True
             
         return not stopp
 
     if not paintoverp(sarray[pointlist[0][0]][pointlist[0][1]]):
+        print("did not start")
         pointlist = []
-
-    point = None
+    
     while len(pointlist) != 0:
-        point = pointlist.pop(0)
-        setsarray(sarray, point[0],point[1], fillcolor)
-        sarrayalpha[point[0]][point[1]] = alphatoset
-        
+        point = pointlist.pop()
+        sarray[point[0]][point[1]] = fillcolor
+    
         #if there is still a point to the left in the bounds
         if point[0] > bounds[0]:
             if paintoverp(sarray[point[0] - 1][point[1]]):
-                pointlist.insert(0, [point[0] - 1, point[1]])
+                pointlist.append([point[0] - 1, point[1]])
         if point[0] < bounds[0]+bounds[2]-1:
             if paintoverp(sarray[point[0] + 1][point[1]]):
-                pointlist.insert(0, [point[0] + 1, point[1]])
+                pointlist.append([point[0] + 1, point[1]])
         if point[1] > bounds[1]:
             if paintoverp(sarray[point[0]][point[1] - 1]):
-                pointlist.insert(0, [point[0], point[1] - 1])
+                pointlist.append([point[0], point[1] - 1])
         if point[1] < bounds[1]+bounds[3]-1:
             if paintoverp(sarray[point[0]][point[1] + 1]):
-                pointlist.insert(0, [point[0], point[1] + 1])
+                pointlist.append([point[0], point[1] + 1])
+
+    sarray.close()
 
 def pointinbounds(point, bounds):
     p = point
     b = bounds
     return p[0] >= b[0] and p[0] < b[0] + b[2] and p[1] >= b[1] and p[1] < b[1] + b[3]
 
-def texturepoint(surface, x, y, t, bounds, sarray, sarrayalpha):
+def texturepoint(surface, x, y, t, bounds):
     # each point is a list of xpos, ypos, invisibleq
     points = [[x, y, False]]
     pointcolor = t.color
@@ -105,9 +99,8 @@ def texturepoint(surface, x, y, t, bounds, sarray, sarrayalpha):
     while len(points) > 0:
         p = points.pop(0)
         if pointinbounds(p, bounds):
-            pc = sarray[p[0]][p[1]]
-            pcolorreduced = (pc[0], pc[1], pc[2])
-            pcolor = (pcolorreduced[0], pcolorreduced[1], pcolorreduced[2], sarrayalpha[p[0]][p[1]])
+            pcolor = surface.get_at(p[0:2])
+            pcolorreduced = (pcolor[0], pcolor[1], pcolor[2])
             acceptedcolorq = True
             if t.acceptedcolors != None:
                 acceptedcolorq = pcolor in t.acceptedcolors or pcolorreduced in t.acceptedcolors
@@ -116,9 +109,9 @@ def texturepoint(surface, x, y, t, bounds, sarray, sarrayalpha):
             if (pcolor != pointcolor) and (not pcolor in t.stopcolors) and acceptedcolorq:
                 if not p[2]:
                     setcolor = (pointcolor[0]+random.randint(-t.redvariancefactor, t.redvariancefactor), pointcolor[1]+random.randint(-t.greenvariancefactor, t.greenvariancefactor), pointcolor[2]+random.randint(-t.bluevariancefactor, t.bluevariancefactor))
-                    setsarray(sarray,p[0],p[1],setcolor)
-                    sarrayalpha[p[0]][p[1]] = 255
                     
+                    surface.set_at(p[0:2], setcolor)
+
                 addup = False
                 adddown = False
                 addright = False
@@ -198,18 +191,16 @@ def get_texturing_bounds(bounds, texturebounds):
             tbounds.append(bounds[x])
     return tbounds
 
-def texturerow(surface, y, texture, b, tbounds, sarray, sarrayalpha):
+def texturerow(surface, y, texture, b, tbounds):
     for x in range(tbounds[0], tbounds[0]+tbounds[2]):
         if random.random() < texture.initialchance:
-            texturepoint(surface, x, y, texture, b, sarray, sarrayalpha)
+            texturepoint(surface, x, y, texture, b)
 
 #type is a string that refers to a set of textures and random patterns
 def addtexture(surface, texture, printp = False):
     b = get_bounds(surface, texture)
     tbounds = get_texturing_bounds(b, texture.texturingbounds)
-    sarray = pygame.surfarray.pixels3d(surface)
-    sarrayalpha = pygame.surfarray.pixels_alpha(surface)
     if printp:
         print(b)
     for y in range(tbounds[1], tbounds[1]+tbounds[3]):
-        texturerow(surface, y, texture, b, tbounds, sarray, sarrayalpha)
+        texturerow(surface, y, texture, b, tbounds)
