@@ -1,4 +1,4 @@
-import pygame, variables, copy, random, math, time
+import pygame, variables, copy, random, math
 from addtexture import addtexture, fillpolygon
 from rdrawrock import addlump
 from pygame import draw
@@ -183,10 +183,10 @@ def drawlayer(p, yoffset, leftbound, rightbound, toplayerp=False, addsnowp = Fal
     startingpoint = [middlebound, int((100 + yoffset - topy) / 2) + topy]
     insidecolorbefore = p.get_at(startingpoint)
     draw.polygon(p, TREEOUTLINECOLOR, rightpoints, 1)  # outline
-    timebefore = time.time()
+    
     fillpolygon(p, startingpoint, TREEFILLCOLOR, [insidecolorbefore],
                 fillbounds= [leftbound, 0, rightbound-leftbound, TREEHEIGHT])
-    print(time.time() - timebefore)
+    
 
     if addsnowp:
         for tpoint in rightpoints:

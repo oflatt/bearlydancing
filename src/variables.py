@@ -26,7 +26,7 @@ newworldeachloadq = True
 # allows specific graphics functions to override and make new generated graphics
 allownewworldoverridep = True
 # this overrides the generation of a new set of graphics for a new game
-newworldnever = False
+newworldnever = True
 # this is for not loading the maps from the save file, to test new map changes
 dontloadmapsdict = True
 # this is to get a fresh player with no player attributes
@@ -34,7 +34,7 @@ dontloadplayer = False
 # get a fresh settings file
 dontloadsettings = False
 # only loads first couple of maps
-fasttestmodep = True
+fasttestmodep = False
 # adds to player level when loading
 lvcheat = 0
 
