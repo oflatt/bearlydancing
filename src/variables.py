@@ -22,7 +22,7 @@ skipsteve = True
 # adds all the soundpacks and keys to the player
 addallrewards = True
 # generates a new world on load no matter what
-newworldeachloadq = True
+newworldeachloadq = False
 # allows specific graphics functions to override and make new generated graphics
 allownewworldoverridep = True
 # this overrides the generation of a new set of graphics for a new game
@@ -146,8 +146,11 @@ displayscale = round(unrounded_displayscale+0.25)
 # factor for scaling up a map to a screen
 scaleoffset = 1
 # the product of scaleoffset and displayscale
-compscale = displayscale
-compscaleunrounded = unrounded_displayscale
+# this is used only for drawing the world
+def compscale():
+    return displayscale*scaleoffset+settings.zoomlevel
+def compscaleunrounded():
+    return unrounded_displayscale * scaleoffset + settings.zoomlevel
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -346,6 +349,20 @@ def checkkey(name, key):
     return key in settings.keydict[name]
 
 def updatescreen():
-    pygame.display.update(dirtyrects + olddirtyrects + [Rect(10,font.get_linesize(), font.get_linesize()*6, font.get_linesize()*6)])
+    if len(dirtyrects) > 0:
+        if dirtyrects[0] == Rect(0,0,width,height):
+            pygame.display.update(Rect(0,0,width, height))
+        else:
+            updaterects()
+    elif len(olddirtyrects) > 0:
+        if olddirtyrects[0] == Rect(0,0,width,height):
+            pygame.display.update(Rect(0,0,width, height))
+        else:
+            updaterects()
+    else:
+        updaterects()
 
+def updaterects():
+    pygame.display.update(dirtyrects + olddirtyrects + [Rect(10,font.get_linesize(), font.get_linesize()*6, font.get_linesize()*6)])
+        
 sign = lambda x: (1, -1)[x < 0]

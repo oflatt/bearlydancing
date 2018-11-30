@@ -85,14 +85,14 @@ class Rock(FrozenClass):
 
     def draw(self, offset = [0,0]):
         self.drawtick()
-        drawx = self.x * variables.compscale + offset[0]
-        drawy = self.y * variables.compscale + offset[1]
-        swidth = self.w * variables.compscale
-        sheight = self.h * variables.compscale
+        drawx = self.x * variables.compscale() + offset[0]
+        drawy = self.y * variables.compscale() + offset[1]
+        swidth = self.w * variables.compscale()
+        sheight = self.h * variables.compscale()
 
         # only draw if on screen
         if drawx+swidth>0 and drawx<variables.width and drawy<variables.height and drawy+sheight>0:
-            p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale)
+            p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale())
             if self.updatescreenp:
                 variables.dirtyrects.append(Rect(drawx, drawy, p.get_width(), p.get_height()))
                 self.updatescreenp = False

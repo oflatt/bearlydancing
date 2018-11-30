@@ -11,16 +11,13 @@ christmasp = False
 if today.month == 12:
     christmasp = True
 
-viewfactor = variables.unrounded_displayscale
-viewfactorrounded = variables.displayscale
-
 def sscale(img, rounded = True):
     w = img.get_width()
     h = img.get_height()
     if rounded:
-        endsize = viewfactorrounded
+        endsize = variables.displayscale
     else:
-        endsize = viewfactor
+        endsize = variables.unrounded_displayscale
     return pygame.transform.scale(img, [int(w*endsize), int(h*endsize)])
 
 #like sscale but instead of returning a scaled pic, it returns what the dimensions of the new pic would have been
@@ -28,18 +25,18 @@ def sscale_dimensions(img, rounded = True):
     w = img.get_width()
     h = img.get_height()
     if rounded:
-        endsize = viewfactorrounded
+        endsize = variables.displayscale
     else:
-        endsize = viewfactor
+        endsize = variables.unrounded_displayscale
     return [int(w*endsize), int(h*endsize)]
 
 def sscale_customfactor(img, factor, rounded = True):
     w = img.get_width()
     h = img.get_height()
     if rounded:
-        endsize = viewfactorrounded
+        endsize = variables.displayscale
     else:
-        endsize = viewfactor
+        endsize = variables.unrounded_displayscale
     return pygame.transform.scale(img, [int(w*endsize*factor), int(h*endsize*factor)])
 
 #use if you want pictures where the smaller dimension is a set size

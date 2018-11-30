@@ -12,6 +12,7 @@ class Settings(FrozenClass):
         self.keydict["left"] = [pygame.K_LEFT, pygame.K_a]
         self.keydict["right"] = [pygame.K_RIGHT, pygame.K_d]
         self.keydict["action"] = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_KP_ENTER]
+        self.keydict["zoom"] = [pygame.K_z]
         self.keydict["note1"] = [pygame.K_a]
         self.keydict["note2"] = [pygame.K_s]
         self.keydict["note3"] = [pygame.K_d]
@@ -43,6 +44,9 @@ class Settings(FrozenClass):
         self.backgroundstate = "world"
         self.menuonq = True
 
+        # zoom level is for viewing the world- gets added to the display scale
+        self.zoomlevel = 0
+
         #possible soundpacks can be seen by listing the keys in all_sounds in play_sound
         self.soundpack = "sine"
 
@@ -65,4 +69,9 @@ class Settings(FrozenClass):
         # this is an offset for all enemy levels
         self.difficulty = 0
 
+
         self._freeze()
+
+
+    def updatezoom(self):
+        self.zoomlevel = (self.zoomlevel+1)%3

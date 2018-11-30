@@ -151,6 +151,14 @@ while not done:
         
     # --- Drawing Code
     def draw_world():
+        #fill edges in with black
+        screenxoffset = maps.current_map.screenxoffset()
+        if screenxoffset != 0:
+            variables.screen.fill(variables.BLACK,
+                                  Rect(0, 0, screenxoffset+1, variables.height))
+            variables.screen.fill(variables.BLACK,
+                                  Rect(variables.width-screenxoffset-2, 0, screenxoffset+3, variables.height))
+            
         classvar.player.update_drawpos()
         
         maps.current_map.draw([classvar.player.mapdrawx, classvar.player.mapdrawy])
@@ -158,13 +166,6 @@ while not done:
             classvar.player.draw()
         maps.current_map.draw_foreground([classvar.player.mapdrawx, classvar.player.mapdrawy])
 
-        #fill edges in with black
-        screenxoffset = maps.current_map.screenxoffset
-        if screenxoffset != 0:
-            variables.screen.fill(variables.BLACK,
-                                  Rect(0, 0, screenxoffset, variables.height))
-            variables.screen.fill(variables.BLACK,
-                                  Rect(variables.width-screenxoffset-1, 0, screenxoffset+1, variables.height))
 
     drawworldp = True
     if variables.settings.menuonq:

@@ -77,8 +77,6 @@ for key in map_dict:
 def new_scale_offset():
     global current_map
     variables.scaleoffset = current_map.map_scale_offset
-    variables.compscale = variables.scaleoffset * variables.displayscale
-    variables.compscaleunrounded = variables.scaleoffset * variables.unrounded_displayscale
     classvar.player.new_scale_offset()
 
 def change_map_nonteleporting(name):
@@ -219,6 +217,9 @@ def on_key(key):
             engage_conversation(c.name)
         elif not e == False:
             engage_exit(e)
+    if variables.checkkey("zoom", key):
+        variables.settings.updatezoom()
+        variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
 
 
 def checkexit():
