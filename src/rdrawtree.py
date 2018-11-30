@@ -265,10 +265,9 @@ def drawtrunk(surface):
                     followpoint[0] += pullamount * changedir(followpoint)
                     a += 1
 
-    for point in pl:
-        if len(point) > 2:
-            point = point[:2]
-
+    for i in range(len(pl)):
+        if len(pl[i]) > 2:
+            pl[i] = pl[i][:2]
     draw.polygon(surface, TRUNKCOLOR, pl)
 
 def maketree(snowp = False):

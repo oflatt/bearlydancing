@@ -61,7 +61,6 @@ def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None,
         return not stopp
 
     if not paintoverp(sarray[pointlist[0][0]][pointlist[0][1]]):
-        print("did not start")
         pointlist = []
     
     while len(pointlist) != 0:
