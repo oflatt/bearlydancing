@@ -58,7 +58,8 @@ dancelionbattle.special_battle.specialscale = "C minor"
 jeremyhome.conversations = [jeremy, dancelionpass, dancelionbattle]
 
 # outside2######################################################################################
-rgrassland = graphics.grassland(600, 500, rightpath = False, uppath = True)
+outside2width = 900
+rgrassland = graphics.grassland(900, 500, rightpath = False, uppath = True)
 outsideheight = GR[rgrassland]["h"]
 b = GR[rgrassland]["w"] / 10
 outside2 = Map(rgrassland, [])
@@ -74,7 +75,7 @@ outside2.lvrange = [1]
 
 
 # outside3######################################################################################
-rgrassland = graphics.grassland(600, 500, leftpath = False, downpath = True)
+rgrassland = graphics.grassland(outside2width, 500, leftpath = False, downpath = True)
 b = GR[rgrassland]["w"] / 10
 outsideheight = GR[rgrassland]["h"]
 outside3 = Map(rgrassland, [])
@@ -88,7 +89,7 @@ outside3.lvrange = [1, 2]
 
 # outside4/rockorsheep#########################################################################
 outside4width = 800
-outside4height = 600
+outside4height = 500
 rgrassland = graphics.grassland(outside4width, outside4height, leftpath = False, rightpath = False, uppath = True)
 
 def make_rock_or_sheep_rocks():
