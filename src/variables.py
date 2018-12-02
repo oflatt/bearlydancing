@@ -22,7 +22,7 @@ skipsteve = True
 # adds all the soundpacks and keys to the player
 addallrewards = True
 # generates a new world on load no matter what
-newworldeachloadq = True
+newworldeachloadq = False
 # allows specific graphics functions to override and make new generated graphics
 allownewworldoverridep = True
 # this overrides the generation of a new set of graphics for a new game

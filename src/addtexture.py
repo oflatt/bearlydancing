@@ -9,13 +9,13 @@ def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None,
 
     sarray = pygame.PixelArray(s)
     # map rgb and make unsigned
-    fillcolor = s.map_rgb(fillcolor) & 0xffffffff
+    fillcolor = s.map_rgb(fillcolor)
     if checkcolors != None:
         for i in range(len(checkcolors)):
-            checkcolors[i] = s.map_rgb(checkcolors[i]) & 0xffffffff
+            checkcolors[i] = s.map_rgb(checkcolors[i])
     if stopcolors != None:
         for i in range(len(stopcolors)):
-            stopcolors[i] = s.map_rgb(stopcolors[i]) & 0xffffffff
+            stopcolors[i] = s.map_rgb(stopcolors[i])
     
     firstpoint = [int(firstpoint[0]), int(firstpoint[1])]
     if fillbounds == None:
@@ -35,7 +35,6 @@ def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None,
         global times
         times += 1
         if times > 80000:
-            print("exit")
             return False
 
         stopp = False
