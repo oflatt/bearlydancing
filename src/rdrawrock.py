@@ -1,6 +1,7 @@
 import pygame, variables, random, math
+import pygame.gfxdraw
 from random import randint
-from addtexture import addtexture, fillpolygon
+from addtexture import addtexture
 from Texture import Texture
 
 rocknumofpoints = 15
@@ -74,8 +75,9 @@ def makerock():
 
     s = pygame.Surface([rockwidth, rockheight], pygame.SRCALPHA)
 
-    pygame.draw.polygon(s, outlinecolor, pointlist, 1)
-    fillpolygon(s, [int(rockwidth/2),int(rockheight/2)], insidecolor, stopcolors = [outlinecolor])
+    pygame.gfxdraw.filled_polygon(s, pointlist, insidecolor)
+    pygame.gfxdraw.polygon(s, pointlist, outlinecolor)
+    #fillpolygon(s, [int(rockwidth/2),int(rockheight/2)], insidecolor, stopcolors = [outlinecolor])
     texture1 = Texture(texture1color, 1/10, 1/20, 1/20, acceptedcolors=[insidecolor])
     texture1.addupq = True
     texture2 = Texture(texture2color, 1/10, 1/30, 1/30, acceptedcolors=[insidecolor])

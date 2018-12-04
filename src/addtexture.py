@@ -5,7 +5,8 @@ from Texture import Texture
 # s is the surface, firstpoint is the starting point, fillcolor is the color to fill
 # checkcolors is a list of colors that will be overridden
 # bounds is a list x y width height of where the points can color, inclusive
-def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None, fillbounds = None):
+# not used after switch to gfxdraw
+def fillpolygon_deprecated(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None, fillbounds = None):
 
     sarray = pygame.PixelArray(s)
     # map rgb and make unsigned

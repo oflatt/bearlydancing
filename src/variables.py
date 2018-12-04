@@ -22,11 +22,11 @@ skipsteve = True
 # adds all the soundpacks and keys to the player
 addallrewards = True
 # generates a new world on load no matter what
-newworldeachloadq = False
+newworldeachloadq = True
 # allows specific graphics functions to override and make new generated graphics
 allownewworldoverridep = True
 # this overrides the generation of a new set of graphics for a new game
-newworldnever = True
+newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
 dontloadmapsdict = True
 # this is to get a fresh player with no player attributes
@@ -320,7 +320,7 @@ def draw_progress_bar():
     draw_loading_tips()
     
     if numused == 1:
-        draw_loading_text("generating world (2/2)")
+        draw_loading_text("generating world- this only happens once")
         if estimated == None:
             pygame.display.flip()
     
