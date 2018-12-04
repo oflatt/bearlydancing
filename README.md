@@ -3,8 +3,11 @@ A rhythm rpg with randomly generated beatmaps, written in python using the pygam
 
 ## setting up the environment
 
-Download a version of python 3.
-Run python setup.py. If the pip library is missing, run pip install pip.
+Install python 3.
+
+Make sure that pip is installed- type pip (or try pip3)
+
+Run python setup.py.
 
 Do not run setup.py from IDLE- there seems to be a bug that causes ultra-slow download speeds.
 

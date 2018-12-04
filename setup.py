@@ -18,4 +18,4 @@ for d in dependencies:
         print("installing " + d)
         install(d)
 
-print("good to go. bigbang.py in the src folder starts the game.")
+print("good to go. bearly dancing.py in the src folder starts the game.")

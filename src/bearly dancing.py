@@ -5,8 +5,6 @@ from pygame import Rect
 
 variables.load_properties()
 variables.draw_loading_tips()
-variables.draw_loading_text("importing graphics (1/2)")
-pygame.display.flip()
 
 # determine if everything should be re-loaded
 if not os.path.isfile(os.path.abspath(variables.settingspath)) and not variables.newworldnever:

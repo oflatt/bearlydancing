@@ -320,7 +320,7 @@ def draw_progress_bar():
     draw_loading_tips()
     
     if numused == 1:
-        draw_loading_text("generating world- this only happens once")
+        draw_loading_text("generating world (3/3)")
         if estimated == None:
             pygame.display.flip()
     

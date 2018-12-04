@@ -1,5 +1,14 @@
 #!/usr/bin/python
-import variables, classvar, enemies, graphics, pygame, copy, conversations
+
+import variables, pygame
+variables.draw_loading_text("generating sounds (1/3)")
+pygame.display.flip()
+from play_sound import play_music, grasslandmusictick, initiategrasslandmusic
+
+variables.draw_loading_text("importing graphics (2/3)")
+pygame.display.flip()
+
+import classvar, enemies, graphics, copy, conversations
 from Animation import Animation
 from graphics import scale_pure
 from graphics import GR
@@ -12,7 +21,6 @@ from Speak import Speak
 from variables import displayscale, fasttestmodep
 from EventRequirement import EventRequirement
 from random import randint
-from play_sound import play_music, grasslandmusictick, initiategrasslandmusic
 
 from mapsvars import *
 
