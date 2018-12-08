@@ -1,4 +1,5 @@
 import pygame, os, wave, math, numpy, variables, copy
+import time as mtime
 from math import sin
 from math import pi
 import random
@@ -13,7 +14,7 @@ defaultvol = 0.5
 
 # volume envelopes are lists of times and what volume it should be at that time
 volumeenvelopes = {"bell" : VolumeEnvelope([[0, 0.05], [200, 1], [800, 0.3]], 200, 0.05),
-                   "flat" : VolumeEnvelope([[0, defaultvol]], 1000, 0.1)}
+                   "flat" : VolumeEnvelope([[0, defaultvol], [400, defaultvol]], 1000, 0.1)}
 
 # volbuffers are a pair containing the volume buffer of the beginning of the volume envelope and the volume buffer for the looped section
 # each buffer is a 1d numpy array with float16
@@ -22,18 +23,19 @@ volbuffers = {}
 for k in volumeenvelopes:
     envelope = volumeenvelopes[k]
     n_samples = int(round(envelope.timevollist[-1][0]*sample_rate/1000))
-    firstbuf = numpy.zeros(n_samples, dtype=numpy.float16)
-    for s in range(n_samples):
-        t = float(s)/sample_rate
-        firstbuf[s] = envelope.tone_volume(t*1000)
 
+    # then put about a second worth of the oscilation part on to the end
     n_samples2 = int(round(envelope.endoscilationrate/1000*sample_rate))
-    secondbuf = numpy.zeros(n_samples2, dtype=numpy.float16)
-    for s in range(n_samples2):
-        t = float(s+n_samples)/sample_rate
-        secondbuf[s] = envelope.tone_volume(t*1000)
+    n_samples2 = n_samples2 * int(sample_rate/n_samples2)
+    
+    firstbuf = numpy.zeros((n_samples+n_samples2, 2), dtype=numpy.float)
+    for s in range(n_samples+n_samples2):
+        t = float(s)/sample_rate
+        firstbuf[s][0] = envelope.tone_volume(t*1000)
+        firstbuf[s][1] = firstbuf[s][0]
+    
         
-    volbuffers[k] = (firstbuf, secondbuf)
+    volbuffers[k] = firstbuf
 
     
 class Soundpack(FrozenClass):
@@ -71,8 +73,8 @@ class Soundpack(FrozenClass):
 
         n_samples = int(round(duration * sample_rate))
 
-        # setup our numpy array to handle 16 bit ints, which is what we set our mixer to expect with "bits"
-        buf = numpy.zeros(n_samples, dtype=numpy.int16)
+        # setup our numpy array to handle  bit ints, which is what we set our mixer to expect with "bits"
+        buf = numpy.zeros((n_samples, 2), dtype=numpy.int)
 
         randfunction = None
         if wavetype == "random":
@@ -107,7 +109,8 @@ class Soundpack(FrozenClass):
         for s in range(n_samples):
             t = float(s) / sample_rate  # time in seconds
             sval = (get_sval(t) / normalizevalue)
-            buf[s] = sval
+            buf[s][0] = sval
+            buf[s][1] = sval
 
         return (buf, duration)
 
@@ -117,14 +120,14 @@ class Soundpack(FrozenClass):
             
             self.loopbuffers.append(loopbuf[0])
 
-            defaultbuf = numpy.zeros((int(loopbuf[0].size), 2), dtype=numpy.int16)
-            for i in range(loopbuf[0].size):
-                defaultbuf[i][0] = loopbuf[0][i]*defaultvol
+            defaultbuf = numpy.zeros((int(loopbuf[0].size), 2), dtype=numpy.int)
+            for i in range(int(loopbuf[0].size/2)):
+                defaultbuf[i][0] = loopbuf[0][i][0]*defaultvol
                 defaultbuf[i][1] = defaultbuf[i][0]
 
             self.defaultbuffers.append(defaultbuf)
             
-            self.tempbuffers.append(numpy.zeros((int(loopbuf[0].size), 2), dtype=numpy.int16))
+            self.tempbuffers.append(numpy.zeros((int(loopbuf[0].size), 2), dtype=numpy.int))
             self.loopbufferdurationmillis.append(loopbuf[1]*1000)
 
             # add all the first buffers
@@ -143,40 +146,27 @@ class Soundpack(FrozenClass):
     # index is which loopbuffer for the frequency to play
     # time is time in milliseconds since start of the note played
     def getbufferattime(self, index, time, volenvelope, applyvolenvelopep):
-        
-        if not applyvolenvelopep:
-            # if we don't apply the envelope, just return the default
-            return self.defaultbuffers[index]
     
-        if time == 0 and len(self.firstbuffers[volenvelope])>index:
-            return self.firstbuffers[volenvelope][index]
-        elif time < self.loopbufferdurationmillis[index]+1 and len(self.secondbuffers[volenvelope])>index:
-            return self.secondbuffers[volenvelope][index]
-        
         obuf = self.loopbuffers[index]
-        buf = self.tempbuffers[index]
-
-        timeindex = int(time/1000 * sample_rate)
-        voltuple = volbuffers[volenvelope]
-        volbuf1 = voltuple[0]
-        volbuf2 = voltuple[1]
-
-        # use the first buffer until you get to the second
-        i = 0
-        buf1top = min(volbuf1.size - timeindex, obuf.size)
-        while i < buf1top:
-            buf[i][0] = obuf[i]*volbuf1[i+timeindex]
-            buf[i][1] = buf[i][0]
-            i += 1
-
-        top2 = obuf.size
-        vi = timeindex - volbuf1.size
-        while i < top2:
-            vi= vi % volbuf2.size
-            buf[i][0] = obuf[i]*volbuf2[vi]
-            buf[i][1] = buf[i][0]
-            i += 1
-            vi += 1
-
-            
+        
+        volbuf = volbuffers[volenvelope]
+        # find the right slice of the volume buffer
+        envelope = volumeenvelopes[volenvelope]
+        n_samples = int(round(envelope.timevollist[-1][0]*sample_rate/1000))
+        n_samples2 = int(round(envelope.endoscilationrate/1000*sample_rate))
+        volindex = int(time/1000 * sample_rate)
+        if volindex>n_samples:
+            volindex = n_samples + (volindex-n_samples) % n_samples2
+        
+        buf = numpy.empty(obuf.shape, dtype=numpy.int16)
+        volbuf = volbuf[volindex:volindex+obuf.shape[0]]
+        
+        numpy.multiply(volbuf, obuf, out=buf, casting='unsafe')
+        
         return buf
+        
+
+
+
+
+
