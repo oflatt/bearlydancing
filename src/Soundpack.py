@@ -27,13 +27,12 @@ for k in volumeenvelopes:
     # then put about a second worth of the oscilation part on to the end
     n_samples2 = int(round(envelope.endoscilationrate/1000*sample_rate))
     n_samples2 = n_samples2 * int(sample_rate/n_samples2)
+    firstbuf = numpy.empty((n_samples+n_samples2, 2), dtype=numpy.float)
     
-    firstbuf = numpy.zeros((n_samples+n_samples2, 2), dtype=numpy.float)
     for s in range(n_samples+n_samples2):
         t = float(s)/sample_rate
         firstbuf[s][0] = envelope.tone_volume(t*1000)
         firstbuf[s][1] = firstbuf[s][0]
-    
         
     volbuffers[k] = firstbuf
 
@@ -46,17 +45,6 @@ class Soundpack(FrozenClass):
         # each buffer is a perfectly loopable sample of the wave, normalized
         # one dimensional array
         self.loopbuffers = []
-
-        # have the first ones precomputed for startup time
-        # a dictionary of volenvelopes as keys and lists of 2d buffers as values
-        self.firstbuffers = {}
-        self.secondbuffers = {}
-
-        # buffers to fill and pass along, 2d arrays
-        self.tempbuffers = []
-
-        # buffer to return when there are too many playing
-        self.defaultbuffers = []
         
         # how long in milliseconds the sound from each loopbuffer is
         self.loopbufferdurationmillis = []
@@ -120,27 +108,9 @@ class Soundpack(FrozenClass):
             
             self.loopbuffers.append(loopbuf[0])
 
-            defaultbuf = numpy.zeros((int(loopbuf[0].size), 2), dtype=numpy.int)
-            for i in range(int(loopbuf[0].size/2)):
-                defaultbuf[i][0] = loopbuf[0][i][0]*defaultvol
-                defaultbuf[i][1] = defaultbuf[i][0]
-
-            self.defaultbuffers.append(defaultbuf)
-            
-            self.tempbuffers.append(numpy.zeros((int(loopbuf[0].size), 2), dtype=numpy.int))
             self.loopbufferdurationmillis.append(loopbuf[1]*1000)
 
-            # add all the first buffers
-            for k in volumeenvelopes:
-                if not k in self.firstbuffers:
-                    self.firstbuffers[k] = []
-                    self.secondbuffers[k] = []
-                    
-                firstbuf = self.getbufferattime(x, 0, k, True)
-                secondbuf = self.getbufferattime(x, self.loopbufferdurationmillis[x], k, True)
-                self.firstbuffers[k].append(copy.deepcopy(firstbuf))
-                self.secondbuffers[k].append(copy.deepcopy(secondbuf))
-
+            
 
     # get the buffer with the volume envelope applied at time in milliseconds
     # index is which loopbuffer for the frequency to play
