@@ -1,6 +1,9 @@
-import math, random
+import math, random, numpy
 from math import sin
 from math import pi
+
+from variables import sample_rate
+from variables import max_sample
 
 def sinesval(t, f):
     wave = math.sin(2 * math.pi * f * t)
@@ -80,3 +83,61 @@ def newrandomwavefunction():
         # add harmonics
         return rfunction(t,f,shapefactor) + (1/4)*rfunction2(2*t, f, shapefactor) + (1/8)*rfunction3(4*t, f, shapefactor)
     return sfunction
+
+# min refinement of 1 which means sine wave, and bigger numbers will take longer unless it is above 25 or so
+# the default duration (None) is 1/frequency * 50
+def make_wave(frequency, wavetype, shapefactor, addnoisep = False, sampleduration = None):
+    if sampleduration == None:
+        loopduration = (1 / frequency) * 50  # in seconds
+    else:
+        loopduration = sampleduration
+    duration = loopduration
+
+    n_samples = int(round(duration * sample_rate))
+
+    # setup our numpy array to handle  bit ints, which is what we set our mixer to expect with "bits"
+    buf = numpy.zeros((n_samples, 2), dtype=numpy.int)
+
+    randfunction = None
+    if wavetype == "random":
+        randfunction = newrandomwavefunction()
+
+    def get_sval(t):
+        sval = 0
+
+        if wavetype == "sine":
+            sval = sinesval(t, frequency)
+        elif wavetype == "square":
+            sval = squaresval(t, frequency, shapefactor)
+        elif wavetype == "triangle":
+            sval = trianglesval(t, frequency, shapefactor)
+        elif wavetype == "sawtooth":
+            sval = sawtoothsval(t, frequency, shapefactor)
+        elif wavetype == "random":
+            sval = randfunction(t, frequency, shapefactor)
+        else:
+            raise Exception("unknown wavetype " + wavetype)
+
+        if addnoisep:
+            sval = sval*numpy.random.normal(0, 0.3)
+        
+        return int(round(max_sample * sval))
+
+    
+        
+
+    # find the maximum value to use to normalize it (make the max volume 1)
+    normalizevalue = 1
+    for s in range(int(round((1/frequency)*2*sample_rate))):
+        t = float(s)/sample_rate
+        sval = get_sval(t)
+        if sval/max_sample > normalizevalue:
+            normalizevalue = sval/max_sample
+
+    for s in range(n_samples):
+        t = float(s) / sample_rate  # time in seconds
+        sval = (get_sval(t) / normalizevalue)
+        buf[s][0] = sval
+        buf[s][1] = sval
+
+    return (buf, duration)

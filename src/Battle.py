@@ -3,7 +3,7 @@ import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, 
 from ChoiceButtons import ChoiceButtons
 from Button import Button
 from Note import Note
-from play_sound import scales, play_effect
+from play_sound import scales, play_drum
 from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR, getTextPic, difficultytocolor, numofspecialmoveeffects, numofplayerframes, drawwave
 from FrozenClass import FrozenClass
 from pygame import Rect
@@ -412,7 +412,7 @@ class Battle(FrozenClass):
     def drumbeat(self, partofbeat):
         # play the drum
         if partofbeat == 0:
-            play_effect("onedrum")
+            play_drum(0)
 
             # chance for a special move based on combo
             specialmovechance = (self.getcombo())/len(self.beatmaps[self.current_beatmap].originalnotes)
@@ -435,12 +435,12 @@ class Battle(FrozenClass):
         elif partofbeat == 2:
             drumchance = self.getcombo()/len(self.beatmaps[self.current_beatmap].originalnotes)
             if random.random() <drumchance:
-                play_effect("onedrum")
+                play_drum(20)
         else:
             drumchance = self.getcombo()/len(self.beatmaps[self.current_beatmap].originalnotes)
             drumchance = drumchance/4
             if random.random() <drumchance:
-                play_effect("onedrum")
+                play_drum(20)
         
 
         # player dirty rect and enemy dirty rect on beat

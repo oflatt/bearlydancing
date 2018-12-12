@@ -69,6 +69,7 @@ def devprint(s):
     
 # Setup
 sample_rate = 22050
+max_sample = 2 ** (16 - 1) - 1
 pygame.mixer.pre_init(sample_rate, -16, 2, 512)
 pygame.mixer.init()
 pygame.init()

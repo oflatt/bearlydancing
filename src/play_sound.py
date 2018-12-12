@@ -1,7 +1,7 @@
 import pygame, variables, random, os
 from graphics import drawwave
 from Soundpack import Soundpack
-
+from DrumPack import DrumPack
 from pygame import Rect
 
 # nessoundfont = "soundfonts/The_Nes_Soundfont.sf2"
@@ -16,6 +16,8 @@ all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 25),
 def currentsoundpack():
     return all_tones[variables.settings.soundpack]
 
+drumpack = DrumPack("sine", 1)
+
 # all possible soundpacks
 soundpackkeys = list(all_tones.keys())
 
@@ -27,9 +29,11 @@ def loadmusic(filename):
     return pygame.mixer.Sound(os.path.join(variables.pathtoself, "music/", filename))
 
 onedrum = loadmusic("onedrum.wav")
-menumusic = loadmusic("menu.wav")
-bearhome = loadmusic("bearhome.wav")
-engagebattle = loadmusic("encounterenemy.wav")
+effects = {
+    "menumusic":loadmusic("menu.wav"),
+    "bearhome" :loadmusic("bearhome.wav"),
+    "engagebattle" : loadmusic("encounterenemy.wav"),
+    "onedrum" : drumpack.getsound(20)}
 
 channels = []
 for x in range(37):
@@ -154,12 +158,16 @@ def getsoundvar(s):
     return g[s]
         
 def play_effect(s):
-    sound = getsoundvar(s)
+    sound = effects[s]
     soundeffectchannel.set_volume(variables.settings.volume)
     soundeffectchannel.play(sound)
 
+def play_drum(index):
+    soundeffectchannel.set_volume(variables.settings.volume)
+    soundeffectchannel.play(drumpack.getsound(index))
+    
 def play_music(s):
-    sound = getsoundvar(s)
+    sound = effects[s]
     musicchannel.set_volume(variables.settings.volume)
     musicchannel.play(sound, loops=-1)
 
