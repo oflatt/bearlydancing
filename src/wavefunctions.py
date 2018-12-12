@@ -1,4 +1,4 @@
-import math, random, numpy
+import math, random, numpy, random, os, wave
 from math import sin
 from math import pi
 
@@ -118,8 +118,11 @@ def make_wave(frequency, wavetype, shapefactor, addnoisep = False, sampleduratio
         else:
             raise Exception("unknown wavetype " + wavetype)
 
+        noiselevel = 0.1
         if addnoisep:
-            sval = sval*numpy.random.normal(0, 0.3)
+            sval = sval*numpy.random.normal(0.5, noiselevel)
+            if random.random() < 0.2:
+                sval *= -0.5
         
         return int(round(max_sample * sval))
 
@@ -141,3 +144,19 @@ def make_wave(frequency, wavetype, shapefactor, addnoisep = False, sampleduratio
         buf[s][1] = sval
 
     return (buf, duration)
+
+
+# saves a pygame sound to a wav file in sounds folder
+def savebuffertofile(name, sound):
+    try:
+        os.makedirs("sounds")
+    except OSError:
+        pass
+
+    sfile = wave.open("sounds/" + name + ".wav", "w")
+    sfile.setframerate(sample_rate)
+    sfile.setnchannels(2)
+    sfile.setsampwidth(2)
+    sfile.writeframesraw(sound.get_raw())
+    sfile.close()
+

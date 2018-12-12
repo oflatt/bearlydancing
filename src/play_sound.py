@@ -11,12 +11,13 @@ from pygame import Rect
 # value of 0 corresponds to A4, -12 is A3
 all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 25),
              "triangle": Soundpack("triangle", 30), "sawtooth": Soundpack("sawtooth", 30),
+             "noisy": Soundpack("square", 25), # TODO: add noise to it, 0.5 normal with 0.1 st dev
              "random":Soundpack("random", 8)}
 
 def currentsoundpack():
     return all_tones[variables.settings.soundpack]
 
-drumpack = DrumPack("sine", 1)
+drumpack = DrumPack("sine", 25)
 
 # all possible soundpacks
 soundpackkeys = list(all_tones.keys())

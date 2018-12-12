@@ -1,5 +1,8 @@
 Bearly Dancing To-Do List
 
+bugs
+-"l" note was the same note as "a", which cannot be correct
+
 gameplay
 -knomi code name- bear winks at you
 -map objects and loading more safely, versioning, safely load with new content
@@ -14,6 +17,11 @@ sound
 -load own sounds using the bowl pianoputer as example
       -random generation of wave?
 - different drums for different enemies, multiple drum samples
+  - which wave to start with
+  - chance to flip sign with noise
+  - variance in how much it changes it with noise
+  - less random noise? some sort of wave of noise
+  - add noise vs multiply by it
 - save to midi, sheet music
 
 battle
@@ -51,3 +59,4 @@ graphics
 Sophie:
 -tent snow
 -wardrobe open, "why do I have this?"
+
