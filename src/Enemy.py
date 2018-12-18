@@ -6,7 +6,7 @@ from FrozenClass import FrozenClass
 
 class Enemy(FrozenClass):
 
-    def __init__(self, animationnum, rarity, name, beatmaprules, volumeenvelope = None):
+    def __init__(self, animationnum, rarity, name, beatmaprules, volumeenvelope = None, drumpackname = None):
         self.lv = 0
         self.animationnum = animationnum
         self.rarity = rarity
@@ -20,8 +20,15 @@ class Enemy(FrozenClass):
         self.storyeventsonlose = None
         self.storyeventsonflee = None
         self.specialscale = None
+        
         # reset needs to be called before enemy is used
         self.animation = None
+
+        # name of the drum pack in the drumpacks dict in play_sound
+        if drumpackname == None:
+            self.drumpackname = "normalnoise"
+        else:
+            self.drumpackname = drumpackname
         
         self._freeze()
 

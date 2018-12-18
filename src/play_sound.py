@@ -11,13 +11,17 @@ from pygame import Rect
 # value of 0 corresponds to A4, -12 is A3
 all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 25),
              "triangle": Soundpack("triangle", 30), "sawtooth": Soundpack("sawtooth", 30),
-             "noisy": Soundpack("square", 25), # TODO: add noise to it, 0.5 normal with 0.1 st dev
+             "noisy": Soundpack("noisysine", 25), # TODO: add noise to it, 0.5 normal with 0.1 st dev
              "random":Soundpack("random", 8)}
 
 def currentsoundpack():
     return all_tones[variables.settings.soundpack]
 
-drumpack = DrumPack("sine", 25)
+drumpacks = {"normalnoise" : DrumPack("noisedrum", 30, "sharp", 0, 36),
+             "deepnoise" : DrumPack("noisedrum", 30, "sharp", -24, 36),
+             "chirp" : DrumPack("noisysine", 30, "chirp", 12, 48),
+             # 40 milliseconds of transition, and make it very low
+             "oomphwave" : DrumPack("oomphwave", 40, "sharp", -38, 12)}
 
 # all possible soundpacks
 soundpackkeys = list(all_tones.keys())
@@ -29,12 +33,12 @@ scales = {"C major" : [2, 2, 1, 2, 2, 2, 1],
 def loadmusic(filename):
     return pygame.mixer.Sound(os.path.join(variables.pathtoself, "music/", filename))
 
-onedrum = loadmusic("onedrum.wav")
+
 effects = {
     "menumusic":loadmusic("menu.wav"),
     "bearhome" :loadmusic("bearhome.wav"),
     "engagebattle" : loadmusic("encounterenemy.wav"),
-    "onedrum" : drumpack.getsound(20)}
+    "onedrum" : drumpacks["normalnoise"].getsound(4)}
 
 channels = []
 for x in range(37):
@@ -163,9 +167,9 @@ def play_effect(s):
     soundeffectchannel.set_volume(variables.settings.volume)
     soundeffectchannel.play(sound)
 
-def play_drum(index):
+def play_drum(index, drumpackname):
     soundeffectchannel.set_volume(variables.settings.volume)
-    soundeffectchannel.play(drumpack.getsound(index))
+    soundeffectchannel.play(drumpacks[drumpackname].getsound(index))
     
 def play_music(s):
     sound = effects[s]

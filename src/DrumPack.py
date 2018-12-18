@@ -1,27 +1,57 @@
-import pygame, numpy
+import pygame, numpy, random, math
 
 from FrozenClass import FrozenClass
 from wavefunctions import make_wave
 from volumebuffers import volbuffers, volumeenvelopes
 
+def changingnoisefunction(t, sval):
+    if t % 2 < 1:
+        return sval
+    else:
+        return multiplynoisefunction(t, sval)
+
+def additivenoisefunction(t, sval):
+    noiselevel = 0.5
+    return sval + numpy.random.normal(0, noiselevel)
+
+
+def multiplynoisefunction(t, sval):
+    noiselevel = 0.2
+    sval = sval*numpy.random.normal(0.5, noiselevel)
+    if random.random()<0.5:
+        return -sval
+    else:
+        return sval
+
+def wavenoisefunction(t, sval):
+    wave = math.sin(2*math.pi * 440 * t)
+    sval = sval * numpy.random.normal(0.5, 0.1)
+
+    if random.random() < abs(wave)/2:
+        return -sval*0.5
+    else:
+        return sval
+
 class DrumPack(FrozenClass):
 
-    def __init__(self, wavetype, shapefactor):
+    def __init__(self, wavetype, shapefactor, volumeenvelopename, lowerfrequency, heigherfrequency):
         # list of sounds with different frequencies used to generate them
         self.sounds = []
 
-        self.make_soundpack(wavetype, shapefactor)
+        self.make_soundpack(wavetype, shapefactor, volumeenvelopename, lowerfrequency, heigherfrequency)
 
         self._freeze()
 
-    def make_soundpack(self, wavetype, shapefactor):
-        # generate every fifth note
-        for i in range(int(37/5)):
-            x = i * 5
-            frequency = (440 * ((2 ** (1 / 12)) ** (x - 12)))
-            loopbuf = make_wave(frequency, wavetype, shapefactor, addnoisep=True, sampleduration = (1/frequency) * 20)[0]
+    def make_soundpack(self, wavetype, shapefactor, volumeenvelopename, low, high):
+        # generate only 8 notes
+        moveby = int((high - low)/8)
+        
+        for i in range(8):
+            x = i * moveby
+            frequency = (440 * ((2 ** (1 / 12)) ** (x - 12 + low)))
+            loopbuf = make_wave(frequency, wavetype, shapefactor, sampleduration = (1/frequency) * 20)[0]
 
-            volbuf = volbuffers["sharp"]
+            volbuf = volbuffers[volumeenvelopename]
 
             buf = numpy.empty(loopbuf.shape, dtype=numpy.int16)
             volbuf = volbuf[0:loopbuf.shape[0]]
@@ -30,6 +60,6 @@ class DrumPack(FrozenClass):
             sound = pygame.sndarray.make_sound(buf)
             self.sounds.append(sound)
 
+    # a number from 0 to 7
     def getsound(self, index):
-        i = int(index/5)
-        return self.sounds[i]
+        return self.sounds[index]

@@ -38,10 +38,10 @@ animations = []
 enemies = {}
 
 counter = 0
-def addEnemy(name, rules, animation, volumeenvelope = None):
+def addEnemy(name, rules, animation, volumeenvelope = None, drumpackname = None):
     global counter
     animations.append(animation)
-    enemies[name] = Enemy(counter, 1, name, rules, volumeenvelope)
+    enemies[name] = Enemy(counter, 1, name, rules, volumeenvelope, drumpackname)
     counter += 1
 
 def getenemies(listofnames):
@@ -59,10 +59,12 @@ addEnemy("sheep", [],
 
 # just tutorial enemy
 addEnemy("mean green", ["melodic", "repeat", "rests", "noaccidentals"],
-         Animation(["meangreen0", "meangreen1"], defaultanimspeed))
+         Animation(["meangreen0", "meangreen1"], defaultanimspeed),
+         drumpackname = "deepnoise")
 
 addEnemy("perp", ["alternating"],
-         Animation(["purpleperp0", "purpleperp1", "purpleperp2", "purpleperp3"], defaultanimspeed))
+         Animation(["purpleperp0", "purpleperp1", "purpleperp2", "purpleperp3"], defaultanimspeed),
+         drumpackname="chirp")
 
 addEnemy("spoe", ["rests", "skippy", "melodic", "repeatvariation"],
          Animation(["spoe0", "spoe1"], defaultanimspeed))
@@ -80,7 +82,8 @@ addEnemy("chimney", ["repeatrhythm", "melodic", "highrepeatchance"],
          chimneyanimation)
 
 addEnemy("scary steven", ["norests", "nochords", "shorternotes", "melodic", "repeatspaceinbetween", "repeatonlybeginning", "nodoublerepeats", "lowervalues"],
-         steveanimation, "flat")
+         steveanimation, "flat",
+         drumpackname = "oomphwave")
 
 addEnemy("rad turtle", ["repeatmove", "repeatspaceinbetween", "nodoublerepeats"],
          Animation(["radturtle0", "radturtle1"], defaultanimspeed))

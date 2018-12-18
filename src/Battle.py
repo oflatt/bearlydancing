@@ -412,7 +412,7 @@ class Battle(FrozenClass):
     def drumbeat(self, partofbeat):
         # play the drum
         if partofbeat == 0:
-            play_drum(0)
+            play_drum(0, self.enemy.drumpackname)
 
             # chance for a special move based on combo
             specialmovechance = (self.getcombo())/len(self.beatmaps[self.current_beatmap].originalnotes)
@@ -435,12 +435,12 @@ class Battle(FrozenClass):
         elif partofbeat == 2:
             drumchance = self.getcombo()/len(self.beatmaps[self.current_beatmap].originalnotes)
             if random.random() <drumchance:
-                play_drum(20)
+                play_drum(4, self.enemy.drumpackname)
         else:
             drumchance = self.getcombo()/len(self.beatmaps[self.current_beatmap].originalnotes)
             drumchance = drumchance/4
             if random.random() <drumchance:
-                play_drum(20)
+                play_drum(4, self.enemy.drumpackname)
         
 
         # player dirty rect and enemy dirty rect on beat
@@ -662,8 +662,10 @@ class Battle(FrozenClass):
                     change_scale(1)
             else:
                 if variables.checkkey("left", key):
+                    play_drum(4, self.enemy.drumpackname)
                     self.battlechoice.previousoption()
                 elif variables.checkkey("right", key):
+                    play_drum(4, self.enemy.drumpackname)
                     self.battlechoice.nextoption()
                 elif variables.checkkey("up", key) and self.battlechoice.current_option == 2:
                     change_soundpack(-1)

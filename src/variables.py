@@ -18,9 +18,9 @@ except ImportError:
 testsmallp = False
 devmode = True
 # skip the fight with steve, add the event to the player
-skipsteve = True
+skipsteve = False
 # adds all the soundpacks and keys to the player
-addallrewards = True
+addallrewards = False
 # generates a new world on load no matter what
 newworldeachloadq = False
 # allows specific graphics functions to override and make new generated graphics
@@ -364,6 +364,7 @@ def updatescreen():
         updaterects()
 
 def updaterects():
-    pygame.display.update(dirtyrects + olddirtyrects + [Rect(10,font.get_linesize(), font.get_linesize()*6, font.get_linesize()*6)])
+    # update rects and the fps
+    pygame.display.update(dirtyrects + olddirtyrects + [Rect(10,font.get_linesize(), font.get_linesize()*5, font.get_linesize()*3)])
         
 sign = lambda x: (1, -1)[x < 0]

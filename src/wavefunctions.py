@@ -5,7 +5,7 @@ from math import pi
 from variables import sample_rate
 from variables import max_sample
 
-def sinesval(t, f):
+def sinesval(t, f, shapefactorunused):
     wave = math.sin(2 * math.pi * f * t)
     harmonic1 = (1 / 4) * math.sin(4 * math.pi * f * t)
     harmonic2 = (1 / 8) * math.sin(8 * math.pi * f * t)
@@ -84,9 +84,45 @@ def newrandomwavefunction():
         return rfunction(t,f,shapefactor) + (1/4)*rfunction2(2*t, f, shapefactor) + (1/8)*rfunction3(4*t, f, shapefactor)
     return sfunction
 
+
+def noisydrumsval(t, f, shapefactor):
+    noiselevel = 0.2
+    sval = sinesval(t,f,shapefactor)*numpy.random.normal(0.5, noiselevel)
+    if random.random()<0.4:
+        return -sval
+    else:
+        return sval
+
+def noisysine(t, f, shapefactor):
+    noiselevel = 0.1
+    sval = sinesval(t,f,shapefactor)*numpy.random.normal(0.5, noiselevel)
+    if random.random()<0.2:
+        return -sval*0.5
+    else:
+        return sval
+
+# changes the frequency over time to reach the target frequency, starting at triple the frequency
+# shapefactor used for how long the transition takes- in milliseconds
+def oomphwave(t, f, shapefactor):
+    criticalt = shapefactor
+    if t > criticalt:
+        return math.sin(2 * math.pi * f * t + (f*(math.pow(shapefactor, 2)/(criticalt+1)))*2*math.pi)
+    else:
+        return math.sin((f*(math.pow(shapefactor, 2)/(t+1)))*2*math.pi)
+
+# new sval functions need to be added to the list
+wavetypetofunction = {"sine":sinesval,
+                      "square": squaresval,
+                      "triangle": trianglesval,
+                      "sawtooth": sawtoothsval,
+                      "noisedrum":noisydrumsval,
+                      "noisysine":noisysine,
+                      "oomphwave":oomphwave}
+
 # min refinement of 1 which means sine wave, and bigger numbers will take longer unless it is above 25 or so
 # the default duration (None) is 1/frequency * 50
-def make_wave(frequency, wavetype, shapefactor, addnoisep = False, sampleduration = None):
+# processfunction is a function called on each of the values with the time and the value- it returns a new value
+def make_wave(frequency, wavetype, shapefactor, sampleduration = None):
     if sampleduration == None:
         loopduration = (1 / frequency) * 50  # in seconds
     else:
@@ -102,32 +138,18 @@ def make_wave(frequency, wavetype, shapefactor, addnoisep = False, sampleduratio
     if wavetype == "random":
         randfunction = newrandomwavefunction()
 
-    def get_sval(t):
-        sval = 0
-
-        if wavetype == "sine":
-            sval = sinesval(t, frequency)
-        elif wavetype == "square":
-            sval = squaresval(t, frequency, shapefactor)
-        elif wavetype == "triangle":
-            sval = trianglesval(t, frequency, shapefactor)
-        elif wavetype == "sawtooth":
-            sval = sawtoothsval(t, frequency, shapefactor)
-        elif wavetype == "random":
-            sval = randfunction(t, frequency, shapefactor)
-        else:
-            raise Exception("unknown wavetype " + wavetype)
-
-        noiselevel = 0.1
-        if addnoisep:
-            sval = sval*numpy.random.normal(0.5, noiselevel)
-            if random.random() < 0.2:
-                sval *= -0.5
-        
-        return int(round(max_sample * sval))
-
+    svalfunction = None
     
+    if wavetype == "random":
+        svalfunction = randfunction
+    elif wavetype in wavetypetofunction:
+        svalfunction = wavetypetofunction[wavetype]
+    else:
+        raise Exception("unknown wavetype " + wavetype)
+
+    def get_sval(t):
         
+        return int(round(max_sample * svalfunction(t, frequency, shapefactor)))
 
     # find the maximum value to use to normalize it (make the max volume 1)
     normalizevalue = 1

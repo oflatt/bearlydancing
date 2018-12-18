@@ -16,6 +16,7 @@ gameplay
 sound
 -load own sounds using the bowl pianoputer as example
       -random generation of wave?
+- add noise to one of the synthesizers- "noisey" given to you by a noisy character
 - different drums for different enemies, multiple drum samples
   - which wave to start with
   - chance to flip sign with noise
