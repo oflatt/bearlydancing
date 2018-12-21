@@ -51,6 +51,7 @@ class Soundpack(FrozenClass):
         envelope = volumeenvelopes[volenvelope]
         n_samples = int(round(envelope.timevollist[-1][0]*sample_rate/1000))
         n_samples2 = int(round(envelope.endoscilationrate/1000*sample_rate))
+        
         volindex = int(time/1000 * sample_rate)
         if volindex>n_samples:
             volindex = n_samples + (volindex-n_samples) % n_samples2

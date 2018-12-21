@@ -1,7 +1,7 @@
 import pygame, numpy
 
 
-from wavefunctions import make_wave, savebuffertofile
+from wavefunctions import make_wave, savesoundtofile
 from volumebuffers import volbuffers
 
 
@@ -17,4 +17,4 @@ for x in range(37):
     numpy.multiply(volbuf, loopbuf, out=buf, casting='unsafe')
     sound = pygame.sndarray.make_sound(buf)
 
-    savebuffertofile("drum_" + str(x), sound)
+    savesoundtofile("drum_" + str(x), sound)

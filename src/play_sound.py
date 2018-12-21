@@ -21,7 +21,7 @@ drumpacks = {"normalnoise" : DrumPack("noisedrum", 30, "sharp", 0, 36),
              "deepnoise" : DrumPack("noisedrum", 30, "sharp", -24, 36),
              "chirp" : DrumPack("noisysine", 30, "chirp", 12, 48),
              # 40 milliseconds of transition, and make it very low
-             "oomphwave" : DrumPack("oomphwave", 40, "sharp", -38, 12)}
+             "oomphwave" : DrumPack("oomphwave", 20, "sharp", -24-12, 6, duration=((1/440)*150))}
 
 # all possible soundpacks
 soundpackkeys = list(all_tones.keys())

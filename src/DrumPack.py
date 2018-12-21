@@ -34,22 +34,26 @@ def wavenoisefunction(t, sval):
 
 class DrumPack(FrozenClass):
 
-    def __init__(self, wavetype, shapefactor, volumeenvelopename, lowerfrequency, heigherfrequency):
+    def __init__(self, wavetype, shapefactor, volumeenvelopename, lowerfrequency, heigherfrequency, duration=None):
         # list of sounds with different frequencies used to generate them
         self.sounds = []
 
-        self.make_soundpack(wavetype, shapefactor, volumeenvelopename, lowerfrequency, heigherfrequency)
+        self.make_soundpack(wavetype, shapefactor, volumeenvelopename, lowerfrequency, heigherfrequency, duration)
 
         self._freeze()
 
-    def make_soundpack(self, wavetype, shapefactor, volumeenvelopename, low, high):
+    def make_soundpack(self, wavetype, shapefactor, volumeenvelopename, low, high, duration):
         # generate only 8 notes
         moveby = int((high - low)/8)
         
         for i in range(8):
             x = i * moveby
             frequency = (440 * ((2 ** (1 / 12)) ** (x - 12 + low)))
-            loopbuf = make_wave(frequency, wavetype, shapefactor, sampleduration = (1/frequency) * 20)[0]
+            sampledur = duration
+            if sampledur == None:
+                sampledur = (1/440)*20
+            sampledur = sampledur - sampledur%(1/frequency)
+            loopbuf = make_wave(frequency, wavetype, shapefactor, sampleduration = sampledur)[0]
 
             volbuf = volbuffers[volumeenvelopename]
 

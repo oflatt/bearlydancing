@@ -14,6 +14,7 @@ gameplay
 - zoom button, rescaling funciton
 
 sound
+- talk to characters to modify instrument- add kick, reverb?
 -load own sounds using the bowl pianoputer as example
       -random generation of wave?
 - add noise to one of the synthesizers- "noisey" given to you by a noisy character

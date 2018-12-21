@@ -1,4 +1,4 @@
-import math, random, numpy, random, os, wave
+import math, random, numpy, random, os, wave, pygame
 from math import sin
 from math import pi
 
@@ -101,14 +101,29 @@ def noisysine(t, f, shapefactor):
     else:
         return sval
 
+def lazerwave(t, f, shapefactor):
+    t = t * 1000
+    return math.sin(f*(math.pow(shapefactor, 2)/(t+1))*2*math.pi)
+
+def oomphgong(t, f, shapefactor):
+    t = t * 1000
+    if t > shapefactor:
+        secondt = math.pow(t, math.sin(t*2*0.2*math.pi)*0.05+1)
+        secondt = (secondt-shapefactor)/1000
+        return math.sin(2 * math.pi * f * secondt + f*(math.pow(shapefactor, 2)/(shapefactor+20))*2*math.pi)
+    else:
+        return math.sin(f*((math.pow(shapefactor, 2)/(t+1))/1000)*2*math.pi)
+    
 # changes the frequency over time to reach the target frequency, starting at triple the frequency
 # shapefactor used for how long the transition takes- in milliseconds
 def oomphwave(t, f, shapefactor):
-    criticalt = shapefactor
-    if t > criticalt:
-        return math.sin(2 * math.pi * f * t + (f*(math.pow(shapefactor, 2)/(criticalt+1)))*2*math.pi)
+    t = t * 1000
+    if t > shapefactor:
+        secondt = t
+        secondt = (secondt-shapefactor)/1000
+        return sawtoothsval(secondt + ((math.pow(shapefactor, 2)/(shapefactor+1))/1000), f, 6)
     else:
-        return math.sin((f*(math.pow(shapefactor, 2)/(t+1)))*2*math.pi)
+        return sawtoothsval((math.pow(shapefactor, 2)/(t+1))/1000, f, 6)
 
 # new sval functions need to be added to the list
 wavetypetofunction = {"sine":sinesval,
@@ -165,11 +180,17 @@ def make_wave(frequency, wavetype, shapefactor, sampleduration = None):
         buf[s][0] = sval
         buf[s][1] = sval
 
+    if wavetype == "replace to save a wavetype":
+        savebuffertofile(wavetype + str(frequency), buf)
+
     return (buf, duration)
 
 
+def savebuffertofile(name, buff):
+    savesoundtofile(name, pygame.sndarray.make_sound(buff))
+
 # saves a pygame sound to a wav file in sounds folder
-def savebuffertofile(name, sound):
+def savesoundtofile(name, sound):
     try:
         os.makedirs("sounds")
     except OSError:
