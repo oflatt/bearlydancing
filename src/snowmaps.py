@@ -22,5 +22,14 @@ snowarea1.populate_with("snowpinetree", randint(10, 15))
 snowarea1.lvrange = [6, 7]
 snowarea1.enemies = enemies.snowenemies
 
-snowarea1.exitareas = [Exit("right", False, "snowentrance", "left", "same")]
+snowarea1.exitareas = [Exit("right", False, "snowentrance", "left", "same"),
+                       Exit("left", False, "hoppingtreearea", "right", "same")]
 
+# hoppingtreearea#######################################################################
+hoppingrock = Rock("chicking0", 350, 250, variables.TREECOLLIDESECTION)
+hoppingtreearea = Map(snowland(800, 500), [hoppingrock])
+
+hoppingtreearea.lvrange = [6, 8]
+hoppingtreearea.enemies = enemies.snowenemies
+
+hoppingtreearea.exitareas = [Exit("right", False, "snowarea1", "left", "same")]

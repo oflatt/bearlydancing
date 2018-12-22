@@ -1,9 +1,9 @@
 # random_beatmap is the entrypoint- values and durations are calculated separetly
 
-#    contracts
+#    contracts- checked at the end of generation
 # the note list in the end should be ordered early notes first
 # notes added on generatively- each "layer" has the main melody note at the end of the list, chord notes inserted before it
-# no note should have a time plus duration longer than current time
+# values should be integers
 from Beatmap import Beatmap
 from Note import Note
 from Note import value_to_screenvalue
@@ -18,7 +18,8 @@ from random import randint
 import variables, math
 
 
-''' rule types for beatmaps (in specs)
+''' rule types for beatmaps that are stored in rules in the specs dictionary
+A list of these rules is checked against in notelistfunctions
 -------- general --------------
 melodic- higher chance of notes being in a row in one direction and other things
 skippy- high chance of note value being 2 away, with continuing direction chance, only melodic
@@ -30,6 +31,7 @@ shorternotes- add more of a chance for the shorter notes
 highervlaues- bias values higher
 lowervalues- bias values lower
 seperatedchordchance- chance to have a rest and then a chord with three notes in it
+holdlongnote- hold long notes while the normal melody continues (reducing difficulty for those notes)
 
 ------- repeat ----------------
 repeat- repeats sections with variations- all of the following can combine except repeatvalues
@@ -107,8 +109,9 @@ def addnote(notelist, time, ischord, specs, valuestouse, accidentalp):
 
     return (l, duration)
 
+
 # returns none if not a special layer, otherwise returns a new list and duration of the layer in a tuple
-def speciallayer(notelist, time, specs):
+def speciallayer(notelist, time, specs, specialmarkers):
 
     if hasrule("seperatedchordchance", specs) and not myrand(4+specs['lv']/2):
         notelist = notelist.copy()
@@ -121,19 +124,36 @@ def speciallayer(notelist, time, specs):
         val3 = random_value(time+restdur, True, notelist, specs)
         notelist.insert(-1, Note(val3, time+restdur, notedur, True))
         return (notelist, restdur+notedur)
+    if hasrule("holdlongnote", specs) and not myrand(4+specs['lv']/2):
+        # add a long note and then repeat until after that long note
+        longnoteduration = 8
+        if random.random() < 0.2 + specs['lv']/80:
+            longnoteduration = 16
+        accidentalp= makeaccidentalp(specs, notelist)
+        if random.random() < 0.5:
+            accidentalp = False
 
+        # add the long note
+        rv = random_value(time, ischord, l, specs)
+        l = notelist.append(Note(rv, time, longnoteduration))
+        reducedspecs = specs.copy()
+        reducedspecs["lv"] = max(2, specs["lv"] - 5)
+
+        loopresult = looplayers(time, time+longnoteduration, l, specs, ["holdinglongnote"])
+
+        
     return None
 
 
 # returns a new list and the duration of the layer in a tuple
 # valuestouse is a list of values to use instead of calling random_value, for use in repeatvaluesrepetition
-def addlayer(notelist, time, specs, valuestouse = []):
+def addlayer(notelist, time, specs, valuestouse = [], specialmarkers = []):
     lv = specs['lv']
     isr = restp(time, notelist, specs)
 
     # if there is a special layer, do that instead
     if len(valuestouse) == 0:
-        sl = speciallayer(notelist, time, specs)
+        sl = speciallayer(notelist, time, specs, specialmarkers)
         if sl != None:
             return sl
     
@@ -169,26 +189,11 @@ def maxtimefromspecs(specs):
     maxtime = specs['maxtime']
     return maxtime + specs['lv']*2
 
-    
-def random_beatmap(specs):
-    if variables.devmode:
-        print()
-        print('output of:')
-        print("   " + str(specs['rules']) + " lv: " + str(specs['lv']))
-        print()
 
-    # first update the screen to say it is being generated
-    drawthismessage("generating new beatmap")
-    variables.updatescreen()
-    # set the variable so that time stops for a frame
-    variables.generatingbeatmapp = True
-    
-    l = []
+def looplayers(time, maxtime, notelist, specs, specialmarkers = []):
+    l = notelist.copy()
     lv = specs['lv']
-    maxtime = maxtimefromspecs(specs);
-    time = 0
-    # repeatduration used in repeat rule for how much time back to copy
-    repeatduration = None
+
     repeatmodep = False
     for r in specs['rules']:
         if r[0:6] == 'repeat':
@@ -215,9 +220,33 @@ def random_beatmap(specs):
             addlayerp = True
             
         if addlayerp:
-            addl = addlayer(l, time, specs)
+            addl = addlayer(l, time, specs, specialmarkers=specialmarkers)
             l = addl[0]
             time += addl[1]
+            
+    return (l, time)
+    
+def random_beatmap(specs):
+    if variables.devmode:
+        print()
+        print('output of:')
+        print("   " + str(specs['rules']) + " lv: " + str(specs['lv']))
+        print()
+
+    # first update the screen to say it is being generated
+    drawthismessage("generating new beatmap")
+    variables.updatescreen()
+    # set the variable so that time stops for a frame
+    variables.generatingbeatmapp = True
+    
+    lv = specs['lv']
+    maxtime = maxtimefromspecs(specs);
+    
+    
+
+    loopresult = looplayers(0, maxtime, [], specs)
+    l = loopresult[0]
+
 
     # default cheap ending- throw in a tonic at end
     lastvalue = random.choice([variables.minvalue, variables.maxvalue, 0])
@@ -281,6 +310,7 @@ def random_duration(time, notelist, specs, isr, ischord):
             offset = 0.2 + lv/100 
         return random.random() < 0.5+offset
 
+    
     d = 1
     if randint(0, 50) < (lv + 2) ** 2:
         if halfp():

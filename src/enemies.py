@@ -94,6 +94,8 @@ addEnemy("dance lion", ["alternating", "repeatvariation", "repeatonlybeginning",
 addEnemy("pile o' snow", ["melodic", "repeat", "repeatvariation", "seperatedchordchance"],
          Animation(["pileo'snow0", "pileo'snow1"], defaultanimspeed))
 
+# TODO change to hopping tree
+addEnemy("hopping tree", ["melodic", "holdlongnote"], Animation(["chicking0"],defaultanimspeed))
 
 woodsenemies = getenemies(["perp", "spoe", "croc", "bogo", "rad turtle"])
 snowenemies = getenemies(["pile o' snow"])
