@@ -33,3 +33,4 @@ hoppingtreearea.lvrange = [6, 8]
 hoppingtreearea.enemies = enemies.snowenemies
 
 hoppingtreearea.exitareas = [Exit("right", False, "snowarea1", "left", "same")]
+
