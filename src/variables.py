@@ -18,7 +18,7 @@ except ImportError:
 testsmallp = False
 devmode = True
 # skip the fight with steve, add the event to the player
-skipsteve = False
+skipsteve = True
 # adds all the soundpacks and keys to the player
 addallrewards = False
 # generates a new world on load no matter what

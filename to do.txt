@@ -12,7 +12,7 @@ gameplay
 - make jeremy fightable after completion of snow area
 - story needs more jokes, more references- nani, you beat my best brother jeremy???!
 -different volume envelopes
-- zoom button, rescaling funciton
+- have computer replay song perfectly button
 
 sound
 - talk to characters to modify instrument- add kick, reverb?

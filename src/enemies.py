@@ -1,7 +1,7 @@
 from Enemy import Enemy
 from Animation import Animation
 from graphics import GR
-import random
+import random, copy
 
 defaultanimspeed = 1000
 
@@ -105,3 +105,6 @@ devbattletest = enemies["bogo"]
 
 def random_enemy(area):
     return random.choice(woodsenemies)
+
+def enemyforspecialbattle(enemyname):
+    return copy.copy(enemies[enemyname])

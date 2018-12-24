@@ -124,7 +124,7 @@ def speciallayer(notelist, time, specs, specialmarkers):
         val3 = random_value(time+restdur, True, notelist, specs)
         notelist.insert(-1, Note(val3, time+restdur, notedur, True))
         return (notelist, restdur+notedur)
-    if hasrule("holdlongnote", specs) and not myrand(4+specs['lv']/2):
+    if hasrule("holdlongnote", specs) and not myrand(4+specs['lv']/2) and (not "holdinglongnote" in specialmarkers):
         # add a long note and then repeat until after that long note
         longnoteduration = 8
         if random.random() < 0.2 + specs['lv']/80:
@@ -134,13 +134,14 @@ def speciallayer(notelist, time, specs, specialmarkers):
             accidentalp = False
 
         # add the long note
-        rv = random_value(time, ischord, l, specs)
-        l = notelist.append(Note(rv, time, longnoteduration))
+        rv = random_value(time, False, notelist, specs)
+        l = notelist.copy()
+        l.append(Note(rv, time, longnoteduration, chordadditionp = True))
         reducedspecs = specs.copy()
         reducedspecs["lv"] = max(2, specs["lv"] - 5)
-
-        loopresult = looplayers(time, time+longnoteduration, l, specs, ["holdinglongnote"])
-
+        loopresult =  looplayers(time, time+longnoteduration, l, reducedspecs, ["holdinglongnote"])
+        
+        return (loopresult[0], loopresult[1]-time)
         
     return None
 
@@ -189,7 +190,8 @@ def maxtimefromspecs(specs):
     maxtime = specs['maxtime']
     return maxtime + specs['lv']*2
 
-
+# loops through until maxtime, adding layers
+# returns a tuple with a list of notes and the new time
 def looplayers(time, maxtime, notelist, specs, specialmarkers = []):
     l = notelist.copy()
     lv = specs['lv']

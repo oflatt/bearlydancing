@@ -241,6 +241,10 @@ beatkewlc = Conversation("beatkewl", [Speak("kewlcorn0", ["Wow, that was cool!",
 beatchimneyc = Conversation("beatchimney", [Speak("flyingchimney4", ["...",
                                                                      "*The chimney drops something.*"])])
 
+
+hoppingtree = Conversation("hoppingtree", [Speak("chicking0", ["!", "!"])])
+
+# floating conversations #########################################################
 floatingconversations = {}
 
 def addfloating(c):

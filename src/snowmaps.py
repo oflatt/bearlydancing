@@ -1,9 +1,14 @@
-import variables, graphics, enemies
+
 from random import randint
+
+import variables, graphics, enemies
+from enemies import enemyforspecialbattle
+from conversations import getconversation
 from Map import Map
 from graphics import snowland
 from Exit import Exit
 from Rock import Rock
+from pygame import Rect
 
 
 # snowentrance###########################################################################
@@ -34,3 +39,9 @@ hoppingtreearea.enemies = enemies.snowenemies
 
 hoppingtreearea.exitareas = [Exit("right", False, "snowarea1", "left", "same")]
 
+hoppingtreeconversation = getconversation("hoppingtree")
+hoppingtreeconversation.area = Rect(hoppingrock.x, hoppingrock.y + int(hoppingrock.h*3/4), hoppingrock.w, hoppingrock.h/2)
+hoppingtreeconversation.special_battle = enemyforspecialbattle("hopping tree")
+hoppingtreeconversation.special_battle.lv = 8
+
+hoppingtreearea.conversations = [hoppingtreeconversation]
