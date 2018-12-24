@@ -32,6 +32,7 @@ highervlaues- bias values higher
 lowervalues- bias values lower
 seperatedchordchance- chance to have a rest and then a chord with three notes in it
 holdlongnote- hold long notes while the normal melody continues (reducing difficulty for those notes)
+doublenotes- doubles all notes up two notes
 
 ------- repeat ----------------
 repeat- repeats sections with variations- all of the following can combine except repeatvalues
@@ -103,9 +104,9 @@ def addnote(notelist, time, ischord, specs, valuestouse, accidentalp):
             
     # chord notes added before the main note to make it easier to compare to the melody
     if ischord:
-        l.insert(len(l) - 1, Note(rv, time, duration, True, accidentalp = accidentalp))
+        appendnotewithspecs(l, Note(rv, time, duration, True, accidentalp = accidentalp), specs)
     else:
-        l.append(Note(rv, time, duration, accidentalp = accidentalp))
+        appendnotewithspecs(l, Note(rv, time, duration, accidentalp = accidentalp), specs)
 
     return (l, duration)
 
@@ -118,11 +119,17 @@ def speciallayer(notelist, time, specs, specialmarkers):
         restdur = random_duration(time, notelist, specs, True, False)
         notedur = random_duration(time, notelist, specs, False, False)
         val1 = random_value(time+restdur, False, notelist, specs)
-        notelist.append(Note(val1, time+restdur, notedur, False))
+        
+        appendnotewithspecs(notelist, Note(val1, time+restdur, notedur, False), specs)
+        
         val2 = random_value(time+restdur, True, notelist, specs)
-        notelist.insert(-1, Note(val2, time+restdur, notedur, True))
+
+        appendnotewithspecs(notelist, Note(val2, time+restdur, notedur, True), specs)
+
         val3 = random_value(time+restdur, True, notelist, specs)
-        notelist.insert(-1, Note(val3, time+restdur, notedur, True))
+        
+        appendnotewithspecs(notelist, Note(val3, time+restdur, notedur, True), specs)
+
         return (notelist, restdur+notedur)
     if hasrule("holdlongnote", specs) and not myrand(4+specs['lv']/2) and (not "holdinglongnote" in specialmarkers):
         # add a long note and then repeat until after that long note
@@ -136,7 +143,10 @@ def speciallayer(notelist, time, specs, specialmarkers):
         # add the long note
         rv = random_value(time, False, notelist, specs)
         l = notelist.copy()
+
+        # append it strait, without using special append rules
         l.append(Note(rv, time, longnoteduration, chordadditionp = True))
+        
         reducedspecs = specs.copy()
         reducedspecs["lv"] = max(2, specs["lv"] - 5)
         loopresult =  looplayers(time, time+longnoteduration, l, reducedspecs, ["holdinglongnote"])
@@ -253,7 +263,7 @@ def random_beatmap(specs):
     # default cheap ending- throw in a tonic at end
     lastvalue = random.choice([variables.minvalue, variables.maxvalue, 0])
     startt = round(l[-1].time + l[-1].duration + 0.5)
-    l.append(Note(lastvalue, startt, randint(1,2)))
+    appendnotewithspecs(l, Note(lastvalue, startt, randint(1,2)), specs)
 
     # tempo is milliseconds per beat
     tempo = (1200 * 3) / (math.sqrt(lv)*0.4+ 0.08*lv + 3.5)
@@ -689,3 +699,15 @@ def getrepeatduration(l, specs, maxtime, currenttime):
         else:
             duration = 2
     return duration
+
+# appends a note to a list, but takes into account rules that change this operation
+def appendnotewithspecs(l, note, specs):
+    if hasrule('doublenotes', specs):
+        pass # TODO check if note above does not collide and is in range
+    else:
+        # chords are inserted before other notes
+        if note.chordadditionp:
+            l.insert(-1, note)
+        else:
+            l.append(note)
+    

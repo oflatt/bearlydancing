@@ -6,18 +6,18 @@ bugs
 gameplay
 - bosses should use concepts from many enemies faced to give a sense of learning and accomplishment
 -knomi code name- bear winks at you
--map objects and loading more safely, versioning, safely load with new content
--random star character- one side of leg longer than other so it looks funny
--ddr machine that you can play and dance against
+- map objects and loading more safely, versioning, safely load with new content
+- random star character- one side of leg longer than other so it looks funny
+- ddr machine that you can play and dance against
 - make jeremy fightable after completion of snow area
+- in general, dialogue that reacts to world events- jeremy says something different after steve
 - story needs more jokes, more references- nani, you beat my best brother jeremy???!
 -different volume envelopes
-- have computer replay song perfectly button
 
 sound
 - talk to characters to modify instrument- add kick, reverb?
--load own sounds using the bowl pianoputer as example
-      -random generation of wave?
+- load own sounds using the bowl pianoputer as example
+- random generation of wave?
 - add noise to one of the synthesizers- "noisey" given to you by a noisy character
 - different drums for different enemies, multiple drum samples
   - which wave to start with
@@ -26,6 +26,7 @@ sound
   - less random noise? some sort of wave of noise
   - add noise vs multiply by it
 - save to midi, sheet music
+- have computer replay song perfectly button
 
 battle
 - battle code is ugly and convoluted with all the time/health variables
@@ -39,25 +40,22 @@ rules ideas
 
 - dual notes rule- every note doubled, 2 notes apart
 - triplet mode only for some enemies
-- repeating with variation chance to redo all of the rest of the notes, especially halfway through or power of 2
+- repeating with variation chance to redo all of the rest of the notes? epecially halfway through or power of 2?
 - two simple melodies, then both at same time
 - left hand repeats while right is a song
-- long chord mode with a note being held with stuff around it
 
 
 
 Knob ideas for the beatmap generator
 
 - sway pitch to higher or lower for different enemies
-  - idea of center?
-  - triangle modified probability distruibution?
 - sway probabilities for repeating at different lengths, and the size of these repetitions
 
 
 
 graphics
--shift pixels for wind? give life to the game
-
+- shift pixels for wind? give life to the game
+- shadows- generated based upon the image- getshadow function in graphics that caches the result
 
 Sophie:
 -tent snow
