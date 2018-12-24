@@ -38,6 +38,8 @@ battle
 
 rules ideas
 
+- add more score multipliers to notes, scoremultiply function after note has been decided
+
 - dual notes rule- every note doubled, 2 notes apart
 - triplet mode only for some enemies
 - repeating with variation chance to redo all of the rest of the notes? epecially halfway through or power of 2?

@@ -198,12 +198,9 @@ def notechordorderedp(l):
     # check all but last note
     for i in range(len(l)-1):
         n = l[i]
-        if n.chordadditionp:
-            if not n.time == l[i+1].time:
-                orderedp = False
-                break
+        
         # if it should have been a chord addition note
-        elif n.time == l[i+1].time:
+        if n.time == l[i+1].time and not n.chordadditionp:
             orderedp = False
             break
     return orderedp

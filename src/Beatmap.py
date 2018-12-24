@@ -77,8 +77,9 @@ class Beatmap():
             self.notes = copy.deepcopy(self.originalnotes)
         self.drumcounter = 0
 
-    def appendscore(self, score):
-        self.scores.append(score)
+    def appendscore(self, score, noteplayed):
+        for x in range(noteplayed.scoremultiplier):
+            self.scores.append(score)
         if score == variables.miss_value:
             self.currentcombo = 0
         else:
@@ -253,7 +254,7 @@ class Beatmap():
                     if s == variables.miss_value:
                         self.notes[np].ison = False
                         self.setfeedback(self.notes[np].screenvalue(), "miss")
-                        self.appendscore(variables.miss_value)
+                        self.appendscore(variables.miss_value, self.notes[np])
 
         # returns the value for the sound produced
         def check_place(v, modifiedp):
@@ -323,7 +324,7 @@ class Beatmap():
                         self.notes[np].height_offset = self.notes[np].pos[1] - variables.getpadypos()
                         self.notes[np].ison = False
 
-                    self.appendscore(final_note_score)
+                    self.appendscore(final_note_score, self.notes[np])
 
                     if final_note_score == variables.miss_value:
                         self.setfeedback(self.notes[np].screenvalue(), "miss")
@@ -388,7 +389,7 @@ class Beatmap():
                 if self.notes[x].ison:
                     self.setfeedback(self.notes[np].screenvalue(), "miss")
                     self.notes[x].ison = False
-                    self.appendscore(variables.miss_value)
+                    self.appendscore(variables.miss_value, self.notes[x])
                 elif self.notes[x].pos[1] < 0:
                     # if you are in a part of the list before the screen, don't keep checking
                     # (assuming the list of notes must be ordered by time, of course)

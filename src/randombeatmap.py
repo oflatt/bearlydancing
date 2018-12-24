@@ -145,7 +145,7 @@ def speciallayer(notelist, time, specs, specialmarkers):
         l = notelist.copy()
 
         # append it strait, without using special append rules
-        l.append(Note(rv, time, longnoteduration, chordadditionp = True))
+        l.append(Note(rv, time, longnoteduration, chordadditionp = True, scoremultiplier = 4+specs['lv']/2))
         
         reducedspecs = specs.copy()
         reducedspecs["lv"] = max(2, specs["lv"] - 5)
