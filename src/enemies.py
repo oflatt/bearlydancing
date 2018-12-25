@@ -95,10 +95,14 @@ addEnemy("pile o' snow", ["melodic", "repeat", "repeatvariation", "seperatedchor
          Animation(["pileo'snow0", "pileo'snow1"], defaultanimspeed))
 
 # TODO change to hopping tree
-addEnemy("hopping tree", ["melodic", "holdlongnote"], Animation(["chicking0"],defaultanimspeed))
+addEnemy("hopping tree", ["melodic", "holdlongnote"],
+         Animation(["chicking0"],defaultanimspeed))
+
+addEnemy("snow fly", ["melodic", "repeatvariation", "doublenotes"],
+         Animation(["snowbutterflyfly0", "snowbutterflyfly1"], defaultanimspeed))
 
 woodsenemies = getenemies(["perp", "spoe", "croc", "bogo", "rad turtle"])
-snowenemies = getenemies(["pile o' snow"])
+snowenemies = getenemies(["pile o' snow", "snow fly"])
 
 # if none picks random one, if an enemy engages enemy
 devbattletest = enemies["bogo"]

@@ -239,6 +239,10 @@ def looplayers(time, maxtime, notelist, specs, specialmarkers = []):
     return (l, time)
     
 def random_beatmap(specs):
+    # lower level for double notes rule
+    if hasrule('doublenotes', specs):
+        specs['lv'] = max(specs['lv'] - 6, 2)
+    
     if variables.devmode:
         print()
         print('output of:')
@@ -702,12 +706,18 @@ def getrepeatduration(l, specs, maxtime, currenttime):
 
 # appends a note to a list, but takes into account rules that change this operation
 def appendnotewithspecs(l, note, specs):
-    if hasrule('doublenotes', specs):
-        pass # TODO check if note above does not collide and is in range
+    # chords are inserted before other notes
+    if note.chordadditionp:
+        l.insert(-1, note)
     else:
-        # chords are inserted before other notes
-        if note.chordadditionp:
-            l.insert(-1, note)
-        else:
-            l.append(note)
+        l.append(note)
+        
+    if hasrule('doublenotes', specs):
+        # add another note two values above if it is in range and does not collide
+        newval = note.value + 2
+        if not outsiderangeq(newval):
+            if not notecollidep(note.time, newval, note.duration, l):
+                l.insert(-1, Note(newval, note.time, note.duration, chordadditionp=True, accidentalp = note.accidentalp))
+        
+        
     
