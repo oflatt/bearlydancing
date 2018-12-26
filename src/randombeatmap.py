@@ -155,37 +155,59 @@ def speciallayer(notelist, time, specs, specialmarkers):
         return (loopresult[0], loopresult[1]-time)
 
     if hasrule('combinemelodies', specs) and not myrand(4+specs['lv']/2) and (not "combiningmelodies" in specialmarkers):
+        # make the first time a factor of two
+        timepassedin = time
+        time = time + ((2-(time % 2)) % 2)
+        
         # first generate a melody at 1/2 the level
         reducedspecs = specs.copy()
         reducedspecs["lv"] = max(2, int(specs["lv"] * 1 / 2))
 
         melodyduration = 8
-        if random.random() < 0.2 + specs['lv']/80:
-            melodyduration *= 2
         if random.random() < 0.1 + specs['lv']/80:
             melodyduration *= 2
+        if random.random() < 0.05 + specs['lv']/80:
+            melodyduration *= 2
         oldtime = time
-            
+
+        # generate the first melody
         loopresult = looplayers(time, melodyduration + time, notelist, reducedspecs, ["combiningmelodies"])
         l = loopresult[0]
         time = loopresult[1]
 
-        newnotes = getnoteswithintime(l, oldtime, time)
-        notestocombine = copy.deepcopy(newnotes)
-        for n in notestocombine:
-            n.time += melodyduration
-        
+        firstmelody = getnoteswithintime(l, oldtime, time)
+        notestocombine = copy.deepcopy(firstmelody)
+
+        middletime = time
+
+        # generate the second melody
         loopresult = looplayers(time, melodyduration+time, l, reducedspecs, ["combiningmelodies"])
         l = loopresult[0]
         time = loopresult[1]
-            
-        l = combineaschords(l, notestocombine)
 
-        if devmode:
+        secondmelody = copy.deepcopy(getnoteswithintime(l, middletime, time))
+
+        # make the final start time a factor of two
+        finalstarttime = time + ((2-(time % 2)) % 2)
+
+        # sync up the new notes and combine them
+        for n in notestocombine:
+            n.time += finalstarttime - oldtime
+        for n in secondmelody:
+            n.time += finalstarttime - middletime
+
+        combined = combineaschords(secondmelody, notestocombine)
+        
+            
+        l.extend(combined)
+
+        time = finalstarttime + (finalstarttime - middletime)
+
+        if variables.devmode:
             print("Combined melodies- oldtime: " + str(oldtime) + \
                   " melodyduration: " + str(melodyduration) + " newtime: " + str(time))
         
-        return (l, time-oldtime)
+        return (l, time-timepassedin)
         
     return None
 
