@@ -33,6 +33,7 @@ lowervalues- bias values lower
 seperatedchordchance- chance to have a rest and then a chord with three notes in it
 holdlongnote- hold long notes while the normal melody continues (reducing difficulty for those notes)
 doublenotes- doubles all notes up two notes
+combinemelodies- combine two melodies after adding them
 
 ------- repeat ----------------
 repeat- repeats sections with variations- all of the following can combine except repeatvalues
@@ -152,6 +153,39 @@ def speciallayer(notelist, time, specs, specialmarkers):
         loopresult =  looplayers(time, time+longnoteduration, l, reducedspecs, ["holdinglongnote"])
         
         return (loopresult[0], loopresult[1]-time)
+
+    if hasrule('combinemelodies', specs) and not myrand(4+specs['lv']/2) and (not "combiningmelodies" in specialmarkers):
+        # first generate a melody at 1/2 the level
+        reducedspecs = specs.copy()
+        reducedspecs["lv"] = max(2, int(specs["lv"] * 1 / 2))
+
+        melodyduration = 8
+        if random.random() < 0.2 + specs['lv']/80:
+            melodyduration *= 2
+        if random.random() < 0.1 + specs['lv']/80:
+            melodyduration *= 2
+        oldtime = time
+            
+        loopresult = looplayers(time, melodyduration + time, notelist, reducedspecs, ["combiningmelodies"])
+        l = loopresult[0]
+        time = loopresult[1]
+
+        newnotes = getnoteswithintime(l, oldtime, time)
+        notestocombine = copy.deepcopy(newnotes)
+        for n in notestocombine:
+            n.time += melodyduration
+        
+        loopresult = looplayers(time, melodyduration+time, l, reducedspecs, ["combiningmelodies"])
+        l = loopresult[0]
+        time = loopresult[1]
+            
+        l = combineaschords(l, notestocombine)
+
+        if devmode:
+            print("Combined melodies- oldtime: " + str(oldtime) + \
+                  " melodyduration: " + str(melodyduration) + " newtime: " + str(time))
+        
+        return (l, time-oldtime)
         
     return None
 
@@ -719,5 +753,3 @@ def appendnotewithspecs(l, note, specs):
             if not notecollidep(note.time, newval, note.duration, l):
                 l.insert(-1, Note(newval, note.time, note.duration, chordadditionp=True, accidentalp = note.accidentalp))
         
-        
-    

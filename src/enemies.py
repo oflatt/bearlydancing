@@ -101,8 +101,11 @@ addEnemy("hopping tree", ["melodic", "holdlongnote"],
 addEnemy("snow fly", ["melodic", "repeatvariation", "doublenotes"],
          Animation(["snowbutterflyfly0", "snowbutterflyfly1"], defaultanimspeed))
 
+addEnemy("polar giraffe", ["melodic", "combinemelodies"],
+         Animation(["polargiraffe0", "polargiraffe1"], defaultanimspeed))
+
 woodsenemies = getenemies(["perp", "spoe", "croc", "bogo", "rad turtle"])
-snowenemies = getenemies(["pile o' snow", "snow fly"])
+snowenemies = getenemies(["pile o' snow", "snow fly", "polar giraffe"])
 
 # if none picks random one, if an enemy engages enemy
 devbattletest = enemies["bogo"]

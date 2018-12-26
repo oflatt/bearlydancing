@@ -71,6 +71,14 @@ class Note(FrozenClass):
 
         self._freeze()
 
+    def equalp(self, othernote):
+        return self.time == othernote.time and \
+            self.duration == othernote.duration and \
+            self.value == othernote.value and \
+            self.accidentalp == othernote.accidentalp and \
+            self.chordadditionp == othernote.chordadditionp and \
+            self.scoremultiplier == othernote.scoremultiplier
+
     def screenvalue(self):
         return value_to_screenvalue(self.value)
 

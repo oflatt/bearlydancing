@@ -40,12 +40,12 @@ rules ideas
 
 - add more score multipliers to notes, scoremultiply function after note has been decided
 
-- dual notes rule- every note doubled, 2 notes apart
 - triplet mode only for some enemies
 - repeating with variation chance to redo all of the rest of the notes? epecially halfway through or power of 2?
 - two simple melodies, then both at same time
 - left hand repeats while right is a song
 
+- chance while holding a note to start a new note (don't always just add the duration of the note to the current time
 
 
 Knob ideas for the beatmap generator
