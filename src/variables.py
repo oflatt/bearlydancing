@@ -1,4 +1,4 @@
-import pygame, os, pickle, copy
+import pygame, os, pickle, copy, sys
 from pygame import Rect
 from Settings import Settings
 from Properties import Properties
@@ -47,6 +47,10 @@ devengagebattlekey = pygame.K_END
 
 # this is the mode for the finished product- it just turns off all other development modes
 exportmode = False
+
+if "exportmode" in sys.argv:
+    exportmode = True
+
 if exportmode:
     testsmallp = False
     devmode = False

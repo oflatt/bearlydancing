@@ -75,7 +75,8 @@ def load():
                     if tempcname in conversations.floatingconversations.keys():
                         conversations.currentconversation = conversations.floatingconversations[tempckey]
                     else:
-                        conversations.currentconversation = maps.map_dict[maps.current_map_name].getconversation(tempcname)
+                        if tempcname != None:
+                            conversations.currentconversation = maps.map_dict[maps.current_map_name].getconversation(tempcname)
 
                 maps.change_map_nonteleporting(maps.current_map_name)
                 # don't start at beginning
