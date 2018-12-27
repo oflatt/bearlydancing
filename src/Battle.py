@@ -435,12 +435,18 @@ class Battle(FrozenClass):
         elif partofbeat == 2:
             drumchance = self.getcombo()/len(self.beatmaps[self.current_beatmap].originalnotes)
             if random.random() <drumchance:
-                play_drum(4, self.enemy.drumpackname)
+                drumoctave = 4
+                if random.random() < 0.3:
+                    drumoctave = random.randint(3, 7)
+                play_drum(drumoctave, self.enemy.drumpackname)
         else:
             drumchance = self.getcombo()/len(self.beatmaps[self.current_beatmap].originalnotes)
             drumchance = drumchance/4
             if random.random() <drumchance:
-                play_drum(4, self.enemy.drumpackname)
+                drumoctave = 4
+                if random.random() < 0.6:
+                    drumoctave = random.randint(3, 7)
+                play_drum(drumoctave, self.enemy.drumpackname)
         
 
         # player dirty rect and enemy dirty rect on beat
