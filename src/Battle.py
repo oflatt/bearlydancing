@@ -242,6 +242,36 @@ class Battle(FrozenClass):
             comborect = Rect(combox, playerpicandrect[1].y-comboheight*1.5, combopic.get_width(), combopic.get_height())
             variables.screen.blit(combopic, comborect)
             variables.dirtyrects.append(comborect)
+
+    def drawscoretable(self):
+        scores = self.beatmaps[self.current_beatmap].scores
+        if len(scores) > 0:
+            percent = int((sum(scores) / (len(scores)*2))*10) / 10.0
+
+            misses = 0
+            okays = 0
+            goods = 0
+            perfects = 0
+            for s in scores:
+                if s == variables.miss_value:
+                    misses += 1
+                elif s == variables.ok_value:
+                    okays += 1
+                elif s == variables.good_value:
+                    goods += 1
+                elif s == variables.perfect_value:
+                    perfects += 1
+
+            tabletext = str(percent) + "%   perfects: " + str(perfects) + \
+            "  goods: " + str(goods) + "  okays: " + str(okays) + \
+            "  misses: " + str(misses) + "  total: " + str(len(scores))
+            
+            tablepic = getTextPic(tabletext, variables.gettextsize(), variables.WHITE)
+            tabley = variables.height-tablepic.get_height()
+            tablerect = Rect((variables.width-tablepic.get_width())/2, tabley, tablepic.get_width(), tablepic.get_height())
+            
+            variables.screen.blit(tablepic, tablerect)
+            variables.dirtyrects.append(tablerect)
             
     def draw(self):
         if self.current_beatmap<len(self.beatmaps):
@@ -335,7 +365,9 @@ class Battle(FrozenClass):
                 text = variables.font.render("you win!", 0, variables.WHITE)
             textscaled = sscale(text)
             variables.screen.blit(textscaled, [w / 2 - (textscaled.get_width() / 2), h / 2])
+            self.drawscoretable()
 
+        
         elif self.state == "exp" or self.state == "got exp":
             text = "continue"
             # continue button
@@ -369,6 +401,8 @@ class Battle(FrozenClass):
                 variables.screen.blit(textscaled,
                                       coordinates)
                 variables.dirtyrects.append(Rect(coordinates[0], coordinates[1], textscaled.get_width(), textscaled.get_height()))
+
+            self.drawscoretable()
 
         # player health bar
         playermaxh = stathandeling.max_health(p.lv())
