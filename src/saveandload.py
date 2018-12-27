@@ -22,8 +22,12 @@ def save(manualp):
         os.makedirs(variables.manualsavebackuppath, exist_ok=True)
     except FileExistsError:
         pass
+
+    conversationname = None
+    if conversations.currentconversation != None:
+        converstaionname = conversations.currentconversation.name
     
-    savelist = [maps.map_dict, conversations.currentconversation.name,
+    savelist = [maps.map_dict, conversationname,
                 classvar.player, classvar.battle, maps.current_map_name, conversations.floatingconversations]
     with open(variables.savepath, "wb") as f:
         pickle.dump(savelist, f)
