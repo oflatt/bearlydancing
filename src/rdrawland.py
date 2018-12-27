@@ -235,7 +235,7 @@ def makesnowland(width, height, grasstosnowp = False):
         hillx = randint(0, width)
         hilly = randint(0, height)
         hillr = randint(int(width/20), int(width/3))
-        if grasstosnowp and hillx+hillr>width/4 + 25:
+        if not grasstosnowp or (grasstosnowp and hillx+hillr>width/4 + 25):
             snowclump(surface, hillx, hilly, groundp = True)
             snowclump(surface, randint(int(width/4 + 25), width), randint(0, height), groundp = True)
             snowclump(surface, randint(int(width/4 + 25), int(width/2)), randint(0, height), groundp = True)

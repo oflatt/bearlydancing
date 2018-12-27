@@ -40,10 +40,16 @@ def addpoints(l, leftbound, rightbound, maxvariation):
 
     return cl
 
+def tuplenumberadd(t, number):
+    l = [None,] * len(t)
+    for a in range(len(t)):
+        l[a] = t[a] + number
+    return tuple(l)
+
 def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
     basecolor = variables.snowcolor
     if groundp:
-        basecolor = (basecolor[0]-20, basecolor[1]-20, basecolor[2]-20)
+        basecolor = (basecolor[0]-3, basecolor[1]-3, basecolor[2]-3)
     swidth = 76
     surface = pygame.Surface([swidth, swidth], pygame.SRCALPHA)
     fillcolor = (basecolor[0]-10, basecolor[1]-10, basecolor[2]-10)
@@ -61,7 +67,7 @@ def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
 
     # squish bottom
     addlump(points, int(numofpoints/2), numofpoints, randint(4, 5))
-
+    
     numoflumps = randint(1, 3)
     for nonused in range(numoflumps):
         addtoy = True
@@ -79,8 +85,12 @@ def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
         if p[1] > shadowthreshold:
             shadowpoints.append((p[0], p[1]))
     shadowcolor = (basecolor[0]-20, basecolor[1]-20, basecolor[2]-20)
+    shadowfillcolor = tuplenumberadd(shadowcolor, -10)
     if groundp:
-        shadowcolor = (fillcolor[0]-2, fillcolor[1]-2, fillcolor[2]-2)
+        shadowcolor = tuplenumberadd(fillcolor, 0)
+        shadowfillcolor = tuplenumberadd(shadowcolor, 0)
+    
+        
     tallest = 1
     for p in points:
         if -p[1] > tallest:
@@ -115,7 +125,8 @@ def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
     pygame.gfxdraw.filled_polygon(surface, pointstranslated, basecolor)
 
     if(len(shadowpoints)>1):
-        pygame.gfxdraw.filled_polygon(surface, shadowpointstranslated, (shadowcolor[0]-10, shadowcolor[1]-10,shadowcolor[2]-10))
+        
+        pygame.gfxdraw.filled_polygon(surface, shadowpointstranslated, shadowfillcolor)
         pygame.gfxdraw.polygon(surface, shadowpointstranslated, shadowcolor)
 
 
