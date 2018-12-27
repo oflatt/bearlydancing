@@ -12,7 +12,7 @@ gameplay
 - make jeremy fightable after completion of snow area
 - in general, dialogue that reacts to world events- jeremy says something different after steve
 - story needs more jokes, more references- nani, you beat my best brother jeremy???!
--different volume envelopes
+- different volume envelopes
 
 sound
 - talk to characters to modify instrument- add kick, reverb?
@@ -26,7 +26,7 @@ sound
   - less random noise? some sort of wave of noise
   - add noise vs multiply by it
 - save to midi, sheet music
-- have computer replay song perfectly button
+- playback mode- have computer replay song perfectly after finishing a battle
 
 battle
 - battle code is ugly and convoluted with all the time/health variables

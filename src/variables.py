@@ -48,7 +48,7 @@ devengagebattlekey = pygame.K_END
 # this is the mode for the finished product- it just turns off all other development modes
 exportmode = False
 
-if "exportmode" in sys.argv:
+if "-exportmode" in sys.argv:
     exportmode = True
 
 if exportmode:

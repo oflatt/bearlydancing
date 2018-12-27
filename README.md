@@ -5,13 +5,11 @@ A rhythm rpg with randomly generated beatmaps, written in python using the pygam
 
 Install python 3.
 
-Make sure that pip is installed- type pip (or try pip3)
 
-Run python setup.py.
+Run python3 setup.py. If this fails, install dependencies listed in src/dependencies.py using pip.
 
-Do not run setup.py from IDLE- there seems to be a bug that causes ultra-slow download speeds.
 
-To play the game without development features, set exportmode in variables.py to True.
+To play the game without development features, use python3 "bearly dancing.py" -exportmode
 
 ## building an executable
 
