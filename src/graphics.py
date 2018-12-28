@@ -1,10 +1,15 @@
 #!/usr/bin/python
 
-import pygame, os, variables, rdrawtree, rdrawland, rdrawrock, random
-from rdrawflower import makeflower
+import pygame, os, variables, random
 from datetime import date
 from pygame import Rect
-import string
+import string, math
+
+import rdrawtree, rdrawland, rdrawrock 
+from rdrawmodify import createshadow
+from rdrawflower import makeflower
+from Shadow import Shadow
+
 
 today = date.today()
 christmasp = False
@@ -177,6 +182,7 @@ def getpic(picname, scale = None):
                 SGR[picname][scale] = scaledimage
             return scaledimage
 
+        
 def getpicbyheight(picname, height):
     scale = height/GR[picname]["h"]
     return getpic(picname, scale)
@@ -184,6 +190,35 @@ def getpicbyheight(picname, height):
 def getpicbywidth(picname, width):                 
     scale = width/GR[picname]["w"]
     return getpic(picname, scale)
+
+# stores unscaled shadows in GR
+def getshadowunscaled(picname, shadowangle):
+    sname = picname + "shadow"
+    picexistsp = sname in GR
+    if picexistsp:
+        return GR[sname]
+    else:
+        shadowpic = createshadow(getpic(picname), shadowangle)
+        GR[sname] = shadowpic
+        return shadowpic
+
+# like getpic, but pass in the name of a pic to get the shadow of
+# returns a Shadow object
+def getshadow(picname, scale = None, shadowangle = -math.pi/4):
+    sunscaled = getshadowunscaled(picname, shadowangle)
+    sname = picname + "shadow" + str(int(shadowangle*100)/100)
+    picexistsp = sname in SGR
+    if picexistsp and scale in SGR[sname]:
+        return SGR[sname][scale]
+    else:
+        shadowpic = pygame.transform.scale(sunscaled.surface, (int(scale*sunscaled.surface.get_width()), int(scale*sunscaled.surface.get_height())))
+        shadow = Shadow(shadowpic, sunscaled.xoffset*scale, sunscaled.yoffset*scale)
+        if picexistsp:
+            SGR[sname][scale] = shadow
+        else:
+            SGR[sname] = {}
+            SGR[sname][scale] = shadow
+        return shadow
 
 # maskname refers to a pic in GR and collidesection is a tuple x y width height coordinates for where the mask is taken from
 def getmask(maskname, collidesection = None):

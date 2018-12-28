@@ -2,8 +2,9 @@
 import pygame, variables, math
 from pygame import Rect
 from Animation import Animation
-from graphics import GR, getpic, getmask
+from graphics import GR, getpic, getmask, getshadow
 from FrozenClass import FrozenClass
+
 
 class Rock(FrozenClass):
 
@@ -93,10 +94,19 @@ class Rock(FrozenClass):
         # only draw if on screen
         if drawx+swidth>0 and drawx<variables.width and drawy<variables.height and drawy+sheight>0:
             p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale())
+            shadow = getshadow(self.animations[self.animationnum].current_frame(), variables.compscale())
+            shadowp = shadow.surface
+            
+            
             if self.updatescreenp:
-                variables.dirtyrects.append(Rect(drawx, drawy, p.get_width(), p.get_height()))
+                variables.dirtyrects.append(Rect(drawx, drawy, max(p.get_width(), shadowp.get_width()), p.get_height()))
                 self.updatescreenp = False
+
+            shadowy = drawy + sheight - shadowp.get_height()
+            shadowx = drawx
+            variables.screen.blit(shadowp, [drawx, shadowy])
             variables.screen.blit(p, [drawx, drawy])
+            
 
     # background range is the range of the player's location that it is drawn behind the player
     def set_backgroundrange(self):

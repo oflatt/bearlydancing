@@ -289,12 +289,7 @@ def maketree(snowp = False):
     l2 = pygame.Surface([TREEWIDTH, TREEHEIGHT], pygame.SRCALPHA)
     l3 = pygame.Surface([TREEWIDTH, TREEHEIGHT], pygame.SRCALPHA)
     l4 = pygame.Surface([TREEWIDTH, TREEHEIGHT], pygame.SRCALPHA)
-    p.fill([255, 255, 255, 0])
-    l.fill([255, 255, 255, 0])
-    l2.fill([255, 255, 255, 0])
-    l3.fill([255, 255, 255, 0])
-    l4.fill([255, 255, 255, 0])
-
+    
     treeshortener = randint(0, 15)
     if randint(0, 5) < 1:
         treeshortener += randint(0, 10)

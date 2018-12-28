@@ -8,7 +8,7 @@ clock = pygame.time.Clock()
 
 # Set the width and height of the screen [width,height]
 modes = pygame.display.list_modes()
-ctypes.windll.user32.SetProcessDPIAware()
+
 mode = modes[0]
 height = mode[1]#displayinfo.current_h - 200
 width = mode[0]
@@ -53,6 +53,8 @@ while running:
     #wide_screen.blit(bigpic, [0,0])
     #pygame.transform.scale(wide_screen, [80, 80])
     hpic = pygame.image.load(os.path.join('pics', "honeyside0.png")).convert_alpha()
+    hpic.set_palette([(0,0,0,0)])
+    
     wide_screen.blit(pygame.transform.scale(hpic, [hpic.get_width()*10, hpic.get_height()*10]), [0,0])
 
     wide_screen.blit(font.render(str(clock.get_fps()), 0, (255,255,255)), [20, 20])
