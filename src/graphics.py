@@ -162,6 +162,10 @@ def difficultytocolor(colorfactor):
         typecolor = (255,min((colorfactor-15)*25, 255), 255)
     return typecolor
 
+# processes images before they are cached- currently does nothing
+def finalprocessimage(image):
+    return image
+
 # this function returns a surface. If no scale is provided, it takes from GR.
 # if a scale is provided, it takes the scaled picture from SGR or scales the picture, adds it to SGR, and returns the pic
 # scale is multiplied by the displayscale by default, this means for rocks scale is the map scale
@@ -175,6 +179,7 @@ def getpic(picname, scale = None):
         else:
             scaledimage = GR[picname]
             scaledimage = pygame.transform.scale(scaledimage["img"], [int(scaledimage["w"]*scale), int(scaledimage["h"]*scale)])
+            scaledimage = finalprocessimage(scaledimage)
             if picexistsp:
                 SGR[picname][scale] = scaledimage
             else:
@@ -212,6 +217,7 @@ def getshadow(picname, scale = None, shadowangle = -math.pi/4):
         return SGR[sname][scale]
     else:
         shadowpic = pygame.transform.scale(sunscaled.surface, (int(scale*sunscaled.surface.get_width()), int(scale*sunscaled.surface.get_height())))
+        shadowpic = finalprocessimage(shadowpic)
         shadow = Shadow(shadowpic, sunscaled.xoffset*scale, sunscaled.yoffset*scale)
         if picexistsp:
             SGR[sname][scale] = shadow

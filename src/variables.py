@@ -130,10 +130,10 @@ def setscreen(windowmode):
     global screen
     if windowmode == "windowed":
         flags = pygame.NOFRAME | pygame.DOUBLEBUF | pygame.HWSURFACE
-        screen = pygame.display.set_mode((width, height), flags)
+        screen = pygame.display.set_mode((width, height), flags, 32)
     if windowmode == "fullscreen":
         flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
-        screen = pygame.display.set_mode((width, height), flags)
+        screen = pygame.display.set_mode((width, height), flags, 32)
 
 setscreen(settings.windowmode)
 

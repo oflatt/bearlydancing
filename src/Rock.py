@@ -91,20 +91,20 @@ class Rock(FrozenClass):
         swidth = self.w * variables.compscale()
         sheight = self.h * variables.compscale()
 
+        p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale())
+        shadow = getshadow(self.animations[self.animationnum].current_frame(), variables.compscale())
+        shadowp = shadow.surface
+            
         # only draw if on screen
-        if drawx+swidth>0 and drawx<variables.width and drawy<variables.height and drawy+sheight>0:
-            p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale())
-            shadow = getshadow(self.animations[self.animationnum].current_frame(), variables.compscale())
-            shadowp = shadow.surface
+        if drawx+max(swidth, shadowp.get_width())>0 and drawx<variables.width and drawy<variables.height and drawy+sheight>0:
             
             
             if self.updatescreenp:
                 variables.dirtyrects.append(Rect(drawx, drawy, max(p.get_width(), shadowp.get_width()), p.get_height()))
                 self.updatescreenp = False
 
-            shadowy = drawy + sheight - shadowp.get_height()
-            shadowx = drawx
-            variables.screen.blit(shadowp, [drawx, shadowy])
+            
+            variables.screen.blit(shadowp, [drawx+shadow.xoffset, drawy+shadow.yoffset])
             variables.screen.blit(p, [drawx, drawy])
             
 
