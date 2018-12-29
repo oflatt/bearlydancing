@@ -38,33 +38,44 @@ def findanchor(surface, checklist = [], greatestfrom = 1):
     return anchor
 
 
+def rotate(surface, angle, offset, scaling):
+    """Rotate the surface around the pivot point.
+
+    Args:
+        surface (pygame.Surface): The surface that is to be rotated.
+        angle (float): Rotate by this angle.
+        pivot (tuple, list, pygame.math.Vector2): The pivot point.
+    """
+    pivot = surface.get_rect().center
+    rotated_image = pygame.transform.rotozoom(surface, -angle, 1)  # Rotate the image.
+    rotated_offset = offset.rotate(angle)  # Rotate the offset vector.
+    
+    # Add the offset vector to the center/pivot point to shift the rect.
+    rect = rotated_image.get_rect(center=pivot-rotated_offset+offset)
+    return rotated_image, rect  # Return the rotated image and shifted rect.
+
+
 
 # returns a surface that is a shadow of the surface given at an angle
 def createshadow(surface, angle):
-    scalingfactor = 1#((math.pi/2)-(abs(angle) % (math.pi/2)))/(math.pi/2)
-
-    newsurface = pygame.transform.scale(surface, (surface.get_width(), int(surface.get_height() * scalingfactor)))
-
-    
+    scalingfactor = 1#((abs(angle) % (math.pi/2)))/(math.pi/2)
     # find the anchor point
-    sanchor = findanchor(newsurface, greatestfrom = int(newsurface.get_height() / 5))
-    
-    # fill the anchor
-    newsurface.fill((255,0,0,255), Rect(sanchor[0]-1, sanchor[1]-1, 3, 3))
-    pixels = pygame.surfarray.pixels2d(newsurface)
+    sanchor = findanchor(surface, greatestfrom = int(surface.get_height() / 8))
+    srect = surface.get_rect()
     
     
-    # rotate
-    newsurface = pygame.transform.rotate(newsurface, angle*180 / (math.pi))
 
-    # find the anchor
-    secondsanchor = findanchor(newsurface, checklist = [pixels[sanchor[0]][sanchor[1]]])
-
+    # offset is a vector from the center to the anchor
+    offset = pygame.math.Vector2(sanchor[0]-srect.center[0], sanchor[1]-srect.center[1])
+    
+    # scale it down and rotate it
+    newsurface, newrect = rotate(surface, -angle*180 / math.pi, offset, scalingfactor)
+    
     # convert to shadow color
     fillskipalpha(newsurface, (0,0,0,100))
-
     
-    return Shadow(newsurface, sanchor[0]-secondsanchor[0], sanchor[1]-secondsanchor[1])
+    
+    return Shadow(newsurface, newrect.left, newrect.top)
 
 
 def rotatepoint(point, angle):

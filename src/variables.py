@@ -353,6 +353,27 @@ def checkkey(name, key):
         name = "action"
     return key in settings.keydict[name]
 
+# returns a bigger rect that contains both of the rects
+def combinerects(rect1, rect2):
+    r = Rect(0,0,1,1)
+    if rect1.left<rect2.left:
+        r.left = rect1.left
+    else:
+        r.left = rect2.left
+    if rect1.top < rect2.top:
+        r.top = rect1.top
+    else:
+        r.top = rect2.top
+    if rect1.right > rect2.right:
+        r.width = rect1.right-r.left
+    else:
+        r.width = rect2.right-r.left
+    if rect1.bottom > rect2.bottom:
+        r.height = rect1.bottom-r.top
+    else:
+        r.height = rect2.bottom-r.top
+    return r
+
 def updatescreen():
     if len(dirtyrects) > 0:
         if dirtyrects[0] == Rect(0,0,width,height):
@@ -372,3 +393,4 @@ def updaterects():
     pygame.display.update(dirtyrects + olddirtyrects + [Rect(10,font.get_linesize(), font.get_linesize()*5, font.get_linesize()*3)])
         
 sign = lambda x: (1, -1)[x < 0]
+

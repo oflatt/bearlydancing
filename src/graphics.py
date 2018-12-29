@@ -85,6 +85,8 @@ TextGR = {}
 SGR = {}
 # an SGR for masks
 MGR = {}
+# an SGR for shadows
+shadowGR = {}
 
 picnames = os.listdir(variables.pathtoself + "/pics")
 
@@ -209,21 +211,22 @@ def getshadowunscaled(picname, shadowangle):
 
 # like getpic, but pass in the name of a pic to get the shadow of
 # returns a Shadow object
-def getshadow(picname, scale = None, shadowangle = -math.pi/4):
+def getshadow(picname, scale = None):
+    shadowangle = -math.pi * (4/10)
     sunscaled = getshadowunscaled(picname, shadowangle)
-    sname = picname + "shadow" + str(int(shadowangle*100)/100)
-    picexistsp = sname in SGR
-    if picexistsp and scale in SGR[sname]:
-        return SGR[sname][scale]
+    sname = picname + str(int(shadowangle*100)/100)
+    picexistsp = sname in shadowGR
+    if picexistsp and scale in shadowGR[sname]:
+        return shadowGR[sname][scale]
     else:
         shadowpic = pygame.transform.scale(sunscaled.surface, (int(scale*sunscaled.surface.get_width()), int(scale*sunscaled.surface.get_height())))
         shadowpic = finalprocessimage(shadowpic)
         shadow = Shadow(shadowpic, sunscaled.xoffset*scale, sunscaled.yoffset*scale)
         if picexistsp:
-            SGR[sname][scale] = shadow
+            shadowGR[sname][scale] = shadow
         else:
-            SGR[sname] = {}
-            SGR[sname][scale] = shadow
+            shadowGR[sname] = {}
+            shadowGR[sname][scale] = shadow
         return shadow
 
 # maskname refers to a pic in GR and collidesection is a tuple x y width height coordinates for where the mask is taken from

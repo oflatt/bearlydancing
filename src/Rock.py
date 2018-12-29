@@ -84,28 +84,35 @@ class Rock(FrozenClass):
         if self.name == "steve":
             self.xposfunctions = [self.makelinearfunction(variables.settings.current_time, -30/1000, lowerlimit = -100)]
 
-    def draw(self, offset = [0,0]):
+    def draw(self, drawshadowp, offset = [0,0]):
         self.drawtick()
-        drawx = self.x * variables.compscale() + offset[0]
-        drawy = self.y * variables.compscale() + offset[1]
-        swidth = self.w * variables.compscale()
-        sheight = self.h * variables.compscale()
-
+        drawrect = Rect(self.x * variables.compscale() + offset[0],
+                        self.y * variables.compscale() + offset[1],
+                        self.w * variables.compscale(),
+                        self.h * variables.compscale())
+        shadowrect = Rect(0,0,0,0)
+        
         p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale())
-        shadow = getshadow(self.animations[self.animationnum].current_frame(), variables.compscale())
-        shadowp = shadow.surface
-            
+        if drawshadowp:
+            shadow = getshadow(self.animations[self.animationnum].current_frame(), variables.compscale())
+            shadowrect = Rect(drawrect[0] + shadow.xoffset,
+                              drawrect[1]+shadow.yoffset,
+                              shadow.surface.get_width(),
+                              shadow.surface.get_height())
+            shadowp = shadow.surface
+
+        combinedrect = variables.combinerects(drawrect, shadowrect)
+                
         # only draw if on screen
-        if drawx+max(swidth, shadowp.get_width())>0 and drawx<variables.width and drawy<variables.height and drawy+sheight>0:
-            
+        if combinedrect.right>0 and combinedrect.left<variables.width and combinedrect.top<variables.height and combinedrect.bottom>0:
             
             if self.updatescreenp:
-                variables.dirtyrects.append(Rect(drawx, drawy, max(p.get_width(), shadowp.get_width()), p.get_height()))
+                variables.dirtyrects.append(combinedrect)
                 self.updatescreenp = False
 
-            
-            variables.screen.blit(shadowp, [drawx+shadow.xoffset, drawy+shadow.yoffset])
-            variables.screen.blit(p, [drawx, drawy])
+            if drawshadowp:
+                variables.screen.blit(shadowp, shadowrect)
+            variables.screen.blit(p, drawrect)
             
 
     # background range is the range of the player's location that it is drawn behind the player

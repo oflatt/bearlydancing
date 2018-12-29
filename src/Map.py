@@ -24,7 +24,7 @@ interact = Animation(["interactionbutton0", "interactionbutton1"], 1000)
 
 class Map(FrozenClass):
 
-    def __init__(self, base, terrain, leftbound = True, rightbound = True, topbound = True, bottombound = True):
+    def __init__(self, base, terrain, leftbound = True, rightbound = True, topbound = True, bottombound = True, shadowsp = True):
         self.topbound = topbound
         self.rightbound = rightbound
         self.bottombound = bottombound
@@ -58,6 +58,9 @@ class Map(FrozenClass):
         self.map_height = GR[base]["h"]
         
         self.playerenabledp = True
+
+        # if the map has shadows
+        self.shadowsp = shadowsp
         
         self._freeze()
 
@@ -235,7 +238,7 @@ class Map(FrozenClass):
             else:
                 if r.background_range != None:
                     if r.background_range.colliderect(playerrect):
-                        r.draw(offset)
+                        r.draw(self.shadowsp, offset = offset)
                         r.drawnp = True
                     else:
                         r.drawnp = False
@@ -254,7 +257,7 @@ class Map(FrozenClass):
                                  classvar.player.normal_height)
         for r in self.terrain:
             if not r.drawnp:
-                r.draw(rockoffset)
+                r.draw(self.shadowsp, offset= rockoffset)
 
         # draw button above exits and conversations
         bwidth = 8*variables.compscale()

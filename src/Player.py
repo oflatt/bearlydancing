@@ -3,7 +3,7 @@ import pygame, variables, maps, stathandeling, math, play_sound
 from variables import sign
 from random import randint
 from random import uniform
-from graphics import GR, getpic, getmask
+from graphics import GR, getpic, getmask, getshadow
 from Animation import Animation
 from pygame import Rect
 from FrozenClass import FrozenClass
@@ -223,19 +223,26 @@ class Player(FrozenClass):
     def draw(self):
         mapbasename = maps.current_map.finalimage
         snowp = mapbasename[0:14] == "randomsnowland"
+
+        shadow = self.current_shadow()
+        variables.screen.blit(shadow.surface, [self.drawx + shadow.xoffset, self.drawy + shadow.yoffset])
         
         variables.screen.blit(self.current_pic_scaled(), [self.drawx, self.drawy])
+        
+        
         if self.mapdrawx != self.oldmapdrawx or self.mapdrawy != self.oldmapdrawy:
             variables.dirtyrects = [Rect(0,0,variables.width, variables.height)]
         else:
             if snowp:
                 # bigger dirtyrect for the snow balls
-                variables.dirtyrects.append(Rect(self.drawx - self.snowclumpradius()*1.5,
+                bearrect = Rect(self.drawx - self.snowclumpradius()*1.5,
                                                  self.drawy-variables.compscale()*5,
                                                  self.normal_width*variables.compscale()+self.snowclumpradius()*3,
-                                                 self.normal_height*variables.compscale() + self.snowclumpradius()*3+variables.compscale()*5))
+                                                 self.normal_height*variables.compscale() + self.snowclumpradius()*3+variables.compscale()*5)
             else:
-                variables.dirtyrects.append(Rect(self.drawx-variables.compscale()*3, self.drawy-variables.compscale()*3, self.normal_width*variables.compscale()+6*variables.compscale(), self.normal_height*variables.compscale() + 6 * variables.compscale()))
+                bearrect = Rect(self.drawx-variables.compscale()*3, self.drawy-variables.compscale()*3, self.normal_width*variables.compscale()+6*variables.compscale(), self.normal_height*variables.compscale() + 6 * variables.compscale())
+            shadowrect = Rect(self.drawx+shadow.xoffset, self.drawy+shadow.yoffset, shadow.surface.get_width()+variables.compscale()*3, shadow.surface.get_height()+variables.compscale() *3)
+            variables.dirtyrects.append(variables.combinerects(shadowrect, bearrect))
 
         # for snow draw trail
         if snowp:
@@ -394,15 +401,19 @@ class Player(FrozenClass):
         self.lastxupdate = variables.settings.current_time
         self.lastyupdate = variables.settings.current_time
 
-
-    def current_pic_scaled(self): # returns the current pic to display
+    def current_pic_name(self):
         if self.leftpresstime == 0 and self.rightpresstime == 0 and \
             self.uppresstime == 0 and self.downpresstime == 0:
             c = self.current_animation.pics[0]
         else:
             c = self.current_animation.current_frame()
-        
-        return getpic(c, variables.compscale())
+        return c
+
+    def current_pic_scaled(self): # returns the current pic to display
+        return getpic(self.current_pic_name(), variables.compscale())
+
+    def current_shadow(self):
+        return getshadow(self.current_pic_name(), variables.compscale())
 
     def new_scale_offset(self):
         # stop a streak from happening with path in snow
