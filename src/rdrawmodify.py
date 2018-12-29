@@ -1,4 +1,4 @@
-import pygame, math, numpy, unittest
+import pygame, math, numpy, copy
 from pygame import Rect
 
 import variables
@@ -38,14 +38,9 @@ def findanchor(surface, checklist = [], greatestfrom = 1):
     return anchor
 
 
-def rotate(surface, angle, offset, scaling):
-    """Rotate the surface around the pivot point.
-
-    Args:
-        surface (pygame.Surface): The surface that is to be rotated.
-        angle (float): Rotate by this angle.
-        pivot (tuple, list, pygame.math.Vector2): The pivot point.
-    """
+# rotate around the offset (relative to middle of surface)
+def rotate(surface, angleradians, offset):
+    angle = angleradians*180 / math.pi
     pivot = surface.get_rect().center
     rotated_image = pygame.transform.rotozoom(surface, -angle, 1)  # Rotate the image.
     rotated_offset = offset.rotate(angle)  # Rotate the offset vector.
@@ -54,22 +49,62 @@ def rotate(surface, angle, offset, scaling):
     rect = rotated_image.get_rect(center=pivot-rotated_offset+offset)
     return rotated_image, rect  # Return the rotated image and shifted rect.
 
+#rotates half of the way, then squishes the rest of the way
+# all transformations are also applied to offset so that positioning can be done
+def rotateandsquish(surface, angleradians, offset, rotateportion = 0.75, scaling = 1):
+    rotated_offset = copy.deepcopy(offset)
+    
+    # scale height by scaling first
+    firstscalingimage = pygame.transform.scale(surface, (surface.get_width(), int(surface.get_height()*scaling)))
+
+    rotated_offset = pygame.Vector2(rotated_offset.x, rotated_offset.y * scaling)
+    
+    angledegrees = angleradians*180 / math.pi
+
+
+    # rotate the image
+    rotated_image = pygame.transform.rotozoom(firstscalingimage, -angledegrees*rotateportion, 1)
+
+    # Rotate the offset vector.
+    rotated_offset = rotated_offset.rotate(angledegrees*rotateportion)
+
+    angleafterrotate = abs(math.pi/2 - angleradians*rotateportion)
+    goalangleradians = abs(math.pi/2 - angleradians)
+    goalovercurrent = numpy.sin(goalangleradians)/numpy.sin(angleafterrotate)
+    newheight = firstscalingimage.get_height() * goalovercurrent
+
+    
+    # scale the rest of the way to the angle
+    scaled_image = pygame.transform.scale(rotated_image, (rotated_image.get_width(), int(newheight)))
+
+    # scale the vector the same way
+    rotated_offset = pygame.Vector2(rotated_offset.x, rotated_offset.y * int(newheight)/rotated_image.get_height())
+
+
+    pivot = surface.get_rect().center
+    # Add the offset vector to the center/pivot point to shift the rect.
+    rect = scaled_image.get_rect(center=pivot-rotated_offset+offset)
+    return scaled_image, rect  # Return the rotated image and shifted rect.
+
 
 
 # returns a surface that is a shadow of the surface given at an angle
 def createshadow(surface, angle):
-    scalingfactor = 1#((abs(angle) % (math.pi/2)))/(math.pi/2)
+    scalingfactor = ((abs(angle) % (math.pi/2)))/(math.pi/2) * 0.8 + 0.2
     # find the anchor point
     sanchor = findanchor(surface, greatestfrom = int(surface.get_height() / 8))
     srect = surface.get_rect()
     
-    
 
     # offset is a vector from the center to the anchor
     offset = pygame.math.Vector2(sanchor[0]-srect.center[0], sanchor[1]-srect.center[1])
+
+    rotateportion = ((abs(angle) % (math.pi/2)))/(math.pi/2) * 0.9 + 0.1
+    
     
     # scale it down and rotate it
-    newsurface, newrect = rotate(surface, -angle*180 / math.pi, offset, scalingfactor)
+    newsurface, newrect = rotateandsquish(surface, -angle, offset,
+                                          rotateportion = scalingfactor, scaling = scalingfactor)
     
     # convert to shadow color
     fillskipalpha(newsurface, (0,0,0,100))
