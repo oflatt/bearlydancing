@@ -1,5 +1,8 @@
 Bearly Dancing To-Do List
 
+pygame
+- checking if a surface has width or height 0 before scaling to avoid segfault
+
 bugs
 -"l" note was the same note as "a", which cannot be correct
 

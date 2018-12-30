@@ -12,18 +12,33 @@ def fillskipalpha(surface, color):
     del array
 
 
-def findanchor(surface, checklist = [], greatestfrom = 1):
+def findanchor(surface, checklist = [], greatestfrom = 1, xchangedir = -1):
+    if greatestfrom < 1:
+        greatestfrom = 1
     anchor = None
     array = pygame.surfarray.pixels2d(surface)
     checkcolors = (surface.map_rgb((0,0,0,0)), surface.map_rgb((255,255,255,0)))
     numberfound = 0
+
+    if xchangedir < 0:
+        start = array.shape[0]-1
+        end = -1
+    else:
+        start = 0
+        end = array.shape[0]
     
     for y in range(array.shape[1]-1, 0-1, -1):
-        for x in range(array.shape[0]-1, 0-1, -1):
+        for x in range(start, end, xchangedir):
             
             if not array[x][y] in checkcolors and (len(checklist) == 0 or array[x][y] in checklist):
-                if anchor == None or x >= anchor[0]:
+                if anchor == None:
                     anchor = (x, y)
+                elif xchangedir > 0:
+                    if x < anchor[0]:
+                        anchor = (x, y)
+                else:
+                    if x > anchor[0]:
+                        anchor = (x, y)
                 numberfound += 1
                 break
                 
@@ -52,19 +67,21 @@ def rotate(surface, angleradians, offset):
 #rotates half of the way, then squishes the rest of the way
 # all transformations are also applied to offset so that positioning can be done
 def rotateandsquish(surface, angleradians, offset, rotateportion = 0.75, scaling = 1):
+    
     rotated_offset = copy.deepcopy(offset)
     
     # scale height by scaling first
     firstscalingimage = pygame.transform.scale(surface, (surface.get_width(), int(surface.get_height()*scaling)))
-
+    
     rotated_offset = pygame.Vector2(rotated_offset.x, rotated_offset.y * scaling)
     
     angledegrees = angleradians*180 / math.pi
 
-
+    
     # rotate the image
     rotated_image = pygame.transform.rotozoom(firstscalingimage, -angledegrees*rotateportion, 1)
-
+    
+    
     # Rotate the offset vector.
     rotated_offset = rotated_offset.rotate(angledegrees*rotateportion)
 
@@ -90,21 +107,28 @@ def rotateandsquish(surface, angleradians, offset, rotateportion = 0.75, scaling
 
 # returns a surface that is a shadow of the surface given at an angle
 def createshadow(surface, angle):
-    scalingfactor = ((abs(angle) % (math.pi/2)))/(math.pi/2) * 0.8 + 0.2
+    # crop it for the shadow
+    surface = surface.subsurface(Rect(0,0,surface.get_width(),int(surface.get_height() * 14/15)))
+
+    rotatingfactor = ((abs(angle) % (math.pi/2)))/(math.pi/2) * 0.8 + 0.2
+    scalingfactor = ((abs(angle) % (math.pi/2)))/(math.pi/2) * 0.5 + 0.5
+    dirforanchor = -1
+    if angle > 0:
+        dirforanchor = 1
     # find the anchor point
-    sanchor = findanchor(surface, greatestfrom = int(surface.get_height() / 8))
-    srect = surface.get_rect()
+    sanchor = findanchor(surface, greatestfrom = int(surface.get_height() / 15), xchangedir = dirforanchor)
     
+    srect = surface.get_rect()
 
     # offset is a vector from the center to the anchor
     offset = pygame.math.Vector2(sanchor[0]-srect.center[0], sanchor[1]-srect.center[1])
 
     rotateportion = ((abs(angle) % (math.pi/2)))/(math.pi/2) * 0.9 + 0.1
     
+
     
-    # scale it down and rotate it
     newsurface, newrect = rotateandsquish(surface, -angle, offset,
-                                          rotateportion = scalingfactor, scaling = scalingfactor)
+                                          rotateportion = rotatingfactor, scaling = scalingfactor)
     
     # convert to shadow color
     fillskipalpha(newsurface, (0,0,0,100))

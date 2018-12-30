@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
-import pygame, os, variables, random
-from datetime import date
+import pygame, os, variables, random, datetime
 from pygame import Rect
 import string, math
 
@@ -11,7 +10,7 @@ from rdrawflower import makeflower
 from Shadow import Shadow
 
 
-today = date.today()
+today = datetime.date.today()
 christmasp = False
 if today.month == 12:
     christmasp = True
@@ -209,10 +208,24 @@ def getshadowunscaled(picname, shadowangle):
         GR[sname] = shadowpic
         return shadowpic
 
+shadowstarthour = 6.5
+shadowendhour = 9.5
+    
 # like getpic, but pass in the name of a pic to get the shadow of
 # returns a Shadow object
 def getshadow(picname, scale = None):
-    shadowangle = -math.pi * (4/10)
+    now = datetime.datetime.now()
+    timeminutes = now.hour * 60 + now.minute - shadowstarthour * 60
+    if timeminutes < 0:
+        timeminutes = 0
+    elif timeminutes > (shadowendhour-shadowstarthour) * 60:
+        timeminutes = (shadowendhour-shadowstarthour) * 60
+    # round down to nearest 10 minutes
+    timeminutes = int(timeminutes / 10)
+    proportionofday = timeminutes / int((shadowendhour-shadowstarthour)*60/10)
+    
+    shadowangle = -math.pi/2 + math.pi * proportionofday * 0.8 + math.pi * 0.1
+    
     sunscaled = getshadowunscaled(picname, shadowangle)
     sname = picname + str(int(shadowangle*100)/100)
     picexistsp = sname in shadowGR
