@@ -29,6 +29,10 @@ menu = load()
 
 maps.new_scale_offset()
 
+# for skipsteve add the event
+if variables.skipsteve:
+    classvar.player.addstoryevent("beatsteve")
+
 #clear all the events so it does not mess up the game when it loads
 pygame.event.get()
 
@@ -38,6 +42,7 @@ done = False
 # if the testspecs are set, use it and initiate a battle
 from initiatestate import initiatebattle
 from enemies import random_enemy
+from enemies import devbattletest
 import copy
 if variables.testspecs != None:
     testenemy = copy.copy(random_enemy("woods"))
@@ -45,7 +50,7 @@ if variables.testspecs != None:
     testenemy.beatmaprules = variables.testspecs['rules']
     initiatebattle(testenemy)
     menu.firstbootup = False
-    variables.menuonq = False
+    variables.settings.menuonq = False
 
 # play main menu music
 from play_sound import play_music
@@ -64,9 +69,6 @@ while not done:
         # do not add the time to the clock
         clock.get_time()
 
-    currentc = None
-    if variables.settings.state == "conversation":
-        currentc = maps.current_map.getconversation(conversations.currentconversation)
     
     # --- Event Processing- this is like keyPressed
     for event in pygame.event.get():
@@ -78,19 +80,25 @@ while not done:
                 if menu.getoption() == "exit":
                     done = True
                 elif menu.getoption() == "save":
-                    save(menu)
-                    menu.saved()
+                    save(True)
+                    variables.saved = True
 
         # User pressed down on a key
         if event.type == pygame.KEYDOWN:
-                
-            if (not variables.settings.menuonq):
-                if variables.settings.state == "conversation" and currentc != None:
-                    message = currentc.keyevent(event.key)
+            # check for dev battle key
+            if variables.devmode and event.key == variables.devengagebattlekey and variables.settings.state == "world":
+                if devbattletest == None:
+                    initiatebattle(random_enemy())
+                else:
+                    initiatebattle(devbattletest)
+            
+            elif (not variables.settings.menuonq):
+                if variables.settings.state == "conversation" and conversations.currentconversation != None:
+                    message = conversations.currentconversation.keyevent(event.key)
                     menu.setmessage(message)
                     # check if it was exited to unhide rocks
                     if variables.settings.state == "world":
-                        maps.unhiderock(currentc.unhidethisrock)
+                        maps.unhiderock(conversations.currentconversation.unhidethisrock)
                 elif variables.settings.state == "world":
                     if maps.playerenabledp() and maps.current_map.playerenabledp:
                         classvar.player.keypress(event.key)
@@ -114,15 +122,12 @@ while not done:
                         classvar.player.keyrelease(event.key)
                 elif variables.settings.state == "battle":
                     classvar.battle.onrelease(event.key)
-                elif variables.settings.state == "conversation" and currentc != None:
-                    currentc.keyrelease(event.key)
+                elif variables.settings.state == "conversation" and conversations.currentconversation != None:
+                    conversations.currentconversation.keyrelease(event.key)
             else:
                 menu.onrelease(event.key)
 
-    # get it again for if the key press changed the state to conversation
-    if variables.settings.state == "conversation":
-        currentc = maps.current_map.getconversation(conversations.currentconversation)
-
+    
     if variables.settings.state == "world" or (variables.settings.state == "conversation" and variables.settings.backgroundstate == "world"):
         maps.musictick()
         
@@ -139,9 +144,10 @@ while not done:
         menu.ontick()
         
 
-    # get it again for if the key press changed the state to conversation
-    if variables.settings.state == "conversation":
-        currentc = maps.current_map.getconversation(conversations.currentconversation)
+    # draw saved
+    if (variables.saved):
+        menu.saved()
+        variables.saved = False
         
     # --- Drawing Code
     def draw_world():
@@ -173,7 +179,7 @@ while not done:
             else:
                 variables.screen.fill(variables.BLACK)
                 classvar.battle.draw()
-            currentc.draw()
+            conversations.currentconversation.draw()
         elif variables.settings.state == "world":
             draw_world()
         elif variables.settings.state == "battle":

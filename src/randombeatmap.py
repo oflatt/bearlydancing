@@ -36,6 +36,8 @@ highrepeatchance- makes the initial chance for a repeat to start very high
 repeatonlybeginning- makes notestoadd in repetition only take from the start of the list
 repeatspaceinbetween- makes it extremely likely to repeat every other repeatlength, so that you get a repetition with normally generated notes in between
 nodoublerepeats- stops one repeat repeating again
+noaccidentals- makes no "modified" notes, no accidentals that are one pitch above
+
 
 ----- defaults ----------------
 -If no ending specified, it throws in a tonic at the end
@@ -44,7 +46,7 @@ nodoublerepeats- stops one repeat repeating again
 ruletypes = ['melodic', 'skippy', 'alternating', 'rests', 'repeat',
              'repeatmove', 'repeatvariation', 'repeatvalues', 'highrepeatchance',
              'repeatrhythm', 'norests', 'nochords', 'shorternotes', 'repeatonlybeginning',
-             'repeatspaceinbetween', 'nodoublerepeats']
+             'repeatspaceinbetween', 'nodoublerepeats', 'noaccidentals']
 
 
 testmapa = [Beatmap((1200 * 3) / 4, [Note(-7, 2, 2), Note(-6, 1, 1)])]
@@ -241,10 +243,23 @@ def repeatlengthfromspecs(specs):
             if myrand(1):
                 rlength += 1
         return rlength
+
+def makeaccidentalp(specs):
+    if "noaccidentals" in specs['rules']:
+        return False
     
+    lv = specs['lv']
+    athreshhold = variables.accidentallvthreshhold
+    # only make accidentals on beatmaps of lv 8 or higher 
+    if lv<athreshhold:
+        return False
+    else:
+        return random.random() < min(1/3, (math.sqrt(lv-athreshhold)+1)/20)
+
+        
 # returns a tuple with a new list and the duration of the new note
 # values touse is a list of values to use instead of calling random_value
-def addnote(notelist, time, ischord, specs, valuestouse):
+def addnote(notelist, time, ischord, specs, valuestouse, accidentalp):
     lv = specs['lv']
     l = notelist.copy()
     duration = random_duration(time, l, specs, False, ischord)
@@ -252,6 +267,7 @@ def addnote(notelist, time, ischord, specs, valuestouse):
     if ischord:
         if randint(0, 100) > ((lv/1.8) + 2) ** 2:
             duration = l[-1].duration
+
 
     # so you can specify a value
     if len(valuestouse)==0:
@@ -262,12 +278,12 @@ def addnote(notelist, time, ischord, specs, valuestouse):
         else:
             # pop off the first value on the list so that it is not used again
             rv = valuestouse.pop(0)
-        
+            
     # chord notes added before the main note to make it easier to compare to the melody
     if ischord:
-        l.insert(len(l) - 1, Note(rv, time, duration, True))
+        l.insert(len(l) - 1, Note(rv, time, duration, True, accidentalp = accidentalp))
     else:
-        l.append(Note(rv, time, duration))
+        l.append(Note(rv, time, duration, accidentalp = accidentalp))
 
     return (l, duration)
 
@@ -280,15 +296,16 @@ def addlayer(notelist, time, specs, valuestouse = []):
     if isr:
         return (notelist, random_duration(time, notelist, specs, True, False))
     else:
+        accidentalp = makeaccidentalp(specs)
         oldt = time
         notedurations = []
-        addn = addnote(notelist, oldt, False, specs, valuestouse)
+        addn = addnote(notelist, oldt, False, specs, valuestouse, accidentalp)
         l = addn[0]
         notedurations.append(addn[1])
 
         def addchord():
             # don't pass in valuestouse for chords
-            addn = addnote(l, oldt, True, specs, [])
+            addn = addnote(l, oldt, True, specs, [], accidentalp)
             notedurations.append(addn[1])
             return addn[0]
 
@@ -304,6 +321,11 @@ def addlayer(notelist, time, specs, valuestouse = []):
 
         return (l, max(notedurations))
 
+def maxtimefromspecs(specs):
+    maxtime = specs['maxtime']
+    return maxtime + specs['lv']*2
+
+    
 def random_beatmap(specs):
     if variables.devmode:
         print()
@@ -320,8 +342,7 @@ def random_beatmap(specs):
     variation_of_notes([])
     l = []
     lv = specs['lv']
-    maxtime = specs['maxtime']
-    maxtime = maxtime + lv * 2
+    maxtime = maxtimefromspecs(specs);
     time = 1
     # repeatlength used in repeat rule for how many notes back to copy
     repeatlength = None
@@ -370,6 +391,8 @@ def random_beatmap(specs):
         thrownoteerror('note list not ordered properly for chords')
     if anynotescollide(l):
         thrownoteerror('notes collided')
+    if not noteaccidentalsconsistantp(l):
+        thrownoteerror('accidental note at same time as non accidental')
 
     for rule in specs['rules']:
         if not rule in ruletypes:

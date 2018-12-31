@@ -1,7 +1,7 @@
 import graphics, variables, pygame, enemies, classvar, maps, random, stathandeling, copy
 from pygame import Rect
 from classvar import player
-from graphics import getpicbyheight, getTextPic
+from graphics import getpicbyheight, getTextPic, getpic
 from ChoiceButtons import ChoiceButtons
 from SettingsMenu import SettingsMenu
 from play_sound import stop_music, play_music, play_effect
@@ -81,7 +81,13 @@ class Menu():
         
         # blit message on top
         if self.message != None:
-            graphics.drawthismessage(self.message)
+            if self.message == "saved!":
+                icon = getTextPic("saved", variables.gettextsize(), variables.WHITE)
+                srect = Rect(0, variables.height-icon.get_height(), icon.get_width(), icon.get_height())
+                variables.screen.blit(icon, [srect.x, srect.y])
+                variables.dirtyrects.append(srect)
+            else:
+                graphics.drawthismessage(self.message)
             
 
     def ontick(self):

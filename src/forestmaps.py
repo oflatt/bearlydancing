@@ -37,7 +37,7 @@ jeremyhome.populate_with("pinetree", randint(3, 8), dontputrockslist)
 jeremyhome.populate_with("flower", randint(15, 25), dontputrockslist)
 
 jeremyhome.exitareas = [Exit("right", False, 'outside1', "left", "same"),
-                        Exit("left", False, 'tutorialwin', "right", "same")]
+                        Exit("left", False, 'snowentrance', "right", "same")]
 jeremy = getconversation("jeremy")
 jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"] - (honeyw / 2), GR["rabbithole"]["h"]]
@@ -51,7 +51,7 @@ dancelionpass.eventrequirements = [EventRequirement("beatsteve", -1, 1)]
 dancelionbattle = getconversation("dancelionbattle")
 dancelionbattle.eventrequirements = [EventRequirement("beatsteve")]
 dancelionbattle.area = [dancelion.x, dancelion.y, dancelion.w+10, dancelion.h+10]
-dancelionbattle.special_battle = copy.copy(enemies.dancelion)
+dancelionbattle.special_battle = copy.copy(enemies.enemies["dance lion"])
 dancelionbattle.special_battle.lv = 6
 dancelionbattle.special_battle.specialscale = "C minor"
 
@@ -153,7 +153,7 @@ outside4.terrain.extend(make_rock_or_sheep_rocks())
 sheepconversation = getconversation("sheepconversation")
 sheepconversation.switchtheserocks = ["sheeprock"]
 sheepconversation.area = [randrock.x, randrock.y, randrock.w, randrock.h]
-sheepconversation.special_battle = copy.copy(enemies.sheep)
+sheepconversation.special_battle = copy.copy(enemies.enemies["sheep"])
 sheepconversation.special_battle.lv = 3
 
 outside4.conversations = [sheepconversation]
@@ -185,9 +185,9 @@ grovetree = Rock(graphics.pinetree(),
                  outside6width/2-variables.TREEWIDTH/2,
                  outside6height-(groveheight/2)-(variables.TREEHEIGHT/2),
                  variables.TREECOLLIDESECTION)
-kewlcorn = Rock("kewlcorn0", grovetree.x+variables.TREEWIDTH/2+5, grovetree.y+variables.TREEHEIGHT/4, [0.5, 0.5, 0.5, 0.5])
+kewlcorn = Rock("kewlcorn0", grovetree.x+variables.TREEWIDTH/2+5, grovetree.y+variables.TREEHEIGHT/4, None)
 kewlcorn.name = "kewlcorn"
-kewlcorn.background_range.y += variables.TREEHEIGHT*(3/4)-kewlcorn.h+1
+kewlcorn.background_range = Rect(0,kewlcorn.y+ variables.TREEHEIGHT*(3/4),9999999,9999999)
 kewlcorn.hide()
 
 outside6 = Map(graphics.grassland(outside6width, outside6height), [grovetree, kewlcorn])
@@ -209,10 +209,13 @@ kewlappearconversation.unhidethisrock = "kewlcorn"
 kewlbattle = getconversation("kewlcornyo")
 kewlbattle.area = kewlappearconversation.area.copy()
 kewlbattle.eventrequirements = [EventRequirement("kewlappears")]
-kewlbattle.special_battle = copy.copy(enemies.kewlcorn)
+kewlbattle.special_battle = copy.copy(enemies.enemies["kewlcorn"])
 kewlbattle.special_battle.lv = 4
 
-outside6.conversations = [kewlappearconversation, kewlbattle]
+beatkewlc = getconversation("beatkewlc")
+makeconversationreward(beatkewlc, kewlbattle.special_battle, "triangle")
+
+outside6.conversations = [kewlappearconversation, kewlbattle, beatkewlc]
 
 outside6.enemies = enemies.woodsenemies
 outside6.lvrange = [3]
@@ -264,14 +267,14 @@ scarysteve.eventrequirements = [EventRequirement("tpboss1leaves"), EventRequirem
 scarysteve.isbutton = False
 scarysteve.exitteleport = tpboss1.exitteleport.copy()
 scarysteve.exitteleport[0] += 40
-scarysteve.special_battle = copy.copy(enemies.steve)
+scarysteve.special_battle = copy.copy(enemies.enemies["scary steven"])
 scarysteve.special_battle.lv = 5
 scarysteve.special_battle.storyeventsonwin = ["beatsteve"]
 
 sagain = getconversation("steveagain")
 sagain.area = [steve.x-100-3, steve.y, steve.w+6, steve.h+10]
 sagainoptions = sagain.speaks[0]
-sagainoptions.special_battle = copy.copy(enemies.steve)
+sagainoptions.special_battle = copy.copy(enemies.enemies["scary steven"])
 sagainoptions.special_battle.lv = 5
 sagain.eventrequirements = [EventRequirement("beatsteve")]
 

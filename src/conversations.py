@@ -199,10 +199,27 @@ trophyc = Conversation("trophyc", [trophyspeak],
                                          "To start again, move or rename the save0 folder,",
                                          "Located in the same directory as the bearly dancing executable."])])
 
+beatkewlc = Conversation("beatkewl", [Speak("kewlcorn0", ["Wow, that was cool!",
+                                                          "This is cool too, you can have it."])])
+
+beatchimneyc = Conversation("beatchimney", [Speak("flyingchimney4", ["...",
+                                                                     "*The chimney drops something.*"])])
+
+floatingconversations = {}
+
+def addfloating(c):
+    floatingconversations[c.name] = c
+addfloating(tutorialconversation1)
+addfloating(pressanow)
+addfloating(endtutorial)
+addfloating(releaseanow)
+addfloating(releasedearly)
+    
 # copy them so one save does not alter all the conversations
 def getconversation(varname):
     g = globals()
     c = deepcopy(g[varname])
     return c
 
+# this is the conversation object currently being displayed
 currentconversation = None

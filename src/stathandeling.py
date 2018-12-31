@@ -1,4 +1,4 @@
-import math
+import math, variables
 
 def max_health(lv):
     return lv * 5 + 20
@@ -21,7 +21,7 @@ def exp_gained(lv):
 
 #amount of damage done to enemy
 def damage(lv):
-    return max_health(lv)/3
+    return max_health(lv)/variables.numofrounds
 
 def percentoflevel(exp):
     expforlevel = exp - lvexp(explv(exp))

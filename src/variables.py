@@ -17,11 +17,17 @@ except ImportError:
 
 testsmallp = False
 devmode = True
+skipsteve = True
+# generates a new world on load no matter what
 newworldeachloadq = False
+# allows specific graphics functions to override and make new generated graphics
+allownewworldoverridep = True
 # this overrides the generation of a new set of graphics for a new game
-newworldnever = False
+newworldnever = True
 # this is for not loading the maps from the save file, to test new map changes
-dontloadmapsdict = True
+dontloadmapsdict = False
+# this is to get a fresh player with no player attributes
+dontloadplayer = False
 # only loads first couple of maps
 fasttestmodep = False
 # adds to player level when loading
@@ -32,18 +38,22 @@ testspecs = None#{'maxtime' : 20, 'lv' : 4, 'rules' : ["alternating"]}
 
 devlosebattlekey = pygame.K_DELETE
 devwinbattlekey = pygame.K_END
+devengagebattlekey = pygame.K_END
 
 # this is the mode for the finished product- it just turns off all other development modes
-exportmode = True
+exportmode = False
 if exportmode:
     testsmallp = False
     devmode = False
+    skipsteve = False
     newworldnever = False
     newworldeachloadq = False
+    allownewworldoverridep = False
     dontloadmapsdict = False
+    dontloadplayer = False
     fasttestmodep = False
-    testspecs = None
     lvcheat = 0
+    testspecs = None
 
 # Setup
 pygame.mixer.pre_init(22050, -16, 2, 128)
@@ -83,6 +93,7 @@ if testsmallp:
     width = int(width/2)
 
 savefolderpath = os.path.join(pathtoself, "save0/")
+manualsavebackuppath = os.path.join(pathtoself, "savebackup/");
 settingspath = os.path.join(savefolderpath, "bdsettings.txt")
 savepath = os.path.join(savefolderpath, "bdsave.txt")
 settings = Settings()
@@ -90,6 +101,7 @@ if (os.path.isfile(os.path.abspath(settingspath))):
         if os.path.getsize(os.path.abspath(settingspath)) > 0:
             with open(settingspath, "rb") as f:
                 settings = pickle.load(f)
+settings.menuonq = True
 
 
 screen = None
@@ -130,6 +142,7 @@ BLUE = (0, 0, 255)
 ORANGE = (255, 255, 0)
 LIGHTYELLOW = (235,227, 92)
 LIGHTBLUE = (66, 206, 244)
+PINK = (226, 40, 255)
 
 # font
 font = pygame.font.Font(os.path.join(pathtoself, 'orangekidregular.ttf'), 30)
@@ -146,6 +159,8 @@ def num_of_generated_graphics_used():
 
 basemapsize = 360
 
+snowcolor = (200, 200, 200)
+
 TREEWIDTH = 100
 TREEHEIGHT = 200
 ROCKMAXRADIUS = 12
@@ -156,15 +171,17 @@ FLOWERCOLLIDESECTION = [0, 1, 0, 0]
 # battle
 healthanimationspeed = 2000# time in milliseconds for the health bar animation to go
 expanimationspeed = 3000
-numofrounds = 3
+numofrounds = 2
+
+accidentallvthreshhold=8
 
 def getpadypos():
     return height*(13/16)
 
 # lv and rules are added later
 maxdifficulty = 200
-generic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : []}
-melodic_specs = {'maxtime' : 20, 'lv' : 0, 'rules' : ['melodic']}
+generic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : []}
+melodic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : ['melodic']}
 maxvalue = 14
 minvalue = -7
 
@@ -207,6 +224,8 @@ beginningprompttextcolor = BLUE
 menuscrollspeed = 150 # in milliseconds
 confirmduration = 11 # in seconds
 maxbindings = 50
+# keeps track of if we saved to display the symbol
+saved = False
 
 def getmenutextyspace():
     return gettextsize() * 1.5
@@ -225,7 +244,7 @@ accelpixelpermillisecond *= floatinessagainstreality
     
 #encountering enemies
 encounter_check_rate = 100 # rate of check in milliseconds
-encounter_chance = 0.002 # chance per check
+encounter_chance = 0.004 # chance per check
 
 properties = Properties()
 properties_path = os.path.join(pathtoself, "properties.txt")
@@ -296,3 +315,5 @@ def checkkey(name, key):
 
 def updatescreen():
     pygame.display.update(dirtyrects + olddirtyrects + [Rect(10,font.get_linesize(), font.get_linesize()*6, font.get_linesize()*6)])
+
+sign = lambda x: (1, -1)[x < 0]

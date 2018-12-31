@@ -1,15 +1,14 @@
 #!/usr/bin/python
-import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, copy, conversations
+import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, copy, conversations, play_sound
 from ChoiceButtons import ChoiceButtons
 from Button import Button
 from Note import Note
-from play_sound import soundpackkeys
 from play_sound import scales
-from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR
+from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR, getTextPic
 from FrozenClass import FrozenClass
 from pygame import Rect
 from notelistfunctions import shorten_doubles
-
+from Soundpack import max_sample
 
 # battle is the class that runs the battle- information about the game such as storyeventonwin is stored in enemy
 class Battle(FrozenClass):
@@ -22,6 +21,7 @@ class Battle(FrozenClass):
 
         # copy the enemy first to avoid editing originals
         self.enemy = copy.copy(enemy)
+        self.enemy.reset()
         # offset enemy lv by difficulty
         self.enemy.lv += variables.settings.difficulty
         
@@ -32,6 +32,25 @@ class Battle(FrozenClass):
         # if the enemy's level is 0 and there have been no battles, the tutorial is triggered
         self.tutorialp = self.enemy.lv - variables.settings.difficulty == 0 and classvar.player.totalbattles == 0
 
+        # if the accidental tutorial has not been activated and lv is above the threshhold, trigger accidental tutorial
+        self.accidentaltutorialp = classvar.player.getstoryevent("accidentaltutorial") == 0 and self.enemy.lv >= variables.accidentallvthreshhold
+
+        # accidental tutorial will never be in the same battle as the normal tutorial
+        # or if there are no accidentals in the beatmap
+        if "noaccidentals" in self.enemy.beatmaprules or self.tutorialp:
+            self.accidentaltutorialp = False
+        elif self.accidentaltutorialp:
+            # if we do activate the accidentaltutorial, set the tutorial and all the conversations
+            self.tutorialp = True
+
+        #if self.tutorialp:
+        #    if not accidentaltutorialp:
+                # set all the conversations for the tutorial
+        #    else:
+                # set all the accidental conversations    
+        
+        self.atutorialstate = None
+        
         # for attacking animation
         self.isplayernext = False  # if the player is currently being damaged
         self.oldenemyhealth = 0
@@ -49,7 +68,9 @@ class Battle(FrozenClass):
 
         # drawing buttons
         # extra space around dance to leave space for synth options
-        self.battlechoice = ChoiceButtons(["   DANCE!   ", "Flee", variables.settings.soundpack, self.getscalename()], 13 / 16)
+        self.battlechoice = ChoiceButtons(["   DANCE!   ", "leave", variables.settings.soundpack, self.getscalename()], 13 / 16)
+
+        self.retrychoice = ChoiceButtons(["retry", "go home"], 13/16)
 
         # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
         self.pausetime = 0
@@ -59,6 +80,15 @@ class Battle(FrozenClass):
         self.playercurrentanim = 0
 
         self._freeze()
+
+    def startnew(self):
+        self.enemy.sethealth()
+        classvar.player.heal()
+        
+        self.state = "dance"
+        self.setfirstbeatmap()
+        # clear screen
+        variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
 
     def getscalename(self):
         if self.enemy.specialscale != None:
@@ -75,16 +105,41 @@ class Battle(FrozenClass):
         self.reset_time()
         self.reset_enemy()
 
-        if self.tutorialp:
-            self.tutorialstate = "starting"
-            # if it is the tutorial, add two notes for the player to fail on, and change first note to a
+        if self.accidentaltutorialp:
+            
+            #add an accidentalnote
             b = self.beatmaps[0]
-            b.notes[0] = Note(0, b.notes[0].time, 3)
+            b.notes.insert(0, Note(0, b.notes[0].time, 2))
+            b.notes[0].accidentalp = True;
+
             # first add ten to give space for the new notes
             for note in b.notes:
                 note.time += 24
             b.notes[0].time -= 12
-            b.notes = [Note(0, 1, 1), Note(1, 2, 1)] + b.notes
+            # insert the note that tests if they know what they are doing
+            b.notes.insert(0, Note(0, 1, 1, accidentalp=True))
+            
+        if self.tutorialp:
+            self.tutorialstate = "starting"
+            # if it is the tutorial, add two notes for the player to fail on, and change first note to a
+            b = self.beatmaps[0]
+            del b.notes[0]
+            b.notes.insert(0, Note(0, b.notes[0].time, 3))
+
+            # set it to be an accidental for the accidental tutorial
+            if self.accidentaltutorialp:
+                b.notes[0].accidentalp = True
+            
+            # first add ten to give space for the new notes
+            for note in b.notes:
+                note.time += 24
+            b.notes[0].time -= 12
+
+            if not self.accidentaltutorialp:
+                b.notes = [Note(0, 1, 1), Note(1, 2, 1)] + b.notes
+            else:
+                newn = Note(0, 1, 2, accidentalp = True)
+                b.notes.insert(0, newn)
 
     def reset_time(self):
         self.starttime = variables.settings.current_time
@@ -171,20 +226,47 @@ class Battle(FrozenClass):
             variables.screen.blit(enemynamescaled, [w / 2 - (enemynamescaled.get_width() / 2), h / 2])
 
             self.battlechoice.draw()
+            
+            # draw the wave above the battlechoice
+            wavex = self.battlechoice.buttons[-2].x * variables.width
+            # the height of the wave
+            waveamp = (self.battlechoice.buttons[-2].height()*3/4) * 0.5
+            wavescalar = waveamp*0.8/(play_sound.currentsoundpack().volumelist[-1][1]*max_sample)
+            wavelen = self.battlechoice.buttons[-2].width()*3/4
+            wavey = self.battlechoice.buttons[-2].y*variables.height-waveamp
+            loopbuffer = play_sound.all_tones[variables.settings.soundpack].loopbuffers[0]
+            skiplen = (len(loopbuffer)/25)/wavelen
+            for waveoffset in range(int(wavelen)):
+                variables.screen.fill(variables.BLUE, Rect(int(wavex+waveoffset), int(wavey), variables.displayscale, variables.displayscale))
+                variables.screen.fill(variables.WHITE, Rect(int(wavex+waveoffset),int(wavey+(loopbuffer[int(waveoffset*skiplen)][0]*wavescalar)), variables.displayscale, variables.displayscale))
+                
+            variables.dirtyrects.append(Rect(wavex, wavey-waveamp, waveoffset, waveamp*2))
+
+            # draw the scale above battlechoice
+            firstscalex = self.battlechoice.buttons[-1].x * variables.width
+            scalex = firstscalex
+            scaley = self.battlechoice.buttons[-1].y*variables.height - self.battlechoice.buttons[-1].height()
+            scaleintervals = play_sound.scales[self.getscalename()]
+            for i in scaleintervals:
+                tpic = getTextPic(str(i)+" ", variables.gettextsize(), variables.WHITE)
+                variables.screen.blit(tpic, (scalex, scaley))
+                scalex += tpic.get_width()
+            variables.dirtyrects.append(Rect(firstscalex, scaley, scalex-firstscalex, self.battlechoice.buttons[-1].height()))
 
         elif self.state == "lose" or self.state == "win":
-            text = None
+
             # button
-            if self.state == "lose":
-                text = "go home in shame"
+            if self.state == "win":
+                conttext = "continue"
+                # button coordinates are multipliers of screen width and height
+                continuebutton = Button(1 / 2, b/h, conttext, variables.gettextsize()/h)
+                continuebutton.iscentered = True
+                continuebutton.draw(True)
             else:
-                text = "continue"
-            # button coordinates are multipliers of screen width and height
-            continuebutton = Button(1 / 2, b/h, text, variables.gettextsize()/h)
-            continuebutton.iscentered = True
-            continuebutton.draw(True)
+                self.retrychoice.draw()
 
             # text
+            text = None
             if self.state == "lose":
                 text = variables.font.render("you lost...", 0, variables.WHITE)
             else:
@@ -285,14 +367,58 @@ class Battle(FrozenClass):
 
     def newplayeranimation(self):
         self.playerframe = 0
-        maxanimnumber = classvar.player.lv() - variables.settings.difficulty
+        maxanimnumber = max(1, classvar.player.lv() - variables.settings.difficulty)
         self.playercurrentanim = random.randint(0, maxanimnumber)
         # if this number is too large because an animation for that level does not exist, pick a new one lower than it
         while not self.currentplayerframename() in GR:
             maxanimnumber = self.playercurrentanim-1
             self.playercurrentanim = random.randint(0, maxanimnumber)
-        
 
+    def deletetutorialnote():
+        # get rid of the third turorial note
+        b = self.beatmaps[0]
+        deletedp = False
+        i = 0
+        while not deletedp:
+            if b.notes[i].time >= 12:
+                del b.notes[i]
+                deletedp = True
+            else:
+                i += 1
+        # offset the rest
+        for note in b.notes:
+            if note.time >= 24:
+                note.time -= 12
+
+    def tutorialdancetick(self,currentb, dt):
+        if self.tutorialstate == "starting":
+            if currentb.notetime() > 4:
+                #exit the tutorial if the got the first two notes perfectly
+                if len(currentb.scores) == 2 and (currentb.scores[0] + currentb.scores[1])/2 >= variables.ok_value:
+                        self.tutorialp = False
+                        # get rid of the third turorial note
+                        self.deletetutorialnote()
+                else:
+                    self.tutorialstate = "first note"
+                    currentb.showkeys()
+                    maps.engage_conversation("tutorialconversation1", True)
+        elif self.tutorialstate == "first note":
+            fnote = currentb.notes[0]
+            if fnote.pos[1] >= variables.getpadypos() and fnote.time > variables.settings.notes_per_screen + 2:
+                self.tutorialstate = "release note"
+                maps.engage_conversation("pressanow", True)
+        elif self.tutorialstate == "release note":
+            fnote = currentb.notes[0]
+            if fnote.pos[1] - fnote.height(currentb.tempo) > variables.getpadypos() and fnote.time > 10:
+                self.tutorialstate = "finished first"
+                maps.engage_conversation("releaseanow", True)
+        elif self.tutorialstate == "finished first":
+            fnote = currentb.notes[0]
+            if fnote.time >= 24:
+                self.tutorialstate = "done"
+                currentb.scores = []
+                maps.engage_conversation("endtutorial", True)
+        
     # for things like the attack animation
     def ontick(self):
         currentb = None
@@ -307,47 +433,8 @@ class Battle(FrozenClass):
 
         
         if self.tutorialp and self.state == "dance":
-            if self.tutorialstate == "starting":
-                if currentb.notetime() > 4:
-                    #exit the tutorial if the got the first two notes perfectly
-                    if len(currentb.scores) == 2:
-                        if (currentb.scores[0] + currentb.scores[1])/2 >= variables.ok_value:
-                            self.tutorialp = False
-                            # get rid of the third turorial note
-                            b = self.beatmaps[0]
-                            deletedp = False
-                            i = 0
-                            while not deletedp:
-                                if b.notes[i].time >= 12:
-                                    del b.notes[i]
-                                    deletedp = True
-                                else:
-                                    i += 1
-                            # offset the rest
-                            for note in b.notes:
-                                if note.time >= 24:
-                                    note.time -= 12
-                    else:
-                        self.tutorialstate = "first note"
-                        currentb.showkeys()
-                        maps.engage_conversation(conversations.tutorialconversation1)
-            elif self.tutorialstate == "first note":
-                fnote = currentb.notes[0]
-                if fnote.pos[1] >= variables.getpadypos() and fnote.time > variables.settings.notes_per_screen + 2:
-                    self.tutorialstate = "release note"
-                    maps.engage_conversation(conversations.pressanow)
-            elif self.tutorialstate == "release note":
-                fnote = currentb.notes[0]
-                if fnote.pos[1] - fnote.height(currentb.tempo) > variables.getpadypos() and fnote.time > 10:
-                    self.tutorialstate = "finished first"
-                    maps.engage_conversation(conversations.releaseanow)
-            elif self.tutorialstate == "finished first":
-                fnote = currentb.notes[0]
-                if fnote.time >= 24:
-                    self.tutorialstate = "done"
-                    currentb.scores = []
-                    maps.engage_conversation(conversations.endtutorial)
-
+            self.tutorialdancetick(currentb, dt)
+            
         if self.state == "attacking":
             if self.isplayernext == True:
                 damage = self.oldplayerhealth - self.newplayerhealth
@@ -361,7 +448,7 @@ class Battle(FrozenClass):
                     if self.newplayerhealth <= 0:
                         self.state = "lose"
                         if self.enemy.name == "chimney":
-                            maps.engage_conversation(conversations.losetochimney)
+                            maps.engage_conversation("losetochimney", True)
                     elif self.newenemyhealth == self.enemy.health:  # if done with the animation
                         self.state = "dance"  # exit
                         self.next_beatmap()
@@ -413,6 +500,7 @@ class Battle(FrozenClass):
         classvar.player.timeslost += 1
         classvar.player.totalbattles += 1
 
+        
     def win(self):
         classvar.player.addstoryevents(self.enemy.storyeventsonwin)
         classvar.player.totalbattles += 1
@@ -425,13 +513,13 @@ class Battle(FrozenClass):
         variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
         classvar.player.addstoryevents(self.enemy.storyeventsonflee)
         if self.enemy.lv - variables.settings.difficulty == 0:
-            maps.engage_conversation(conversations.letsflee)
+            maps.engage_conversation("letsflee", True)
         maps.initiatemusic()
 
     def onkey(self, key):
         def change_soundpack(offset):
-            i = soundpackkeys.index(variables.settings.soundpack)
-            variables.settings.soundpack = soundpackkeys[(i + offset) % len(soundpackkeys)]
+            i = classvar.player.soundpacks.index(variables.settings.soundpack)
+            variables.settings.soundpack = classvar.player.soundpacks[(i + offset) % len(classvar.player.soundpacks)]
             self.battlechoice.buttons[-2].assign_text(variables.settings.soundpack)
 
         def change_scale(offset):
@@ -452,10 +540,7 @@ class Battle(FrozenClass):
         elif self.state == "choose":
             if variables.checkkey("enter", key):
                 if self.battlechoice.current_option == 0:
-                    self.state = "dance"
-                    self.setfirstbeatmap()
-                    # clear screen
-                    variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
+                    self.startnew()
                 elif self.battlechoice.current_option == 1:
                     self.flee()
                 elif self.battlechoice.current_option == 2:
@@ -476,8 +561,14 @@ class Battle(FrozenClass):
                 elif variables.checkkey("down", key) and self.battlechoice.current_option == 3:
                     change_scale(1)
 
-        elif self.state == "lose" and variables.checkkey("enter", key):
-            self.lose()
+        elif self.state == "lose":
+            if  variables.checkkey("enter", key):
+                if self.retrychoice.getoption() == "retry":
+                    self.startnew()
+                else:
+                    self.lose()
+            else:
+                self.retrychoice.leftrightonkey(key)
         elif self.state == "win" and variables.checkkey("enter", key):
             self.addexp()
         elif self.state == "got exp" and variables.checkkey("enter", key):
@@ -491,7 +582,7 @@ class Battle(FrozenClass):
                     if self.tutorialstate == "first note":
                         pass
                     elif self.tutorialstate == "release note":
-                        maps.engage_conversation(conversations.releasedearly)
+                        maps.engage_conversation("releasedearly", True)
                     else:
                         releasep = True
                 else:

@@ -24,6 +24,10 @@ class Beatmap():
         self.scores = []
         # held keys is None if the key is not held, and the tone if it is held
         self.held_keys = [None] * 8
+        # like held keys but for the modified versions of the key (accidentals)
+        self.modifierheldkeys = [None] * 8
+        # spaceheldq stores if the modifier key (default space) is currently being held
+        self.spacepressedp = False
         self.time_key_started = [0] * 8
         # when to stop displaying the text, in milliseconds
         self.feedback_timers = [None] * 8
@@ -63,14 +67,21 @@ class Beatmap():
         w = variables.width / 20
         ew = w * 1.25
         padellipseypos = variables.getpadypos() - padheight + padheight / 2 - ew / 4
+        
         # draw which ones are pressed
         for x in range(0, 8):
-            if self.held_keys[x] != None:
+            padcolor = (180, 180, 180)
+            if self.modifierheldkeys[x] != None:
+                padcolor = (variables.PINK[0]-70, variables.PINK[1]-30, variables.PINK[2]-70)
+            elif self.spacepressedp:
+                padcolor = (variables.PINK[0]-70, variables.PINK[1]-30, variables.PINK[2]-70)
+            
+            if self.held_keys[x] != None or self.modifierheldkeys[x] != None:
                 xoffset = 0
                 if (x + 1 > 4):
                     xoffset = middleoffset
                 expos = padxspace * (x + 1) - w / 8 + xoffset
-                pygame.draw.ellipse(variables.screen, variables.WHITE, [expos,
+                pygame.draw.ellipse(variables.screen, padcolor, [expos,
                                                                         padellipseypos,
                                                                         ew, ew / 2])
                 variables.dirtyrects.append(Rect(expos, padellipseypos, ew, ew/2))
@@ -112,10 +123,20 @@ class Beatmap():
             xoffset = 0
             if (x > 4):
                 xoffset = middleoffset
+            padcolor = variables.notes_colors[x-1]
+            if(self.spacepressedp):
+                padcolor = variables.PINK
+            # draw the pads
             padrect = Rect(padxspace * (x) - w / 8 + xoffset, variables.getpadypos() - padheight, w * 1.25, padheight)
-            pygame.draw.rect(variables.screen, variables.notes_colors[x - 1],
-                             padrect)
+            pygame.draw.rect(variables.screen, padcolor, padrect)
             variables.dirtyrects.append(padrect)
+
+            # draw little pads if space pressed
+            if self.spacepressedp:
+                spacing = w*0.05
+                padrect = Rect(padxspace * (x) - w / 8 + xoffset + spacing/2, variables.getpadypos() - padheight+spacing/2, w * 1.25-spacing, padheight-spacing)
+                pygame.draw.rect(variables.screen, variables.notes_colors[x - 1], padrect)
+                variables.dirtyrects.append(padrect)
             
 
         # draw the feedback (keys then scores, perfect ect)
@@ -191,9 +212,14 @@ class Beatmap():
         def check_note(np):
             if self.notes[np].beginning_score == None:
                 s = self.pos_to_score(self.notes[np].pos[1] - padheight)
+
+                
                 if s != None:
+                    # check if modifier is correct
+                    if not self.notes[np].accidentalp == self.spacepressedp:
+                        s = variables.miss_value
                     self.notes[np].beginning_score = s
-                    if self.notes[np].beginning_score == variables.miss_value:
+                    if s == variables.miss_value:
                         self.notes[np].ison = False
                         self.feedback[self.notes[np].screenvalue()] = "miss"
                         self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
@@ -217,29 +243,26 @@ class Beatmap():
                     sound_value += self.scale[x % 7]
             return sound_value
 
-        def playnotepressed(kp):
+        def playnotepressed(kp, modifiedp):
             v = check_place(kp)
             v = simple_value_in_key(v)
+            if self.spacepressedp or modifiedp:
+                v += 1
             self.held_keys[kp] = v
             self.time_key_started[kp] = variables.settings.current_time
             play_tone(v)
 
-        if variables.checkkey("note1", key):
-            playnotepressed(0)
-        elif variables.checkkey("note2", key):
-            playnotepressed(1)
-        elif variables.checkkey("note3", key):
-            playnotepressed(2)
-        elif variables.checkkey("note4", key):
-            playnotepressed(3)
-        elif variables.checkkey("note5", key):
-            playnotepressed(4)
-        elif variables.checkkey("note6", key):
-            playnotepressed(5)
-        elif variables.checkkey("note7", key):
-            playnotepressed(6)
-        elif variables.checkkey("note8", key):
-            playnotepressed(7)
+        for x in range(8):
+            if variables.checkkey("note" + str(x+1), key):
+                playnotepressed(x, False)
+                break
+        
+        if variables.checkkey("notemodifier", key):
+            self.spacepressedp = True
+
+        for x in range(8):
+            if variables.checkkey("note" + str(x+1) + "modified", key):
+                playnotepressed(x, True)
 
     def onrelease(self, key):
 
@@ -253,6 +276,7 @@ class Beatmap():
                     self.notes[np].height_offset = self.notes[np].pos[1] - variables.getpadypos()
 
                 if s != None:
+                    
                     if s < self.notes[np].beginning_score:
                         final_note_score = s
                     else:
@@ -293,38 +317,16 @@ class Beatmap():
                 self.feedback[v] = "miss"
                 self.feedback_timers[v] = variables.settings.current_time + self.tempo
 
-        if variables.checkkey("note1", key):
-            check_place(0)
-            stop_tone(self.held_keys[0])
-            self.held_keys[0] = None
-        elif variables.checkkey("note2", key):
-            check_place(1)
-            stop_tone(self.held_keys[1])
-            self.held_keys[1] = None
-        elif variables.checkkey("note3", key):
-            check_place(2)
-            stop_tone(self.held_keys[2])
-            self.held_keys[2] = None
-        elif variables.checkkey("note4", key):
-            check_place(3)
-            stop_tone(self.held_keys[3])
-            self.held_keys[3] = None
-        elif variables.checkkey("note5", key):
-            check_place(4)
-            stop_tone(self.held_keys[4])
-            self.held_keys[4] = None
-        elif variables.checkkey("note6", key):
-            check_place(5)
-            stop_tone(self.held_keys[5])
-            self.held_keys[5] = None
-        elif variables.checkkey("note7", key):
-            check_place(6)
-            stop_tone(self.held_keys[6])
-            self.held_keys[6] = None
-        elif variables.checkkey("note8", key):
-            check_place(7)
-            stop_tone(self.held_keys[7])
-            self.held_keys[7] = None
+        for x in range(8):
+            if variables.checkkey("note" + str(x+1), key) or \
+               variables.checkkey("note" + str(x+1) + "modified", key):
+                check_place(x)
+                stop_tone(self.held_keys[x])
+                self.held_keys[x] = None
+                break
+         
+        if variables.checkkey("notemodifier", key):
+            self.spacepressedp = False
 
     def ontick(self):
         # update positions of notes

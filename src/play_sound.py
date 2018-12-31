@@ -7,15 +7,18 @@ from Soundpack import Soundpack
 # each soundpack is a list of sounds from A3 to A6
 # value of 0 corresponds to A4, -12 is A3
 all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 25),
-             "triangle": Soundpack("triangle", 2),
-             "triangleh": Soundpack("triangle", 30), "sawtooth": Soundpack("sawtooth", 4),
-             "sawtoothh": Soundpack("sawtooth", 30)}
+             "triangle": Soundpack("triangle", 30), "sawtooth": Soundpack("sawtooth", 30),
+             "sawsoft": Soundpack("sawtooth", 4)}
+
+def currentsoundpack():
+    return all_tones[variables.settings.soundpack]
 
 # all possible soundpacks
-soundpackkeys = ["sine", 'square', 'triangle', 'triangleh', 'sawtooth', 'sawtoothh']
+soundpackkeys = list(all_tones.keys())
 
 scales = {"C major" : [2, 2, 1, 2, 2, 2, 1],
-          "C minor" : [2, 1, 2, 2, 1, 3, 1]}# list of offsets for the scale
+          "C minor" : [2, 1, 2, 2, 1, 3, 1],
+          "chromatic" : [1, 1, 1, 6, 1, 1, 1]}# list of offsets for the scale
 
 def loadmusic(filename):
     return pygame.mixer.Sound(os.path.join(variables.pathtoself, "music/", filename))
@@ -32,7 +35,12 @@ for x in range(37):
 musicchannel = pygame.mixer.Channel(37)
 soundeffectchannel = pygame.mixer.Channel(38)
 
-def play_tone(t):
+def play_tone(tonein):
+    t = tonein
+    if t+12>=len(all_tones[variables.settings.soundpack].soundlist):
+        t = len(all_tones[variables.settings.soundpack].soundlist)-1-12
+    elif t+12 < 0:
+        t = 0-12
     # add because values are centered on 0
     all_tones[variables.settings.soundpack].soundlist[t+12]
     channels[t+12].set_volume(variables.settings.volume*(1/3)) # balance volume

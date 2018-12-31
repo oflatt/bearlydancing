@@ -33,7 +33,7 @@ class Map(FrozenClass):
         self.base = base
         # terrain is a list of Rock
         self.terrain = terrain
-        # final image is an actual image, not a dict
+        # final image is the name of the image for the background
         self.finalimage = base
 
         self.set_map_scale_offset()
@@ -58,6 +58,7 @@ class Map(FrozenClass):
         self.map_height = GR[base]["h"]
         self.reset_screenxoffset()
         self.playerenabledp = True
+        
         self._freeze()
 
     def set_map_scale_offset(self):
@@ -90,7 +91,7 @@ class Map(FrozenClass):
         y_min_distance = 8
         
         greyrockp = rocktype == "greyrock" or rocktype == "grey rock" or rocktype == "rock"
-        pinetreep = rocktype == "pinetree" or rocktype == "pine tree"
+        pinetreep = rocktype == "pinetree" or rocktype == "pine tree" or rocktype == "snowpinetree"
         flowerp = rocktype == "flower"
 
         # set width and height of rock generated, the constraints for where they are generated,
@@ -164,7 +165,10 @@ class Map(FrozenClass):
             randx = random.randint(xconstraints[0], xconstraints[1])
             if not collidesp(randx, randy, newrocks):
                 if pinetreep:
-                    newrocks.append(Rock(graphics.pinetree(), randx, randy, variables.TREECOLLIDESECTION))
+                    if rocktype == "snowpinetree":
+                        newrocks.append(Rock(graphics.snowpinetree(), randx, randy, variables.TREECOLLIDESECTION))
+                    else:
+                        newrocks.append(Rock(graphics.pinetree(), randx, randy, variables.TREECOLLIDESECTION))
                 elif greyrockp:
                     newrocks.append(Rock(graphics.greyrock(), randx, randy, variables.ROCKCOLLIDESECTION))
                 elif flowerp:
@@ -323,7 +327,7 @@ class Map(FrozenClass):
         minencounterchecks = 20
         # if the random chance activates
         if self.encounterchecksnotactivated>minencounterchecks:
-            if random.random() < variables.encounter_chance * (math.sqrt(self.encounterchecksnotactivated-minencounterchecks) + 0.2):
+            if random.random() < variables.encounter_chance * math.sqrt(self.encounterchecksnotactivated-minencounterchecks):
                 self.encounterchecksnotactivated = 0
                 currentenemy = False
 

@@ -20,18 +20,28 @@ class Settings(FrozenClass):
         self.keydict["note6"] = [pygame.K_k]
         self.keydict["note7"] = [pygame.K_l]
         self.keydict["note8"] = [pygame.K_SEMICOLON]
-
+        self.keydict["notemodifier"] = [pygame.K_SPACE]
+        self.keydict["note1modified"] = [pygame.K_w]
+        self.keydict["note2modified"] = [pygame.K_e]
+        self.keydict["note3modified"] = [pygame.K_r]
+        self.keydict["note4modified"] = [pygame.K_t]
+        self.keydict["note5modified"] = [pygame.K_i]
+        self.keydict["note6modified"] = [pygame.K_o]
+        self.keydict["note7modified"] = [pygame.K_p]
+        self.keydict["note8modified"] = [pygame.K_[]
+        
         self.keydict["escape"] = [pygame.K_ESCAPE]
+
 
         # normal setting stuff
         self.windowmode = "fullscreen"
         self.volume = 0.5
+        self.autosavep = True
 
         # state can be world, battle, or conversation
         self.state = "world"
         self.backgroundstate = "world"
         self.menuonq = True
-        self.easymodeq = False
 
         #possible soundpacks can be seen by listing the keys in all_sounds in play_sound
         self.soundpack = "sine"

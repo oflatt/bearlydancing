@@ -9,7 +9,6 @@ class Enemy(FrozenClass):
     def __init__(self, animationnum, rarity, name, beatmaprules):
         self.lv = 0
         self.animationnum = animationnum
-        self.reset()
         self.rarity = rarity
         self.name = name
         self.beatmaprules = beatmaprules
@@ -18,6 +17,8 @@ class Enemy(FrozenClass):
         self.storyeventsonlose = None
         self.storyeventsonflee = None
         self.specialscale = None
+        # reset needs to be called before enemy is used
+        self.animation = None
         
         self._freeze()
 
@@ -27,3 +28,7 @@ class Enemy(FrozenClass):
 
     def sethealth(self):
         self.health = stathandeling.max_health(self.lv)
+
+    def enterbattle(self):
+        if self.name == "bogo":
+            graphics.randombogoface()

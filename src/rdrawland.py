@@ -1,9 +1,10 @@
-import pygame, variables, random
+import pygame, variables, random, math
 from pygame import draw
 from random import randint
 from Texture import Texture
 from addtexture import addtexture
 from pygame import Rect
+from rdrawtree import snowclump
 
 dirtcolor = (70, 71, 14)
 pathwidth = 16
@@ -151,3 +152,85 @@ def makegrassland(width, height, leftpath = True, rightpath = True, uppath = Tru
     surface = addroad(surface, leftpath, rightpath, uppath, downpath)
         
     return surface
+
+def makesnowland(width, height, grasstosnowp = False):
+    surface = None
+    if grasstosnowp:
+        surface = makegrassland(width, height, uppath = False, downpath = False)
+        for x in range(20):
+            surface.fill((variables.snowcolor[0]-(20-x),variables.snowcolor[0]-(20-x),variables.snowcolor[0]-(20-x)), Rect(width/4 - 1 - x,0, 1, height))
+        surface.fill(variables.snowcolor, Rect(0, 0, width/4-20, height))
+        # now make darker pertrusion into grass
+        pertrusionx = 10
+        for yp in range(height):
+            for xp in range(pertrusionx):
+                surface.set_at((int(width/4+xp), yp), (variables.snowcolor[0]-20-xp*2, variables.snowcolor[0]-20-xp*2, variables.snowcolor[0]-20-xp*2))
+            pertrusionx += randint(-2, 2)
+            if pertrusionx < 1:
+                pertrusionx = 1
+            if pertrusionx > 20:
+                pertrusionx = 20
+    else:
+        surface = pygame.Surface([width, height], pygame.SRCALPHA)
+        surface.fill(variables.snowcolor)
+
+    currentcolorincrease = 5
+    
+    def makehill(hillx, hilly, hillradiusin):
+        shadowdir = random.uniform(0, math.pi*2)
+        shadowrmin = random.uniform(math.pi/5, math.pi*2/3)/2
+        shadowrmax = shadowrmin*random.uniform(1.6, 2.2)
+        
+        hillradius = hillradiusin
+        currentshade = variables.snowcolor[0]
+        sharpness = currentcolorincrease * random.uniform(1.5, 2)/hillradius
+        while hillradius > 0:
+            shadowr = shadowrmin + (shadowrmax-shadowrmin)*(hillradius/hillradiusin)
+            circlethreshold(surface, hillx, hilly, hillradius, (currentshade, currentshade, currentshade), shadowdir, shadowr)
+            hillradius -= 1
+            if currentshade < variables.snowcolor[0]+currentcolorincrease:
+                currentshade += sharpness
+
+    for x in range(randint(3, 7)):
+        hillx = randint(0, width)
+        hilly = randint(0, height)
+        hillr = randint(int(width/20), int(width/3))
+        if grasstosnowp and hillx+hillr>width/4 + 25:
+            snowclump(surface, hillx, hilly, groundp = True)
+            snowclump(surface, randint(int(width/4 + 25), width), randint(0, height), groundp = True)
+            snowclump(surface, randint(int(width/4 + 25), int(width/2)), randint(0, height), groundp = True)
+            snowclump(surface, randint(int(width/4 + 25), int(width/2)), randint(0, height), groundp = True)
+        else:
+            makehill(hillx, hilly, hillr)
+        if randint(0, int(currentcolorincrease)) <3:
+            currentcolorincrease += random.uniform(2, 15)
+            if currentcolorincrease > 35:
+                currentcolorincrease = 35
+
+    return surface
+
+def circlethreshold(surface, x, y, radius, color, shadowdir, shadowr):
+    steps = math.pi * radius * 2.5
+    currentstep = 0
+    differencec = color[0] - variables.snowcolor[0]
+    
+    while currentstep<=steps:
+        colortouse = color
+        
+        angle = currentstep*2*math.pi/steps
+        anglediff = abs(angle-shadowdir)
+        if anglediff > math.pi:
+            anglediff = math.pi*2-anglediff
+        if shadowdir != None:
+            if anglediff <= shadowr:
+                colordarkened = color[0]-(1 - anglediff/shadowr)*differencec
+                colortouse = (colordarkened, colordarkened, colordarkened)
+        
+        fillx = int(math.cos(angle)*radius)+x
+        filly = int(math.sin(angle)*radius)+y
+        if fillx >= 0 and fillx < surface.get_width() and filly>=0 and filly<surface.get_height():
+            currentcolor = surface.get_at((fillx, filly))
+            if colortouse[0] > currentcolor[0]:
+                surface.set_at((fillx, filly), colortouse)
+                    
+        currentstep += 1

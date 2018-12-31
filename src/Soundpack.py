@@ -52,7 +52,7 @@ class Soundpack():
                 sval += (1 / (x * 2 - 1)) * math.sin(math.pi * 2 * (2 * x - 1) * frequency * t)
         # max of 25 for "true" square wave
         elif squareness == 25:
-            if (frequency * t) % 2 < 0.5:
+            if (frequency * t) % 1 < 0.5:
                 sval = 1
             else:
                 sval = -1
@@ -69,7 +69,7 @@ class Soundpack():
                 sval += (-1 ** k) * (sin(2 * pi * (2 * k + 1) * f * t) / ((2 * k + 1) ** 2))
         else:
             p = 1 / f
-            sval = (2 / p) * abs((t % p) - p / 2) - p / 4
+            sval = (2 / p) * 2* (abs((t % p) - p / 2) - p / 4)
         return sval
 
     # shapefactor is a factor used for additive synthesis

@@ -164,6 +164,17 @@ def notechordorderedp(l):
                 break
     return orderedp
 
+# checks to make sure when one note is an accidental, all other notes at that time are also accidentals
+def noteaccidentalsconsistantp(l):
+    for i in range(len(l)-1):
+        n = l[i]
+        n2 = l[i+1]
+        # if they are at the same time
+        if compare_numbers_around(n.time, n2.time, 0.05):
+            if not n.accidentalp == n2.accidentalp:
+                return False
+    return True
+
 def thrownoteerror(errorstring):
     print("------------------------------")
     print("ERROR: " + errorstring)
