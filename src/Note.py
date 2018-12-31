@@ -1,7 +1,9 @@
 import pygame
+
+
 import variables
 from FrozenClass import FrozenClass
-
+from graphics import getTextPic
 
 def value_to_screenvalue(v):
     sv = v % 7
@@ -39,7 +41,7 @@ def beatshape(time):
 
 class Note(FrozenClass):
 
-    def __init__(self, value, time, duration, chordadditionp = False, accidentalp = False):
+    def __init__(self, value, time, duration, chordadditionp = False, accidentalp = False, scoremultiplier = 1):
         # value is the placement in the current scale (instrument) that the note is, 0 is the first note, can go neg
         self.value = value
         
@@ -60,11 +62,22 @@ class Note(FrozenClass):
         # raises the note one half step up
         self.accidentalp = accidentalp
         
-        # this is for printing out notes and debugging
+        # this is for generating notes and debugging
         self.chordadditionp = chordadditionp
         self.collidedwithanotherp = False
 
+        # multiplies the score that you get from that note
+        self.scoremultiplier = int(scoremultiplier)
+
         self._freeze()
+
+    def equalp(self, othernote):
+        return self.time == othernote.time and \
+            self.duration == othernote.duration and \
+            self.value == othernote.value and \
+            self.accidentalp == othernote.accidentalp and \
+            self.chordadditionp == othernote.chordadditionp and \
+            self.scoremultiplier == othernote.scoremultiplier
 
     def screenvalue(self):
         return value_to_screenvalue(self.value)
@@ -91,6 +104,8 @@ class Note(FrozenClass):
     def drawhelper(self, tempo):
         width = variables.width / 20
         height = self.height(tempo)
+        borderwidth = 0 # zero signals pygame to draw it filled in
+        
 
         # subtract height to y because the pos is the bottom of the rectangle
         if self.ison:
@@ -112,39 +127,54 @@ class Note(FrozenClass):
         topendy = p[1] - height - end_height
         endx = p[0] - width/8
         endwidth = width * 1.25
+        middleofnoteoffset = 0
 
+        if self.scoremultiplier != 1:
+            borderwidth = int(end_height/2)
+            middleofnoteoffset = int((width-int(width*0.7))/2)
+            width = int(width * 0.7)
+            
+        
         def drawend(x, y, color, endshape):
             if endshape == "square":
                 pygame.draw.rect(variables.screen, color,
-                                 [x, y, endwidth, end_height])
+                                 [x, y, endwidth, end_height], borderwidth)
             elif endshape == "triangle":
                 fourthx = endwidth/4
                 centery = y + end_height/2
                 pygame.draw.polygon(variables.screen, color,
                                     [[x, centery], [x+fourthx, y], [x+3*fourthx, y],
-                                     [x+endwidth, centery], [x+3*fourthx, y+end_height], [x+fourthx, y+end_height]])
+                                     [x+endwidth, centery], [x+3*fourthx, y+end_height], [x+fourthx, y+end_height]], borderwidth)
             elif endshape == "round":
                 pygame.draw.ellipse(variables.screen, color,
-                                    [x, y, endwidth, end_height])
+                                    [x, y, endwidth, end_height], borderwidth)
 
         def drawmid(y, mheight, color):
+            x = p[0] + middleofnoteoffset
             if mheight > 0:
                 if self.shape() == "square":
-                    pygame.draw.rect(variables.screen, color, [p[0], y, width, mheight])
+                    pygame.draw.rect(variables.screen, color, [x, y, width, mheight], borderwidth)
                 elif self.shape() == "triangle":
                     fourthx = width/4
                     pygame.draw.polygon(variables.screen, color,
-                                        [[p[0]+3*fourthx, y], [p[0]+fourthx, y], [p[0], y + mheight/2],
-                                         [p[0]+fourthx, y+mheight], [p[0]+3*fourthx, y+mheight], [p[0]+width, y + mheight/2]])
+                                        [[x+3*fourthx, y], [x+fourthx, y], [x, y + mheight/2],
+                                         [x+fourthx, y+mheight], [x+3*fourthx, y+mheight], [x+width, y + mheight/2]],
+                                        borderwidth)
                 elif self.shape() == "round":
                     ellipsesurface = pygame.Surface((width, mheight), pygame.SRCALPHA)
                     pygame.draw.ellipse(ellipsesurface, color,
-                                        [0, -20, width, mheight+40])
-                    variables.screen.blit(ellipsesurface, [p[0], y])
+                                        [0, -20, width, mheight+40],
+                                        borderwidth)
+                    variables.screen.blit(ellipsesurface, [x, y])
 
+                # draw the multiplier if it is not 1
+                if self.scoremultiplier != 1:
+                    scorepic = getTextPic("x" + str(self.scoremultiplier), variables.gettextsize(), variables.WHITE)
+                    variables.screen.blit(scorepic, (x, y + mheight/2 - variables.gettextsize()/2))
+                    
                 # now draw pink line if it is an accidental
                 if self.accidentalp:
-                    pygame.draw.rect(variables.screen, variables.PINK, [p[0]+width/4, y, width/2, mheight])
+                    pygame.draw.rect(variables.screen, variables.PINK, [x+width/4, y, width/2, mheight]) # don't change border width
                 
 
         # subtract height from y because the pos is the bottom of the rectangle
@@ -172,4 +202,4 @@ class Note(FrozenClass):
             drawend(endx, p[1]-end_height, color, self.shape())
             variables.dirtyrects.append(pygame.Rect(endx, topendy-10, endwidth, height+end_height+2+20))
 
-        #don't draw it if it has been played
+        # don't draw it if it has been played

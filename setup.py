@@ -1,21 +1,21 @@
-import pip
-from sys import platform
 
-installed_packages = pip.get_installed_distributions()
-flat_installed_packages = [package.project_name for package in installed_packages]
+from sys import platform
 
 import sys
 sys.path.insert(0, './src')
 from dependencies import dependencies
 
-def install(package):
-    pip.main(['install', package])
+import subprocess
+
+def install(name):
+    if platform == "win32":
+        subprocess.call(['pip', 'install', name])
+    else:
+        subprocess.call(['pip3', 'install', name])
+
 
 for d in dependencies:
-    if d in flat_installed_packages:
-        print(d + " already installed")
-    else:
-        print("installing " + d)
-        install(d)
+    print("bearly dancing setup installing " + d)
+    install(d)
 
-print("good to go. bigbang.py in the src folder starts the game.")
+print("good to go. bearly dancing.py in the src folder starts the game.")

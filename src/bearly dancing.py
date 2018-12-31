@@ -5,8 +5,6 @@ from pygame import Rect
 
 variables.load_properties()
 variables.draw_loading_tips()
-variables.draw_loading_text("importing graphics (1/2)")
-pygame.display.flip()
 
 # determine if everything should be re-loaded
 if not os.path.isfile(os.path.abspath(variables.settingspath)) and not variables.newworldnever:
@@ -151,6 +149,14 @@ while not done:
         
     # --- Drawing Code
     def draw_world():
+        #fill edges in with black
+        screenxoffset = maps.current_map.screenxoffset()
+        if screenxoffset != 0:
+            variables.screen.fill(variables.BLACK,
+                                  Rect(0, 0, screenxoffset+1, variables.height))
+            variables.screen.fill(variables.BLACK,
+                                  Rect(variables.width-screenxoffset-2, 0, screenxoffset+3, variables.height))
+            
         classvar.player.update_drawpos()
         
         maps.current_map.draw([classvar.player.mapdrawx, classvar.player.mapdrawy])
@@ -158,13 +164,6 @@ while not done:
             classvar.player.draw()
         maps.current_map.draw_foreground([classvar.player.mapdrawx, classvar.player.mapdrawy])
 
-        #fill edges in with black
-        screenxoffset = maps.current_map.screenxoffset
-        if screenxoffset != 0:
-            variables.screen.fill(variables.BLACK,
-                                  Rect(0, 0, screenxoffset, variables.height))
-            variables.screen.fill(variables.BLACK,
-                                  Rect(variables.width-screenxoffset-1, 0, screenxoffset+1, variables.height))
 
     drawworldp = True
     if variables.settings.menuonq:
@@ -207,19 +206,9 @@ while not done:
         pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
 
         
-    if len(variables.dirtyrects) > 0:
-        if variables.dirtyrects[0] == Rect(0,0,variables.width,variables.height):
-            pygame.display.update(Rect(0,0,variables.width, variables.height))
-        else:
-            variables.updatescreen()
-    elif len(variables.olddirtyrects) > 0:
-        if variables.olddirtyrects[0] == Rect(0,0,variables.width,variables.height):
-            pygame.display.update(Rect(0,0,variables.width, variables.height))
-        else:
-            variables.updatescreen()
-    else:
-        variables.updatescreen()
-        
+    variables.updatescreen()
+
+    # reset dirtyrects
     variables.olddirtyrects = variables.dirtyrects
     variables.dirtyrects = []
 

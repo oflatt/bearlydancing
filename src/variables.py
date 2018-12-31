@@ -1,4 +1,4 @@
-import pygame, os, pickle
+import pygame, os, pickle, copy, sys
 from pygame import Rect
 from Settings import Settings
 from Properties import Properties
@@ -17,17 +17,22 @@ except ImportError:
 
 testsmallp = False
 devmode = True
+# skip the fight with steve, add the event to the player
 skipsteve = True
+# adds all the soundpacks and keys to the player
+addallrewards = False
 # generates a new world on load no matter what
-newworldeachloadq = False
+newworldeachloadq = True
 # allows specific graphics functions to override and make new generated graphics
 allownewworldoverridep = True
 # this overrides the generation of a new set of graphics for a new game
-newworldnever = True
+newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
-dontloadmapsdict = False
+dontloadmapsdict = True
 # this is to get a fresh player with no player attributes
 dontloadplayer = False
+# get a fresh settings file
+dontloadsettings = False
 # only loads first couple of maps
 fasttestmodep = False
 # adds to player level when loading
@@ -42,23 +47,38 @@ devengagebattlekey = pygame.K_END
 
 # this is the mode for the finished product- it just turns off all other development modes
 exportmode = False
+
+if "-exportmode" in sys.argv:
+    exportmode = True
+
 if exportmode:
     testsmallp = False
     devmode = False
     skipsteve = False
+    addallrewards = False
     newworldnever = False
     newworldeachloadq = False
     allownewworldoverridep = False
     dontloadmapsdict = False
     dontloadplayer = False
+    dontloadsettings = True
     fasttestmodep = False
     lvcheat = 0
     testspecs = None
 
+# only print if devmode is on
+def devprint(s):
+    if devmode:
+        print(s)
+    
 # Setup
-pygame.mixer.pre_init(22050, -16, 2, 128)
+sample_rate = 22050
+max_sample = 2 ** (16 - 1) - 1
+pygame.mixer.pre_init(sample_rate, -16, 2, 512)
 pygame.mixer.init()
 pygame.init()
+
+pygame.mixer.set_reserved(38)
 
 # load icon
 icon = pygame.image.load(os.path.join(pathtoself, "icon.png"))
@@ -97,7 +117,8 @@ manualsavebackuppath = os.path.join(pathtoself, "savebackup/");
 settingspath = os.path.join(savefolderpath, "bdsettings.txt")
 savepath = os.path.join(savefolderpath, "bdsave.txt")
 settings = Settings()
-if (os.path.isfile(os.path.abspath(settingspath))):
+if not dontloadsettings:
+    if (os.path.isfile(os.path.abspath(settingspath))):
         if os.path.getsize(os.path.abspath(settingspath)) > 0:
             with open(settingspath, "rb") as f:
                 settings = pickle.load(f)
@@ -120,6 +141,7 @@ setscreen(settings.windowmode)
 generatingbeatmapp = False
 
 olddirtyrects = []
+# keep track of areas of the screen to update. Blitting is done regardless of dirty rects, but when a dirtyrect is appended to this list it is updated twice- this frame and next
 dirtyrects = []
 #screen = pygame.Surface([height, width])
 
@@ -129,8 +151,11 @@ displayscale = round(unrounded_displayscale+0.25)
 # factor for scaling up a map to a screen
 scaleoffset = 1
 # the product of scaleoffset and displayscale
-compscale = displayscale
-compscaleunrounded = unrounded_displayscale
+# this is used only for drawing the world
+def compscale():
+    return displayscale*scaleoffset+settings.zoomlevel
+def compscaleunrounded():
+    return unrounded_displayscale * scaleoffset + settings.zoomlevel
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -178,10 +203,13 @@ accidentallvthreshhold=8
 def getpadypos():
     return height*(13/16)
 
-# lv and rules are added later
 maxdifficulty = 200
-generic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : []}
-melodic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : ['melodic']}
+# maxtime is changed in the code, the goal for how long the song should be
+# lv is the level of the enemy
+# rules are the rules for generating a beatmap
+generic_specs = {'maxtime' : 16, 'lv' : 0, 'rules' : [], 'volumeenvelope': 'bell'}
+melodic_specs = generic_specs.copy()
+melodic_specs['rules'] = ["melodic"]
 maxvalue = 14
 minvalue = -7
 
@@ -190,8 +218,11 @@ good_value = 1
 ok_value = 0.7
 miss_value = 0
 
-all_perfect_multiplier = 1.75
-player_advantage_multiplier = 1.3
+
+all_perfect_multiplier = 1.3
+player_advantage_multiplier = 1.2
+# combo multiplier is calculated by  one plus the length of the max combo over the total number of notes, and then it is multiplied by this factor
+player_combo_multiplier = 0.25
 
 def getperfectrange():
     return height/100
@@ -274,8 +305,17 @@ def draw_loading_tips():
     xpos = int((width / 2) - (text.get_width() / 2))
     ypos = int((height / 2) - text.get_height() - height/10) - text.get_height()*2.5
     pygame.draw.rect(screen, BLACK, Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height()))
-    screen.blit(text, [xpos, ypos])
+    screen.blit(text, [xpos, ypos]) 
 
+def draw_graphic_name(name):
+    text = font.render(name, 0, WHITE).convert()
+    xpos = int((width / 2) - (text.get_width() / 2))
+    ypos = int((height -text.get_height() - height/20))
+    textrect = Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height())
+    pygame.draw.rect(screen, BLACK, textrect)
+    screen.blit(text, [xpos, ypos])
+    pygame.display.update(textrect)
+    
 def draw_progress_bar():
     #clear all the events so it does not crash
     pygame.event.get()
@@ -285,7 +325,7 @@ def draw_progress_bar():
     draw_loading_tips()
     
     if numused == 1:
-        draw_loading_text("generating world (2/2)")
+        draw_loading_text("generating world (3/3)")
         if estimated == None:
             pygame.display.flip()
     
@@ -314,6 +354,21 @@ def checkkey(name, key):
     return key in settings.keydict[name]
 
 def updatescreen():
-    pygame.display.update(dirtyrects + olddirtyrects + [Rect(10,font.get_linesize(), font.get_linesize()*6, font.get_linesize()*6)])
+    if len(dirtyrects) > 0:
+        if dirtyrects[0] == Rect(0,0,width,height):
+            pygame.display.update(Rect(0,0,width, height))
+        else:
+            updaterects()
+    elif len(olddirtyrects) > 0:
+        if olddirtyrects[0] == Rect(0,0,width,height):
+            pygame.display.update(Rect(0,0,width, height))
+        else:
+            updaterects()
+    else:
+        updaterects()
 
+def updaterects():
+    # update rects and the fps
+    pygame.display.update(dirtyrects + olddirtyrects + [Rect(10,font.get_linesize(), font.get_linesize()*5, font.get_linesize()*3)])
+        
 sign = lambda x: (1, -1)[x < 0]

@@ -4,22 +4,20 @@ import pygame, os, variables, rdrawtree, rdrawland, rdrawrock, random
 from rdrawflower import makeflower
 from datetime import date
 from pygame import Rect
+import string
 
 today = date.today()
 christmasp = False
 if today.month == 12:
     christmasp = True
 
-viewfactor = variables.unrounded_displayscale
-viewfactorrounded = variables.displayscale
-
 def sscale(img, rounded = True):
     w = img.get_width()
     h = img.get_height()
     if rounded:
-        endsize = viewfactorrounded
+        endsize = variables.displayscale
     else:
-        endsize = viewfactor
+        endsize = variables.unrounded_displayscale
     return pygame.transform.scale(img, [int(w*endsize), int(h*endsize)])
 
 #like sscale but instead of returning a scaled pic, it returns what the dimensions of the new pic would have been
@@ -27,18 +25,18 @@ def sscale_dimensions(img, rounded = True):
     w = img.get_width()
     h = img.get_height()
     if rounded:
-        endsize = viewfactorrounded
+        endsize = variables.displayscale
     else:
-        endsize = viewfactor
+        endsize = variables.unrounded_displayscale
     return [int(w*endsize), int(h*endsize)]
 
 def sscale_customfactor(img, factor, rounded = True):
     w = img.get_width()
     h = img.get_height()
     if rounded:
-        endsize = viewfactorrounded
+        endsize = variables.displayscale
     else:
-        endsize = viewfactor
+        endsize = variables.unrounded_displayscale
     return pygame.transform.scale(img, [int(w*endsize*factor), int(h*endsize*factor)])
 
 #use if you want pictures where the smaller dimension is a set size
@@ -56,7 +54,15 @@ def scale_pure(img, s, side = None):
     return pygame.transform.scale(img, [int((w/smaller) * s), int((h/smaller) * s)])
 
 def importpic(filename):
-    return pygame.image.load(os.path.join(variables.pathtoself, os.path.join('pics', filename))).convert_alpha()
+    
+    pic = pygame.image.load(os.path.join(variables.pathtoself, os.path.join('pics', filename)))
+    # a list of types of pictures with no alpha in them
+    backgrounds = ["randomgrassland", "randomsnowland"]
+    
+    if typename(filename) in backgrounds:
+        return pic.convert()
+    else:
+        return pic.convert_alpha()
 
 #simport returns a dictionary with an image and what its new dimensions would be if scaled
 def simport(filename):
@@ -80,6 +86,9 @@ picnames = os.listdir(variables.pathtoself + "/pics")
 def nicename(filename):
     return filename.replace(".png", "").lower()
 
+def typename(filename):
+    return nicename(filename).rstrip(string.digits)
+
 def addtoGR(filename):
     p = simport(filename)
     GR[nicename(filename)] = p
@@ -93,7 +102,10 @@ def addsurfaceGR(s, name, dimensions = None):
 def rendertext(text, color, textheight):
     return scale_pure(variables.font.render(text, 0, color).convert(), textheight, "height")
     
-def getTextPic(text, textheight, color = variables.BLACK):
+def getTextPic(text, textheight, color = variables.BLACK, savep = True):
+    if not savep:
+        return rendertext(text, color, textheight)
+    
     if not text in TextGR:
         TextGR[text] = {}
     if not textheight in TextGR[text]:
@@ -103,9 +115,18 @@ def getTextPic(text, textheight, color = variables.BLACK):
         
     return TextGR[text][textheight][color]
 
+# add all the pics in the pic folder
 for x in picnames:
     if x != "" and x[0] != ".":
         addtoGR(x)
+
+# count the number of player animations
+numofplayerframes = 0
+while "honeydance" + str(numofplayerframes) + "-0" in GR:
+    numofplayerframes += 1
+numofspecialmoveeffects = 0
+while "specialmoveeffect" + str(numofspecialmoveeffects) in GR:
+    numofspecialmoveeffects += 1
 
 # down arrow used for conversations
 DOWNARROW = pygame.Surface([5, 8], pygame.SRCALPHA)
@@ -115,6 +136,26 @@ RIGHTARROW = pygame.transform.rotate(DOWNARROW, 90)
 addsurfaceGR(DOWNARROW, "downarrow")
 addsurfaceGR(RIGHTARROW, "rightarrow")
 
+
+# for the color of difficulty and combos
+# input is a number 0 to 1, where 1 corresponds to the max
+def difficultytocolor(colorfactor):
+    maxnum = 20
+    colorfactor = colorfactor*maxnum
+    typecolor = None
+    if colorfactor < 1:
+        typecolor = (0, 255, 0)
+    elif colorfactor < 2:
+        typecolor = (150, 255, 0)
+    elif colorfactor < 3:
+        typecolor = (255, 255, 0)
+    elif colorfactor < 8:
+        typecolor = (255, 255-(colorfactor - 2)*42, 0)
+    elif colorfactor < 16:
+        typecolor = (255, 0, 28*(colorfactor-7))
+    else:
+        typecolor = (255,min((colorfactor-15)*25, 255), 255)
+    return typecolor
 
 # this function returns a surface. If no scale is provided, it takes from GR.
 # if a scale is provided, it takes the scaled picture from SGR or scales the picture, adds it to SGR, and returns the pic
@@ -188,7 +229,28 @@ def drawthismessage(messagestring):
 def endofgeneration():
     variables.draw_progress_bar()
 
+def startofgeneration(nameofgraphic):
+    variables.draw_graphic_name(nameofgraphic)
+    
+max_sample = 2 ** (16 - 1) - 1
+def drawwave(loopbuffer, skiplen, wavex, wavey, waveamp, wavelen, color, dirtyrectp = True):
+    wavescalar = waveamp*0.8/(max_sample)
+    oldpos = (wavex, wavey)
+    for waveoffset in range(int(wavelen)):
+        loopscale = loopbuffer[int(waveoffset*skiplen)]
+        if len(loopbuffer.shape) > 1:
+            # when it is a 2d buffer, just use one side
+            loopscale = loopscale[0]
+        
+        variables.screen.fill(variables.BLUE, Rect(int(wavex+waveoffset), int(wavey), variables.displayscale, variables.displayscale))
+        newpos = (int(wavex+waveoffset),int(wavey+(loopscale*wavescalar)))
+        pygame.draw.line(variables.screen, color, oldpos, newpos)
+        oldpos = newpos
+        #variables.screen.fill(color, Rect, variables.displayscale, variables.displayscale))
 
+    if dirtyrectp:
+        variables.dirtyrects.append(Rect(wavex, wavey-waveamp, waveoffset, waveamp*2))
+    
 
 def randombogoface():
     # first clear the scaled pics for bugo
@@ -235,6 +297,8 @@ def randombogoface():
     
 # takes a function that returns a new surface and a filename and returns the newy made surface name
 def generategraphic(generatingfunction, graphicname, newworldoverride = False):
+    startofgeneration(graphicname)
+    
     if not graphicname in variables.generatedgraphicsused:
         variables.generatedgraphicsused[graphicname] = 1
     else:

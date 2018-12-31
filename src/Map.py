@@ -2,7 +2,7 @@
 # Oliver Flatt works on Classes
 import variables, pygame, classvar, random, stathandeling, math, graphics
 from Battle import Battle
-from graphics import viewfactorrounded, getpic, GR
+from graphics import getpic, GR
 from Rock import Rock
 from pygame import Mask, Rect
 from initiatestate import initiatebattle
@@ -53,14 +53,15 @@ class Map(FrozenClass):
         self.encounterchecksnotactivated = 0
         self.conversations = []  # list of conversation on the map
         self.isscaled = False  # if scale stuff has been called
-        self.screenxoffset = 0 # this is if the map width is less than the screen width
+
         self.map_width = GR[base]["w"]
         self.map_height = GR[base]["h"]
-        self.reset_screenxoffset()
+        
         self.playerenabledp = True
         
         self._freeze()
 
+    # this describes if the map should be scaled up because it doesn't fit well in the screen
     def set_map_scale_offset(self):
         mapw = GR[self.base]["w"] * variables.displayscale
         maph = GR[self.base]["h"] * variables.displayscale
@@ -218,11 +219,11 @@ class Map(FrozenClass):
     def draw_background(self, drawpos):
         offset = [-drawpos[0], -drawpos[1]]
 
-        if self.screenxoffset == 0:
-            mapbaserect = Rect(drawpos[0], drawpos[1], self.map_width*variables.compscale+1, self.map_height*variables.compscale+1)
-            variables.screen.blit(getpic(self.finalimage, variables.compscale), (0,0), mapbaserect)
+        if self.screenxoffset() == 0:
+            mapbaserect = Rect(drawpos[0], drawpos[1], self.map_width*variables.compscale()+1, self.map_height*variables.compscale()+1)
+            variables.screen.blit(getpic(self.finalimage, variables.compscale()), (0,0), mapbaserect)
         else:
-            variables.screen.blit(getpic(self.finalimage, variables.compscale), (self.screenxoffset,offset[1]))
+            variables.screen.blit(getpic(self.finalimage, variables.compscale()), (self.screenxoffset(),offset[1]))
 
         # detect if within the foreground range
         playerrect = Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
@@ -256,11 +257,11 @@ class Map(FrozenClass):
                 r.draw(rockoffset)
 
         # draw button above exits and conversations
-        bwidth = 8*variables.compscale
+        bwidth = 8*variables.compscale()
         buttonx = classvar.player.xpos + classvar.player.normal_width / 2
         buttony = classvar.player.ypos - 2
-        buttonx = buttonx * variables.compscale - drawpos[0] - bwidth/2
-        buttony = buttony * variables.compscale - drawpos[1] - bwidth
+        buttonx = buttonx * variables.compscale() - drawpos[0] - bwidth/2
+        buttony = buttony * variables.compscale() - drawpos[1] - bwidth
         e = self.checkexit()
         if not e == False and e.showbutton and e.isbutton:
             self.draw_interaction_button(buttonx, buttony)
@@ -269,8 +270,8 @@ class Map(FrozenClass):
             self.draw_interaction_button(buttonx, buttony)
 
     def draw_interaction_button(self, xpos, ypos):
-        variables.dirtyrects.append(Rect(xpos, ypos, 8*variables.compscale, 8*variables.compscale))
-        pic = getpic(interact.current_frame(), variables.compscale)
+        variables.dirtyrects.append(Rect(xpos, ypos, 8*variables.compscale(), 8*variables.compscale()))
+        pic = getpic(interact.current_frame(), variables.compscale())
         variables.screen.blit(pic, [xpos, ypos])
 
     def checkexit(self):
@@ -299,14 +300,15 @@ class Map(FrozenClass):
                     break
         return currentconversation
 
-    def reset_screenxoffset(self):
-        drawwidth = self.map_width * variables.displayscale * self.map_scale_offset
+    def screenxoffset(self):
+        drawwidth = self.map_width * variables.compscale()
         
         if drawwidth < variables.width:
-            self.screenxoffset = int((variables.width-drawwidth)/2)
+            return int((variables.width-drawwidth)/2)
+        else:
+            return 0
     
     def on_tick(self):
-        self.reset_screenxoffset()
         
         if len(self.enemies) > 0:
             if variables.settings.current_time - self.last_encounter_check >= variables.encounter_check_rate and classvar.player.ismoving():

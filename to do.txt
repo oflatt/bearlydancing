@@ -1,34 +1,66 @@
 Bearly Dancing To-Do List
 
+bugs
+-"l" note was the same note as "a", which cannot be correct
+
 gameplay
+- bosses should use concepts from many enemies faced to give a sense of learning and accomplishment
 -knomi code name- bear winks at you
--map objects and loading more safely, versioning, safely load with new content
--ddr machine that you can play and dance against
--recieve waves from enemies
--recieve scales from enemies
+- map objects and loading more safely, versioning, safely load with new content
+- random star character- one side of leg longer than other so it looks funny
+- ddr machine that you can play and dance against
+- make jeremy fightable after completion of snow area
+- in general, dialogue that reacts to world events- jeremy says something different after steve
+- story needs more jokes, more references- nani, you beat my best brother jeremy???!
+- different volume envelopes
 
 sound
--load own sounds using the bowl pianoputer as example
-      -random generation of wave?
--different drums for different enemies
+- talk to characters to modify instrument- add kick, reverb?
+- load own sounds using the bowl pianoputer as example
+- random generation of wave?
+- add noise to one of the synthesizers- "noisey" given to you by a noisy character
+- different drums for different enemies, multiple drum samples
+  - which wave to start with
+  - chance to flip sign with noise
+  - variance in how much it changes it with noise
+  - less random noise? some sort of wave of noise
+  - add noise vs multiply by it
+- save to midi, sheet music
+- playback mode- have computer replay song perfectly after finishing a battle
 
 battle
--melodicmode:
+- battle code is ugly and convoluted with all the time/health variables
+
+- melodicmode:
 	-sync up durations of melodic notes, ones in a line should be shorter
 	-better restp function, currently just a 1/9 chance of a rest
--repeatbig, an aditional layer of repetition for a large phrase with variation
--repeatwithvariation more sophisticated- switch notes, offset by a beat
--triplet chord mode
--octaves rule
--dual notes rule- every note doubled, 2 notes apart
--better drum machine
+- repeatwithvariation more sophisticated- switch notes, offset by a beat. Different types of repeatwithvariation?
 
--battle code is ugly and convoluted with all the time/health variables
+rules ideas
+
+- add more score multipliers to notes, scoremultiply function after note has been decided
+
+- triplet mode only for some enemies
+- repeating with variation chance to redo all of the rest of the notes? epecially halfway through or power of 2?
+- two simple melodies, then both at same time
+- left hand repeats while right is a song
+
+- chance while holding a note to start a new note (don't always just add the duration of the note to the current time
+
+
+Knob ideas for the beatmap generator
+
+- sway pitch to higher or lower for different enemies
+- sway probabilities for repeating at different lengths, and the size of these repetitions
+
+
 
 graphics
--shift pixels for wind? give life to the game
-
+- shift pixels for wind? give life to the game
+- shadows- generated based upon the image- getshadow function in graphics that caches the result
 
 Sophie:
 -tent snow
 -wardrobe open, "why do I have this?"
+
+

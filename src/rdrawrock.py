@@ -1,21 +1,23 @@
 import pygame, variables, random, math
+import pygame.gfxdraw
 from random import randint
-from addtexture import addtexture, fillpolygon
+from addtexture import addtexture
 from Texture import Texture
 
-numofpoints = 15
+rocknumofpoints = 15
 
 #pointlist is a list of points centered around zero on the classical cartesian plane
 # startpoint and endpoint are list indexes and are both inclusive
 # it creates "lumps" by adding to the y values
 def addlump(pointlist, startpoint, endpoint, radius, addtoy = True):
+    listlen = len(pointlist)
     lengthoflump = endpoint - startpoint + 1
     for t in range(startpoint, endpoint+1):
         radians = ((t-startpoint)/(2*lengthoflump)) * 2 * math.pi
         if addtoy:
-            pointlist[t%numofpoints][1] += math.sin(radians) * radius
+            pointlist[t%listlen][1] += math.sin(radians) * radius
         else:
-            pointlist[t%numofpoints][0] += math.sin(radians) * radius
+            pointlist[t%listlen][0] += math.sin(radians) * radius
         
 def makerock():
     outlinecolor = (105, 105, 105)
@@ -33,24 +35,24 @@ def makerock():
     if random.randint(0, 5) < 1:
         radius = randint(4, 9)
         
-    for t in range(numofpoints):
-        radians = (t/numofpoints) * 2 * math.pi
+    for t in range(rocknumofpoints):
+        radians = (t/rocknumofpoints) * 2 * math.pi
         xpos = radius * math.cos(radians) + 1.5 * math.cos(radians)
         ypos = radius * math.sin(radians)
         
         pointlist.append([xpos, ypos])
 
     # squish bottom of rock
-    addlump(pointlist, int(numofpoints/2), numofpoints, 3)
+    addlump(pointlist, int(rocknumofpoints/2), rocknumofpoints, 3)
 
     numoflumps = randint(1, 3)
     for x in range(numoflumps):
         addtoy = True
-        lumplength = randint(int(numofpoints/5), int(numofpoints/2))
-        startpoint = randint(-1, int(numofpoints/2)+2-lumplength)
+        lumplength = randint(int(rocknumofpoints/5), int(rocknumofpoints/2))
+        startpoint = randint(-1, int(rocknumofpoints/2)+2-lumplength)
         if randint(0, 4) == 1:
             addtoy = False
-            startpoint = randint(-int(numofpoints/5), int(numofpoints/2)+int(numofpoints/5)-lumplength)
+            startpoint = randint(-int(rocknumofpoints/5), int(rocknumofpoints/2)+int(rocknumofpoints/5)-lumplength)
         addlump(pointlist, startpoint, startpoint + lumplength, randint(1, 4), addtoy)
 
     def getx(pos):
@@ -73,8 +75,9 @@ def makerock():
 
     s = pygame.Surface([rockwidth, rockheight], pygame.SRCALPHA)
 
-    pygame.draw.polygon(s, outlinecolor, pointlist, 1)
-    fillpolygon(s, [int(rockwidth/2),int(rockheight/2)], insidecolor, stopcolors = [outlinecolor])
+    pygame.gfxdraw.filled_polygon(s, pointlist, insidecolor)
+    pygame.gfxdraw.polygon(s, pointlist, outlinecolor)
+    #fillpolygon(s, [int(rockwidth/2),int(rockheight/2)], insidecolor, stopcolors = [outlinecolor])
     texture1 = Texture(texture1color, 1/10, 1/20, 1/20, acceptedcolors=[insidecolor])
     texture1.addupq = True
     texture2 = Texture(texture2color, 1/10, 1/30, 1/30, acceptedcolors=[insidecolor])

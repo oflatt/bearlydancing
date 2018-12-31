@@ -4,6 +4,7 @@ from Menu import Menu
 from Battle import Battle
 import dill as pickle
 from stathandeling import explv, lvexp
+from play_sound import soundpackkeys, scales
 
 def loadmaps(mapdict):
     maps.set_new_maps(mapdict)
@@ -21,8 +22,12 @@ def save(manualp):
         os.makedirs(variables.manualsavebackuppath, exist_ok=True)
     except FileExistsError:
         pass
+
+    conversationname = None
+    if conversations.currentconversation != None:
+        converstaionname = conversations.currentconversation.name
     
-    savelist = [maps.map_dict, conversations.currentconversation.name,
+    savelist = [maps.map_dict, conversationname,
                 classvar.player, classvar.battle, maps.current_map_name, conversations.floatingconversations]
     with open(variables.savepath, "wb") as f:
         pickle.dump(savelist, f)
@@ -47,7 +52,7 @@ def load():
             with open(save0path, "rb") as f:
                 loadedlist = pickle.load(f)
                 tempplayer = None
-                mapsdict, tempcname, tempplayer, classvar.battle, maps.current_map_name, conversations.floatingconversations = loadedlist
+                mapsdict, tempcname, tempplayer, classvar.battle, maps.current_map_name, floatingtemp = loadedlist
                 if not variables.dontloadplayer:
                     classvar.player = tempplayer
                 else:
@@ -55,14 +60,23 @@ def load():
                     classvar.player.ypos = tempplayer.ypos
                     for x in range(50):
                         classvar.player.addstoryevent("bed")
+                        
                 if variables.lvcheat != 0:
                     classvar.player.exp = lvexp(explv(classvar.player.exp)+variables.lvcheat)
+                if variables.addallrewards:
+                    for k in soundpackkeys:
+                        classvar.player.addreward(k)
+                    for k in scales.keys():
+                        classvar.player.addreward(k)
+                    
                 if not variables.dontloadmapsdict:
+                    conversations.floatingconversations = floatingtemp
                     loadmaps(mapsdict)
                     if tempcname in conversations.floatingconversations.keys():
                         conversations.currentconversation = conversations.floatingconversations[tempckey]
                     else:
-                        conversations.currentconversation = maps.map_dict[maps.current_map_name].getconversation(tempcname)
+                        if tempcname != None:
+                            conversations.currentconversation = maps.map_dict[maps.current_map_name].getconversation(tempcname)
 
                 maps.change_map_nonteleporting(maps.current_map_name)
                 # don't start at beginning

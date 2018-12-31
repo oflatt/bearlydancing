@@ -8,7 +8,9 @@ middleoffset = padxspace / 2
 
 class Beatmap():
 
-    def __init__(self, tempo, notes):
+    def __init__(self, tempo, notes, specs):
+        self.enemyspecs = specs
+        
         # tempo in how many milliseconds per beat.
         self.tempo = tempo
         self.originalnotes = notes
@@ -28,18 +30,28 @@ class Beatmap():
         self.modifierheldkeys = [None] * 8
         # spaceheldq stores if the modifier key (default space) is currently being held
         self.spacepressedp = False
-        self.time_key_started = [0] * 8
         # when to stop displaying the text, in milliseconds
         self.feedback_timers = [None] * 8
+        self.feedbackcolor = [None] * 8
         self.feedback = []
-        self.setfeedbacktocontrols()
+        self.setfeedbacktocontrols(False)
+
+        self.currentcombo = 0;
+        self.roundmaxcombo = 0;
+        self.timeoflastcomboaddition = 0;
 
         self.drumcounter = 0
 
-    def setfeedbacktocontrols(self):
+        
+    def setfeedbacktocontrols(self, modifiedp):
         self.feedback = []
         for x in range(8):
-            n = pygame.key.name(variables.settings.keydict["note" + str(x+1)][0])
+            if modifiedp:
+                n = pygame.key.name(variables.settings.keydict["note" + str(x+1) + "modified"][0])
+                self.feedbackcolor[x] = variables.PINK
+            else:
+                n = pygame.key.name(variables.settings.keydict["note" + str(x+1)][0])
+                self.feedbackcolor[x] = variables.WHITE
             self.feedback.append(n)
 
     def pause(self):
@@ -49,13 +61,15 @@ class Beatmap():
         self.starttime += variables.settings.current_time - self.pausetime
         self.pausetime = 0
 
-    def showkeys(self):
+    def showkeys(self, modifiedp = False):
         self.feedback_timers = [None] * 8
-        self.setfeedbacktocontrols()
+        self.setfeedbacktocontrols(modifiedp)
 
 
     def reset(self, battlestarttime, beginningq):
         self.scores = []
+        self.roundmaxcombo = 0
+        self.currentcombo = 0
         synctime = self.tempo - ((variables.settings.current_time - battlestarttime) % self.tempo)
         self.starttime = variables.settings.current_time + synctime
         self.showkeys()
@@ -63,6 +77,17 @@ class Beatmap():
             self.notes = copy.deepcopy(self.originalnotes)
         self.drumcounter = 0
 
+    def appendscore(self, score, noteplayed):
+        for x in range(noteplayed.scoremultiplier):
+            self.scores.append(score)
+        if score == variables.miss_value:
+            self.currentcombo = 0
+        else:
+            self.currentcombo += 1
+            self.timeoflastcomboaddition = variables.settings.current_time
+            if self.currentcombo>self.roundmaxcombo:
+                self.roundmaxcombo = self.currentcombo
+        
     def draw(self):
         w = variables.width / 20
         ew = w * 1.25
@@ -97,6 +122,9 @@ class Beatmap():
             variables.screen.blit(notetimetext, [10, 2*variables.font.get_linesize()])
 
     def getfeedbackpic(self, index):
+        color = variables.WHITE
+        if self.feedbackcolor[index] != None:
+            color = self.feedbackcolor[index]
         s = self.feedback[index]
         rotatep = False
         if s == "miss":
@@ -111,7 +139,7 @@ class Beatmap():
         elif s == "perfect":
             s = "PERFECT"
             rotatep = True
-        pic = graphics.getTextPic(s, variables.gettextsize(), variables.WHITE)
+        pic = graphics.getTextPic(s, variables.gettextsize(), color)
         if rotatep:
             pic = pygame.transform.rotate(pic, -45)
         return pic
@@ -208,31 +236,36 @@ class Beatmap():
                 break
         return np
 
+    def setfeedback(self, index, string):
+        self.feedback[index] = string
+        self.feedback_timers[index] = variables.settings.current_time + self.tempo
+        self.feedbackcolor[index] = variables.WHITE
+
     def onkey(self, key):
-        def check_note(np):
+        def check_note(np, modifiedp):
             if self.notes[np].beginning_score == None:
                 s = self.pos_to_score(self.notes[np].pos[1] - padheight)
-
                 
                 if s != None:
                     # check if modifier is correct
-                    if not self.notes[np].accidentalp == self.spacepressedp:
+                    if not self.notes[np].accidentalp == modifiedp:
                         s = variables.miss_value
                     self.notes[np].beginning_score = s
                     if s == variables.miss_value:
                         self.notes[np].ison = False
-                        self.feedback[self.notes[np].screenvalue()] = "miss"
-                        self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
+                        self.setfeedback(self.notes[np].screenvalue(), "miss")
+                        self.appendscore(variables.miss_value, self.notes[np])
 
         # returns the value for the sound produced
-        def check_place(v):
+        def check_place(v, modifiedp):
             placeandvalue = self.get_note_place_from_value_begin(v)
             np = placeandvalue[0]
             if not np == None:
-                check_note(np)
+                check_note(np, modifiedp)
             return placeandvalue[1]
 
         def simple_value_in_key(v):
+            
             av = abs(v)
             sound_value = 0
             if (v < 0):
@@ -244,17 +277,20 @@ class Beatmap():
             return sound_value
 
         def playnotepressed(kp, modifiedp):
-            v = check_place(kp)
+            v = check_place(kp, modifiedp)
             v = simple_value_in_key(v)
             if self.spacepressedp or modifiedp:
                 v += 1
-            self.held_keys[kp] = v
-            self.time_key_started[kp] = variables.settings.current_time
-            play_tone(v)
+            play_tone(v, self.enemyspecs["volumeenvelope"], self.numofupdatetones)
+            self.numofupdatetones += 1
+            if modifiedp:
+                self.modifierheldkeys[kp] = v
+            else:
+                self.held_keys[kp] = v
 
         for x in range(8):
             if variables.checkkey("note" + str(x+1), key):
-                playnotepressed(x, False)
+                playnotepressed(x, self.spacepressedp)
                 break
         
         if variables.checkkey("notemodifier", key):
@@ -288,41 +324,44 @@ class Beatmap():
                         self.notes[np].height_offset = self.notes[np].pos[1] - variables.getpadypos()
                         self.notes[np].ison = False
 
-                    self.scores.append(final_note_score)
+                    self.appendscore(final_note_score, self.notes[np])
 
                     if final_note_score == variables.miss_value:
-                        self.feedback[self.notes[np].screenvalue()] = "miss"
-                        self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
+                        self.setfeedback(self.notes[np].screenvalue(), "miss")
                     elif final_note_score == variables.good_value:
-                        self.feedback[self.notes[np].screenvalue()] = "good"
-                        self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
+                        self.setfeedback(self.notes[np].screenvalue(), "good")
                     elif final_note_score == variables.ok_value:
-                        self.feedback[self.notes[np].screenvalue()] = "ok"
-                        self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
+                        self.setfeedback(self.notes[np].screenvalue(), "ok")
                     elif final_note_score == variables.perfect_value:
-                        self.feedback[self.notes[np].screenvalue()] = "perfect"
-                        self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
+                        self.setfeedback(self.notes[np].screenvalue(), "perfect")
             # released before a note, penalty for randomly playing notes not written
-            else:
-                self.scores.append(variables.miss_value)
-                self.feedback[self.notes[np].screenvalue()] = "miss"
-                self.feedback_timers[self.notes[np].screenvalue()] = variables.settings.current_time + self.tempo
+            #else:
+            #    self.appendscore(variables.miss_value)
+            #    self.setfeedback(self.notes[np].screenvalue(), "miss")
 
         def check_place(v):
             np = self.get_note_place_from_value_end(v)
             if not np == None:
                 check_note(np)
-            else:
-                self.scores.append(variables.miss_value)
-                self.feedback[v] = "miss"
-                self.feedback_timers[v] = variables.settings.current_time + self.tempo
+
+            # this would make it a miss if there is no note
+            #else:
+            #    self.appendscore(variables.miss_value)
+            #    self.setfeedback(v, "miss")
 
         for x in range(8):
-            if variables.checkkey("note" + str(x+1), key) or \
-               variables.checkkey("note" + str(x+1) + "modified", key):
+            if variables.checkkey("note" + str(x+1), key):
+                # do the same for both modified and unmodified keys for check place, only start matters
                 check_place(x)
-                stop_tone(self.held_keys[x])
+                if self.held_keys[x] != None:
+                    stop_tone(self.held_keys[x])
                 self.held_keys[x] = None
+                break
+            elif variables.checkkey("note" + str(x+1) + "modified", key):
+                check_place(x)
+                if self.modifierheldkeys[x] != None:
+                    stop_tone(self.modifierheldkeys[x])
+                self.modifierheldkeys[x] = None
                 break
          
         if variables.checkkey("notemodifier", key):
@@ -348,19 +387,26 @@ class Beatmap():
 
             if self.notes[x].pos[1] - smaller > variables.getpadypos() and self.notes[x].beginning_score == None:
                 if self.notes[x].ison:
-                    self.feedback[self.notes[x].screenvalue()] = "miss"
-                    self.feedback_timers[self.notes[x].screenvalue()] = variables.settings.current_time + self.tempo
+                    self.setfeedback(self.notes[np].screenvalue(), "miss")
                     self.notes[x].ison = False
-                    self.scores.append(variables.miss_value)
+                    self.appendscore(variables.miss_value, self.notes[x])
                 elif self.notes[x].pos[1] < 0:
                     # if you are in a part of the list before the screen, don't keep checking
                     # (assuming the list of notes must be ordered by time, of course)
                     break
 
+        
         # update played notes for looping
         for k in self.held_keys:
             if not k == None:
-                update_tone(k)
+                update_tone(k, self.enemyspecs["volumeenvelope"], self.numofupdatetones)
+                self.numofupdatetones += 1
+
+         # update played notes for looping
+        for k in self.modifierheldkeys:
+            if not k == None:
+                update_tone(k, self.enemyspecs["volumeenvelope"], self.numofupdatetones)
+                self.numofupdatetones += 1
 
         # handle the drum machine
         # now dt is based on starttime
@@ -368,12 +414,15 @@ class Beatmap():
         # play a drum sound if it is on the beat, drumcounter increases 4 times per beat
         if (notetime*4 >= self.drumcounter+1):
             self.drumcounter += 1
-            if self.drumcounter % 4 == 0:
-                play_effect("onedrum")
 
+        # reset numofupdatetones for next frame
+        self.numofupdatetones = 0
+            
     def reset_buttons(self):
         for x in range(8):
             self.held_keys[x] = None
+        for x in range(8):
+            self.modifierheldkeys[x] = None
         # turn off sound
         for x in range(-24, 24):
             stop_tone(x)

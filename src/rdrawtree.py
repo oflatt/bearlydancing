@@ -1,7 +1,7 @@
 import pygame, variables, copy, random, math
-from addtexture import addtexture, fillpolygon
+import pygame.gfxdraw
+from addtexture import addtexture
 from rdrawrock import addlump
-from pygame import draw
 from random import randint
 from Texture import Texture
 from variables import TREEWIDTH, TREEHEIGHT
@@ -40,10 +40,16 @@ def addpoints(l, leftbound, rightbound, maxvariation):
 
     return cl
 
+def tuplenumberadd(t, number):
+    l = [None,] * len(t)
+    for a in range(len(t)):
+        l[a] = t[a] + number
+    return tuple(l)
+
 def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
     basecolor = variables.snowcolor
     if groundp:
-        basecolor = (basecolor[0]-20, basecolor[1]-20, basecolor[2]-20)
+        basecolor = (basecolor[0]-3, basecolor[1]-3, basecolor[2]-3)
     swidth = 76
     surface = pygame.Surface([swidth, swidth], pygame.SRCALPHA)
     fillcolor = (basecolor[0]-10, basecolor[1]-10, basecolor[2]-10)
@@ -61,7 +67,7 @@ def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
 
     # squish bottom
     addlump(points, int(numofpoints/2), numofpoints, randint(4, 5))
-
+    
     numoflumps = randint(1, 3)
     for nonused in range(numoflumps):
         addtoy = True
@@ -79,8 +85,12 @@ def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
         if p[1] > shadowthreshold:
             shadowpoints.append((p[0], p[1]))
     shadowcolor = (basecolor[0]-20, basecolor[1]-20, basecolor[2]-20)
+    shadowfillcolor = tuplenumberadd(shadowcolor, -10)
     if groundp:
-        shadowcolor = (fillcolor[0]-2, fillcolor[1]-2, fillcolor[2]-2)
+        shadowcolor = tuplenumberadd(fillcolor, 0)
+        shadowfillcolor = tuplenumberadd(shadowcolor, 0)
+    
+        
     tallest = 1
     for p in points:
         if -p[1] > tallest:
@@ -104,7 +114,7 @@ def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
     shadowpointstranslated = []
     for p in shadowpoints:
         shadowpointstranslated.append((p[0]+swidth/2, p[1]+swidth/2))
-    pygame.draw.polygon(surface, basecolor, pointstranslated,  1)
+    
     
     fillpoint = (int(swidth/2),swidth-1)
     while surface.get_at(fillpoint)[3] == 0 and fillpoint[1] > 0:
@@ -112,12 +122,16 @@ def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
     while surface.get_at(fillpoint)[3] != 0 and fillpoint[1] > 0:
         fillpoint = (fillpoint[0], fillpoint[1]-1)
     
-    fillpolygon(surface, fillpoint, fillcolor, stopcolors = [basecolor])
+    pygame.gfxdraw.filled_polygon(surface, pointstranslated, basecolor)
 
     if(len(shadowpoints)>1):
-        pygame.draw.polygon(surface, shadowcolor, shadowpointstranslated,  1)
-        fillpolygon(surface, fillpoint, (shadowcolor[0]-10, shadowcolor[1]-10,shadowcolor[2]-10), stopcolors = [shadowcolor, basecolor])
+        
+        pygame.gfxdraw.filled_polygon(surface, shadowpointstranslated, shadowfillcolor)
+        pygame.gfxdraw.polygon(surface, shadowpointstranslated, shadowcolor)
 
+
+    # draw outline of polygon
+    pygame.gfxdraw.polygon(surface, pointstranslated, basecolor)
     surfacefinal.blit(surface, [x-swidth/2, y-swidth/2])
     
 
@@ -182,10 +196,10 @@ def drawlayer(p, yoffset, leftbound, rightbound, toplayerp=False, addsnowp = Fal
 
     startingpoint = [middlebound, int((100 + yoffset - topy) / 2) + topy]
     insidecolorbefore = p.get_at(startingpoint)
-    draw.polygon(p, TREEOUTLINECOLOR, rightpoints, 1)  # outline
-
-    fillpolygon(p, startingpoint, TREEFILLCOLOR, [insidecolorbefore],
-                fillbounds= [leftbound, 0, rightbound-leftbound, TREEHEIGHT])
+    
+    
+    pygame.gfxdraw.filled_polygon(p, rightpoints, TREEFILLCOLOR)
+    pygame.gfxdraw.polygon(p, rightpoints, TREEOUTLINECOLOR)
 
     if addsnowp:
         for tpoint in rightpoints:
@@ -264,11 +278,10 @@ def drawtrunk(surface):
                     followpoint[0] += pullamount * changedir(followpoint)
                     a += 1
 
-    for point in pl:
-        if len(point) > 2:
-            point = point[:2]
-
-    draw.polygon(surface, TRUNKCOLOR, pl)
+    for i in range(len(pl)):
+        if len(pl[i]) > 2:
+            pl[i] = pl[i][:2]
+    pygame.gfxdraw.filled_polygon(surface,  pl,TRUNKCOLOR)
 
 def maketree(snowp = False):
     p = pygame.Surface([TREEWIDTH, TREEHEIGHT], pygame.SRCALPHA)
@@ -287,7 +300,7 @@ def maketree(snowp = False):
         treeshortener += randint(0, 10)
     
     drawtrunk(p)
-
+    
     yoffset = randint(30, 40) + treeshortener
     if randint(0, 8) > 0:
         drawlayer(l, yoffset, 0, TREEWIDTH, addsnowp = False)
@@ -302,7 +315,7 @@ def maketree(snowp = False):
     p.blit(l2, [0, 0])
     p.blit(l3, [0, 0])
     p.blit(l4, [0, 0])
-
+    
     # first texturize the green part of the tree
     moss1 = Texture(TREECOLOR1, 1/12, 1/21, 4/7, acceptedcolors = [TREEFILLCOLOR])
     moss2 = Texture(TREECOLOR2, 1/70, 1/21, 4/7, acceptedcolors = [TREEFILLCOLOR])
@@ -313,7 +326,7 @@ def maketree(snowp = False):
     addtexture(p, moss1)
     addtexture(p, moss2)
     addtexture(p, moss3)
-
+    
     # then texture the bark
     bark1 = Texture((46, 35, 35), 1/40, 1/160, 18/20, acceptedcolors = [TRUNKCOLOR])
     bark2 = Texture((45, 32, 32), 1/100, 1/160, 18/20, acceptedcolors = [TRUNKCOLOR])

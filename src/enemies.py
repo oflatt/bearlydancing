@@ -1,7 +1,7 @@
 from Enemy import Enemy
 from Animation import Animation
 from graphics import GR
-import random
+import random, copy
 
 defaultanimspeed = 1000
 
@@ -38,10 +38,10 @@ animations = []
 enemies = {}
 
 counter = 0
-def addEnemy(name, rules, animation):
+def addEnemy(name, rules, animation, volumeenvelope = None, drumpackname = None):
     global counter
     animations.append(animation)
-    enemies[name] = Enemy(counter, 1, name, rules)
+    enemies[name] = Enemy(counter, 1, name, rules, volumeenvelope, drumpackname)
     counter += 1
 
 def getenemies(listofnames):
@@ -59,10 +59,12 @@ addEnemy("sheep", [],
 
 # just tutorial enemy
 addEnemy("mean green", ["melodic", "repeat", "rests", "noaccidentals"],
-         Animation(["meangreen0", "meangreen1"], defaultanimspeed))
+         Animation(["meangreen0", "meangreen1"], defaultanimspeed),
+         drumpackname = "deepnoise")
 
 addEnemy("perp", ["alternating"],
-         Animation(["purpleperp0", "purpleperp1", "purpleperp2", "purpleperp3"], defaultanimspeed))
+         Animation(["purpleperp0", "purpleperp1", "purpleperp2", "purpleperp3"], defaultanimspeed),
+         drumpackname="chirp")
 
 addEnemy("spoe", ["rests", "skippy", "melodic", "repeatvariation"],
          Animation(["spoe0", "spoe1"], defaultanimspeed))
@@ -73,14 +75,15 @@ addEnemy("croc", ["melodic", "repeatmove"],
 addEnemy("kewlcorn", ["repeatvalues", "highrepeatchance"],
          Animation(["kewlcorn0", "kewlcorn1", "kewlcorn2", "kewlcorn3"], defaultanimspeed))
 
-addEnemy("bogo", ["repeatvariation", "repeatmove", "highrepeatchance"],
+addEnemy("bogo", ["repeatvariation", "repeatmove", "highrepeatchance", "highervalues"],
          Animation(["bugo0","bugo1"], defaultanimspeed))
 
 addEnemy("chimney", ["repeatrhythm", "melodic", "highrepeatchance"],
          chimneyanimation)
 
-addEnemy("scary steven", ["norests", "nochords", "shorternotes", "melodic", "repeatspaceinbetween", "repeatonlybeginning", "nodoublerepeats"],
-         steveanimation)
+addEnemy("scary steven", ["norests", "nochords", "shorternotes", "melodic", "repeatspaceinbetween", "repeatonlybeginning", "nodoublerepeats", "lowervalues"],
+         steveanimation, "flat",
+         drumpackname = "oomphwave")
 
 addEnemy("rad turtle", ["repeatmove", "repeatspaceinbetween", "nodoublerepeats"],
          Animation(["radturtle0", "radturtle1"], defaultanimspeed))
@@ -88,15 +91,27 @@ addEnemy("rad turtle", ["repeatmove", "repeatspaceinbetween", "nodoublerepeats"]
 addEnemy("dance lion", ["alternating", "repeatvariation", "repeatonlybeginning", "nodoublerepeats"],
           Animation(["dancelion0", "dancelion1"], defaultanimspeed))
 
-addEnemy("pile o' snow", [],
+addEnemy("pile o' snow", ["melodic", "repeat", "repeatvariation", "seperatedchordchance"],
          Animation(["pileo'snow0", "pileo'snow1"], defaultanimspeed))
 
+# TODO change to hopping tree
+addEnemy("hopping tree", ["melodic", "holdlongnote"],
+         Animation(["chicking0"],defaultanimspeed))
+
+addEnemy("snow fly", ["melodic", "repeatvariation", "doublenotes"],
+         Animation(["snowbutterflyfly0", "snowbutterflyfly1"], defaultanimspeed))
+
+addEnemy("polar giraffe", ["melodic", "combinemelodies"],
+         Animation(["polargiraffe0", "polargiraffe1"], defaultanimspeed))
 
 woodsenemies = getenemies(["perp", "spoe", "croc", "bogo", "rad turtle"])
-snowenemies = getenemies(["pile o' snow"])
+snowenemies = getenemies(["pile o' snow", "snow fly", "polar giraffe"])
 
 # if none picks random one, if an enemy engages enemy
 devbattletest = enemies["bogo"]
 
 def random_enemy(area):
     return random.choice(woodsenemies)
+
+def enemyforspecialbattle(enemyname):
+    return copy.copy(enemies[enemyname])

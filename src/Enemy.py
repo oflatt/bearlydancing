@@ -6,19 +6,29 @@ from FrozenClass import FrozenClass
 
 class Enemy(FrozenClass):
 
-    def __init__(self, animationnum, rarity, name, beatmaprules):
+    def __init__(self, animationnum, rarity, name, beatmaprules, volumeenvelope = None, drumpackname = None):
         self.lv = 0
         self.animationnum = animationnum
         self.rarity = rarity
         self.name = name
-        self.beatmaprules = beatmaprules
+        self.beatmapspecs = copy.deepcopy(variables.generic_specs)
+        self.beatmapspecs["rules"].extend(beatmaprules)
+        if volumeenvelope != None:
+            self.beatmapspecs["volumeenvelope"] = volumeenvelope
         self.health = None
         self.storyeventsonwin = None
         self.storyeventsonlose = None
         self.storyeventsonflee = None
         self.specialscale = None
+        
         # reset needs to be called before enemy is used
         self.animation = None
+
+        # name of the drum pack in the drumpacks dict in play_sound
+        if drumpackname == None:
+            self.drumpackname = "normalnoise"
+        else:
+            self.drumpackname = drumpackname
         
         self._freeze()
 

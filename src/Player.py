@@ -79,22 +79,23 @@ class Player(FrozenClass):
             self.ypos = y
 
     def snowclumpradius(self):
-        return int(self.normal_width*variables.compscale*0.25)
+        return int(self.normal_width*variables.compscale()*0.25)
 
+    # drawpos handles the positions for view- this means scaling the coordinates up by compscale
     def update_drawpos(self):
         self.oldmapdrawx = self.mapdrawx
         self.oldmapdrawy = self.mapdrawy
         self.olddrawx = self.drawx
         self.olddrawy = self.drawy
         
-        x = self.xpos * variables.compscale
-        y = self.ypos * variables.compscale
+        x = self.xpos * variables.compscale()
+        y = self.ypos * variables.compscale()
         m = maps.current_map
-        w = m.map_width * variables.compscale
-        h = m.map_height * variables.compscale
+        w = m.map_width * variables.compscale()
+        h = m.map_height * variables.compscale()
         
-        pwidth = self.normal_width * variables.compscale
-        pheight = self.normal_height * variables.compscale
+        pwidth = self.normal_width * variables.compscale()
+        pheight = self.normal_height * variables.compscale()
         hpheight = pheight/2
         hpwidth = pwidth/2
         screenhw = variables.width/2
@@ -129,8 +130,8 @@ class Player(FrozenClass):
             self.drawy = screenhh - hpheight
 
         # then add the map's x offset for drawing small maps in the middle
-        self.drawx += m.screenxoffset
-        self.mapdrawx -= m.screenxoffset
+        self.drawx += m.screenxoffset()
+        self.mapdrawx -= m.screenxoffset()
 
         #round to nearest pixel
         self.mapdrawx = int(self.mapdrawx)
@@ -138,14 +139,14 @@ class Player(FrozenClass):
 
     def drawsnowtrail(self):
         m = maps.current_map
-        background = getpic(m.finalimage, variables.compscale)
-        feetw = self.collidesection[2]*variables.compscale
+        background = getpic(m.finalimage, variables.compscale())
+        feetw = self.collidesection[2]*variables.compscale()
         pathradius = feetw*0.3
-        footoffsetx = self.collidesection[0]*variables.compscale+feetw/2
-        footoffsety = self.collidesection[1]*variables.compscale
+        footoffsetx = self.collidesection[0]*variables.compscale()+feetw/2
+        footoffsety = self.collidesection[1]*variables.compscale()
         
-        standingpos = (int(self.xpos*variables.compscale+footoffsetx), int(self.ypos*variables.compscale+footoffsety))
-        forwardpos = (int(self.xpos*variables.compscale+footoffsetx+sign(self.xspeed)*pathradius), int(self.ypos*variables.compscale+footoffsety+sign(self.yspeed)*pathradius))
+        standingpos = (int(self.xpos*variables.compscale()+footoffsetx), int(self.ypos*variables.compscale()+footoffsety))
+        forwardpos = (int(self.xpos*variables.compscale()+footoffsetx+sign(self.xspeed)*pathradius), int(self.ypos*variables.compscale()+footoffsety+sign(self.yspeed)*pathradius))
         
         standingcolor = background.get_at(standingpos)
         
@@ -169,10 +170,10 @@ class Player(FrozenClass):
                 angle = uniform(0, 2*math.pi)
                 mag = uniform(pathradius - particlebandwidth/2, pathradius + particlebandwidth/2)
                 rgrey = randint(160, 245)
-                dotx = xpos + math.cos(angle)*mag-variables.compscale/2
-                doty = ypos + math.sin(angle)*mag-variables.compscale/2
+                dotx = xpos + math.cos(angle)*mag-variables.compscale()/2
+                doty = ypos + math.sin(angle)*mag-variables.compscale()/2
 
-                pygame.draw.rect(background, (rgrey, rgrey, rgrey),  Rect(dotx, doty, variables.compscale, variables.compscale))
+                pygame.draw.rect(background, (rgrey, rgrey, rgrey),  Rect(dotx, doty, variables.compscale(), variables.compscale()))
 
 
 
@@ -190,10 +191,10 @@ class Player(FrozenClass):
             pygame.draw.circle(background, greysnow, linestart, int(linewidth/2))
 
 
-            leftb = (self.xpos+self.collidesection[0])*variables.compscale
+            leftb = (self.xpos+self.collidesection[0])*variables.compscale()
             rightb = leftb + feetw
-            topb = (self.ypos + self.collidesection[1]+self.collidesection[3]/2)*variables.compscale - feetw/3
-            bottomb = ((self.ypos + self.collidesection[1]+self.collidesection[3]/2)*variables.compscale) + feetw/20
+            topb = (self.ypos + self.collidesection[1]+self.collidesection[3]/2)*variables.compscale() - feetw/3
+            bottomb = ((self.ypos + self.collidesection[1]+self.collidesection[3]/2)*variables.compscale()) + feetw/20
             # snow clumps at feet
             i = 0
             xchange = self.xpos - self.oldxpos
@@ -201,7 +202,7 @@ class Player(FrozenClass):
             while(i<len(self.feetsnowclumps)):
                 p = self.feetsnowclumps[i]
                 if p[2] < self.snowclumpradius():
-                    self.feetsnowclumps[i] = (p[0]+ xchange*variables.compscale, p[1]+ychange*variables.compscale, p[2]+self.snowclumpradius()/500)
+                    self.feetsnowclumps[i] = (p[0]+ xchange*variables.compscale(), p[1]+ychange*variables.compscale(), p[2]+self.snowclumpradius()/500)
 
                 if p[0]<leftb or p[0]>rightb or p[1]<topb or p[1]>bottomb:
                     del self.feetsnowclumps[i]
@@ -230,11 +231,11 @@ class Player(FrozenClass):
             if snowp:
                 # bigger dirtyrect for the snow balls
                 variables.dirtyrects.append(Rect(self.drawx - self.snowclumpradius()*1.5,
-                                                 self.drawy-variables.compscale*5,
-                                                 self.normal_width*variables.compscale+self.snowclumpradius()*3,
-                                                 self.normal_height*variables.compscale + self.snowclumpradius()*3+variables.compscale*5))
+                                                 self.drawy-variables.compscale()*5,
+                                                 self.normal_width*variables.compscale()+self.snowclumpradius()*3,
+                                                 self.normal_height*variables.compscale() + self.snowclumpradius()*3+variables.compscale()*5))
             else:
-                variables.dirtyrects.append(Rect(self.drawx-variables.compscale*3, self.drawy-variables.compscale*3, self.normal_width*variables.compscale+6*variables.compscale, self.normal_height*variables.compscale + 6 * variables.compscale))
+                variables.dirtyrects.append(Rect(self.drawx-variables.compscale()*3, self.drawy-variables.compscale()*3, self.normal_width*variables.compscale()+6*variables.compscale(), self.normal_height*variables.compscale() + 6 * variables.compscale()))
 
         # for snow draw trail
         if snowp:
@@ -401,7 +402,7 @@ class Player(FrozenClass):
         else:
             c = self.current_animation.current_frame()
         
-        return getpic(c, variables.compscale)
+        return getpic(c, variables.compscale())
 
     def new_scale_offset(self):
         # stop a streak from happening with path in snow

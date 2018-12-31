@@ -1,5 +1,14 @@
 #!/usr/bin/python
-import variables, classvar, enemies, graphics, pygame, copy, conversations
+
+import variables, pygame
+variables.draw_loading_text("generating sounds (1/3)")
+pygame.display.flip()
+from play_sound import play_music, grasslandmusictick, initiategrasslandmusic
+
+variables.draw_loading_text("importing graphics (2/3)")
+pygame.display.flip()
+
+import classvar, enemies, graphics, copy, conversations
 from Animation import Animation
 from graphics import scale_pure
 from graphics import GR
@@ -12,7 +21,6 @@ from Speak import Speak
 from variables import displayscale, fasttestmodep
 from EventRequirement import EventRequirement
 from random import randint
-from play_sound import play_music, grasslandmusictick, initiategrasslandmusic
 
 from mapsvars import *
 
@@ -77,8 +85,6 @@ for key in map_dict:
 def new_scale_offset():
     global current_map
     variables.scaleoffset = current_map.map_scale_offset
-    variables.compscale = variables.scaleoffset * variables.displayscale
-    variables.compscaleunrounded = variables.scaleoffset * variables.unrounded_displayscale
     classvar.player.new_scale_offset()
 
 def change_map_nonteleporting(name):
@@ -219,6 +225,9 @@ def on_key(key):
             engage_conversation(c.name)
         elif not e == False:
             engage_exit(e)
+    if variables.checkkey("zoom", key):
+        variables.settings.updatezoom()
+        variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
 
 
 def checkexit():

@@ -3,12 +3,13 @@ import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, 
 from ChoiceButtons import ChoiceButtons
 from Button import Button
 from Note import Note
-from play_sound import scales
-from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR, getTextPic
+from play_sound import scales, play_drum
+from graphics import getpic, sscale, sscale_customfactor, getpicbyheight, GR, getTextPic, difficultytocolor, numofspecialmoveeffects, numofplayerframes, drawwave
 from FrozenClass import FrozenClass
 from pygame import Rect
 from notelistfunctions import shorten_doubles
 from Soundpack import max_sample
+
 
 # battle is the class that runs the battle- information about the game such as storyeventonwin is stored in enemy
 class Battle(FrozenClass):
@@ -19,6 +20,9 @@ class Battle(FrozenClass):
         self.damage_multiplier = 1
         self.beatmaps = []
 
+        # keeps track of combo carrying over from last round
+        self.runningcombo = 0
+
         # copy the enemy first to avoid editing originals
         self.enemy = copy.copy(enemy)
         self.enemy.reset()
@@ -28,6 +32,8 @@ class Battle(FrozenClass):
         # state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
         self.tutorialstate = None
+        self.tutorialconversations = None
+        
         
         # if the enemy's level is 0 and there have been no battles, the tutorial is triggered
         self.tutorialp = self.enemy.lv - variables.settings.difficulty == 0 and classvar.player.totalbattles == 0
@@ -37,19 +43,28 @@ class Battle(FrozenClass):
 
         # accidental tutorial will never be in the same battle as the normal tutorial
         # or if there are no accidentals in the beatmap
-        if "noaccidentals" in self.enemy.beatmaprules or self.tutorialp:
+        if "noaccidentals" in self.enemy.beatmapspecs["rules"] or self.tutorialp:
             self.accidentaltutorialp = False
         elif self.accidentaltutorialp:
             # if we do activate the accidentaltutorial, set the tutorial and all the conversations
             self.tutorialp = True
 
-        #if self.tutorialp:
-        #    if not accidentaltutorialp:
+        if self.tutorialp:
+            if not self.accidentaltutorialp:
                 # set all the conversations for the tutorial
-        #    else:
-                # set all the accidental conversations    
+                self.tutorialconversations = ["tutorialconversation1",
+                                              "pressanow",
+                                              "releaseanow",
+                                              "endtutorial",
+                                              "releasedearly"]
+            else:
+                # set all the accidental conversations
+                self.tutorialconversations = ["accidentaltutorialintro",
+                                              "presswnow",
+                                              "releasewnow",
+                                              "endtutorial",
+                                              "releasedwearly"]
         
-        self.atutorialstate = None
         
         # for attacking animation
         self.isplayernext = False  # if the player is currently being damaged
@@ -79,6 +94,11 @@ class Battle(FrozenClass):
         self.playerframe = 0
         self.playercurrentanim = 0
 
+        # the frame of the current special move effect
+        self.currentspecialmove = 0
+        # if we are currently doing a special move
+        self.specialmovep = False
+
         self._freeze()
 
     def startnew(self):
@@ -97,28 +117,13 @@ class Battle(FrozenClass):
             return classvar.player.scales[variables.settings.scaleindex]
 
     def setfirstbeatmap(self):
-        specs = copy.deepcopy(variables.generic_specs)
-        specs["lv"] = self.enemy.lv
-        specs["rules"].extend(self.enemy.beatmaprules)
+        self.enemy.beatmapspecs["lv"] = self.enemy.lv
+        specs = self.enemy.beatmapspecs
         self.beatmaps = [randombeatmap.random_beatmap(specs)]
         self.initiatenewbeatmap()
         self.reset_time()
         self.reset_enemy()
-
-        if self.accidentaltutorialp:
-            
-            #add an accidentalnote
-            b = self.beatmaps[0]
-            b.notes.insert(0, Note(0, b.notes[0].time, 2))
-            b.notes[0].accidentalp = True;
-
-            # first add ten to give space for the new notes
-            for note in b.notes:
-                note.time += 24
-            b.notes[0].time -= 12
-            # insert the note that tests if they know what they are doing
-            b.notes.insert(0, Note(0, 1, 1, accidentalp=True))
-            
+        
         if self.tutorialp:
             self.tutorialstate = "starting"
             # if it is the tutorial, add two notes for the player to fail on, and change first note to a
@@ -159,14 +164,23 @@ class Battle(FrozenClass):
             self.beatmaps[self.current_beatmap].unpause()
         self.reset_enemy()
 
+    def getcombo(self):
+        currentb = self.beatmaps[self.current_beatmap]
+        if len(currentb.scores)>currentb.currentcombo:
+            self.runningcombo = 0
+        return self.runningcombo + currentb.currentcombo
+
     def new_beatmaps(self):
-        self.beatmaps = [randombeatmap.variation_of(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo)]
+        self.beatmaps = [randombeatmap.variation_of_notes_to_beatmap(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo, self.enemy.beatmapspecs)]
 
     def initiatenewbeatmap(self):
         self.beatmaps[0].scale = scales[self.getscalename()]
         self.beatmaps[0].notes = shorten_doubles(self.beatmaps[0].notes)
 
     def next_beatmap(self):
+        # first set the carry over for the combo
+        self.runningcombo = self.runningcombo + self.beatmaps[self.current_beatmap].currentcombo
+        
         if self.current_beatmap + 1 == len(self.beatmaps):
             self.new_beatmaps()
             self.current_beatmap = 0
@@ -187,7 +201,83 @@ class Battle(FrozenClass):
     def currentplayerframename(self):
         return "honeydance" + str(self.playercurrentanim) + "-" + str(self.playerframe)
 
+    # returns the picture for the player and the rect for position in a tuple
+    def getplayerpicandrect(self):
+        playerpic = None
+        if self.state != "dance":
+            playerpic = getpicbyheight("honeydance0-0", variables.height/4)
+        else:
+            playerpic = getpicbyheight(self.currentplayerframename(), variables.height/4)
+        playery = variables.height-playerpic.get_height()*1.5
+        playerrect = Rect(variables.width-playerpic.get_width(), playery, playerpic.get_width(), variables.height-playery)
+        return (playerpic, playerrect)
+
+    def drawspecialmove(self):
+        if self.specialmovep:
+            playerr = self.getplayerpicandrect()[1]
+            playerr.height = variables.height - playerr.y
+            effectpic = getpicbyheight("specialmoveeffect" + str(self.currentspecialmove), playerr.height)
+            variables.screen.blit(effectpic, playerr)
+
+    def drawcombo(self):
+        currentb=self.beatmaps[self.current_beatmap]
+        totalcombo = self.getcombo()
+        if totalcombo >= 10:
+            combocolor = difficultytocolor(((totalcombo-9)/variables.numofrounds)/len(currentb.originalnotes))
+            # find combo height based on the last time it was increased
+            comboheight = variables.gettextsize()
+            deltatcombo = variables.settings.current_time-currentb.timeoflastcomboaddition
+            # threshhold in millis for making the resizing text animation
+            comboanimthreshhold = 100
+            if deltatcombo < comboanimthreshhold:
+                comboheight *= 1 + (1 - deltatcombo/comboanimthreshhold)*0.5
+
+            playerpicandrect = self.getplayerpicandrect()
+                
+            combopic = getTextPic("COMBO: " + str(totalcombo), comboheight, combocolor)
+            combox = variables.width-combopic.get_width()
+            combodif = combox-(variables.width-playerpicandrect[1].width)
+            if combodif > 0:
+                combox = combox-combodif/2
+            comborect = Rect(combox, playerpicandrect[1].y-comboheight*1.5, combopic.get_width(), combopic.get_height())
+            variables.screen.blit(combopic, comborect)
+            variables.dirtyrects.append(comborect)
+
+    def drawscoretable(self):
+        scores = self.beatmaps[self.current_beatmap].scores
+        if len(scores) > 0:
+            percent = int((sum(scores) / (len(scores)*2))*10) / 10.0
+
+            misses = 0
+            okays = 0
+            goods = 0
+            perfects = 0
+            for s in scores:
+                if s == variables.miss_value:
+                    misses += 1
+                elif s == variables.ok_value:
+                    okays += 1
+                elif s == variables.good_value:
+                    goods += 1
+                elif s == variables.perfect_value:
+                    perfects += 1
+
+            tabletext = str(percent) + "%   perfects: " + str(perfects) + \
+            "  goods: " + str(goods) + "  okays: " + str(okays) + \
+            "  misses: " + str(misses) + "  total: " + str(len(scores))
+            
+            tablepic = getTextPic(tabletext, variables.gettextsize(), variables.WHITE)
+            tabley = variables.height-tablepic.get_height()
+            tablerect = Rect((variables.width-tablepic.get_width())/2, tabley, tablepic.get_width(), tablepic.get_height())
+            
+            variables.screen.blit(tablepic, tablerect)
+            variables.dirtyrects.append(tablerect)
+            
     def draw(self):
+        if self.current_beatmap<len(self.beatmaps):
+            currentb = self.beatmaps[self.current_beatmap]
+        else:
+            currentb = None
         h = variables.height
         w = variables.width
         b = h * 13 / 16
@@ -201,13 +291,19 @@ class Battle(FrozenClass):
         epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
             
 
-        if self.state != "dance":
-            playerpic = getpicbyheight("honeydance0-0", variables.height/4)
-        else:
-            playerpic = getpicbyheight(self.currentplayerframename(), variables.height/4)
+        playerpicandrect = self.getplayerpicandrect()
         
         variables.screen.blit(epic, [w - epic.get_width(), 0])
-        variables.screen.blit(playerpic, [w-playerpic.get_width(), h-playerpic.get_height()])
+
+        # draw the player
+        if self.state == "dance":
+            # draw the special animation behind the player
+            self.drawspecialmove()
+        variables.screen.blit(playerpicandrect[0], playerpicandrect[1])
+
+        if currentb != None:
+            # now draw the combo if necessary
+            self.drawcombo()
 
         if self.enemy.animation.updatealwaysbattle:
             self.updatescreenforenemy()
@@ -231,16 +327,12 @@ class Battle(FrozenClass):
             wavex = self.battlechoice.buttons[-2].x * variables.width
             # the height of the wave
             waveamp = (self.battlechoice.buttons[-2].height()*3/4) * 0.5
-            wavescalar = waveamp*0.8/(play_sound.currentsoundpack().volumelist[-1][1]*max_sample)
+            
             wavelen = self.battlechoice.buttons[-2].width()*3/4
             wavey = self.battlechoice.buttons[-2].y*variables.height-waveamp
             loopbuffer = play_sound.all_tones[variables.settings.soundpack].loopbuffers[0]
             skiplen = (len(loopbuffer)/25)/wavelen
-            for waveoffset in range(int(wavelen)):
-                variables.screen.fill(variables.BLUE, Rect(int(wavex+waveoffset), int(wavey), variables.displayscale, variables.displayscale))
-                variables.screen.fill(variables.WHITE, Rect(int(wavex+waveoffset),int(wavey+(loopbuffer[int(waveoffset*skiplen)][0]*wavescalar)), variables.displayscale, variables.displayscale))
-                
-            variables.dirtyrects.append(Rect(wavex, wavey-waveamp, waveoffset, waveamp*2))
+            drawwave(loopbuffer, skiplen, wavex, wavey, waveamp, wavelen, (255,255,255))
 
             # draw the scale above battlechoice
             firstscalex = self.battlechoice.buttons[-1].x * variables.width
@@ -273,7 +365,9 @@ class Battle(FrozenClass):
                 text = variables.font.render("you win!", 0, variables.WHITE)
             textscaled = sscale(text)
             variables.screen.blit(textscaled, [w / 2 - (textscaled.get_width() / 2), h / 2])
+            self.drawscoretable()
 
+        
         elif self.state == "exp" or self.state == "got exp":
             text = "continue"
             # continue button
@@ -308,6 +402,8 @@ class Battle(FrozenClass):
                                       coordinates)
                 variables.dirtyrects.append(Rect(coordinates[0], coordinates[1], textscaled.get_width(), textscaled.get_height()))
 
+            self.drawscoretable()
+
         # player health bar
         playermaxh = stathandeling.max_health(p.lv())
         healthh = h * (1 / 18)
@@ -340,6 +436,7 @@ class Battle(FrozenClass):
 
     def partofbeatlist(self):
         pofbeatlist = [0]
+        # list of honey animations that should be double speed
         doublespeedlist = [2,3,4,5,7]
         if self.playercurrentanim in doublespeedlist:
             # double speed of animation 3 (spin)
@@ -347,15 +444,56 @@ class Battle(FrozenClass):
         return pofbeatlist
             
     def drumbeat(self, partofbeat):
+        # play the drum
+        if partofbeat == 0:
+            play_drum(0, self.enemy.drumpackname)
+
+            # chance for a special move based on combo
+            specialmovechance = (self.getcombo())/len(self.beatmaps[self.current_beatmap].originalnotes)
+            specialmovechance *= (1.0/4.0)
+
+            # not before combo reaches 10
+            if self.getcombo() < 10:
+                specialmovechance = 0
+                
+            if self.getcombo()%10 == 0:
+                specialmovechance *= 3.5
+            elif self.getcombo()%5 == 0:
+                specialmovechance *= 2
+
+            if random.random() < specialmovechance:
+                self.newplayerspecialmove()
+            else:
+                self.specialmovep = False
+            
+        elif partofbeat == 2:
+            drumchance = self.getcombo()/len(self.beatmaps[self.current_beatmap].originalnotes)
+            if random.random() <drumchance:
+                drumoctave = 4
+                if random.random() < 0.3:
+                    drumoctave = random.randint(3, 7)
+                play_drum(drumoctave, self.enemy.drumpackname)
+        else:
+            drumchance = self.getcombo()/len(self.beatmaps[self.current_beatmap].originalnotes)
+            drumchance = drumchance/4
+            if random.random() <drumchance:
+                drumoctave = 4
+                if random.random() < 0.6:
+                    drumoctave = random.randint(3, 7)
+                play_drum(drumoctave, self.enemy.drumpackname)
+        
+
+        # player dirty rect and enemy dirty rect on beat
         if partofbeat in self.partofbeatlist():
+
             # update screen for enemy, player
             self.updatescreenforenemy()
-            playerpic = getpicbyheight("honeydance0-0", variables.height/4)
-            variables.dirtyrects.append(Rect(variables.width-playerpic.get_width(), variables.height-playerpic.get_height(), playerpic.get_width(), playerpic.get_height()))
+            # player dirty rect
+            variables.dirtyrects.append(self.getplayerpicandrect()[1])
 
         # change player pic
         self.nextplayerpic(partofbeat)
-
+        
     def nextplayerpic(self, partofbeat):
         if partofbeat in self.partofbeatlist():
             self.playerframe += 1
@@ -368,13 +506,16 @@ class Battle(FrozenClass):
     def newplayeranimation(self):
         self.playerframe = 0
         maxanimnumber = max(1, classvar.player.lv() - variables.settings.difficulty)
+        maxanimnumber = min(numofplayerframes-1, maxanimnumber)
         self.playercurrentanim = random.randint(0, maxanimnumber)
-        # if this number is too large because an animation for that level does not exist, pick a new one lower than it
-        while not self.currentplayerframename() in GR:
-            maxanimnumber = self.playercurrentanim-1
-            self.playercurrentanim = random.randint(0, maxanimnumber)
 
-    def deletetutorialnote():
+    def newplayerspecialmove(self):
+        maxanimnumber = numofspecialmoveeffects-1
+        self.currentspecialmove = random.randint(0, maxanimnumber)
+        self.specialmovep = True
+        
+
+    def deletetutorialnote(self):
         # get rid of the third turorial note
         b = self.beatmaps[0]
         deletedp = False
@@ -390,34 +531,46 @@ class Battle(FrozenClass):
             if note.time >= 24:
                 note.time -= 12
 
+    def exittutorial(self):
+        self.tutorialp = False
+        if self.accidentaltutorialp:
+            classvar.player.addstoryevent("accidentaltutorial")
+
     def tutorialdancetick(self,currentb, dt):
         if self.tutorialstate == "starting":
             if currentb.notetime() > 4:
+                skiptutorialp = False
+                if self.accidentaltutorialp:
+                    skiptutorialp = len(currentb.scores) == 1 and currentb.scores[0] >= variables.ok_value
+                else:
+                    skiptutorialp = len(currentb.scores) == 2 and (currentb.scores[0] + currentb.scores[1])/2 >= variables.ok_value
+                
                 #exit the tutorial if the got the first two notes perfectly
-                if len(currentb.scores) == 2 and (currentb.scores[0] + currentb.scores[1])/2 >= variables.ok_value:
-                        self.tutorialp = False
-                        # get rid of the third turorial note
-                        self.deletetutorialnote()
+                if skiptutorialp:
+                    self.exittutorial()
+                    # get rid of the third turorial note
+                    self.deletetutorialnote()
                 else:
                     self.tutorialstate = "first note"
-                    currentb.showkeys()
-                    maps.engage_conversation("tutorialconversation1", True)
+                    currentb.showkeys(self.accidentaltutorialp)
+                    maps.engage_conversation(self.tutorialconversations[0], True)
         elif self.tutorialstate == "first note":
             fnote = currentb.notes[0]
             if fnote.pos[1] >= variables.getpadypos() and fnote.time > variables.settings.notes_per_screen + 2:
                 self.tutorialstate = "release note"
-                maps.engage_conversation("pressanow", True)
+                maps.engage_conversation(self.tutorialconversations[1], True)
         elif self.tutorialstate == "release note":
             fnote = currentb.notes[0]
             if fnote.pos[1] - fnote.height(currentb.tempo) > variables.getpadypos() and fnote.time > 10:
                 self.tutorialstate = "finished first"
-                maps.engage_conversation("releaseanow", True)
+                maps.engage_conversation(self.tutorialconversations[2], True)
         elif self.tutorialstate == "finished first":
             fnote = currentb.notes[0]
             if fnote.time >= 24:
                 self.tutorialstate = "done"
                 currentb.scores = []
-                maps.engage_conversation("endtutorial", True)
+                maps.engage_conversation(self.tutorialconversations[3], True)
+                self.exittutorial()
         
     # for things like the attack animation
     def ontick(self):
@@ -533,7 +686,7 @@ class Battle(FrozenClass):
                 self.win()
         if self.state == 'dance':
             if self.tutorialp:
-                if not self.tutorialstate == "first note" or not variables.checkkey("note1", key):
+                if not self.tutorialstate == "first note" or (not variables.checkkey("note1", key) and not variables.checkkey("note1modified", key)):
                     self.beatmaps[self.current_beatmap].onkey(key)
             else:
                 self.beatmaps[self.current_beatmap].onkey(key)
@@ -549,8 +702,10 @@ class Battle(FrozenClass):
                     change_scale(1)
             else:
                 if variables.checkkey("left", key):
+                    play_drum(4, self.enemy.drumpackname)
                     self.battlechoice.previousoption()
                 elif variables.checkkey("right", key):
+                    play_drum(4, self.enemy.drumpackname)
                     self.battlechoice.nextoption()
                 elif variables.checkkey("up", key) and self.battlechoice.current_option == 2:
                     change_soundpack(-1)
@@ -578,11 +733,11 @@ class Battle(FrozenClass):
         releasep = False
         if self.state == "dance":
             if self.tutorialp:
-                if variables.checkkey("note1", key):
+                if (variables.checkkey("note1", key) and not self.accidentaltutorialp)  or (variables.checkkey("note1modified", key) and self.accidentaltutorialp):
                     if self.tutorialstate == "first note":
                         pass
                     elif self.tutorialstate == "release note":
-                        maps.engage_conversation("releasedearly", True)
+                        maps.engage_conversation(self.tutorialconversations[4], True)
                     else:
                         releasep = True
                 else:
@@ -603,6 +758,7 @@ class Battle(FrozenClass):
             
     # "damages" player and enemy after a round and before the animation
     def trade(self, scores):
+        currentb = self.beatmaps[self.current_beatmap]
         self.damage_multiplier = sum(scores) / len(scores)
         self.damage_multiplier *= variables.player_advantage_multiplier
         
@@ -610,6 +766,7 @@ class Battle(FrozenClass):
         if (not (variables.miss_value in scores)):
             self.damage_multiplier *= variables.all_perfect_multiplier
 
+        combomultiplier = 1 + (self.runningcombo + currentb.roundmaxcombo) / len(currentb.originalnotes) * variables.player_combo_multiplier
         
         playerlv = classvar.player.lv()
         enemylv = self.enemy.lv
@@ -638,3 +795,10 @@ class Battle(FrozenClass):
         
         damageenemy()
         damageplayer()
+
+        # set the player animation back to default
+        self.playerframe = 0
+        self.playercurrentanim = 0
+        # player dirty rect
+        playerpic = getpicbyheight("honeydance0-0", variables.height/4)
+        variables.dirtyrects.append(self.getplayerpicandrect()[1])

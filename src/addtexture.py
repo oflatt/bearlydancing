@@ -1,65 +1,87 @@
-import random
+import random, pygame
 from Texture import Texture
-
-def reducergb(t):
-    return (t[0], t[1], t[2])
-
-def rgbsimple(l):
-    if l == None:
-        return l
-    newl = []
-    for i in range(len(l)):
-        newl.append((l[i][0],l[i][1],l[i][2]))
-    return newl
 
 # fills a polygon with a point in the polygon
 # s is the surface, firstpoint is the starting point, fillcolor is the color to fill
 # checkcolors is a list of colors that will be overridden
 # bounds is a list x y width height of where the points can color, inclusive
-def fillpolygon(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None, fillbounds = None):
+# not used after switch to gfxdraw
+def fillpolygon_deprecated(s, firstpoint, fillcolor, checkcolors = None, stopcolors = None, fillbounds = None):
+
+    sarray = pygame.PixelArray(s)
+    # map rgb and make unsigned
+    fillcolor = s.map_rgb(fillcolor)
+    if checkcolors != None:
+        for i in range(len(checkcolors)):
+            checkcolors[i] = s.map_rgb(checkcolors[i])
+    if stopcolors != None:
+        for i in range(len(stopcolors)):
+            stopcolors[i] = s.map_rgb(stopcolors[i])
+    
     firstpoint = [int(firstpoint[0]), int(firstpoint[1])]
-    fillcolor = reducergb(fillcolor)
-    checkcolors = rgbsimple(checkcolors)
-    stopcolors = rgbsimple(stopcolors)
     if fillbounds == None:
         bounds = [0, 0, s.get_width(), s.get_height()]
     else:
         bounds = fillbounds
     pointlist = [firstpoint]
 
+    paintovercache = {}
+    #def paintoverp(c):
+     #   if not c in paintovercache:
+      #      paintovercache[c] = paintoverpnonmemo(c)
+       # return paintovercache[c]
+    global times
+    times = 1
     def paintoverp(c):
-        c = reducergb(c)
+        global times
+        times += 1
+        if times > 80000:
+            return False
+
         stopp = False
         if checkcolors != None:
-            if not c in checkcolors:
+            incolors = False
+            for check in checkcolors:
+                if check==c:
+                    incolors = True
+                    break
+
+            if not incolors:
                 stopp = True
+                
         if stopcolors != None:
-            if c in stopcolors:
-                stopp = True
-        if c == fillcolor:
+            for check in stopcolors:
+                if check == c:
+                    stopp = True
+                    break
+
+        if c==fillcolor:
             stopp = True
+            
         return not stopp
 
-    if not paintoverp(s.get_at(pointlist[0])):
+    if not paintoverp(sarray[pointlist[0][0]][pointlist[0][1]]):
         pointlist = []
     
     while len(pointlist) != 0:
-        point = pointlist.pop(0)
-        s.set_at(point, fillcolor)
-        
+        point = pointlist.pop()
+        sarray[point[0]][point[1]] = fillcolor
+    
         #if there is still a point to the left in the bounds
         if point[0] > bounds[0]:
-            if paintoverp(s.get_at([point[0] - 1, point[1]])):
-                pointlist.insert(0, [point[0] - 1, point[1]])
+            if paintoverp(sarray[point[0] - 1][point[1]]):
+                pointlist.append([point[0] - 1, point[1]])
         if point[0] < bounds[0]+bounds[2]-1:
-            if paintoverp(s.get_at([point[0] + 1, point[1]])):
-                pointlist.insert(0, [point[0] + 1, point[1]])
+            if paintoverp(sarray[point[0] + 1][point[1]]):
+                pointlist.append([point[0] + 1, point[1]])
         if point[1] > bounds[1]:
-            if paintoverp(s.get_at([point[0], point[1] - 1])):
-                pointlist.insert(0, [point[0], point[1] - 1])
+            if paintoverp(sarray[point[0]][point[1] - 1]):
+                pointlist.append([point[0], point[1] - 1])
         if point[1] < bounds[1]+bounds[3]-1:
-            if paintoverp(s.get_at([point[0], point[1] + 1])):
-                pointlist.insert(0, [point[0], point[1] + 1])
+            if paintoverp(sarray[point[0]][point[1] + 1]):
+                pointlist.append([point[0], point[1] + 1])
+
+    sarray.close()
 
 def pointinbounds(point, bounds):
     p = point
