@@ -38,7 +38,8 @@ honeyhome = Map("honeyhouseinside",
                 [bed,
                  table,
                  littleletter,
-                 Rock(stashlist, 131, 55, [0, 0.9, 1, 0.1], name="stash")])
+                 Rock(stashlist, 131, 55, [0, 0.9, 1, 0.1], name="stash")],
+                shadowsp = False)
 
 outofbed = Conversation("outofbed",[], speaksafter = [[],[],[]], switchtheserocks = "bed")
 outofbed.storyevent = "bed"
@@ -115,7 +116,8 @@ w2.background_range = None
 
 letter = Map("backgroundforpaper", [bigpaper,
                                         w1,
-                                        w2])
+                                        w2],
+             shadowsp = False)
 
 letter.playerenabledp = False
 

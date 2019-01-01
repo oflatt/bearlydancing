@@ -28,7 +28,7 @@ allownewworldoverridep = True
 # this overrides the generation of a new set of graphics for a new game
 newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
-dontloadmapsdict = True
+dontloadmapsdict = False
 # this is to get a fresh player with no player attributes
 dontloadplayer = False
 # get a fresh settings file

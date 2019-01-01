@@ -224,8 +224,10 @@ class Player(FrozenClass):
         mapbasename = maps.current_map.finalimage
         snowp = mapbasename[0:14] == "randomsnowland"
 
-        shadow = self.current_shadow()
-        variables.screen.blit(shadow.surface, [self.drawx + shadow.xoffset, self.drawy + shadow.yoffset])
+        if maps.current_map.shadowsp:
+            shadow = self.current_shadow()
+            variables.screen.blit(shadow.surface, [self.drawx + shadow.xoffset, self.drawy + shadow.yoffset])
+        
         
         variables.screen.blit(self.current_pic_scaled(), [self.drawx, self.drawy])
         
@@ -241,8 +243,13 @@ class Player(FrozenClass):
                                                  self.normal_height*variables.compscale() + self.snowclumpradius()*3+variables.compscale()*5)
             else:
                 bearrect = Rect(self.drawx-variables.compscale()*3, self.drawy-variables.compscale()*3, self.normal_width*variables.compscale()+6*variables.compscale(), self.normal_height*variables.compscale() + 6 * variables.compscale())
-            shadowrect = Rect(self.drawx+shadow.xoffset, self.drawy+shadow.yoffset, shadow.surface.get_width()+variables.compscale()*3, shadow.surface.get_height()+variables.compscale() *3)
-            variables.dirtyrects.append(variables.combinerects(shadowrect, bearrect))
+
+            if maps.current_map.shadowsp:
+                shadowrect = Rect(self.drawx+shadow.xoffset, self.drawy+shadow.yoffset, shadow.surface.get_width()+variables.compscale()*3, shadow.surface.get_height()+variables.compscale() *3)
+            
+                variables.dirtyrects.append(variables.combinerects(shadowrect, bearrect))
+            else:
+                variables.dirtyrects.append(bearrect)
 
         # for snow draw trail
         if snowp:

@@ -208,14 +208,15 @@ def getshadowunscaled(picname, shadowangle):
         GR[sname] = shadowpic
         return shadowpic
 
-shadowstarthour = 6.5
-shadowendhour = 9.5
+shadowstarthour = 7.5
+shadowendhour = 9.5+12
     
 # like getpic, but pass in the name of a pic to get the shadow of
 # returns a Shadow object
 def getshadow(picname, scale = None):
     now = datetime.datetime.now()
     timeminutes = now.hour * 60 + now.minute - shadowstarthour * 60
+    
     if timeminutes < 0:
         timeminutes = 0
     elif timeminutes > (shadowendhour-shadowstarthour) * 60:
@@ -223,9 +224,9 @@ def getshadow(picname, scale = None):
     # round down to nearest 10 minutes
     timeminutes = int(timeminutes / 10)
     proportionofday = timeminutes / int((shadowendhour-shadowstarthour)*60/10)
-    
-    shadowangle = -math.pi/2 + math.pi * proportionofday * 0.8 + math.pi * 0.1
-    
+
+    shadowangle = -math.pi/2 + math.pi * proportionofday * 0.9 + math.pi * 0.05
+
     sunscaled = getshadowunscaled(picname, shadowangle)
     sname = picname + str(int(shadowangle*100)/100)
     picexistsp = sname in shadowGR
