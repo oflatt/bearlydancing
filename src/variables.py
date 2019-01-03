@@ -277,6 +277,10 @@ accelpixelpermillisecond *= floatinessagainstreality
 encounter_check_rate = 100 # rate of check in milliseconds
 encounter_chance = 0.004 # chance per check
 
+# wind
+windcheckrate = 100
+windchance = 0.04
+
 properties = Properties()
 properties_path = os.path.join(pathtoself, "properties.txt")
 

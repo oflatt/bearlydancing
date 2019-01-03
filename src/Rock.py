@@ -86,6 +86,7 @@ class Rock(FrozenClass):
 
     def draw(self, drawshadowp, offset = [0,0]):
         self.drawtick()
+        
         drawrect = Rect(self.x * variables.compscale() + offset[0],
                         self.y * variables.compscale() + offset[1],
                         self.w * variables.compscale(),

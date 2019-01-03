@@ -1,13 +1,18 @@
  #!/usr/bin/python
 # Oliver Flatt works on Classes
-import variables, pygame, classvar, random, stathandeling, math, graphics
+
+import pygame, random, math
+from pygame import Mask, Rect
+
+
+import variables, classvar, stathandeling, graphics
 from Battle import Battle
 from graphics import getpic, GR
 from Rock import Rock
-from pygame import Mask, Rect
 from initiatestate import initiatebattle
 from FrozenClass import FrozenClass
 from Animation import Animation
+from Wind import Wind
 
 extraarea = 50
 TREEMASK = Mask((variables.TREEWIDTH, variables.TREEHEIGHT))
@@ -59,8 +64,11 @@ class Map(FrozenClass):
         
         self.playerenabledp = True
 
-        # if the map has shadows
+        # if the map has shadows, which also implies that it can spawn wind
         self.shadowsp = shadowsp
+
+        self.windlist = []
+        self.lastwindspawncheck = 0
         
         self._freeze()
 
@@ -310,14 +318,37 @@ class Map(FrozenClass):
             return int((variables.width-drawwidth)/2)
         else:
             return 0
-    
-    def on_tick(self):
+
+    def windtick(self):
+        if not self.shadowsp:
+
+            # remove wind not on screen
+            i = 0
+            while i < len(self.windlist):
+                wind = self.windlist[i]
+                if wind.windpos() > self.map_width() and len(wind.windshifts) == None:
+                    self.windlist.pop(i)
+                else:
+                    i = i + 1
+
+            # chance to spawn new wind
+            if (variables.settings.current_time-self.lastwindspawncheck) > variables.windcheckrate:
+                if len(self.windlist) <2:
+                    self.lastwindspawncheck = variables.settings.current_time
+                    
+                    if random.random() < variables.windchance:
+                        self.windlist.append(Wind())
         
+    def on_tick(self):
+        self.windtick()
+
+         
         if len(self.enemies) > 0:
             if variables.settings.current_time - self.last_encounter_check >= variables.encounter_check_rate and classvar.player.ismoving():
                 self.checkenemy()
                 self.last_encounter_check = variables.settings.current_time
 
+                
         for r in self.terrain:
             r.ontick()
 
