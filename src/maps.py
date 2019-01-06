@@ -226,7 +226,7 @@ def on_key(key):
         elif not e == False:
             engage_exit(e)
     if variables.checkkey("zoom", key):
-        variables.settings.updatezoom()
+        variables.settings.updatezoom(variables.displayscale)
         variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
 
 

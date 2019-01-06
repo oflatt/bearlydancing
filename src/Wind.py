@@ -1,3 +1,5 @@
+import random
+
 from FrozenClass import FrozenClass
 import variables
 
@@ -9,7 +11,7 @@ class Wind(FrozenClass):
         self.starttime = variables.settings.current_time
 
         # speed is measured in pixels per second
-        self.speed = 40.0
+        self.speed = random.randint(35, 65)
 
 
         self._freeze()

@@ -26,7 +26,10 @@ def save(manualp):
     conversationname = None
     if conversations.currentconversation != None:
         converstaionname = conversations.currentconversation.name
-    
+
+    for key in maps.map_dict:
+        maps.map_dict[key].preparetosave()
+        
     savelist = [maps.map_dict, conversationname,
                 classvar.player, classvar.battle, maps.current_map_name, conversations.floatingconversations]
     with open(variables.savepath, "wb") as f:

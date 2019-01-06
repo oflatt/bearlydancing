@@ -107,7 +107,9 @@ def texturepoint(surface, x, y, t, bounds):
             # first check if the point is already colored, or if it is one of the colors not to paint
             if (pcolor != pointcolor) and (not pcolor in t.stopcolors) and acceptedcolorq:
                 if not p[2]:
-                    setcolor = (pointcolor[0]+random.randint(-t.redvariancefactor, t.redvariancefactor), pointcolor[1]+random.randint(-t.greenvariancefactor, t.greenvariancefactor), pointcolor[2]+random.randint(-t.bluevariancefactor, t.bluevariancefactor))
+                    setcolor = ((pointcolor[0] + random.randint(-t.redvariancefactor, t.redvariancefactor) + t.verticalcolorchange[0]*(p[1]-y)) % 256,
+                                (pointcolor[1] + random.randint(-t.greenvariancefactor, t.greenvariancefactor) + t.verticalcolorchange[1]*(p[1]-y)) % 256,
+                                (pointcolor[2] + random.randint(-t.bluevariancefactor, t.bluevariancefactor)+t.verticalcolorchange[2]*(p[1]-y)) % 256)
                     
                     surface.set_at(p[0:2], setcolor)
 

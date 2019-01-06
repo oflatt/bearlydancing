@@ -3,7 +3,7 @@ from FrozenClass import FrozenClass
 
 class Texture(FrozenClass):
 
-    def __init__(self, color, initialchance, xchance, ychance, stopcolors = [], acceptedcolors = None):
+    def __init__(self, color, initialchance, xchance, ychance, stopcolors = [], acceptedcolors = None, verticalcolorchange = (0,0,0)):
         # these handle whether or not points are added after the initial in any of these directions
         self.addupq = False
         self.adddownq = True
@@ -57,4 +57,8 @@ class Texture(FrozenClass):
         self.greenvarianceperspawn = 0
         self.bluevarianceperspawn = 0
 
+        # change the colors by this every time you move vertically
+        # ex: (10, 10, 10) would make the color brighter as you move down
+        self.verticalcolorchange = verticalcolorchange
+        
         self._freeze()

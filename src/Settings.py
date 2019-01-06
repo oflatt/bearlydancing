@@ -73,5 +73,9 @@ class Settings(FrozenClass):
         self._freeze()
 
 
-    def updatezoom(self):
-        self.zoomlevel = (self.zoomlevel+1)%3
+    def updatezoom(self, displayscale):
+        self.zoomlevel = self.zoomlevel+1
+        if self.zoomlevel == 2:
+            self.zoomlevel = max(int(displayscale * 2.5), 2)
+        elif self.zoomlevel > 2:
+            self.zoomlevel = 0

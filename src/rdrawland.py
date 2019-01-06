@@ -83,12 +83,12 @@ def makepatch(randomcolorsunsorted, width, height):
     randomcolors = sorted(randomcolorsunsorted, key=brightness)
     s = pygame.Surface([width, height], pygame.SRCALPHA)
     # randomcolors should be sorted in order of drawing, brightest is texture 3
-    texture1 = Texture(randomcolors[0], 1/13, 1/10, 9/20)
-    texture2 = Texture(randomcolors[1], 1/13, 1/10, 9/20)
-    texture3 = Texture(randomcolors[2], 1/9, 1/10, 9/20)
+    texture1 = Texture(randomcolors[0], random.randint(3, 5)/52.0, 1/10, 9/20, verticalcolorchange = (-2, -2, -2))
+    texture2 = Texture(randomcolors[1], random.randint(3, 5)/52.0, 1/10, 9/20, verticalcolorchange = (-4, -4, -4))
+    texture3 = Texture(randomcolors[2], random.randint(6, 8)/52.0, 1/10, 9/20, verticalcolorchange = (-5, -7, -7))
     textures = [texture1, texture2, texture3]
     for t in textures:
-        t.greenvarianceperspawn = 8
+        t.greenvarianceperspawn = 4
         t.addupq = True
         t.adddownq = False
         t.pickonedirp = True
@@ -98,8 +98,10 @@ def makepatch(randomcolorsunsorted, width, height):
         t.xinvisiblechance = 1/4
         t.yinvisiblechance = 1/4
         addtexture(s, t)
+        
     # blue rect for seeing where pathes are
     #pygame.draw.rect(s, variables.BLUE, Rect(0,0,width,height), 1)
+    
     return s
 
 # currently brownchance is unused
@@ -113,7 +115,7 @@ def patchlist(patchwidth, patchheight, pinkmodeonq, brownchance = False):
         lightness = randint(40, 65)
         return (lightness+10, lightness, lightness)
     
-    randomgreens = [randint(75, 150), randint(75, 150), randint(75, 150)]
+    randomgreens = [randint(75, 150)-10, randint(75, 150)-10, randint(75, 150)-10]
     randomgreens = sorted(randomgreens, key=int)
 
     

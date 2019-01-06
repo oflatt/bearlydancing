@@ -57,6 +57,13 @@ if "-restartnogeneration" in sys.argv:
     dontloadmapsdict = True
     dontloadplayer = True
     dontloadsettings = True
+
+if "-generatenorestart" in sys.argv:
+    newworldeachloadq = True
+    newworldnever = False
+    dontloadmapsdict = False
+    dontloadplayer = False
+    dontloadsettings = False
     
 if exportmode:
     testsmallp = False

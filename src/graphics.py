@@ -225,8 +225,8 @@ def getshadow(picname, scale = None):
     timeminutes = int(timeminutes / 10)
     proportionofday = timeminutes / int((shadowendhour-shadowstarthour)*60/10)
 
-    shadowangle = -math.pi/2 + math.pi * proportionofday * 0.9 + math.pi * 0.05
-
+    shadowangle = -math.pi/2 + math.pi * proportionofday * 0.8 + math.pi * 0.1
+    
     sunscaled = getshadowunscaled(picname, shadowangle)
     sname = picname + str(int(shadowangle*100)/100)
     picexistsp = sname in shadowGR

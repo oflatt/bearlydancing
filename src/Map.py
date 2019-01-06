@@ -76,6 +76,11 @@ class Map(FrozenClass):
         
         self._freeze()
 
+    # clear wind stuff before saving
+    def preparetosave(self):
+        self.windlist = []
+        self.windeffect = WindEffect()
+
     # this describes if the map should be scaled up because it doesn't fit well in the screen
     def set_map_scale_offset(self):
         mapw = GR[self.base]["w"] * variables.displayscale
@@ -339,16 +344,17 @@ class Map(FrozenClass):
 
             # chance to spawn new wind
             if (variables.settings.current_time-self.lastwindspawncheck) > variables.windcheckrate:
+                print(len(self.windlist))
+                self.lastwindspawncheck = variables.settings.current_time
                 if len(self.windlist) <2:
-                    self.lastwindspawncheck = variables.settings.current_time
-                    
                     if random.random() < variables.windchance:
+                        print("addedwind")
                         self.windlist.append(Wind())
 
             
             # for all the winds, have a chance to spawn windshift on the grass
             for w in self.windlist:
-                numbertogenerate = random.randint(3, 6)
+                numbertogenerate = random.randint(2, 4)
                 for x in range(numbertogenerate):
                     self.addwindshift(w)
 
