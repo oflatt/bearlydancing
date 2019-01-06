@@ -60,7 +60,7 @@ def load():
                     classvar.player.ypos = tempplayer.ypos
                     for x in range(50):
                         classvar.player.addstoryevent("bed")
-                        
+             
                 if variables.lvcheat != 0:
                     classvar.player.exp = lvexp(explv(classvar.player.exp)+variables.lvcheat)
                 if variables.addallrewards:

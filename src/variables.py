@@ -51,6 +51,13 @@ exportmode = False
 if "-exportmode" in sys.argv:
     exportmode = True
 
+if "-restartnogeneration" in sys.argv:
+    newworldeachloadq = False
+    newworldnever = True
+    dontloadmapsdict = True
+    dontloadplayer = True
+    dontloadsettings = True
+    
 if exportmode:
     testsmallp = False
     devmode = False
@@ -169,6 +176,9 @@ LIGHTYELLOW = (235,227, 92)
 LIGHTBLUE = (66, 206, 244)
 PINK = (226, 40, 255)
 
+def greenp(c):
+    return c[1] > c[0]+10 and c[1] > c[2] + 10
+
 # font
 font = pygame.font.Font(os.path.join(pathtoself, 'orangekidregular.ttf'), 30)
 
@@ -279,7 +289,7 @@ encounter_chance = 0.004 # chance per check
 
 # wind
 windcheckrate = 100
-windchance = 0.04
+windchance = 0.01
 
 properties = Properties()
 properties_path = os.path.join(pathtoself, "properties.txt")

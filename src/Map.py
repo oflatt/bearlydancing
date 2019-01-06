@@ -13,6 +13,8 @@ from initiatestate import initiatebattle
 from FrozenClass import FrozenClass
 from Animation import Animation
 from Wind import Wind
+from WindEffect import WindEffect
+from WindShift import WindShift
 
 extraarea = 50
 TREEMASK = Mask((variables.TREEWIDTH, variables.TREEHEIGHT))
@@ -68,6 +70,8 @@ class Map(FrozenClass):
         self.shadowsp = shadowsp
 
         self.windlist = []
+        self.windeffect = WindEffect()
+        
         self.lastwindspawncheck = 0
         
         self._freeze()
@@ -236,7 +240,9 @@ class Map(FrozenClass):
         else:
             variables.screen.blit(getpic(self.finalimage, variables.compscale()), (self.screenxoffset(),offset[1]))
 
-        # detect if within the foreground range
+        self.windeffect.draw(offset)
+
+        
         playerrect = Rect(classvar.player.xpos, classvar.player.ypos, classvar.player.normal_width,
                                  classvar.player.normal_height)
 
@@ -320,13 +326,13 @@ class Map(FrozenClass):
             return 0
 
     def windtick(self):
-        if not self.shadowsp:
+        if self.shadowsp:
 
             # remove wind not on screen
             i = 0
             while i < len(self.windlist):
                 wind = self.windlist[i]
-                if wind.windpos() > self.map_width() and len(wind.windshifts) == None:
+                if wind.windpos() > self.map_width:
                     self.windlist.pop(i)
                 else:
                     i = i + 1
@@ -338,10 +344,32 @@ class Map(FrozenClass):
                     
                     if random.random() < variables.windchance:
                         self.windlist.append(Wind())
+
+            
+            # for all the winds, have a chance to spawn windshift on the grass
+            for w in self.windlist:
+                numbertogenerate = random.randint(3, 6)
+                for x in range(numbertogenerate):
+                    self.addwindshift(w)
+
+    def addwindshift(self, w):
+        mapbase = getpic(self.finalimage, variables.compscale())
+        baserect = mapbase.get_rect()
+        shiftrect = Rect(w.windpos()*variables.compscale(), random.randint(0, variables.height)*variables.compscale(), random.randint(3, 10)*variables.compscale(), random.randint(3, 10)*variables.compscale())
+
+        # if the pixels on endges are green and the rect is in the base
+        if baserect.contains(shiftrect) and \
+           variables.greenp(mapbase.get_at((shiftrect[0], shiftrect.y))) and \
+           variables.greenp(mapbase.get_at((min(baserect.width-1,shiftrect.x+shiftrect.width), min(shiftrect.y+shiftrect.height, baserect.height-1)))):
+            newwindshift = WindShift(mapbase.subsurface(shiftrect),
+                                     (shiftrect[0])/variables.compscale() + 1,
+                                     (shiftrect[1]-1)/variables.compscale() + random.randint(0, 1),
+                                     variables.settings.current_time + 500)
+            
+            self.windeffect.addwindshift(newwindshift)
         
     def on_tick(self):
         self.windtick()
-
          
         if len(self.enemies) > 0:
             if variables.settings.current_time - self.last_encounter_check >= variables.encounter_check_rate and classvar.player.ismoving():
