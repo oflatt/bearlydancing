@@ -1,5 +1,4 @@
  #!/usr/bin/python
-# Oliver Flatt works on Classes
 
 import pygame, random, math
 from pygame import Mask, Rect
@@ -80,6 +79,8 @@ class Map(FrozenClass):
     def preparetosave(self):
         self.windlist = []
         self.windeffect = WindEffect()
+        for r in self.terrain:
+            r.windeffect = WindEffect()
 
     # this describes if the map should be scaled up because it doesn't fit well in the screen
     def set_map_scale_offset(self):
@@ -344,36 +345,31 @@ class Map(FrozenClass):
 
             # chance to spawn new wind
             if (variables.settings.current_time-self.lastwindspawncheck) > variables.windcheckrate:
-                print(len(self.windlist))
                 self.lastwindspawncheck = variables.settings.current_time
                 if len(self.windlist) <2:
                     if random.random() < variables.windchance:
-                        print("addedwind")
                         self.windlist.append(Wind())
 
             
-            # for all the winds, have a chance to spawn windshift on the grass
+            # for all the winds, have a chance to spawn windshift on the grass and give all the rocks a chance to spawn a windshift
             for w in self.windlist:
+                for r in self.terrain:
+                    r.processwind(w)
+                
                 numbertogenerate = random.randint(2, 4)
                 for x in range(numbertogenerate):
                     self.addwindshift(w)
 
     def addwindshift(self, w):
         mapbase = getpic(self.finalimage, variables.compscale())
-        baserect = mapbase.get_rect()
         shiftrect = Rect(w.windpos()*variables.compscale(), random.randint(0, variables.height)*variables.compscale(), random.randint(3, 10)*variables.compscale(), random.randint(3, 10)*variables.compscale())
 
-        # if the pixels on endges are green and the rect is in the base
-        if baserect.contains(shiftrect) and \
-           variables.greenp(mapbase.get_at((shiftrect[0], shiftrect.y))) and \
-           variables.greenp(mapbase.get_at((min(baserect.width-1,shiftrect.x+shiftrect.width), min(shiftrect.y+shiftrect.height, baserect.height-1)))):
-            newwindshift = WindShift(mapbase.subsurface(shiftrect),
-                                     (shiftrect[0])/variables.compscale() + 1,
-                                     (shiftrect[1]-1)/variables.compscale() + random.randint(0, 1),
-                                     variables.settings.current_time + 500)
-            
+        newwindshift = self.windeffect.windshiftifgreen(mapbase, shiftrect)
+        if newwindshift != None:
+            newwindshift.xpos += 1
+            newwindshift.ypos += random.randint(0, 1)
             self.windeffect.addwindshift(newwindshift)
-        
+    
     def on_tick(self):
         self.windtick()
          

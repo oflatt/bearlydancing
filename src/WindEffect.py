@@ -1,4 +1,7 @@
+from pygame import Rect
+
 from FrozenClass import FrozenClass
+from WindShift import WindShift
 import variables
 
 
@@ -8,7 +11,7 @@ class WindEffect(FrozenClass):
     def __init__(self):
         self.windshifts = []
 
-    def draw(self, mapoffset):
+    def draw(self, mapoffset, destination = variables.screen):
         # first remove old windshifts
         i = 0
         while i < len(self.windshifts):
@@ -18,8 +21,33 @@ class WindEffect(FrozenClass):
                 i = i + 1
         
         for w in self.windshifts:
-            w.draw(mapoffset)
+            w.draw(mapoffset, destination = destination)
 
 
     def addwindshift(self, windshift):
         self.windshifts.append(windshift)
+
+    def emptyp(self):
+        return len(self.windshifts) == 0
+
+    # returns a windshift of the surface from the shiftrect if the rect is valid
+    # and has corners touching green
+    # if checkpoints is none, it defaults to the top left and bottom right corners
+    def windshiftifgreen(self, surface, shiftrect, checkpoints = None):
+        baserect = surface.get_rect()
+
+        if checkpoints == None:
+            checkpoints = [(shiftrect.x, shiftrect.y),
+                           (shiftrect.x+shiftrect.width-1, shiftrect.y+shiftrect.height-1)]
+        
+        if not baserect.contains(shiftrect):
+            return None
+    
+        for p in checkpoints:
+            if not variables.greenp(surface.get_at(p)):
+                return None
+
+        return WindShift(surface.subsurface(shiftrect),
+                         (shiftrect[0])/variables.compscale(),
+                         (shiftrect[1]-1)/variables.compscale(),
+                         variables.settings.current_time + 500)

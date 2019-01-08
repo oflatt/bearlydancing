@@ -1,9 +1,13 @@
 #!/usr/bin/python
-import pygame, variables, math
+import pygame, math, random
 from pygame import Rect
+
+import variables
 from Animation import Animation
 from graphics import GR, getpic, getmask, getshadow
 from FrozenClass import FrozenClass
+from WindEffect import WindEffect
+from WindShift import WindShift
 
 
 class Rock(FrozenClass):
@@ -70,6 +74,8 @@ class Rock(FrozenClass):
         self.updatescreenp = False
         self.updatealways = False
 
+        self.windeffect = WindEffect()
+        
         self._freeze()
         
 
@@ -89,8 +95,8 @@ class Rock(FrozenClass):
         
         drawrect = Rect(self.x * variables.compscale() + offset[0],
                         self.y * variables.compscale() + offset[1],
-                        self.w * variables.compscale(),
-                        self.h * variables.compscale())
+                        (self.w+1) * variables.compscale(),
+                        (self.h+1) * variables.compscale())
         shadowrect = Rect(0,0,0,0)
         
         p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale())
@@ -113,7 +119,25 @@ class Rock(FrozenClass):
 
             if drawshadowp:
                 variables.screen.blit(shadowp, shadowrect)
-            variables.screen.blit(p, drawrect)
+
+            # draw wind shifts on top if needed
+            if not self.windeffect.emptyp():
+                # make it slightly bigger so surfaces will fit in it
+                newp = pygame.Surface((p.get_width() + variables.compscale(),
+                                       p.get_height() + variables.compscale()),
+                                      pygame.SRCALPHA,
+                                      p)
+                newp.blit(p, (0, variables.compscale()))
+                self.windeffect.draw((0,0), destination = newp)
+
+                # subtract one because the p got bigger by one
+                drawrect.y -= variables.compscale()
+                variables.screen.blit(newp, drawrect)
+                
+            else:
+                
+                variables.screen.blit(p, drawrect)
+
             
 
     # background range is the range of the player's location that it is drawn behind the player
@@ -258,7 +282,35 @@ class Rock(FrozenClass):
                     self.x = 1001
                     self.lastx = 1001
                     self.clearfunctions()
-                    
+
+    # currently only for pine trees
+    def processwind(self, wind):
+        if self.animations[0].current_frame()[0:14] == "randompinetree":
+            windx = wind.windpos()
+            if windx > self.x and windx < self.x + self.w:
+                # only add new wind if it is empty
+                if self.windeffect.emptyp() or random.random() < 0.05:
+                    self.addwindshift(wind)
+
+
+    def addwindshift(self, wind):
+        p = getpic(self.animations[self.animationnum].current_frame(), variables.compscale())
+        numbertoadd = 4
+        effectsize = self.w/random.randint(5, 7) * variables.compscale()
+
+        for i in range(numbertoadd):
+            shiftrect = Rect((wind.windpos() - self.x)*variables.compscale(),
+                             random.randint(0, int(self.h*3/5))*variables.compscale(),
+                             effectsize, effectsize)
+            # the wind shift is relative to the rock, since it is blitted onto the rock
+            newwindshift = self.windeffect.windshiftifgreen(p, shiftrect, checkpoints = [(shiftrect.x+shiftrect.width-1, shiftrect.y+shiftrect.height-1)])
+            if newwindshift != None:
+                
+                # start it up and to the right of original pixels
+                newwindshift.animation.framerate = 250
+                newwindshift.animation.offsetlist = [(1, -1), (1, 0)]
+                self.windeffect.addwindshift(newwindshift)
+
 
     # currently not used
     def ontick(self):

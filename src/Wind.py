@@ -11,7 +11,7 @@ class Wind(FrozenClass):
         self.starttime = variables.settings.current_time
 
         # speed is measured in pixels per second
-        self.speed = random.randint(35, 65)
+        self.speed = random.randint(45, 75)
 
 
         self._freeze()

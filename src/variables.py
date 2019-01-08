@@ -296,7 +296,7 @@ encounter_chance = 0.004 # chance per check
 
 # wind
 windcheckrate = 100
-windchance = 0.01
+windchance = 0.05
 
 properties = Properties()
 properties_path = os.path.join(pathtoself, "properties.txt")
