@@ -113,30 +113,27 @@ class Rock(FrozenClass):
         # only draw if on screen
         if combinedrect.right>0 and combinedrect.left<variables.width and combinedrect.top<variables.height and combinedrect.bottom>0:
             
-            if self.updatescreenp:
-                variables.dirtyrects.append(combinedrect)
-                self.updatescreenp = False
-
             if drawshadowp:
                 variables.screen.blit(shadowp, shadowrect)
 
             # draw wind shifts on top if needed
             if not self.windeffect.emptyp():
+                
                 # make it slightly bigger so surfaces will fit in it
-                newp = pygame.Surface((p.get_width() + variables.compscale(),
-                                       p.get_height() + variables.compscale()),
-                                      pygame.SRCALPHA,
-                                      p)
-                newp.blit(p, (0, variables.compscale()))
+                newp = p.copy()
                 self.windeffect.draw((0,0), destination = newp)
 
-                # subtract one because the p got bigger by one
-                drawrect.y -= variables.compscale()
                 variables.screen.blit(newp, drawrect)
-                
+                self.updatescreenp = True
             else:
                 
                 variables.screen.blit(p, drawrect)
+
+            # update dirtyrect if needed
+            if self.updatescreenp:
+                variables.dirtyrects.append(combinedrect)
+                self.updatescreenp = False
+
 
             
 
@@ -285,11 +282,11 @@ class Rock(FrozenClass):
 
     # currently only for pine trees
     def processwind(self, wind):
-        if self.animations[0].current_frame()[0:14] == "randompinetree":
+       if self.animations[0].current_frame()[0:14] == "randompinetree":
             windx = wind.windpos()
             if windx > self.x and windx < self.x + self.w:
                 # only add new wind if it is empty
-                if self.windeffect.emptyp() or random.random() < 0.05:
+                if len(self.windeffect.windshifts) / 10 < random.random():
                     self.addwindshift(wind)
 
 
@@ -303,11 +300,16 @@ class Rock(FrozenClass):
                              random.randint(0, int(self.h*3/5))*variables.compscale(),
                              effectsize, effectsize)
             # the wind shift is relative to the rock, since it is blitted onto the rock
-            newwindshift = self.windeffect.windshiftifgreen(p, shiftrect, checkpoints = [(shiftrect.x+shiftrect.width-1, shiftrect.y+shiftrect.height-1)])
+            checkpoints = [(shiftrect.x+shiftrect.width-1, shiftrect.y+shiftrect.height-1),
+                           (shiftrect.x, shiftrect.y+shiftrect.h-1)]
+            shiftduration = random.randint(600, 1200)
+            newwindshift = self.windeffect.windshiftifgreen(p, shiftrect, checkpoints = checkpoints,
+                                                            timeoffset = shiftduration,
+                                                            accepttransparent = True)
             if newwindshift != None:
                 
                 # start it up and to the right of original pixels
-                newwindshift.animation.framerate = 250
+                newwindshift.animation.framerate = shiftduration/2
                 newwindshift.animation.offsetlist = [(1, -1), (1, 0)]
                 self.windeffect.addwindshift(newwindshift)
 

@@ -33,7 +33,8 @@ class WindEffect(FrozenClass):
     # returns a windshift of the surface from the shiftrect if the rect is valid
     # and has corners touching green
     # if checkpoints is none, it defaults to the top left and bottom right corners
-    def windshiftifgreen(self, surface, shiftrect, checkpoints = None):
+    def windshiftifgreen(self, surface, shiftrect, checkpoints = None,
+                         timeoffset = 500, accepttransparent = False):
         baserect = surface.get_rect()
 
         if checkpoints == None:
@@ -44,7 +45,8 @@ class WindEffect(FrozenClass):
             return None
     
         for p in checkpoints:
-            if not variables.greenp(surface.get_at(p)):
+            c = surface.get_at(p)
+            if not variables.greenp(c) or (accepttransparent and c[3] == 0):
                 return None
 
         return WindShift(surface.subsurface(shiftrect),

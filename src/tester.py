@@ -1,4 +1,4 @@
-import pygame, ctypes, os
+import pygame, ctypes, os, time
 
 # Setup
 pygame.init()
@@ -24,6 +24,21 @@ if "orangekidregular" in fontlist:
 font = pygame.font.SysFont(fontname, 30)
 
 print("starup time: " + str(pygame.time.get_ticks()) + " millis")
+
+before = time.time()
+
+for x in range(500):
+    s = pygame.Surface((500, 500), pygame.SRCALPHA)
+
+print("time 1 " + str(time.time()-before))
+
+before = time.time()
+
+s = pygame.Surface((500, 500), pygame.SRCALPHA)
+s2 = pygame.Surface((500, 500), pygame.SRCALPHA)
+for x in range(500):
+    s.copy()
+print("time 2 " + str(time.time()-before))
 
 def sscale(img):
     factor = 0.0025 #This basically determines how much of the map we can see
