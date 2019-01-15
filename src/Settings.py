@@ -69,7 +69,8 @@ class Settings(FrozenClass):
         # this is an offset for all enemy levels
         self.difficulty = 0
 
-
+        self.dancepadmodep = True
+        
         self._freeze()
 
 

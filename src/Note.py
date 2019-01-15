@@ -5,6 +5,12 @@ import variables
 from FrozenClass import FrozenClass
 from graphics import getTextPic
 
+dancepadtable = {0:(True,False,False,False), 1:(False,True,False,False),
+                 2:(False,False,True,False), 3:(False,False,False,True),
+                 4:(True,True,False,False), 5:(True,False,True,False),
+                 6:(True,False,False,True), 7:(False,True,True,False),
+                 8:(False,True,False,True), 9:(False,False,True,True)}
+
 def value_to_screenvalue(v):
     sv = v % 7
     if (sv == 0 and v >= 7):
@@ -93,6 +99,18 @@ class Note(FrozenClass):
 
     def height(self, tempo):
         return self.duration * (variables.getpadypos() / variables.settings.notes_per_screen)
+
+    # returns a tuple with true for which arrows are part of the value
+    # the tuple corresponds to (left, right, up, down)
+    def dancepadval(self):
+        if self.accidentalp:
+                return dancepadtable[(self.value+12) % 10]
+
+        # if we return a combination one
+        if self.duration < 1 and (self.value+12) % 6 == 0:
+                return self.dancepadtable[((int((self.value+12)/6)) % 6) + 4]
+        else:
+            return dancepadtable[(self.value+12) % 4]
 
     # bottom end of note included, top of note goes over height
     # detection is by the bottom of each end of the note

@@ -41,6 +41,11 @@ jeremyhome.exitareas = [Exit("right", False, 'outside1', "left", "same"),
 jeremy = getconversation("jeremy")
 jeremy.area = [b * 5 + GR["rabbithole"]["w"] - (honeyw / 2), b * 5 - GR["rabbithole"]["h"],
                              GR["rabbithole"]["w"] - (honeyw / 2), GR["rabbithole"]["h"]]
+jeremy.eventrequirements = [EventRequirement("beatsteve", -1, 1)]
+
+jeremyaftersteve = getconversation("jeremyaftersteve")
+jeremyaftersteve.area = jeremy.area.copy()
+jeremyaftersteve.eventrequirements = [EventRequirement("beatsteve")]
 
 dancelionpass = getconversation("dancelionpass")
 dancelionpass.area = [0, 0, b, b * 10]
@@ -55,7 +60,8 @@ dancelionbattle.special_battle = copy.copy(enemies.enemies["dance lion"])
 dancelionbattle.special_battle.lv = 6
 dancelionbattle.special_battle.specialscale = "C minor"
 
-jeremyhome.conversations = [jeremy, dancelionpass, dancelionbattle]
+jeremyhome.conversations = [jeremy, jeremyaftersteve, dancelionpass, dancelionbattle]
+jeremyhome.enemies = enemies.woodsenemies
 
 # outside2######################################################################################
 outside2width = 900

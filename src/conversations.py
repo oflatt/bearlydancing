@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Spirit and Jacob work on script
+
 import variables, pygame
 from Conversation import Conversation
 from copy import deepcopy
@@ -27,10 +27,7 @@ monster = ["Greenie Meanie: Who goes there!"]
 ohhoney4 = ["You know who it is, Meanie. I'm looking for TP."]
 monster2 = ["No one may pass!"]
 ohhoney5 = ["So what...you want to fight?"]
-monster3 = ["No no, you're a bear.", "We'll settle this with a DANCE-OFF!"]
-ohhoney6 = ["Did TP put you up to this?"]
-monster4 = ["Strong maybe."]
-ohhoney7 = ["I knew it."]
+monster3 = ["No no, that would be stupid.", "We'll settle this with a DANCE-OFF!"]
 ohhoney8 = ["Fine, dance-off it is.",
             "Hey, User, why don't you do something useful?",
             "You be the bard and play the music.",
@@ -40,9 +37,14 @@ jeremy = Conversation("jeremy",[Speak("jeremy0", ["Howdey, Honey",
                                          "Have a random piece of advice.",
                                          "Better dancers live further away from your home for whatever reason.",
                                          "If you don't feel ready to continue, just stick around in one area for a while."])],
-                      [Speak("jeremy0", ["Your bard is bad, and you might have to make up for it with your dance level",
-                                         "... or give your bard a bit of practice.",
-                                         "Now bug off."])])
+                      [Speak("jeremy0", ["I already told you, walk around and practice before continuing.",
+                                         "You can't face me yet."]),
+                       Speak("jeremy0", ["Bug off."])])
+
+jeremyaftersteve = Conversation("jeremyaftersteve",
+                                [Speak("jeremy0", ["Ah, so you beat Steve."]),
+                                 Speak("jeremy0", ["Me? You are not ready to face me."], side = "left")],
+                                [Speak("jeremy0", ["You aren't ready to face me."])])
 
 meaniestops = Conversation("meaniestops",
                            [Speak("meangreen0", monster),
@@ -50,22 +52,19 @@ meaniestops = Conversation("meaniestops",
                             Speak("meangreen0", monster2),
                             Speak("honeyside3", ohhoney5),
                             Speak("meangreen0", monster3),
-                            Speak("honeyside3", ohhoney6),
-                            Speak("meangreen0", monster4),
-                            Speak("honeyside3", ohhoney7),
                             Speak("honeyback3", ohhoney8, side="right")],
                            [Speak("honeyback3", ["Here we go again..."])])
 
 dancelionpass = Conversation("dancelionpass",
                              [Speak("dancelion0",
-                                    ["Hey, I'll only let you through if you beat me in a dance battle.",
-                                     "...Yes I do wait around all day stopping travelers like this, thank you."]),
+                                    ["Hey, I'll only let you through if you beat me in a dance battle."]),
                               honeydotspeak,
                               Speak("dancelion0",
                                     ["Wait, you telling me your bard can't play in the key of C minor?",
                                      "Come back when they can."])],
                              [Speak("dancelion0", ["Come back when your bard can play in the key of C minor.",
                                                        "I only dance to music in that key."])])
+
 dancelionbattle = Conversation("dancelion",
                                [Speak("dancelion0",
                                       ["I am dance lion and I love the key of C minor.",

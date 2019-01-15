@@ -8,7 +8,7 @@ bugs
 
 gameplay
 - bosses should use concepts from many enemies faced to give a sense of learning and accomplishment
--knomi code name- bear winks at you
+- knomi code name- bear winks at you
 - map objects and loading more safely, versioning, safely load with new content
 - random star character- one side of leg longer than other so it looks funny
 - ddr machine that you can play and dance against
@@ -59,8 +59,8 @@ Knob ideas for the beatmap generator
 
 
 graphics
-- shift pixels for wind? give life to the game
-- shadows- generated based upon the image- getshadow function in graphics that caches the result
+- more life to the game- snow animations
+- automatically adjusting resolution, resolution option in settings
 
 Sophie:
 -tent snow
