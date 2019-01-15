@@ -52,7 +52,8 @@ def convertnotelisttodancepad(notelist, specs):
             if newvallist[i] and not dancepadnotecollidesp(l, i, n.time):
                 newn = copy.copy(n)
                 newn.duration = 1
-                newn.value = i
+                # overwrite the screen value but not the value
+                newn.screenvalue = i
                 l.append(newn)
 
     return l

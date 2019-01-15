@@ -1,5 +1,4 @@
 import variables, random
-from Note import value_to_screenvalue
 from Note import compare_numbers_around
 from Note import Note
 
@@ -148,7 +147,7 @@ def notecollidep(ntime, nvalue, nduration, l):
     iscopy = False
     x = 0
     while (x < len(l)):
-        if l[x].screenvalue() == value_to_screenvalue(nvalue):
+        if l[x].getscreenvalue() == Note.value_to_screenvalue(nvalue):
             if l[x].time+l[x].duration > ntime and l[x].time < ntime+nduration:
                 iscopy = True
                 break
@@ -164,7 +163,7 @@ def notecollidebesidesselfp(note, l):
     x = 0
     while (x < len(l)):
         if not note == l[x]:
-            if l[x].screenvalue() == value_to_screenvalue(nvalue):
+            if l[x].getscreenvalue() == Note.value_to_screenvalue(nvalue):
                 if l[x].time+l[x].duration > ntime and l[x].time < ntime+nduration:
                     note.collidedwithanotherp = True
                     iscopy = True
@@ -256,7 +255,7 @@ def shorten_doubles(l):
         y = 1
         while x + y < len(l):
             if l[x + y].time <= l[x].time + l[x].duration:
-                if l[x].screenvalue() == l[x + y].screenvalue():
+                if l[x].getscreenvalue() == l[x + y].getscreenvalue():
                     newl[x].duration -= 0.1
                     break
             else:

@@ -7,7 +7,6 @@
 
 from Beatmap import Beatmap
 from Note import Note
-from Note import value_to_screenvalue
 from Note import compare_around, compare_numbers_around
 from notelistvariation import variation_of_notes
 from notelistfunctions import *
@@ -473,13 +472,16 @@ def random_duration(time, notelist, specs, isr, ischord):
 # used to get a variation for the next round of a dance
 def variation_of_notes_to_beatmap(old_notes, tempo, specs):
     newnotes = variation_of_notes(old_notes, specs)
+    # now if dancepad mode change to dance pad mode
+    if variables.settings.dancepadmodep:
+        newnotes = convertnotelisttodancepad(newnotes, specs)
+        
     newb = Beatmap(tempo, newnotes, specs)
     return newb
 
 # repetition favors an ABAB struture of music by default
 
 
-from notelistvariation import variation_of_notes
 from notelistrandomvalue import random_value
 import variables
 

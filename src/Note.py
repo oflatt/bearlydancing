@@ -6,14 +6,6 @@ from FrozenClass import FrozenClass
 from graphics import getTextPic
 
 
-def value_to_screenvalue(v):
-    sv = v % 7
-    if (sv == 0 and v >= 7):
-        sv = 7
-    elif (sv < 0):
-        sv += 7
-    return sv
-
 # compare_within is inclusive, and adds a little on for floating point error
 def compare_around(num, comparedto, within = 0, modulus = 1):
     left = comparedto-(within + 0.000001)
@@ -70,6 +62,9 @@ class Note(FrozenClass):
         # multiplies the score that you get from that note
         self.scoremultiplier = int(scoremultiplier)
 
+        # screen value is changed for dance pad mode
+        self.screenvalue = Note.value_to_screenvalue(self.value)
+        
         self._freeze()
 
     def equalp(self, othernote):
@@ -80,8 +75,17 @@ class Note(FrozenClass):
             self.chordadditionp == othernote.chordadditionp and \
             self.scoremultiplier == othernote.scoremultiplier
 
-    def screenvalue(self):
-        return value_to_screenvalue(self.value)
+    def getscreenvalue(self):
+        return self.screenvalue
+
+    @staticmethod
+    def value_to_screenvalue(v):
+        sv = v % 7
+        if (sv == 0 and v >= 7):
+            sv = 7
+        elif (sv < 0):
+            sv += 7
+        return sv
 
     def shape(self):
         return beatshape(self.time)
@@ -111,7 +115,7 @@ class Note(FrozenClass):
 
         # subtract height to y because the pos is the bottom of the rectangle
         if self.ison:
-            color = variables.notes_colors[self.screenvalue()]
+            color = variables.notes_colors[self.screenvalue]
         else:
             color = variables.GREY
 
