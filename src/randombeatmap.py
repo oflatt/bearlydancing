@@ -4,6 +4,7 @@
 # the note list in the end should be ordered early notes first
 # notes added on generatively- each "layer" has the main melody note at the end of the list, chord notes inserted before it
 # values should be integers
+
 from Beatmap import Beatmap
 from Note import Note
 from Note import value_to_screenvalue
@@ -12,6 +13,7 @@ from notelistvariation import variation_of_notes
 from notelistfunctions import *
 from graphics import drawthismessage
 from notelistrandomvalue import random_value
+from notelistconverttodancepad import convertnotelisttodancepad
 
 import random, copy
 from random import randint
@@ -298,6 +300,10 @@ def random_beatmap(specs):
     # lower level for double notes rule
     if hasrule('doublenotes', specs):
         specs['lv'] = max(specs['lv'] - 6, 2)
+
+    # higher level for beatmap mode
+    if variables.settings.dancepadmodep:
+        specs['lv'] = specs['lv'] + variables.dancepadlevelincrease
     
     if variables.devmode:
         print()
@@ -332,20 +338,15 @@ def random_beatmap(specs):
         printnotelist(l)
 
     # then perform checks
-    if not notetimeorderedp(l):
-        thrownoteerror('note list not ordered properly for time')
-    if not notechordorderedp(l):
-        thrownoteerror('note list not ordered properly for chords')
-    if anynotescollide(l):
-        thrownoteerror('notes collided')
-    if not noteaccidentalsconsistantp(l):
-        thrownoteerror('accidental note at same time as non accidental')
-    if not notevaluesintegersp(l):
-        thrownoteerror('not all values in note list were integers')
-
+    performnotelistchecks(l)
+    
     for rule in specs['rules']:
         if not rule in ruletypes:
             thrownoteerror('rule ' + str(rule) + ' unknown')
+
+    # now if dancepad mode change to dance pad mode
+    if variables.settings.dancepadmodep:
+        l = convertnotelisttodancepad(l, specs)
         
     return Beatmap(tempo, l, specs)
 
@@ -650,6 +651,7 @@ def normalrepetition(time, movelength, listofnotes, repeatduration, specs, maxti
 
 
 # assumes num % base == 0
+# the log of the largest exponent of base that fits in num
 def getremainderlog(num, base):
     if not num%base == 0:
         raise ValueError("getremainderlog needs num%base == 0")
@@ -668,7 +670,7 @@ def getremainderlog(num, base):
         return getremainderlog(num-power, base)
     
 # returns if there should be a repetition
-# when time is closer to a power of two it is more likely to repeat TODO
+# when time is closer to a power of two it is more likely to repeat
 def repeatp(notelist, specs, ctime, maxtime):
     if len(notelist)<2:
         return False
@@ -681,7 +683,7 @@ def repeatp(notelist, specs, ctime, maxtime):
 
     timerandomchance = 0
     if ctime % 2 == 0:
-        timerandomchance = (1/10 + math.pow(getremainderlog(ctime, 2)/10, 0.6))
+        timerandomchance = (1/10 + math.pow(getremainderlog(ctime, 2)/10, 0.6)*0.6)
     elif ctime % 1 == 0:
         timerandomchance = (1 / (maxtime*3))
     else:

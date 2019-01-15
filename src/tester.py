@@ -68,7 +68,7 @@ while running:
     #wide_screen.blit(bigpic, [0,0])
     #pygame.transform.scale(wide_screen, [80, 80])
     hpic = pygame.image.load(os.path.join('pics', "honeyside0.png")).convert_alpha()
-    hpic.set_palette([(0,0,0,0)])
+    
     
     wide_screen.blit(pygame.transform.scale(hpic, [hpic.get_width()*10, hpic.get_height()*10]), [0,0])
 

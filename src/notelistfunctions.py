@@ -222,6 +222,28 @@ def notevaluesintegersp(l):
             return False
     return True
 
+def notedurationsmatchp(l, num):
+    for n in l:
+        if not n.duration == num:
+            return False
+    return True
+
+def performnotelistchecks(l):
+    if not notetimeorderedp(l):
+        thrownoteerror('note list not ordered properly for time')
+    if not notechordorderedp(l):
+        thrownoteerror('note list not ordered properly for chords')
+    if anynotescollide(l):
+        thrownoteerror('notes collided')
+    if not noteaccidentalsconsistantp(l):
+        thrownoteerror('accidental note at same time as non accidental')
+    if not notevaluesintegersp(l):
+        thrownoteerror('not all values in note list were integers')
+    if variables.settings.dancepadmodep:
+        if not notedurationsmatchp(l, 1):
+            thrownoteerror('not all durations for notes were 1 in dance pad mode')
+
+
 def thrownoteerror(errorstring):
     print("------------------------------")
     print("ERROR: " + errorstring)
