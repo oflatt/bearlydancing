@@ -186,6 +186,17 @@ PINK = (226, 40, 255)
 def greenp(c):
     return c[1] > c[0]+10 and c[1] > c[2] + 10
 
+def brighten(c, amount):
+    if len(c) == 4:
+        return (max(0, min(c[0]+amount, 255)),
+                max(0, min(c[1]+amount, 255)),
+                max(0, min(c[2]+amount, 255)),
+                c[3])
+    else:
+        return (max(0, min(c[0]+amount, 255)),
+                max(0, min(c[1]+amount, 255)),
+                max(0, min(c[2]+amount, 255)))
+
 # font
 font = pygame.font.Font(os.path.join(pathtoself, 'orangekidregular.ttf'), 30)
 

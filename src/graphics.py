@@ -132,10 +132,16 @@ rightdancearrow = pygame.transform.rotate(leftdancearrow,180)
 downdancearrow = pygame.transform.rotate(leftdancearrow,270)
 updancearrow = pygame.transform.rotate(leftdancearrow,90)
 
-pygame.PixelArray(leftdancearrow).replace((0,0,0,255), variables.notes_colors[0])
-pygame.PixelArray(rightdancearrow).replace((0,0,0,255), variables.notes_colors[3])
-pygame.PixelArray(updancearrow).replace((0,0,0,255), variables.notes_colors[2])
-pygame.PixelArray(downdancearrow).replace((0,0,0,255), variables.notes_colors[1])
+pygame.PixelArray(leftdancearrow).replace((255,255,255), variables.brighten(variables.notes_colors[0], -40))
+pygame.PixelArray(rightdancearrow).replace((255,255,255), variables.brighten(variables.notes_colors[3], -40))
+pygame.PixelArray(updancearrow).replace((255,255,255), variables.brighten(variables.notes_colors[2], -40))
+pygame.PixelArray(downdancearrow).replace((255,255,255), variables.brighten(variables.notes_colors[1], -40))
+
+pygame.PixelArray(leftdancearrow).replace((0,0,0), variables.notes_colors[0])
+pygame.PixelArray(rightdancearrow).replace((0,0,0), variables.notes_colors[3])
+pygame.PixelArray(updancearrow).replace((0,0,0), variables.notes_colors[2])
+pygame.PixelArray(downdancearrow).replace((0,0,0), variables.notes_colors[1])
+
 
 GR["leftdancearrow"]["img"] = leftdancearrow
 addsurfaceGR(rightdancearrow, "rightdancearrow")
