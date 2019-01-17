@@ -34,8 +34,58 @@ class AnchorTests(unittest.TestCase):
         
         anchor = findanchor(s)
         self.assertEqual(anchor, (9, 10))
-    
 
+
+from DestructiveFrozenClass import DestructiveFrozenClass
+class TestClassFrozen(DestructiveFrozenClass):
+
+    def __init__(self, testarg):
+        
+        self.data = 1
+        self.testarg = testarg
+        
+        self._freeze()
+
+    def makedatapurple(self):
+        return self.destructiveset("data","purple")
+        
+    def setdata(self, newdata):
+        return self.destructiveset("data", newdata)
+        
+        
+class DestructiveFrozenClassTests(unittest.TestCase):
+    
+    def test_frozen(self):
+        t = TestClassFrozen("testargstring")
+        
+        self.assertEqual(t.data, 1)
+        self.assertEqual(t.testarg, "testargstring")
+        with self.assertRaises(TypeError):
+            t.green = 3
+
+    def test_parameter_method(self):
+        t = TestClassFrozen("testargstring")
+        
+        self.assertEqual(t.data, 1)
+        
+        self.assertEqual(t.setdata(3).data, 3)
+
+    def test_no_parameter_method(self):
+        t = TestClassFrozen("testargstring")
+        
+        self.assertEqual(t.data, 1)
+        t = t.makedatapurple()
+        
+        self.assertEqual(t.data, "purple")
+
+    def test_set_method(self):
+        t = TestClassFrozen("testargstring")
+        t.data = 4
+        with self.assertRaises(AttributeError):
+            t.data
+
+    
+        
 if __name__ == "__main__":
     unittest.main()    
 

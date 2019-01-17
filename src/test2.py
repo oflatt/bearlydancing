@@ -1,5 +1,13 @@
-import pygame
+from DestructiveBox import DestructiveBox
 
-s = pygame.Surface((10, 0))
-pygame.transform.scale(s, (10, 2))
-#pygame.transform.rotozoom(s, 30, 1)
+class GreenBean():
+
+    def __init__(self, pizza):
+        self.pizza = pizza
+
+b = DestructiveBox(GreenBean("yellow"))
+print(b.pizza)
+a = b.set("pizza", "green")
+
+print(a.pizza)
+
