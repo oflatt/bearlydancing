@@ -135,7 +135,11 @@ pygame.init()
     
 # load icon
 icon = pygame.image.load(os.path.join(pathtoself, "icon.png"))
-pygame.display.set_icon(icon)
+
+try:
+    pygame.display.set_icon(icon)
+except pygame.error:
+    devprint("set icon failed- no video output device?")
 
 pygame.display.set_caption('Bearly Dancing')
 
