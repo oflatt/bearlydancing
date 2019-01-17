@@ -222,6 +222,9 @@ dancepadlevelincrease = 5
 def getpadypos():
     return height*(13/16)
 
+def dancearrowwidth():
+    return width/15
+
 maxdifficulty = 200
 # maxtime is changed in the code, the goal for how long the song should be
 # lv is the level of the enemy

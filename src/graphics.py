@@ -126,6 +126,22 @@ for x in picnames:
     if x != "" and x[0] != ".":
         addtoGR(x)
 
+# duplicate and rotate the left arrow
+leftdancearrow = GR["leftdancearrow"]["img"]
+rightdancearrow = pygame.transform.rotate(leftdancearrow,180)
+downdancearrow = pygame.transform.rotate(leftdancearrow,270)
+updancearrow = pygame.transform.rotate(leftdancearrow,90)
+
+pygame.PixelArray(leftdancearrow).replace((0,0,0,255), variables.notes_colors[0])
+pygame.PixelArray(rightdancearrow).replace((0,0,0,255), variables.notes_colors[3])
+pygame.PixelArray(updancearrow).replace((0,0,0,255), variables.notes_colors[2])
+pygame.PixelArray(downdancearrow).replace((0,0,0,255), variables.notes_colors[1])
+
+GR["leftdancearrow"]["img"] = leftdancearrow
+addsurfaceGR(rightdancearrow, "rightdancearrow")
+addsurfaceGR(updancearrow, "updancearrow")
+addsurfaceGR(downdancearrow, "downdancearrow")
+
 # count the number of player animations
 numofplayerframes = 0
 while "honeydance" + str(numofplayerframes) + "-0" in GR:

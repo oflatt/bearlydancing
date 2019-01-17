@@ -1,10 +1,11 @@
 import pygame
-
+from pygame import Rect
 
 import variables
 from FrozenClass import FrozenClass
-from graphics import getTextPic
+from graphics import getTextPic, getpicbywidth
 
+dancenamemap = {0:"leftdancearrow",1:"downdancearrow",2:"updancearrow",3:"rightdancearrow"}
 
 # compare_within is inclusive, and adds a little on for floating point error
 def compare_around(num, comparedto, within = 0, modulus = 1):
@@ -105,9 +106,20 @@ class Note(FrozenClass):
     def draw(self, tempo):
         # only draw if it is on screen
         if self.pos[1]>0:
-            self.drawhelper(tempo)
+            if variables.settings.dancepadmodep:
+                self.drawdancepadmode(tempo)
+            else:
+                self.drawnormalmode(tempo)
 
-    def drawhelper(self, tempo):
+    def drawdancepadmode(self, tempo):
+        picname = dancenamemap[self.getscreenvalue()]
+        arroww = variables.dancearrowwidth()
+        pic = getpicbywidth(picname, arroww)
+        prect = Rect(self.pos[0], self.pos[1]-arroww, arroww, arroww)
+        variables.screen.blit(pic, prect)
+        variables.dirtyrects.append(prect)
+
+    def drawnormalmode(self, tempo):
         width = variables.width / 20
         height = self.height(tempo)
         borderwidth = 0 # zero signals pygame to draw it filled in

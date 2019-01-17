@@ -2,9 +2,8 @@ import graphics, pygame, variables, copy
 from play_sound import stop_tone, play_tone, update_tone, play_effect
 from pygame import Rect
 
-padxspace = variables.width / 12
+
 padheight = variables.height / 80
-middleoffset = padxspace / 2
 
 class Beatmap():
 
@@ -102,10 +101,7 @@ class Beatmap():
                 padcolor = (variables.PINK[0]-70, variables.PINK[1]-30, variables.PINK[2]-70)
             
             if self.held_keys[x] != None or self.modifierheldkeys[x] != None:
-                xoffset = 0
-                if (x + 1 > 4):
-                    xoffset = middleoffset
-                expos = padxspace * (x + 1) - w / 8 + xoffset
+                expos = Beatmap.screenvaltoxpos(x) - w / 8
                 pygame.draw.ellipse(variables.screen, padcolor, [expos,
                                                                         padellipseypos,
                                                                         ew, ew / 2])
@@ -148,30 +144,24 @@ class Beatmap():
         w = variables.width / 20
         # draw bottom rectangles
         for x in range(1, 9):
-            xoffset = 0
-            if (x > 4):
-                xoffset = middleoffset
             padcolor = variables.notes_colors[x-1]
             if(self.spacepressedp):
                 padcolor = variables.PINK
             # draw the pads
-            padrect = Rect(padxspace * (x) - w / 8 + xoffset, variables.getpadypos() - padheight, w * 1.25, padheight)
+            padrect = Rect(Beatmap.screenvaltoxpos(x-1)- w / 8, variables.getpadypos() - padheight, w * 1.25, padheight)
             pygame.draw.rect(variables.screen, padcolor, padrect)
             variables.dirtyrects.append(padrect)
 
             # draw little pads if space pressed
             if self.spacepressedp:
                 spacing = w*0.05
-                padrect = Rect(padxspace * (x) - w / 8 + xoffset + spacing/2, variables.getpadypos() - padheight+spacing/2, w * 1.25-spacing, padheight-spacing)
+                padrect = Rect(Beatmap.screenvaltoxpos(x-1) - w / 8+ spacing/2, variables.getpadypos() - padheight+spacing/2, w * 1.25-spacing, padheight-spacing)
                 pygame.draw.rect(variables.screen, variables.notes_colors[x - 1], padrect)
                 variables.dirtyrects.append(padrect)
             
 
         # draw the feedback (keys then scores, perfect ect)
         for x in range(0, 8):
-            xoffset = 0
-            if (x > 3):
-                xoffset = middleoffset
             blitp = False
             if self.feedback_timers[x] != None:
                 if variables.settings.current_time < self.feedback_timers[x]:
@@ -180,7 +170,7 @@ class Beatmap():
                 blitp = True
 
             if blitp:
-                bx = padxspace * (x + 1) - w / 8 + xoffset
+                bx = Beatmap.screenvaltoxpos(x) - w / 8 
                 by = variables.getpadypos() - padheight
                 bpic = self.getfeedbackpic(x)
                 brect = Rect(bx, by, bpic.get_width(), bpic.get_height())
@@ -195,15 +185,25 @@ class Beatmap():
         notetime = (dt/self.tempo) - variables.settings.notes_per_screen
         return notetime
 
+    @staticmethod
+    def screenvaltoxpos(screenval):
+        
+        padxspace = variables.width / 12
+        middleoffset = padxspace / 2
+
+        xpos = 0
+        if (screenval > 3):
+            xpos = screenval * padxspace + middleoffset + padxspace
+        else:
+            xpos = screenval * padxspace + padxspace
+        return xpos
+
+
     # returns the pos of the bottom of the note
     def notepos(self, note):
         notetime = self.notetime()
         ypos = (notetime - note.time) * (variables.getpadypos() / variables.settings.notes_per_screen) + variables.getpadypos()
-        if (note.getscreenvalue() > 3):
-            xpos = note.getscreenvalue() * padxspace + middleoffset + padxspace
-        else:
-            xpos = note.getscreenvalue() * padxspace + padxspace
-        return [xpos, ypos]
+        return [Beatmap.screenvaltoxpos(note.getscreenvalue()), ypos]
 
     def pos_to_score(self, ypos):
         difference = abs(ypos - variables.getpadypos())
