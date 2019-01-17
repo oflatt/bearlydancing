@@ -136,29 +136,33 @@ pygame.init()
 # load icon
 icon = pygame.image.load(os.path.join(pathtoself, "icon.png"))
 
-try:
+mode = None
+
+if "-novideomode" in sys.argv:
+    mode = (1200, 700)
+else:
     pygame.display.set_icon(icon)
-except pygame.error:
-    devprint("set icon failed- no video output device?")
-
-pygame.display.set_caption('Bearly Dancing')
 
 
-modes = pygame.display.list_modes()
-mode = modes[0]
-ratio = mode[0]/mode[1]
+    pygame.display.set_caption('Bearly Dancing')
 
-if platform == 'win32':
-    import ctypes
-    ctypes.windll.user32.SetProcessDPIAware()
-elif platform == 'darwin':
-    import AppKit
-    AppKit.NSMenu.setMenuBarVisible_(False)
-    for m in modes:
-        if m[0]/m[1] == ratio:
-            if m[0]<1800:
-                mode = m
-                break
+
+    modes = pygame.display.list_modes()
+    mode = modes[0]
+    ratio = mode[0]/mode[1]
+
+    if platform == 'win32':
+        import ctypes
+        ctypes.windll.user32.SetProcessDPIAware()
+    elif platform == 'darwin':
+        import AppKit
+        AppKit.NSMenu.setMenuBarVisible_(False)
+        
+        for m in modes:
+            if m[0]/m[1] == ratio:
+                if m[0]<1800:
+                    mode = m
+                    break
 
 #(ctypes.windll.user32.GetSystemMetrics(0),ctypes.windll.user32.GetSystemMetrics(1))
 # Set the width and height of the screen [width,height]
