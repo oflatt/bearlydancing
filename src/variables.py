@@ -4,6 +4,8 @@ from Settings import Settings
 from Properties import Properties
 from sys import platform
 
+from devoptions import *
+
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 # for export need the commented section
 try:
@@ -15,75 +17,6 @@ except ImportError:
         from pathtoselfmac import pathtoself
 
 
-testsmallp = False
-devmode = True
-# skip the fight with steve, add the event to the player
-skipsteve = True
-# adds all the soundpacks and keys to the player
-addallrewards = False
-# generates a new world on load no matter what
-newworldeachloadq = False
-# allows specific graphics functions to override and make new generated graphics
-allownewworldoverridep = True
-# this overrides the generation of a new set of graphics for a new game
-newworldnever = False
-# this is for not loading the maps from the save file, to test new map changes
-dontloadmapsdict = False
-# this is to get a fresh player with no player attributes
-dontloadplayer = False
-# get a fresh settings file
-dontloadsettings = False
-# only loads first couple of maps
-fasttestmodep = False
-# adds to player level when loading
-lvcheat = 0
-
-# if None it does nothing, if it is a dictionary for "specs" it goes directly into a battle with those specs
-testspecs = None#{'maxtime' : 20, 'lv' : 4, 'rules' : ["alternating"]}
-
-devlosebattlekey = pygame.K_DELETE
-devwinbattlekey = pygame.K_END
-devengagebattlekey = pygame.K_END
-
-# this is the mode for the finished product- it just turns off all other development modes
-exportmode = False
-
-if "-exportmode" in sys.argv:
-    exportmode = True
-
-if "-restartnogeneration" in sys.argv:
-    newworldeachloadq = False
-    newworldnever = True
-    dontloadmapsdict = True
-    dontloadplayer = True
-    dontloadsettings = True
-
-if "-generatenorestart" in sys.argv:
-    newworldeachloadq = True
-    newworldnever = False
-    dontloadmapsdict = False
-    dontloadplayer = False
-    dontloadsettings = False
-    
-if exportmode:
-    testsmallp = False
-    devmode = False
-    skipsteve = False
-    addallrewards = False
-    newworldnever = False
-    newworldeachloadq = False
-    allownewworldoverridep = False
-    dontloadmapsdict = False
-    dontloadplayer = False
-    dontloadsettings = True
-    fasttestmodep = False
-    lvcheat = 0
-    testspecs = None
-
-# only print if devmode is on
-def devprint(s):
-    if devmode:
-        print(s)
 
 # load settings
 savefolderpath = os.path.join(pathtoself, "save0/")
@@ -138,7 +71,7 @@ icon = pygame.image.load(os.path.join(pathtoself, "icon.png"))
 
 mode = None
 
-if "-novideomode" in sys.argv:
+if args.novideomode:
     mode = (1200, 700)
 else:
     pygame.display.set_icon(icon)
@@ -184,7 +117,7 @@ def setscreen(windowmode):
         flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
         screen = pygame.display.set_mode((width, height), flags, 32)
 
-if not "-novideomode" in sys.argv:
+if not args.novideomode:
     setscreen(settings.windowmode)
 
 # this is used so that time does not continue durng the frame that it generates the beatmap

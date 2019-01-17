@@ -1,4 +1,6 @@
-import pygame, unittest, random
+import pygame, unittest, random, sys
+
+
 
 from rdrawmodify import findanchor
 
@@ -87,6 +89,7 @@ class DestructiveFrozenClassTests(unittest.TestCase):
     
         
 if __name__ == "__main__":
-    unittest.main()    
+    
+    unittest.main(argv=["--novideomode"])    
 
 
