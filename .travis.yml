@@ -1,0 +1,7 @@
+language: python
+
+install:
+  - python3 setup.py
+
+script:
+  - python3 src/tests.py
