@@ -287,9 +287,9 @@ class SettingsMenu(FrozenClass):
                     self.notconfirm()
                 elif self.confirmoption == 0:
                     # put the working copy into effect
-                    self.implementnewsettings()
+                    message = self.implementnewsettings()
                     self.exitsettingsmenu()
-                    message = "confirmed new settings"
+                    
 
             return message
 
@@ -305,14 +305,23 @@ class SettingsMenu(FrozenClass):
             self.clearkeys()
             return None
 
+    # update settings to match workingcopy
     def implementnewsettings(self):
+        message = "confirmed new settings"
         newwindowmode = self.workingcopy.windowmode
         if self.workingcopy.windowmode != variables.settings.windowmode:
             variables.setscreen(newwindowmode)
+
+        if variables.settings.volume != self.workingcopy.volume:
+            if not variables.soundinit():
+                message = "sound error: no available devices"
+            else:
+                setnewvolume()
+            
         variables.settings = self.workingcopy
+        return message
 
     def exitsettingsmenu(self):
-        setnewvolume()
         self.state = "main"
         self.clearkeys()
 

@@ -84,22 +84,61 @@ if exportmode:
 def devprint(s):
     if devmode:
         print(s)
-    
+
+# load settings
+savefolderpath = os.path.join(pathtoself, "save0/")
+manualsavebackuppath = os.path.join(pathtoself, "savebackup/");
+settingspath = os.path.join(savefolderpath, "bdsettings.txt")
+savepath = os.path.join(savefolderpath, "bdsave.txt")
+settings = Settings()
+if not dontloadsettings:
+    if (os.path.isfile(os.path.abspath(settingspath))):
+        if os.path.getsize(os.path.abspath(settingspath)) > 0:
+            with open(settingspath, "rb") as f:
+                settings = pickle.load(f)
+settings.menuonq = True
+
+        
 # Setup
 sample_rate = 22050
 max_sample = 2 ** (16 - 1) - 1
+
 pygame.mixer.pre_init(sample_rate, -16, 2, 512)
-pygame.mixer.init()
+
+mainchannels = None
+otherchannels = None
+
+
+def soundinit():
+    global otherchannels
+    global mainchannels
+    failed = False
+    try:
+        pygame.mixer.init()
+        pygame.mixer.set_reserved(38)
+        pygame.mixer.set_num_channels(46)
+        mainchannels = []
+        for x in range(37):
+            mainchannels.append(pygame.mixer.Channel(x))
+            otherchannels = [pygame.mixer.Channel(37), pygame.mixer.Channel(38)]
+    except pygame.error:
+         #if volume is 0, do not use the mixer, it is not initialized
+        settings.volume = 0
+        failed = True
+    return not failed
+
+soundinit()
+
+
 pygame.init()
 
-pygame.mixer.set_reserved(38)
-
+    
 # load icon
 icon = pygame.image.load(os.path.join(pathtoself, "icon.png"))
 pygame.display.set_icon(icon)
 
 pygame.display.set_caption('Bearly Dancing')
-pygame.mixer.set_num_channels(46)
+
 
 modes = pygame.display.list_modes()
 mode = modes[0]
@@ -126,17 +165,6 @@ if testsmallp:
     height = int(height/2)
     width = int(width/2)
 
-savefolderpath = os.path.join(pathtoself, "save0/")
-manualsavebackuppath = os.path.join(pathtoself, "savebackup/");
-settingspath = os.path.join(savefolderpath, "bdsettings.txt")
-savepath = os.path.join(savefolderpath, "bdsave.txt")
-settings = Settings()
-if not dontloadsettings:
-    if (os.path.isfile(os.path.abspath(settingspath))):
-        if os.path.getsize(os.path.abspath(settingspath)) > 0:
-            with open(settingspath, "rb") as f:
-                settings = pickle.load(f)
-settings.menuonq = True
 
 
 screen = None

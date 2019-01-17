@@ -73,6 +73,8 @@ class Settings(FrozenClass):
         
         self._freeze()
 
+    def soundonp(self):
+        return self.volume != 0
 
     def updatezoom(self, displayscale):
         self.zoomlevel = self.zoomlevel+1

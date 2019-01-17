@@ -1,3 +1,4 @@
+from variables import mainchannels, otherchannels
 import pygame, variables, random, os
 from graphics import drawwave
 from Soundpack import Soundpack
@@ -40,21 +41,19 @@ effects = {
     "engagebattle" : loadmusic("encounterenemy.wav"),
     "onedrum" : drumpacks["normalnoise"].getsound(4)}
 
-channels = []
-for x in range(37):
-    channels.append(pygame.mixer.Channel(x))
 
 # stores time in milliseconds of the current end of the music queued on the channel
 # none if not playing
 channeltimes = [None]*37
 
-musicchannel = pygame.mixer.Channel(37)
-soundeffectchannel = pygame.mixer.Channel(38)
+
 
 def buffertosound(b):
     return pygame.sndarray.make_sound(b)
 
 def play_tone(tonein, volenvelope, numofupdatetonessofar):
+    if not variables.settings.soundonp():
+        return
     t = tonein
     # make t always in range if out of range
     if t+12>=len(all_tones[variables.settings.soundpack].loopbuffers):
@@ -64,9 +63,9 @@ def play_tone(tonein, volenvelope, numofupdatetonessofar):
 
     # add because values are centered on 0
     sp = all_tones[variables.settings.soundpack]
-    channels[t+12].set_volume(variables.settings.volume) # balance volume
+    mainchannels[t+12].set_volume(variables.settings.volume) # balance volume
     buf = sp.getbufferattime(t+12, 0, volenvelope, True)
-    channels[t+12].play(buffertosound(buf))
+    mainchannels[t+12].play(buffertosound(buf))
     displaywave(buf, t+12, numofupdatetonessofar)
  
     channeltimes[t+12] = sp.loopbufferdurationmillis[t+12]
@@ -77,6 +76,9 @@ def play_tone(tonein, volenvelope, numofupdatetonessofar):
 # this allows us to put a cap on the number of
 # volumeenvelopes to apply, since it is expensive
 def update_tone(tonein, volenvelope, numofupdatetonessofar):
+    if not variables.settings.soundonp():
+        return
+    
     updatevolenvelopep = numofupdatetonessofar < variables.settings.maxvolumeenvelopesperframe
     
     t = tonein
@@ -85,7 +87,7 @@ def update_tone(tonein, volenvelope, numofupdatetonessofar):
     elif t+12 < 0:
         t = 0-12
 
-    c = channels[t+12]
+    c = mainchannels[t+12]
     sp = all_tones[variables.settings.soundpack]
 
     if channeltimes[t+12] == None:
@@ -101,13 +103,16 @@ def update_tone(tonein, volenvelope, numofupdatetonessofar):
         firstbuf = sp.getbufferattime(t+12, 0, volenvelope, True)
 
 def stop_tone(tonein):
+    if not variables.settings.soundonp():
+        return
+    
     t = tonein
     if t+12>=len(all_tones[variables.settings.soundpack].loopbuffers):
         t = len(all_tones[variables.settings.soundpack].loopbuffers)-1-12
     elif t+12 < 0:
         t = 0-12
     if not t == None:
-        channels[t+12].stop()
+        mainchannels[t+12].stop()
         channeltimes[t+12] = None
         stopdisplaywave(t+12)
 
@@ -116,6 +121,9 @@ furthestdisplaywavex = 0
 nextdisplaywavey = 0
         
 def displaywave(buf, channel, drawnsofar):
+    if not variables.settings.soundonp():
+        return
+    
     global furthestdisplaywavex, nextdisplaywavey
     # make it so that each second crosses .2 of the width of the screen
     wavelen = (buf.size/2)/variables.sample_rate * 0.2 * variables.width
@@ -163,24 +171,31 @@ def getsoundvar(s):
     return g[s]
         
 def play_effect(s):
-    sound = effects[s]
-    soundeffectchannel.set_volume(variables.settings.volume)
-    soundeffectchannel.play(sound)
+    if variables.settings.soundonp():
+        sound = effects[s]
+        otherchannels[0].set_volume(variables.settings.volume)
+        otherchannels[0].play(sound)
 
 def play_drum(index, drumpackname):
-    soundeffectchannel.set_volume(variables.settings.volume)
-    soundeffectchannel.play(drumpacks[drumpackname].getsound(index))
+    if variables.settings.soundonp():
+        otherchannels[0].set_volume(variables.settings.volume)
+        otherchannels[0].play(drumpacks[drumpackname].getsound(index))
     
 def play_music(s):
-    sound = effects[s]
-    musicchannel.set_volume(variables.settings.volume)
-    musicchannel.play(sound, loops=-1)
+    if variables.settings.soundonp():
+        sound = effects[s]
+        otherchannels[1].set_volume(variables.settings.volume)
+        otherchannels[1].play(sound, loops=-1)
 
 def stop_music():
-    musicchannel.stop()
+    if not variables.settings.soundonp():
+        return
+    otherchannels[1].stop()
 
 def stop_effect():
-    soundeffectchannel.stop()
+    if not variables.settings.soundonp():
+        return
+    otherchannels[0].stop()
 
 ############################################ grassland music #########################################
 finalgrassmelody = pygame.mixer.Sound(os.path.join(variables.pathtoself, "music/modmusicgrassland/melodyfinal.wav"))
@@ -197,9 +212,11 @@ for x in range(6):
     grassdrums.append(pygame.mixer.Sound(os.path.join(variables.pathtoself, "music/modmusicgrassland/drum" + str(x) + ".wav")))
 
 def initiatedrums():
+    if not variables.settings.soundonp():
+        return
     sound = random.choice(grassdrums)
-    soundeffectchannel.set_volume(variables.settings.volume)
-    soundeffectchannel.play(sound)
+    otherchannels[0].set_volume(variables.settings.volume)
+    otherchannels[0].play(sound)
     
 def nextgrasslandsound():
     global indexes_left
@@ -212,32 +229,38 @@ def nextgrasslandsound():
         return finalgrassmelody
 
 def initiatemelody():
+    if not variables.settings.soundonp():
+        return
     indexes_left = INDEXES.copy()
     sound = nextgrasslandsound()
-    musicchannel.set_volume(variables.settings.volume)
-    musicchannel.play(sound)
+    otherchannels[1].set_volume(variables.settings.volume)
+    otherchannels[1].play(sound)
     
 def initiategrasslandmusic():
     initiatemelody()
     initiatedrums()
 
 def grasslandmusictick():
-    if not musicchannel.get_busy():
+    if not variables.settings.soundonp():
+        return
+    if not otherchannels[1].get_busy():
         initiatemelody()
         initiatedrums()
-    elif musicchannel.get_queue() == None:
+    elif otherchannels[1].get_queue() == None:
         sound = nextgrasslandsound()
-        musicchannel.set_volume(variables.settings.volume)
-        musicchannel.queue(sound)
+        otherchannels[1].set_volume(variables.settings.volume)
+        otherchannels[1].queue(sound)
 
-    if not soundeffectchannel.get_busy():
+    if not otherchannels[0].get_busy():
         initiatedrums()
-    elif soundeffectchannel.get_queue() == None:
+    elif otherchannels[0].get_queue() == None:
         sound = random.choice(grassdrums)
-        soundeffectchannel.set_volume(variables.settings.volume)
-        soundeffectchannel.queue(sound)
+        otherchannels[0].set_volume(variables.settings.volume)
+        otherchannels[0].queue(sound)
 
 def setnewvolume():
-    musicchannel.set_volume(variables.settings.volume)
-    soundeffectchannel.set_volume(variables.settings.volume)
+    if not variables.settings.soundonp():
+        return
+    otherchannels[1].set_volume(variables.settings.volume)
+    otherchannels[0].set_volume(variables.settings.volume)
         
