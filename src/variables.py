@@ -174,7 +174,6 @@ if testsmallp:
     width = int(width/2)
 
 
-
 screen = None
 def setscreen(windowmode):
     global screen
@@ -185,7 +184,8 @@ def setscreen(windowmode):
         flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
         screen = pygame.display.set_mode((width, height), flags, 32)
 
-setscreen(settings.windowmode)
+if not "-novideomode" in sys.argv:
+    setscreen(settings.windowmode)
 
 # this is used so that time does not continue durng the frame that it generates the beatmap
 generatingbeatmapp = False
