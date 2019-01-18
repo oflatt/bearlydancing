@@ -163,7 +163,8 @@ beatchimneyc = getconversation("beatchimneyc")
 makeconversationreward(beatchimneyc, chimneybattlec.special_battle, "chromatic")
 
 outside1 = Map(rgrassland,
-               [houserock,
+               [Rock(graphics.arcadecabinet(), 8*b, 7.5*b, variables.ROCKCOLLIDESECTION),
+                houserock,
                 Rock(graphics.greyrock(), 6.5 * b, 7.5 * b, variables.ROCKCOLLIDESECTION),
                 treerock,
                 meangreenrock,

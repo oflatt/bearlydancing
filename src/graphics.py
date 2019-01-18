@@ -9,6 +9,7 @@ from rdraw.rdrawtree import maketree, makechristmastree
 from rdraw.rdrawland import makegrassland, makesnowland
 from rdraw.rdrawmodify import createshadow
 from rdraw.rdrawflower import makeflower
+from rdraw.rdrawarcade import makecabinet
 from Shadow import Shadow
 
 
@@ -436,3 +437,8 @@ def snowland(width, height, grasstosnowp = False):
 
 def flower():
     return generategraphic(makeflower, "randomflower")
+
+def arcadecabinet():
+    def callmakecabinet():
+        return makecabinet(40, 100)
+    return generategraphic(callmakecabinet, "randomarcadecabinet")
