@@ -43,6 +43,8 @@ parser.add_argument('--restartnogeneration', "- restart save files but don't gen
 
 parser.add_argument('--novideomode', "- don't initialize the display or draw anything.",action = 'store_true')
 
+parser.add_argument('--fasttestmode', "- only load the first couple of maps.", action = 'store_true')
+
 args = parser.parse_args()
 
 if args.exportmode:
@@ -77,6 +79,9 @@ if exportmode:
     lvcheat = 0
     testspecs = None
 
+if args.fasttestmode:
+    fasttestmodep = True
+    
 # only print if devmode is on
 def devprint(s):
     if devmode:

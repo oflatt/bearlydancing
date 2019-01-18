@@ -4,8 +4,8 @@ from random import randint
 from Texture import Texture
 from addtexture import addtexture
 from pygame import Rect
-from rdrawtree import snowclump
-from rdrawrock import addlump
+from .rdrawtree import snowclump
+from .rdrawrock import addlump
 
 dirtcolor = (70, 71, 14)
 pathwidth = 16

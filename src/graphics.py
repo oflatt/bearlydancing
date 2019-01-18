@@ -4,9 +4,11 @@ import pygame, os, variables, random, datetime
 from pygame import Rect
 import string, math
 
-import rdrawtree, rdrawland, rdrawrock 
-from rdrawmodify import createshadow
-from rdrawflower import makeflower
+from rdraw.rdrawrock import makerock
+from rdraw.rdrawtree import maketree, makechristmastree
+from rdraw.rdrawland import makegrassland, makesnowland
+from rdraw.rdrawmodify import createshadow
+from rdraw.rdrawflower import makeflower
 from Shadow import Shadow
 
 
@@ -398,37 +400,37 @@ def generategraphic(generatingfunction, graphicname, newworldoverride = False):
     return nicename(filename)
     
 def pinetree():
-    nicetreename = generategraphic(rdrawtree.maketree, "randompinetree")
+    nicetreename = generategraphic(maketree, "randompinetree")
 
     # christmas!
     if christmasp:
-        rdrawtree.makechristmastree(GR[nicetreename]["img"])
+        makechristmastree(GR[nicetreename]["img"])
 
     return nicetreename
 
 def snowpinetree():
     def makesnowtree():
-        return rdrawtree.maketree(True)
+        return maketree(True)
     nicetreename = generategraphic(makesnowtree, "randomsnowpinetree")
 
     # christmas!
     if christmasp:
-        rdrawtree.makechristmastree(GR[nicetreename]["img"])
+        makechristmastree(GR[nicetreename]["img"])
 
     return nicetreename
 
 def greyrock():
-    return generategraphic(rdrawrock.makerock, "randomgreyrock")
+    return generategraphic(makerock, "randomgreyrock")
 
 def grassland(width, height, leftpath = True, rightpath = True, uppath = False, downpath = False):
     def callgrasslandfunction():
-        return rdrawland.makegrassland(width, height, leftpath, rightpath, uppath, downpath)
+        return makegrassland(width, height, leftpath, rightpath, uppath, downpath)
     
     return generategraphic(callgrasslandfunction, "randomgrassland")
 
 def snowland(width, height, grasstosnowp = False):
     def callsnowland():
-        return rdrawland.makesnowland(width, height, grasstosnowp)
+        return makesnowland(width, height, grasstosnowp)
 
     return generategraphic(callsnowland, "randomsnowland")
 

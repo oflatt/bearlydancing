@@ -25,7 +25,7 @@ class Animation():
         framenum = self.framenum(outerframerate)
         if type(self.pics[framenum]) == Animation:
             # set the beginning time to the beginning of this animation's frame
-            self.pics[framenum].beginning_time = variables.settings.current_time - (at % f)
+            self.pics[framenum].beginning_time = variables.settings.current_time - (at % framenum)
             return self.pics[framenum].current_frame(self.framerate)
         else:
             return self.pics[framenum]

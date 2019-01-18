@@ -1,7 +1,7 @@
 import pygame, variables, copy, random, math
 import pygame.gfxdraw
 from addtexture import addtexture
-from rdrawrock import addlump
+from .rdrawrock import addlump
 from random import randint
 from Texture import Texture
 from variables import TREEWIDTH, TREEHEIGHT
@@ -137,6 +137,7 @@ def snowclump(surfacefinal, x, y, addrad = False, groundp = False):
 
 def drawlayer(p, yoffset, leftbound, rightbound, toplayerp=False, addsnowp = False):
     boundwidth = rightbound - leftbound
+    bottomcurveamount = boundwidth/6
     halflen = int((rightbound - leftbound) / 2) - 1
     middlebound = halflen + leftbound
     spikelower = 108 + yoffset
@@ -146,22 +147,30 @@ def drawlayer(p, yoffset, leftbound, rightbound, toplayerp=False, addsnowp = Fal
     # highest point unless toplayerp is true
     topy = 65 + yoffset
 
+    # add some dip to points closer to center
+    def spikeyoffset(pointxpos):
+        return int(yoffset + math.sin((pointxpos - leftbound)/boundwidth * math.pi) * bottomcurveamount - bottomcurveamount/2)
+
     # starts with a lower point
     rightpoints = [[middlebound, randint(100 + yoffset, spikelower)]]
 
+    # add the spikes on the right side
     drawingspikesq = True
     spikex = middlebound
     while drawingspikesq:
+        # add higher point- higher points cropped while lower points break
         spikex += randint(spikewmin, spikewmax)
         if (spikex >= rightbound):
             spikex = rightbound - 1
-        rightpoints.append([spikex, randint(spikeupper, 100 + yoffset)])
+        rightpoints.append([spikex, randint(spikeupper+spikeyoffset(spikex)-yoffset, 100 + spikeyoffset(spikex))])
 
+        # add lower point
         spikex += randint(spikewmin, spikewmax)
         if (spikex >= (rightbound - spikewmin - 1)):
             break
-        rightpoints.append([spikex, randint(100 + yoffset, spikelower)])
+        rightpoints.append([spikex, randint(100 + spikeyoffset(spikex), spikelower+spikeyoffset(spikex)-yoffset)])
 
+    # now add the top of the layer after the bottom is done
     fourth = int(boundwidth / 4)
     if toplayerp:
         # with the top layer, it's taller and has points in the middle
@@ -175,19 +184,20 @@ def drawlayer(p, yoffset, leftbound, rightbound, toplayerp=False, addsnowp = Fal
             [[rightbound - fourth, topy], [leftbound + int(boundwidth / 4), topy]])
 
     leftpoints = []
-    # now the lest
+    # now the left side of the bottom spikey bit
     drawingspikesq = True
     spikex = middlebound
     while drawingspikesq:
         spikex -= randint(spikewmin, spikewmax)
         if (spikex < leftbound):
             spikex = leftbound
-        leftpoints.append([spikex, randint(spikeupper, 100 + yoffset)])
+        leftpoints.append([spikex, randint(spikeupper+spikeyoffset(spikex)-yoffset, 100 + spikeyoffset(spikex))])
 
         spikex -= randint(spikewmin, spikewmax)
         if (spikex <= leftbound + spikewmin):
             break
-        leftpoints.append([spikex, randint(100 + yoffset, spikelower)])
+        # add spikeyoffset but subtract yoffset because spikelower already had it added on
+        leftpoints.append([spikex, randint(100 + spikeyoffset(spikex), spikelower+ spikeyoffset(spikex)-yoffset)])
 
     rightpoints.extend(leftpoints[::-1])
     # Then call a function that randomly adds new points for complexity
