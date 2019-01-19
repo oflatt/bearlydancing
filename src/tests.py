@@ -2,7 +2,7 @@ import pygame, unittest, random, sys
 
 
 
-from rdrawmodify import findanchor
+from rdraw.rdrawmodify import findanchor
 
 s = pygame.Surface((20, 20), pygame.SRCALPHA)
 
