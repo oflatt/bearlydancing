@@ -3,6 +3,7 @@ from pygame import Rect
 from Settings import Settings
 from Properties import Properties
 from sys import platform
+from random import randint
 
 from devoptions import *
 
@@ -152,6 +153,12 @@ LIGHTYELLOW = (235,227, 92)
 LIGHTBLUE = (66, 206, 244)
 PINK = (226, 40, 255)
 
+def randomnicecolor():
+    color = [randint(60, 255), randint(60, 255), randint(60, 255), 255]
+    # set one of them to 60
+    color[randint(0, 2)] = 60
+    return color
+
 def greenp(c):
     return c[1] > c[0]+10 and c[1] > c[2] + 10
 
@@ -186,6 +193,7 @@ snowcolor = (200, 200, 200)
 TREEWIDTH = 100
 TREEHEIGHT = 200
 ROCKMAXRADIUS = 12
+ROCKMINRADIUS = 5
 TREECOLLIDESECTION = [0, 18.5 / 20, 1, 1.5 / 20]
 ROCKCOLLIDESECTION = [0, 1/10, 1, 9/10]
 FLOWERCOLLIDESECTION = [0, 1, 0, 0]

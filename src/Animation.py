@@ -1,4 +1,4 @@
-#Oliver Flatt
+
 import variables
 
 class Animation():
@@ -22,10 +22,15 @@ class Animation():
 
     def current_frame(self, outerframerate = None):
         at = variables.settings.current_time-self.beginning_time
+        
         framenum = self.framenum(outerframerate)
+        f = self.framerate
+        if outerframerate != None and self.relativeframerate:
+            f = outerframerate*self.framerate
+            
         if type(self.pics[framenum]) == Animation:
             # set the beginning time to the beginning of this animation's frame
-            self.pics[framenum].beginning_time = variables.settings.current_time - (at % framenum)
+            self.pics[framenum].beginning_time = variables.settings.current_time - (at % f)
             return self.pics[framenum].current_frame(self.framerate)
         else:
             return self.pics[framenum]

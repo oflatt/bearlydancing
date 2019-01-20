@@ -63,6 +63,9 @@ if args.generatenorestart:
     dontloadmapsdict = False
     dontloadplayer = False
     dontloadsettings = False
+
+if args.fasttestmode:
+    fasttestmodep = True
     
 if exportmode:
     testsmallp = False
@@ -79,8 +82,6 @@ if exportmode:
     lvcheat = 0
     testspecs = None
 
-if args.fasttestmode:
-    fasttestmodep = True
     
 # only print if devmode is on
 def devprint(s):

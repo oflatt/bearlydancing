@@ -440,5 +440,5 @@ def flower():
 
 def arcadecabinet():
     def callmakecabinet():
-        return makecabinet(40, 100)
+        return makecabinet()
     return generategraphic(callmakecabinet, "randomarcadecabinet")
