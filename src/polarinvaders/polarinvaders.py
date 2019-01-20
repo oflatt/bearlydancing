@@ -1,5 +1,10 @@
 import pygame, math, random, sys
-from spriteSheetToList import *
+from .spriteSheetToList import *
+
+from Game import Game
+
+# stored as global
+screen = None
 
 class Enemy:
 
@@ -163,10 +168,14 @@ def remove():
             rB-=1
         rB+=1
     
-def display():
+def display(time, settings, screenin):
+    global screen
+    screen = screenin
+    
     screen.fill((0,0,0))
     for i in range(len(starValues)):
-        pygame.draw.rect(screen, starValues[i][0], starValues[i][1], 0)
+        pygame.draw.rect(screen, starValues[i][0],
+                         starValues[i][1], 0)
     for bullet in eBullets:
         bullet.update()
     for enemy in enemies:
@@ -189,7 +198,7 @@ def display():
     screen.blit(text, [0,0])
     screen.blit(fONT.render(str(pHealth), True, (255,pHealth*255/30,pHealth*255/30), None), [width/2,0])
     screen.blit(fONT.render(str(eHealth), True, (255,pHealth*255/30,pHealth*255/30), None), [width*4/5,0])
-    clock.tick(FPS)
+    
     pygame.display.flip()
 
 def movement():
@@ -247,37 +256,26 @@ def waves():
         elif waveCounter > 540:
             doneWave = True
     waveCounter+=1
-###           
-#setup
-###
-pygame.init()
-pygame.font.init()
-modes = pygame.display.list_modes()
-mode = modes[0]
-size = width, height = mode
-screen = pygame.display.set_mode(mode,pygame.FULLSCREEN)
-clock= pygame.time.Clock()
-FPS = 60
+
 ###
 #variables
 ###
 score = 0
 eBullets = []
 starValues = []
-for i in range(200):
-    starValues.append([(255,255,255), (random.randint(0, width-3), random.randint(0, height-3), 3, 3)])
-cen = [width/2, height/2]
+
+cen = None
 theta = math.pi/2
 radius = 400
-pos = [radius*math.cos(theta)+cen[0], radius*math.sin(theta)+cen[1]]
-ringRadius = (height-250)/2
+pos = None
+ringRadius = None
 pSize = 64
-eBullet = pygame.image.load("eBullet.png")
-enemy = pygame.image.load("enemy.png")
-laser = pygame.image.load("laser.png")
-leftBooster = pygame.image.load("leftBooster.png")
-mainBooster = pygame.image.load("mainBooster.png")
-rightBooster = pygame.image.load("rightBooster.png")
+eBullet = pygame.image.load("polarinvaders/eBullet.png")
+enemy = pygame.image.load("polarinvaders/enemy.png")
+laser = pygame.image.load("polarinvaders/laser.png")
+leftBooster = pygame.image.load("polarinvaders/leftBooster.png")
+mainBooster = pygame.image.load("polarinvaders/mainBooster.png")
+rightBooster = pygame.image.load("polarinvaders/rightBooster.png")
 leftBooster = spriteSheetToList(leftBooster, 4)
 mainBooster = spriteSheetToList(mainBooster, 4)
 rightBooster = spriteSheetToList(rightBooster, 4)
@@ -286,7 +284,8 @@ count = 0
 dTheta = 0
 pSpeed = math.pi/7200
 animationSpeed = .01
-time = pygame.time.get_ticks()
+time = 1
+dTime = 1
 mainBoost = True
 leftBoost = False
 pBullets = []
@@ -303,34 +302,44 @@ eHealth = 1
 diff = 0
 currentImRect = mainBooster[0].copy()
 currentImRect = currentImRect.get_rect()
+
+def init(screen):
+    global cen
+    global pos
+    global width
+    global height
+    width = screen.get_width()
+    height = screen.get_height()
+    cen = [width/2, height/2]
+    pos = [radius*math.cos(theta)+cen[0], radius*math.sin(theta)+cen[1]]
+    ringRadius = (height-250)/2
+    for i in range(200):
+        starValues.append([(255,255,255), (int(random.random()*width), int(random.random()*height), 3, 3)])
+
+
+def onkey(time, settings, event):
+    if event.type != pygame.KEYDOWN:
+        return
+    key = event.key
     
-while True:
-    #if int(time)%10 == 0:
-    dTime = pygame.time.get_ticks() - time
-    time = pygame.time.get_ticks()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_ESCAPE]:
-        pygame.quit()
-        sys.exit()
-    if keys[pygame.K_LEFT] and keys[pygame.K_RIGHT]:
-        mainBoost = True
-    elif keys[pygame.K_LEFT]:
+    global mainBoost
+    global firingCount
+    global pBullets
+    global coeff1
+    global coeff2
+    global pHealth
+    
+    
+    if settings.iskey("left", key):
         mainBoost = False
         leftBoost = False
-    elif keys[pygame.K_RIGHT]:
+    elif settings.iskey("right", key):
         mainBoost = False
         leftBoost = True
     else:
         mainBoost = True
-    if pHealth <= 0:
-        pygame.quit()
-        sys.exit()
-    firingCount+=1
-    if keys[pygame.K_SPACE] and firingCount >= firingRate:
+
+    if settings.iskey("action", key) and firingCount >= firingRate:
         firingCount = 0
         theAngle1 = theta+math.atan(-22/13)
         theAngle2 = theta+math.atan(22/13)
@@ -338,7 +347,24 @@ while True:
         coeff2 = math.sqrt(400)
         pBullets.append(PBullet([pos[0]-coeff1*math.cos(theAngle1), pos[1]-coeff1*math.sin(theAngle1)], theta, pBulletSpeed, laser))
         pBullets.append(PBullet([pos[0]-coeff1*math.cos(theAngle2), pos[1]-coeff1*math.sin(theAngle2)], theta, pBulletSpeed, laser))
+        
+    if pHealth <= 0:
+        pygame.quit()
+        sys.exit()
+
+def ontick(timein, settings):
+    global time
+    global dTime
+    dTime = time - timein
+    time = timein
+    global firingCount
+    firingCount += 1
     waves()
     movement()
     remove()
-    display()
+        
+def creategame():
+    return Game(init, onkey, ontick, display)
+
+    
+    

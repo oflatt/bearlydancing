@@ -68,7 +68,7 @@ while not done:
         clock.get_time()
 
     
-    # --- Event Processing- this is like keyPressed
+    # --- Event Processing-
     for event in pygame.event.get():
         #first check for saving and exiting
         if event.type == pygame.QUIT:

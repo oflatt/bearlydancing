@@ -73,6 +73,9 @@ class Settings(FrozenClass):
         
         self._freeze()
 
+    def iskey(self,binding, pygamekey):
+        return pygamekey in self.keydict[binding]
+        
     def soundonp(self):
         return self.volume != 0
 
