@@ -167,7 +167,14 @@ def remove():
             enemies.pop(rB)
             rB-=1
         rB+=1
+
+
+def drawboostimg(screen, boostimage):
+    currentIm = pygame.transform.rotate(boostimage, 180*(math.pi/2-theta)/math.pi)
+    currentImRect = currentIm.get_rect()
+    screen.blit(currentIm, (pos[0]-currentImRect.width/2, pos[1] - currentImRect.height/2))
     
+        
 def display(time, settings, screenin):
     global screen
     screen = screenin
@@ -184,15 +191,16 @@ def display(time, settings, screenin):
         bullet.update()
     global count
     count += animationSpeed*dTime
+
     if mainBoost:
-        currentIm = mainBooster[int(count)%4].copy()
-    elif leftBoost:
-        currentIm = leftBooster[int(count)%4].copy()
-    else:
-        currentIm = rightBooster[int(count)%4].copy()
-    currentIm = pygame.transform.rotate(currentIm, 180*(math.pi/2-theta)/math.pi)
-    currentImRect = currentIm.get_rect()
-    screen.blit(currentIm, (pos[0]-currentImRect.width/2, pos[1] - currentImRect.height/2))
+        drawboostimg(screen, mainBooster[int(count)%4].copy())
+
+    if rightBoost:
+        drawboostimg(screen, leftBooster[int(count)%4].copy())
+        
+    if leftBoost:
+        drawboostimg(screen, rightBooster[int(count)%4].copy())
+    
     fONT = pygame.font.SysFont("impact", 50)
     text = fONT.render(str(score), True, (255,255,255), None)
     screen.blit(text, [0,0])
@@ -286,8 +294,10 @@ pSpeed = math.pi/7200
 animationSpeed = .01
 time = 1
 dTime = 1
+actionHeld = False
 mainBoost = True
 leftBoost = False
+rightBoost = False
 pBullets = []
 pBulletSpeed = 7
 firingCount = 0
@@ -318,28 +328,46 @@ def init(screen):
 
 
 def onkey(time, settings, event):
-    if event.type != pygame.KEYDOWN:
+    if not event.type in (pygame.KEYDOWN, pygame.KEYUP):
         return
     key = event.key
     
     global mainBoost
+    global leftBoost
+    global rightBoost
     global firingCount
-    global pBullets
-    global coeff1
-    global coeff2
+    
     global pHealth
+    global actionHeld
     
     
     if settings.iskey("left", key):
         mainBoost = False
-        leftBoost = False
+        leftBoost = event.type == pygame.KEYDOWN
     elif settings.iskey("right", key):
         mainBoost = False
-        leftBoost = True
-    else:
+        rightBoost = event.type == pygame.KEYDOWN
+
+    if not leftBoost and not rightBoost:
         mainBoost = True
 
-    if settings.iskey("action", key) and firingCount >= firingRate:
+        
+    if settings.iskey("action", key):
+        actionHeld = (event.type == pygame.KEYDOWN)
+
+        
+    if pHealth <= 0:
+        pygame.quit()
+        sys.exit()
+
+def handlefiring():
+    global firingCount
+    global pBullets
+    global coeff1
+    global coeff2
+    firingCount += 1
+    
+    if actionHeld and firingCount >= firingRate:
         firingCount = 0
         theAngle1 = theta+math.atan(-22/13)
         theAngle2 = theta+math.atan(22/13)
@@ -347,18 +375,15 @@ def onkey(time, settings, event):
         coeff2 = math.sqrt(400)
         pBullets.append(PBullet([pos[0]-coeff1*math.cos(theAngle1), pos[1]-coeff1*math.sin(theAngle1)], theta, pBulletSpeed, laser))
         pBullets.append(PBullet([pos[0]-coeff1*math.cos(theAngle2), pos[1]-coeff1*math.sin(theAngle2)], theta, pBulletSpeed, laser))
+    
         
-    if pHealth <= 0:
-        pygame.quit()
-        sys.exit()
-
 def ontick(timein, settings):
     global time
     global dTime
     dTime = time - timein
     time = timein
-    global firingCount
-    firingCount += 1
+
+    handlefiring()
     waves()
     movement()
     remove()
