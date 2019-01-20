@@ -26,9 +26,10 @@ lvcheat = 0
 # if None it does nothing, if it is a dictionary for "specs" it goes directly into a battle with those specs
 testspecs = None#{'maxtime' : 20, 'lv' : 4, 'rules' : ["alternating"]}
 
-devlosebattlekey = pygame.K_DELETE
+devlosebattlekey = pygame.K_BACKSLASH
 devwinbattlekey = pygame.K_END
 devengagebattlekey = pygame.K_END
+devquitkey = pygame.K_BACKSLASH
 
 # this is the mode for the finished product- it just turns off all other development modes
 exportmode = False

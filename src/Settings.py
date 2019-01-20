@@ -39,7 +39,7 @@ class Settings(FrozenClass):
         self.volume = 0.5
         self.autosavep = True
 
-        # state can be world, battle, or conversation
+        # state can be world, battle, game, or conversation
         self.state = "world"
         self.backgroundstate = "world"
         self.menuonq = True
@@ -70,6 +70,10 @@ class Settings(FrozenClass):
         self.difficulty = 0
 
         self.dancepadmodep = True
+
+        # gamedata is a dict that can be populated by Game objects
+        self.gamedata = {}
+        self.currentgame = None
         
         self._freeze()
 
@@ -85,3 +89,9 @@ class Settings(FrozenClass):
             self.zoomlevel += 1
         elif self.zoomlevel > 2:
             self.zoomlevel = 0
+
+    def setgamedata(gamename, gamedata):
+        self.gamedata[gamename] = gamedata
+
+    def getgamedata(gamename):
+        return self.gamedata[gamename]

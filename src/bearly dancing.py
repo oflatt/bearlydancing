@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import pygame, variables, copy, os
+import pygame, variables, copy, os, sys
 from pygame import Rect
 
 
@@ -57,80 +57,79 @@ play_music("menumusic")
 menu.enemyanimation.framerate = (60000/160)*2
 menu.enemyanimation.beginning_time = variables.settings.current_time
 
-# -------- Main Program Loop -----------
-while not done:
-    # add the past tick to the current time
-    if not variables.generatingbeatmapp:
-        variables.settings.current_time += clock.get_time()
-    else:
-        # set it to false, done generating
-        variables.generatingbeatmapp = False
-        # do not add the time to the clock
-        clock.get_time()
 
-    
-    # --- Event Processing-
-    for event in pygame.event.get():
-        #first check for saving and exiting
-        if event.type == pygame.QUIT:
-            done = True
-        elif event.type == pygame.KEYDOWN and variables.checkkey("enter", event.key) and variables.settings.menuonq:
-            if menu.state == "main":
-                if menu.getoption() == "exit":
-                    done = True
-                elif menu.getoption() == "save":
-                    save(True)
-                    variables.saved = True
+def onevent(event):
+    global done
+    #first check for saving and exiting
+    if event.type == pygame.QUIT:
+        done = True
+    elif event.type == pygame.KEYDOWN and event.key == variables.devquitkey:
+        pygame.quit()
+        sys.exit()
+    elif event.type == pygame.KEYDOWN and variables.checkkey("enter", event.key) and variables.settings.menuonq:
+        if menu.state == "main":
+            if menu.getoption() == "exit":
+                done = True
+            elif menu.getoption() == "save":
+                save(True)
+                variables.saved = True
 
-        # User pressed down on a key
-        if event.type == pygame.KEYDOWN:
-            # check for dev battle key
-            if variables.devmode and event.key == variables.devengagebattlekey and variables.settings.state == "world":
-                if devbattletest == None:
-                    initiatebattle(random_enemy())
-                else:
-                    initiatebattle(devbattletest)
-            
-            elif (not variables.settings.menuonq):
-                if variables.settings.state == "conversation" and conversations.currentconversation != None:
-                    message = conversations.currentconversation.keyevent(event.key)
-                    menu.setmessage(message)
-                    # check if it was exited to unhide rocks
-                    if variables.settings.state == "world":
-                        maps.unhiderock(conversations.currentconversation.unhidethisrock)
-                elif variables.settings.state == "world":
-                    if maps.playerenabledp() and maps.current_map.playerenabledp:
-                        classvar.player.keypress(event.key)
-                    maps.on_key(event.key)
-                elif variables.settings.state == "battle":
-                    classvar.battle.onkey(event.key)
-                    
-                # also check if the player is pausing the game
-                if variables.checkkey("escape", event.key):
-                    if not variables.settings.menuonq:
-                        menu.pause()
+    # process key in minigame
+    if variables.settings.state == "game":
+        variables.currentgame().inputfunction(variables.settings.current_time, variables.settings, event)
+
+        
+    # User pressed down on a key
+    if event.type == pygame.KEYDOWN:
+        # check for dev battle key
+        if variables.devmode and event.key == variables.devengagebattlekey and variables.settings.state == "world":
+            if devbattletest == None:
+                initiatebattle(random_enemy())
             else:
-                menu.onkey(event.key)
+                initiatebattle(devbattletest)
 
-
-        # User let up on a key
-        elif event.type == pygame.KEYUP:
-            if (not variables.settings.menuonq):
+        elif (not variables.settings.menuonq):
+            if variables.settings.state == "conversation" and conversations.currentconversation != None:
+                message = conversations.currentconversation.keyevent(event.key)
+                menu.setmessage(message)
+                # check if it was exited to unhide rocks
                 if variables.settings.state == "world":
-                    if maps.playerenabledp() and maps.current_map.playerenabledp:
-                        classvar.player.keyrelease(event.key)
-                elif variables.settings.state == "battle":
-                    classvar.battle.onrelease(event.key)
-                elif variables.settings.state == "conversation" and conversations.currentconversation != None:
-                    conversations.currentconversation.keyrelease(event.key)
-            else:
-                menu.onrelease(event.key)
+                    maps.unhiderock(conversations.currentconversation.unhidethisrock)
+            elif variables.settings.state == "world":
+                if maps.playerenabledp() and maps.current_map.playerenabledp:
+                    classvar.player.keypress(event.key)
+                maps.on_key(event.key)
+            elif variables.settings.state == "battle":
+                classvar.battle.onkey(event.key)
 
+            # also check if the player is pausing the game
+            if variables.checkkey("escape", event.key):
+                if not variables.settings.menuonq:
+                    menu.pause()
+        else:
+            menu.onkey(event.key)
+
+
+    # User let up on a key
+    elif event.type == pygame.KEYUP:
+        if (not variables.settings.menuonq):
+            if variables.settings.state == "world":
+                if maps.playerenabledp() and maps.current_map.playerenabledp:
+                    classvar.player.keyrelease(event.key)
+            elif variables.settings.state == "battle":
+                classvar.battle.onrelease(event.key)
+            elif variables.settings.state == "conversation" and conversations.currentconversation != None:
+                conversations.currentconversation.keyrelease(event.key)
+        else:
+            menu.onrelease(event.key)
+
+
+def ontick():
+    if variables.settings.state == "game":
+        variables.currentgame().tickfunction(variables.settings.current_time, variables.settings)
     
     if variables.settings.state == "world" or (variables.settings.state == "conversation" and variables.settings.backgroundstate == "world"):
         maps.musictick()
-        
-    # --- Game Logic
     if (not variables.settings.menuonq):
         if variables.settings.state == "world":
             classvar.player.move()
@@ -141,14 +140,13 @@ while not done:
             classvar.battle.ontick()
     else:
         menu.ontick()
-        
 
+def ondraw():
     # draw saved
     if (variables.saved):
         menu.saved()
         variables.saved = False
-        
-    # --- Drawing Code
+
     def draw_world():
         #fill edges in with black
         screenxoffset = maps.current_map.screenxoffset()
@@ -200,21 +198,53 @@ while not done:
         # blit red boarder for testing
         variables.screen.fill(variables.RED, Rect(variables.width, 0, 10, variables.height))
         variables.screen.fill(variables.RED, Rect(0, variables.height, variables.width, 10))
-    
-    # Go ahead and update the screen with what we've drawn.
-    
-    if len(variables.dirtyrects) > 0 and variables.devmode:
-        pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
 
+
+    if variables.settings.state == "game":
+        variables.currentgame().drawfunction(variables.settings.current_time, variables.settings, variables.screen)
         
-    variables.updatescreen()
+    # Go ahead and update the screen with what we've drawn.
+    if variables.settings.state != "game":
+        if len(variables.dirtyrects) > 0 and variables.devmode:
+            pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
 
-    # reset dirtyrects
-    variables.olddirtyrects = variables.dirtyrects
-    variables.dirtyrects = []
 
+        variables.updatescreen()
+
+        # reset dirtyrects
+        variables.olddirtyrects = variables.dirtyrects
+        variables.dirtyrects = []
+
+    
+    
+
+# -------- Main Program Loop -----------
+while not done:
+    # add the past tick to the current time
+    if not variables.generatingbeatmapp:
+        variables.settings.current_time += clock.get_time()
+    else:
+        # set it to false, done generating
+        variables.generatingbeatmapp = False
+        # do not add the time to the clock
+        clock.get_time()
+
+
+    # --- Event Processing-
+    for event in pygame.event.get():
+        onevent(event)
+    
+        
+    # --- Game Logic
+    ontick()    
+    
+    # --- Drawing Code
+    ondraw()
+    
     # We want as many frames as possible to reduce likelyhood for mismatch with screen refresh and tearing
     clock.tick_busy_loop(0)
 
+
 # Close the window and quit, this is after the main loop has finished
 pygame.quit()
+

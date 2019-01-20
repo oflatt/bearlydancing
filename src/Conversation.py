@@ -23,6 +23,9 @@ class Conversation(FrozenClass):
         # none or an enemy object to encounter after the conversation
         self.special_battle = "none"
 
+        # if set to the string name of a game, load the game at the end of the conversation
+        self.loadgameonend = None
+
         self.progress = 0
         self.timesexited = 0
         
@@ -136,7 +139,11 @@ class Conversation(FrozenClass):
         else:
             initiatebattle(self.special_battle)
 
+        if self.loadgameonend != None:
+            variables.loadgame(self.loadgameonend)
+
         self.timesexited += 1
+        
         self.progress = 0
         if self.speaksafter != None and self.timesexited <= len(self.speaksafter):
             self.speaks = self.speaksafter[self.timesexited-1]

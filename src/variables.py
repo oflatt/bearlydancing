@@ -4,6 +4,7 @@ from Settings import Settings
 from Properties import Properties
 from sys import platform
 from random import randint
+from Game import Game
 
 from devoptions import *
 
@@ -32,7 +33,30 @@ if not dontloadsettings:
                 settings = pickle.load(f)
 settings.menuonq = True
 
-        
+
+
+# load games
+def loadpolar():
+    from polarinvaders.polarinvaders import creategame
+    return creategame()
+
+
+# go from being a function that loads a game to being a game object
+games = {"polarinvaders":loadpolar}
+
+def currentgame():
+    return games[settings.currentgame]
+
+def loadgame(gamename):
+    global settings
+    global games
+    settings.currentgame = gamename
+    if callable(games[gamename]):
+        games[gamename] = games[gamename]()
+
+    games[gamename].initfunction(screen)
+    settings.state = "game"
+
 # Setup
 sample_rate = 22050
 max_sample = 2 ** (16 - 1) - 1
