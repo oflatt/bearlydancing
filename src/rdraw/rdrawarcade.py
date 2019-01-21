@@ -1,10 +1,10 @@
 import pygame, random
 from random import randint
-from pygame import Surface
+from pygame import Surface, Rect
 
 import variables
 
-def makecabinet():
+def makecabinet(gamename):
     width = 28
     height = 48
     # make it bigger in case cropped off
@@ -79,9 +79,25 @@ def makecabinet():
     pygame.gfxdraw.filled_polygon(surface, screenarea, variables.BLACK)
 
     pygame.gfxdraw.filled_polygon(surface, buttonsarea, variables.brighten(screenbordercolor, -50))
+
+    # draw buttons on button area
+    
+    buttonsy = buttonsarea[0][1] + (buttonareaheight/3)
+    buttonxmin = buttonsarea[-2][0]
+    buttonxwidth = buttonsarea[0][0]-buttonxmin
+    pygame.gfxdraw.circle(surface, int(buttonxmin + buttonxwidth * 0.2), int(buttonsy), int(buttonxwidth*0.05), variables.RED)
+    pygame.gfxdraw.circle(surface, int(buttonxmin + buttonxwidth * 0.35), int(buttonsy), int(buttonxwidth*0.05), variables.RED)
+    pygame.gfxdraw.circle(surface, int(buttonxmin + buttonxwidth * 0.7), int(buttonsy), int(buttonxwidth*0.05), variables.BLUE)
+
     coinslotareacolor = variables.brighten(machinecolor, -30)
     pygame.gfxdraw.filled_polygon(surface, coinslotarea, coinslotareacolor)
     pygame.gfxdraw.polygon(surface, coinslotarea, variables.brighten(coinslotareacolor, -20))
+
+    # draw coin slot
+    coinslotareaw = (coinslotarea[0][0]-coinslotarea[1][0])
+    coinslotareah = (coinslotarea[2][1]-coinslotarea[1][1])
+    coinslotrect = Rect(int(coinslotarea[1][0] + coinslotareaw/3), int(coinslotarea[0][1] + coinslotareah*0.3), coinslotareaw  * 0.3, coinslotareah * 0.4)
+    pygame.gfxdraw.box(surface, coinslotrect, (40, 40, 40))
 
     return surface
                         

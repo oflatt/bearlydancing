@@ -171,16 +171,22 @@ outside4.lvrange = [2,3]
 
 
 # outside5 #####################################################################################
-outside5 = Map(graphics.grassland(800, outside4height, downpath = True), [])
-outside5.populate_with("greyrock", 4)
-outside5.populate_with("pinetree", 15)
-outside5.populate_with("flower", randint(1, 3))
+polarinvadersrock = Rock(graphics.arcadecabinet("polarinvaders"), randint(50, 300), 20, variables.ARCADECABINETCOLLIDESECTION)
+polarinvadersrockrect = Rect(polarinvadersrock.x, polarinvadersrock.y, polarinvadersrock.w, polarinvadersrock.h)
+outside5 = Map(graphics.grassland(800, outside4height, downpath = True), [polarinvadersrock])
+outside5.populate_with("greyrock", 4, colliderects = [polarinvadersrockrect])
+outside5.populate_with("pinetree", 15, colliderects = [polarinvadersrockrect])
+outside5.populate_with("flower", randint(1, 3), colliderects = [polarinvadersrockrect])
 outside5.enemies = enemies.woodsenemies
 outside5.lvrange = [2]
 outside5.exitareas = [Exit("left", False, "outside3", "right", "same"),
                       Exit("bottom", False, "outside4", "same", "top"),
                       Exit("right", False, "outside6", "left", "same")]
+arcadeconversation = Conversation("arcadeconvo", [])
+arcadeconversation.loadgameonend = "polarinvaders"
+arcadeconversation.area = polarinvadersrockrect
 
+outside5.conversations = [arcadeconversation]
 
 # outside6 #####################################################################################
 outside6width = 1200

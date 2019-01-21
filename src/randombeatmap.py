@@ -492,12 +492,12 @@ def movednotes(old_notes, movelength):
     if len(old_notes) == 0:
         return []
     
-    l = copy.deepcopy(old_notes)
+    
 
     # find the max and min values
-    maxval = l[0].value
-    minval = l[0].value
-    for n in l:
+    maxval = old_notes[0].value
+    minval = old_notes[0].value
+    for n in old_notes:
         if n.value > maxval:
             maxval = n.value
         if n.value < minval:
@@ -505,13 +505,18 @@ def movednotes(old_notes, movelength):
 
     #print(str(maxval) + '  ' + str(minval) + '  ' + str(movelength))
 
-    if outsiderangeq(maxval + movelength) or outsiderangeq(minval + movelength):
+    
+    if outsiderangeq(maxval + movelength) and outsiderangeq(minval + movelength):
+        return copy.deepcopy(old_notes)
+    elif outsiderangeq(maxval + movelength) or outsiderangeq(minval + movelength):
         return movednotes(l, randint(-4, 4))
     else:
+        l = copy.deepcopy(old_notes)
         for n in l:
             n.newvalue(n.value + movelength)
         return l
 
+    
 # returns a dictionary with the new time and the list
 # repeatduration is how long the section to repeat should be
 # movelength is an offset for values of notes

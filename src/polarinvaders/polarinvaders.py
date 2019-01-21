@@ -389,7 +389,7 @@ def ontick(timein, settings):
     remove()
         
 def creategame():
-    return Game(init, onkey, ontick, display)
+    return Game("polarinvaders", init, onkey, ontick, display)
 
     
     

@@ -438,7 +438,7 @@ def snowland(width, height, grasstosnowp = False):
 def flower():
     return generategraphic(makeflower, "randomflower")
 
-def arcadecabinet():
+def arcadecabinet(gamename):
     def callmakecabinet():
-        return makecabinet()
+        return makecabinet(gamename)
     return generategraphic(callmakecabinet, "randomarcadecabinet")

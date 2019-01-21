@@ -105,6 +105,15 @@ def texturepoint(surface, x, y, t, bounds):
                 acceptedcolorq = pcolor in t.acceptedcolors or pcolorreduced in t.acceptedcolors
             
             # first check if the point is already colored, or if it is one of the colors not to paint
+            try:
+                if (pcolor != pointcolor) and (not pcolor in t.stopcolors) and acceptedcolorq:
+                    pass
+            except OverflowError:
+                print(pcolor)
+                print(pointcolor)
+                print(t.stopcolors)
+                print(acceptedcolorq)
+                
             if (pcolor != pointcolor) and (not pcolor in t.stopcolors) and acceptedcolorq:
                 if not p[2]:
                     setcolor = ((pointcolor[0] + random.randint(-t.redvariancefactor, t.redvariancefactor) + t.verticalcolorchange[0]*(p[1]-y)) % 256,
