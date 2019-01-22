@@ -1,6 +1,7 @@
 import pygame
 
 from polarinvaders.polarinvaders import creategame
+import generategridgame.generategridgame
 
 import pygame, ctypes, os, time
 
@@ -29,7 +30,7 @@ if "orangekidregular" in fontlist:
     fontname = "orangekidregular"
 font = pygame.font.SysFont(fontname, 30)
 
-game = creategame()
+game = generategridgame.generategridgame.creategame()
 
 settings = Settings()
 
@@ -49,5 +50,5 @@ while running:
     game.tickfunction(time, settings)
     game.drawfunction(time, settings, screen)
     
-
+    pygame.display.flip()
     clock.tick(60)

@@ -386,24 +386,7 @@ def checkkey(name, key):
 
 # returns a bigger rect that contains both of the rects
 def combinerects(rect1, rect2):
-    r = Rect(0,0,1,1)
-    if rect1.left<rect2.left:
-        r.left = rect1.left
-    else:
-        r.left = rect2.left
-    if rect1.top < rect2.top:
-        r.top = rect1.top
-    else:
-        r.top = rect2.top
-    if rect1.right > rect2.right:
-        r.width = rect1.right-r.left
-    else:
-        r.width = rect2.right-r.left
-    if rect1.bottom > rect2.bottom:
-        r.height = rect1.bottom-r.top
-    else:
-        r.height = rect2.bottom-r.top
-    return r
+    return rect1.union(rect2)
 
 def updatescreen():
     if len(dirtyrects) > 0:

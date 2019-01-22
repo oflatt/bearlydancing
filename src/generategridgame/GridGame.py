@@ -1,8 +1,12 @@
 
 from DestructiveFrozenClass import DestructiveFrozenClass
 
-class GridGame():
+class GridGame(DestructiveFrozenClass):
 
-    def __init__(subgrids):
+    def __init__(self, subgrids):
         self.subgrids = subgrids
-        self_freeze()
+        self._freeze()
+
+    def draw(self, time, settings, screen):
+        for s in self.subgrids:
+            s.draw(time, settings, screen)

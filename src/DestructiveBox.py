@@ -35,8 +35,12 @@ class DestructiveBox(object):
         # make functions take destructivebox as self
         if callable(attr):
             def hooked(*args, **kwargs):
-                # pass in self instead
-                return attr.__func__(self, *args, **kwargs)
+                #check if it is a bound method
+                if hasattr(attr, '__func__'):
+                    # pass in self instead
+                    return attr.__func__(self, *args, **kwargs)
+                else:
+                    return attr(*args, **kwargs)
             return hooked
         else:
             return object.__getattribute__(object.__getattribute__(self, "item"), key)
