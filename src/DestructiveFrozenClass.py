@@ -21,6 +21,7 @@ class DestructiveFrozenClass(object):
         
         object.__setattr__(self, key, value)
 
+        
     def _freeze(self):
         self.__isfrozen = True
 

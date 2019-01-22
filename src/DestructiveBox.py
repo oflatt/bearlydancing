@@ -1,3 +1,4 @@
+import copy
 
 # a wrapper around any object that makes setting attributes destroy the box and return a new box
 class DestructiveBox(object):
@@ -39,3 +40,22 @@ class DestructiveBox(object):
             return hooked
         else:
             return object.__getattribute__(object.__getattribute__(self, "item"), key)
+
+    # override copy to copy the item as well
+    def __copy__(self):
+        old = object.__getattribute__(self, "item")
+        # don't call DestructiveFrozenClass' new, otherwise a new box is created
+        newitem = object.__new__(old.__class__)
+        newitem.__dict__.update(old.__dict__)
+        return DestructiveBox(newitem)
+
+    # override copy to copy the item as well
+    def __deepcopy__(self, memo = {}):
+        old = object.__getattribute__(self, "item")
+        # don't call DestructiveFrozenClass' new, otherwise a new box is created
+        newitem = object.__new__(old.__class__)
+        newitem.__dict__.update(old.__dict__)
+        d = newitem.__dict__
+        for k in d:
+            d[k] = copy.deepcopy(d[k])
+        return DestructiveBox(newitem)

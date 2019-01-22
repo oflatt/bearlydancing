@@ -1,4 +1,4 @@
-import pygame, unittest, random, sys
+import pygame, unittest, random, sys, copy
 
 
 
@@ -85,6 +85,21 @@ class DestructiveFrozenClassTests(unittest.TestCase):
         t.data = 4
         with self.assertRaises(AttributeError):
             t.data
+
+    def test_copying(self):
+        t = TestClassFrozen("testargsstring")
+        t = t.destructiveset("data", ["green"])
+        copied = copy.copy(t)
+        copied = copied.destructiveset("data", ["yellow"])
+        self.assertEqual(t.data, ["green"])
+        self.assertEqual(copied.data, ["yellow"])
+
+        deepcopied = copy.deepcopy(t)
+        t.data.append("blue")
+        self.assertEqual(t.data, ["green", "blue"])
+        self.assertEqual(deepcopied.data, ["green"])
+        
+        
 
     
         
