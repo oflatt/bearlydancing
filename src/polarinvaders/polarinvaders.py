@@ -1,6 +1,8 @@
 import pygame, math, random, sys
 from .spriteSheetToList import *
 
+import variables
+from graphics import getTextPic
 from Game import Game
 
 # stored as global
@@ -201,13 +203,14 @@ def display(time, settings, screenin):
     if leftBoost:
         drawboostimg(screen, rightBooster[int(count)%4].copy())
     
-    fONT = pygame.font.SysFont("impact", 50)
-    text = fONT.render(str(score), True, (255,255,255), None)
-    screen.blit(text, [0,0])
-    screen.blit(fONT.render(str(pHealth), True, (255,pHealth*255/30,pHealth*255/30), None), [width/2,0])
-    screen.blit(fONT.render(str(eHealth), True, (255,pHealth*255/30,pHealth*255/30), None), [width*4/5,0])
     
-    pygame.display.flip()
+    text = getTextPic("score:  " + str(score) + "   health:  " + str(pHealth), int(variables.gettextsize()*0.6), color = (255,min(max(0, pHealth*255/30), 255),min(max(0, pHealth*255/30), 255)), savep = False)
+    textrect = text.get_rect()
+    textrect.center = (width/2, 0)
+    textrect.top = 0
+    screen.blit(text, textrect)
+
+    
 
 def movement():
     global theta
@@ -268,16 +271,6 @@ def waves():
 ###
 #variables
 ###
-score = 0
-eBullets = []
-starValues = []
-
-cen = None
-theta = math.pi/2
-radius = 400
-pos = None
-ringRadius = None
-pSize = 64
 eBullet = pygame.image.load("polarinvaders/eBullet.png")
 enemy = pygame.image.load("polarinvaders/enemy.png")
 laser = pygame.image.load("polarinvaders/laser.png")
@@ -288,36 +281,56 @@ leftBooster = spriteSheetToList(leftBooster, 4)
 mainBooster = spriteSheetToList(mainBooster, 4)
 rightBooster = spriteSheetToList(rightBooster, 4)
 pMask = pygame.mask.from_surface(mainBooster[0])
-count = 0
-dTheta = 0
-pSpeed = math.pi/7200
-animationSpeed = .01
-time = 1
-dTime = 1
-actionHeld = False
-mainBoost = True
-leftBoost = False
-rightBoost = False
-pBullets = []
+
+
 pBulletSpeed = 7
 firingCount = 0
 firingRate = 10
-enemies = []
-pHealth = 30
-waveNum = -1
-newWave = True
-doneWave = True
-waveCounter = 0
-eHealth = 1
-diff = 0
-currentImRect = mainBooster[0].copy()
-currentImRect = currentImRect.get_rect()
+
 
 def init(screen):
     global cen
     global pos
     global width
     global height
+    global score, eBullets, starValues, cen, theta, radius, pos, ringRadius
+    global pSize, count, dTheta, pSpeed, animationSpeed, time, dTime, actionHeld
+    global mainBoost, leftBoost, rightBoost, pBullets, enemies, pHealth, waveNum
+    global newWave, doneWave, waveCounter, eHealth, diff, currentImRect
+
+
+    score = 0
+    eBullets = []
+    starValues = []
+    cen = None
+    theta = math.pi/2
+    radius = 400
+    pos = None
+    ringRadius = None
+    pSize = 64
+    count = 0
+    dTheta = 0
+    pSpeed = math.pi/7200
+    animationSpeed = .01
+    time = 1
+    dTime = 1
+    actionHeld = False
+    mainBoost = True
+    leftBoost = False
+    rightBoost = False
+    pBullets = []
+    enemies = []
+    pHealth = 30
+    waveNum = -1
+    newWave = True
+    doneWave = True
+    waveCounter = 0
+    eHealth = 1
+    diff = 0
+    currentImRect = mainBooster[0].copy()
+    currentImRect = currentImRect.get_rect()
+
+    
     width = screen.get_width()
     height = screen.get_height()
     cen = [width/2, height/2]
@@ -387,9 +400,13 @@ def ontick(timein, settings):
     waves()
     movement()
     remove()
-        
+
+def unpause(currenttime):
+    global time
+    time = currenttime
+    
 def creategame():
-    return Game("polarinvaders", init, onkey, ontick, display)
+    return Game("polarinvaders", init, onkey, ontick, display, unpause)
 
     
     

@@ -5,6 +5,7 @@ from graphics import getpicbyheight, getTextPic, getpic, difficultytocolor
 from ChoiceButtons import ChoiceButtons
 from SettingsMenu import SettingsMenu
 from play_sound import stop_music, play_music, play_effect
+from initiatestate import returntoworld
 
 
 def keytonum(key):
@@ -39,8 +40,6 @@ class Menu():
         
         self.option = 0
         self.state = "main"
-        self.options = ["resume", "save", "settings", "exit"]
-        self.mainmenuoptions = ["play", "settings", "exit"]
 
         self.message = None
         self.messagetime = 0
@@ -64,6 +63,14 @@ class Menu():
         self.backspacetime = 0
         self.firstbootup = True
 
+
+    def options(self):
+        if self.mainmenup:
+            return ["play", "settings", "exit"]
+        elif variables.settings.state == "game":
+            return ["resume", "save", "settings", "leave game", "exit"]
+        return ["resume", "save", "settings", "exit"]
+        
 
     def setmessage(self, string):
         if string != None:
@@ -116,27 +123,26 @@ class Menu():
         
 
     def resume(self):
-        if not self.mainmenup:
-            self.reset()
-            variables.settings.menuonq = False
-            classvar.player.change_of_state()
-            if variables.settings.state == "battle":
-                if not isinstance(classvar.battle, str):
-                    classvar.battle.unpause()
+        self.reset()
+        variables.settings.menuonq = False
+        classvar.player.change_of_state()
+        if variables.settings.state == "battle":
+            if not isinstance(classvar.battle, str):
+                classvar.battle.unpause()
+
+        if variables.settings.state == "game":
+            variables.currentgame().unpausefunction(variables.settings.current_time)
+
+        
 
     def drawmain(self):
         extrabuttonwidth = variables.getmenutextxoffset() / 4
         
         opics = []
-        
-        if self.mainmenup:
-            for o in self.mainmenuoptions:
-                textpic = getTextPic(o, variables.gettextsize(), variables.WHITE)
-                opics.append(textpic)
-        else:
-            for o in self.options:
-                textpic = getTextPic(o, variables.gettextsize(), variables.WHITE)
-                opics.append(textpic)
+        optionnames = self.options()
+        for o in optionnames:
+            textpic = getTextPic(o, variables.gettextsize(), variables.WHITE)
+            opics.append(textpic)
             
         xoffset = variables.getmenutextxoffset()
         
@@ -299,9 +305,8 @@ class Menu():
 
 
     def onkeymain(self, key):
-        optionslength = len(self.options)
-        if self.mainmenup:
-            optionslength = len(self.mainmenuoptions)
+        optionslength = len(self.options())
+        
         if variables.checkkey("up", key):
             self.option = (self.option - 1) % optionslength
         elif variables.checkkey("down", key):
@@ -323,9 +328,8 @@ class Menu():
             if self.getoption() == "settings":
                 self.state = "settings"
                 self.settingsmenu.newworkingcopy()
+            if self.getoption() == "leave game":
+                returntoworld()
 
     def getoption(self):
-        if self.mainmenup:
-            return self.mainmenuoptions[self.option]
-        else:
-            return self.options[self.option]
+        return self.options()[self.option]

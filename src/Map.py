@@ -8,7 +8,7 @@ import variables, classvar, stathandeling, graphics
 from Battle import Battle
 from graphics import getpic, GR
 from Rock import Rock
-from initiatestate import initiatebattle
+from initiatebattle import initiatebattle
 from FrozenClass import FrozenClass
 from Animation import Animation
 from Wind import Wind

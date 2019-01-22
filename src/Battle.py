@@ -9,6 +9,7 @@ from FrozenClass import FrozenClass
 from pygame import Rect
 from notelistfunctions import shorten_doubles
 from Soundpack import max_sample
+from initiatestate import returntoworld
 
 
 # battle is the class that runs the battle- information about the game such as storyeventonwin is stored in enemy
@@ -647,27 +648,24 @@ class Battle(FrozenClass):
     def lose(self):
         # go home
         classvar.player.addstoryevents(self.enemy.storyeventsonlose)
-        classvar.player.heal()
-        variables.settings.state = "world"
+        
         maps.teleportplayerhome()
+        
         classvar.player.timeslost += 1
         classvar.player.totalbattles += 1
+        returntoworld()
 
         
     def win(self):
         classvar.player.addstoryevents(self.enemy.storyeventsonwin)
         classvar.player.totalbattles += 1
-        variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
-        variables.settings.state = "world"
-        maps.initiatemusic()
-
+        returntoworld()
+        
     def flee(self):
-        variables.settings.state = "world"
-        variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
         classvar.player.addstoryevents(self.enemy.storyeventsonflee)
         if self.enemy.lv - variables.settings.difficulty == 0:
             maps.engage_conversation("letsflee", True)
-        maps.initiatemusic()
+        returntoworld()
 
     def onkey(self, key):
         def change_soundpack(offset):

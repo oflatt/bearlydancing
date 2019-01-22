@@ -4,7 +4,7 @@ import variables, pygame, classvar
 from Battle import Battle
 from ChoiceButtons import ChoiceButtons
 from graphics import scale_pure, getpic, getTextPic
-from initiatestate import initiatebattle
+from initiatebattle import initiatebattle
 from FrozenClass import FrozenClass
 
 

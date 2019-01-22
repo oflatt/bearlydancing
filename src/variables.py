@@ -47,15 +47,7 @@ games = {"polarinvaders":loadpolar}
 def currentgame():
     return games[settings.currentgame]
 
-def loadgame(gamename):
-    global settings
-    global games
-    settings.currentgame = gamename
-    if callable(games[gamename]):
-        games[gamename] = games[gamename]()
-
-    games[gamename].initfunction(screen)
-    settings.state = "game"
+    
 
 # Setup
 sample_rate = 22050

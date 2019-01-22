@@ -7,6 +7,9 @@ bugs
 -"l" note was the same note as "a", which cannot be correct
 
 gameplay
+- random avoid minigame using dp pathfinding
+- idle plant minigame
+- music for polar invaders
 - bosses should use concepts from many enemies faced to give a sense of learning and accomplishment
 - knomi code name- bear winks at you
 - map objects and loading more safely, versioning, safely load with new content

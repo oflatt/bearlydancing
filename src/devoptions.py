@@ -29,7 +29,7 @@ testspecs = None#{'maxtime' : 20, 'lv' : 4, 'rules' : ["alternating"]}
 devlosebattlekey = pygame.K_BACKSLASH
 devwinbattlekey = pygame.K_END
 devengagebattlekey = pygame.K_END
-devquitkey = pygame.K_BACKSLASH
+devquitkey = pygame.K_RCTRL
 
 # this is the mode for the finished product- it just turns off all other development modes
 exportmode = False

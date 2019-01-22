@@ -1,6 +1,7 @@
 import variables, classvar
 from pygame import Rect
-from initiatestate import initiatebattle
+from initiatestate import initiategame
+from initiatebattle import initiatebattle
 from graphics import getpicbywidth
 from FrozenClass import FrozenClass
 
@@ -140,7 +141,8 @@ class Conversation(FrozenClass):
             initiatebattle(self.special_battle)
 
         if self.loadgameonend != None:
-            variables.loadgame(self.loadgameonend)
+            initiategame(self.loadgameonend)
+            
 
         self.timesexited += 1
         

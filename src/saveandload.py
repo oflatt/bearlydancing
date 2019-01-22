@@ -5,6 +5,7 @@ from Battle import Battle
 import dill as pickle
 from stathandeling import explv, lvexp
 from play_sound import soundpackkeys, scales
+from initiatestate import initiategame
 
 def loadmaps(mapdict):
     maps.set_new_maps(mapdict)
@@ -87,5 +88,8 @@ def load():
                 
     if (not isinstance(classvar.battle, str)):
         classvar.battle.reset_enemy()
+
+    if variables.settings.state == "game":
+        initiategame(variables.settings.currentgame)
     
     return m

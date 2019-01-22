@@ -2,7 +2,7 @@ from FrozenClass import FrozenClass
 
 class Game(FrozenClass):
 
-    def __init__(self, name, initfunction, inputfunction, tickfunction, drawfunction):
+    def __init__(self, name, initfunction, inputfunction, tickfunction, drawfunction, unpausefunction):
         # takes just the screen
         self.initfunction = initfunction
         
@@ -14,6 +14,9 @@ class Game(FrozenClass):
 
         # draw function takes the current time, settings, and screen
         self.drawfunction = drawfunction
+
+        # takes the current time
+        self.unpausefunction = unpausefunction
 
         self._freeze()
 

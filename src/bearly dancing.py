@@ -38,7 +38,7 @@ pygame.event.get()
 done = False
 
 # if the testspecs are set, use it and initiate a battle
-from initiatestate import initiatebattle
+from initiatebattle import initiatebattle
 from enemies import random_enemy
 from enemies import devbattletest
 import copy
@@ -75,7 +75,7 @@ def onevent(event):
                 variables.saved = True
 
     # process key in minigame
-    if variables.settings.state == "game":
+    if variables.settings.state == "game" and not variables.settings.menuonq:
         variables.currentgame().inputfunction(variables.settings.current_time, variables.settings, event)
 
         
@@ -125,11 +125,15 @@ def onevent(event):
 
 
 def ontick():
-    if variables.settings.state == "game":
-        variables.currentgame().tickfunction(variables.settings.current_time, variables.settings)
+    # set the saved message if needed
+    if (variables.saved):
+        menu.saved()
+        variables.saved = False
+
     
     if variables.settings.state == "world" or (variables.settings.state == "conversation" and variables.settings.backgroundstate == "world"):
         maps.musictick()
+        
     if (not variables.settings.menuonq):
         if variables.settings.state == "world":
             classvar.player.move()
@@ -138,15 +142,17 @@ def ontick():
             maps.current_map.on_tick()
         elif variables.settings.state == "battle":
             classvar.battle.ontick()
+        elif variables.settings.state == "game":
+            variables.currentgame().tickfunction(variables.settings.current_time, variables.settings)
     else:
         menu.ontick()
 
 def ondraw():
-    # draw saved
-    if (variables.saved):
-        menu.saved()
-        variables.saved = False
-
+    
+    if variables.settings.state == "game":
+        variables.currentgame().drawfunction(variables.settings.current_time, variables.settings, variables.screen)
+     
+    
     def draw_world():
         #fill edges in with black
         screenxoffset = maps.current_map.screenxoffset()
@@ -170,6 +176,7 @@ def ondraw():
             if menu.state in ["main", "settings"]:
                 variables.screen.fill(variables.BLACK)
                 drawworldp = False
+                
     if drawworldp:
         if variables.settings.state == "conversation":
             if variables.settings.backgroundstate == "world":
@@ -191,17 +198,16 @@ def ondraw():
         menu.drawmessage()
 
 
-    # blit fps
-    variables.screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [10, variables.font.get_linesize()])
-
+    
     if variables.testsmallp:
         # blit red boarder for testing
         variables.screen.fill(variables.RED, Rect(variables.width, 0, 10, variables.height))
         variables.screen.fill(variables.RED, Rect(0, variables.height, variables.width, 10))
 
 
-    if variables.settings.state == "game":
-        variables.currentgame().drawfunction(variables.settings.current_time, variables.settings, variables.screen)
+    # blit fps
+    variables.screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [10, variables.font.get_linesize()])
+
         
     # Go ahead and update the screen with what we've drawn.
     if variables.settings.state != "game":
@@ -214,6 +220,8 @@ def ondraw():
         # reset dirtyrects
         variables.olddirtyrects = variables.dirtyrects
         variables.dirtyrects = []
+    else:
+        pygame.display.flip()    
 
     
     

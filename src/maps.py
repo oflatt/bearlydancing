@@ -167,11 +167,12 @@ def change_map(name, newx, newy):
 def teleportplayerhome():
     change_map_nonteleporting(home_map_name)
     classvar.player.teleport(current_map.startpoint[0], current_map.startpoint[1])
-    play_music('bearhome')
 
 def initiatemusic():
     if not current_map_name in nongrasslandmaps:
         initiategrasslandmusic()
+    elif current_map_name == "honeyhome":
+        play_music('bearhome')
     
 def engage_conversation(cname, floatingconversationp = False):
     if not type(cname) == str:
