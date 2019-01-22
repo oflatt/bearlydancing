@@ -85,7 +85,6 @@ class EBullet:
 
     def update(self):
         self.movement()
-        self.display()
         self.collision()
 
     def movement(self):
@@ -124,7 +123,6 @@ class PBullet:
 
     def update(self):
         self.movement()
-        self.display()
         self.collision()
 
     def movement(self):
@@ -186,11 +184,11 @@ def ondraw(time, settings, screenin):
         pygame.draw.rect(screen, starValues[i][0],
                          starValues[i][1], 0)
     for bullet in eBullets:
-        bullet.update()
+        bullet.display()
     for enemy in enemies:
-        enemy.update()
+        enemy.display()
     for bullet in pBullets:
-        bullet.update()
+        bullet.display()
     global count
     count += animationSpeed*dTime
 
@@ -396,6 +394,13 @@ def ontick(timein, settings):
     dTime = time - timein
     time = timein
 
+    for bullet in eBullets:
+        bullet.update()
+    for enemy in enemies:
+        enemy.update()
+    for bullet in pBullets:
+        bullet.update()
+    
     handlefiring()
     waves()
     movement()
