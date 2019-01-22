@@ -148,10 +148,7 @@ def ontick():
         menu.ontick()
 
 def ondraw():
-    
-    if variables.settings.state == "game":
-        variables.currentgame().drawfunction(variables.settings.current_time, variables.settings, variables.screen)
-     
+
     
     def draw_world():
         #fill edges in with black
@@ -170,14 +167,14 @@ def ondraw():
         maps.current_map.draw_foreground([classvar.player.mapdrawx, classvar.player.mapdrawy])
 
 
-    drawworldp = True
+    drawnonmenup = True
     if variables.settings.menuonq:
         if menu.mainmenup:
             if menu.state in ["main", "settings"]:
                 variables.screen.fill(variables.BLACK)
-                drawworldp = False
+                drawnonmenup = False
                 
-    if drawworldp:
+    if drawnonmenup:
         if variables.settings.state == "conversation":
             if variables.settings.backgroundstate == "world":
                 draw_world()
@@ -190,6 +187,11 @@ def ondraw():
         elif variables.settings.state == "battle":
             variables.screen.fill(variables.BLACK)
             classvar.battle.draw()
+        elif variables.settings.state == "game":
+            if variables.settings.menuonq:
+                variables.currentgame().drawfunction(menu.pausetime, variables.settings, variables.screen)
+            else:
+                variables.currentgame().drawfunction(variables.settings.current_time, variables.settings, variables.screen)
 
     if (variables.settings.menuonq):
         menu.draw()

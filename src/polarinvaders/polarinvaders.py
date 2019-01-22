@@ -177,7 +177,7 @@ def drawboostimg(screen, boostimage):
     screen.blit(currentIm, (pos[0]-currentImRect.width/2, pos[1] - currentImRect.height/2))
     
         
-def display(time, settings, screenin):
+def ondraw(time, settings, screenin):
     global screen
     screen = screenin
     
@@ -406,7 +406,6 @@ def unpause(currenttime):
     time = currenttime
     
 def creategame():
-    return Game("polarinvaders", init, onkey, ontick, display, unpause)
-
+    return Game("polarinvaders", init, onkey, ontick, ondraw, unpause)
     
     

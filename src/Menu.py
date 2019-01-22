@@ -7,6 +7,7 @@ from SettingsMenu import SettingsMenu
 from play_sound import stop_music, play_music, play_effect
 from initiatestate import returntoworld
 
+from FrozenClass import FrozenClass
 
 def keytonum(key):
     numentered = None
@@ -33,7 +34,7 @@ def keytonum(key):
     return numentered
 
 # self.state can be main or name
-class Menu():
+class Menu(FrozenClass):
     
     def __init__(self):
         self.settingsmenu = SettingsMenu()
@@ -63,6 +64,10 @@ class Menu():
         self.backspacetime = 0
         self.firstbootup = True
 
+        # keep track of when the menu was turned on
+        self.pausetime = None
+
+        self._freeze()
 
     def options(self):
         if self.mainmenup:
@@ -114,6 +119,8 @@ class Menu():
         self.enemyanimation = newanim
 
     def pause(self):
+        self.pausetime = variables.settings.current_time
+        
         if variables.settings.state == "battle":
             if (not isinstance(classvar.battle, str)):
                 classvar.battle.pause()
@@ -330,6 +337,7 @@ class Menu():
                 self.settingsmenu.newworkingcopy()
             if self.getoption() == "leave game":
                 returntoworld()
+                self.resume()
 
     def getoption(self):
         return self.options()[self.option]
