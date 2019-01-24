@@ -12,7 +12,14 @@ class SubGrid(DestructiveFrozenClass):
         self._freeze()
 
 
-    def draw(self, time, settings, screen):
+    def draw(self, time, settings, screen, offset):
         for l in self.lavas:
-            l.draw(time, settings, screen, self.rect)
-        
+            l.draw(time, settings, screen, (self.rect[0] + offset[0], self.rect[1] + offset[1]))
+
+    def collideswithshipp(self, time, settings, shippos, pixelsize):
+        shippos = (shippos[0] - self.rect.x, shippos[1]-self.rect.y)
+        for l in self.lavas:
+            if l.collideswithshipp(time, settings, shippos, pixelsize):
+                return True
+
+        return False

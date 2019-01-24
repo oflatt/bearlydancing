@@ -19,4 +19,17 @@ class Lava(DestructiveFrozenClass):
         funcoffset = self.posfunction(time)
         screen.fill((180, 0, 0), self.rect.scaledup(screen, offset = (posoffset[0]+funcoffset[0], posoffset[1]+funcoffset[1])))
 
+    def collideswithshipp(self, time, settings, shippos, pixelsize):
+        funcoffset = self.posfunction(time)
+        posunscaled = (self.rect.x + funcoffset[0], self.rect.y+funcoffset[1])
+        
+        if posunscaled[0] < shippos[0]+pixelsize and \
+           posunscaled[0] + self.rect.w > shippos[0] and \
+           posunscaled[1] < shippos[1]+pixelsize and \
+           posunscaled[1] + self.rect.h > shippos[1]:
+            return True
+        else:
+            return False
+        
+
     

@@ -12,8 +12,9 @@ class FRect(FrozenClass):
 
     def scaledup(self, screen, offset = (0, 0)):
         
-        return Rect((self.x+offset[0])*screen.get_width(), (self.y+offset[1])*screen.get_height(),
-                    self.w*screen.get_width(), self.h*screen.get_height())
+        return Rect((self.x+offset[0])*screen.get_height(), (self.y+offset[1])*screen.get_height(),
+                    self.w*screen.get_height(), self.h*screen.get_height())
+    
 
     def move(self, xoffset, yoffset):
         self.x += xoffset
