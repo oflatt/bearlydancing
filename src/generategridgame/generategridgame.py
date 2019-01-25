@@ -7,6 +7,13 @@ from .GridGame import GridGame
 from .SubGrid import SubGrid
 from .Lava import Lava, zeroposfunction
 from .Ship import Ship
+from .simulatedifficulty import simulatedifficulty
+
+
+# first test simulateddifficulty
+testlavas = [Lava(FRect(.5, .5, .5, .5), zeroposfunction)]
+
+print(simulatedifficulty(SubGrid(FRect(0,0,1,1), []), 800, None, 0.1))
 
 
 # all coordinates are expressed as a fraction of screen height

@@ -1,9 +1,9 @@
 import pygame
 
-
 from DestructiveFrozenClass import DestructiveFrozenClass
 
-keyrepeatspeed = 100
+
+from .constants import keyrepeatspeed, scrollspeed
 
 class GridGame(DestructiveFrozenClass):
 
@@ -23,7 +23,7 @@ class GridGame(DestructiveFrozenClass):
         return (self.shippospixels[0]*pixelsize, self.shippospixels[1]*pixelsize)
         
     def draw(self, time, settings, screen, pixelsize):
-        offset = (-self.getscroll(time, settings), 0)
+        offset = (-self.getscroll(time, settings, pixelsize), 0)
         for s in self.subgrids:
             s.draw(time, settings, screen, offset)
         shippos = self.shippos(pixelsize)
@@ -68,13 +68,16 @@ class GridGame(DestructiveFrozenClass):
     
         return self
 
-    def getscroll(self, time, settings):
-        return time/1000 * 0.2
+    def getscroll(self, time, settings, pixelsize):
+        return time/1000 * scrollspeed * pixelsize
 
-    def gameoverp(self, time, settings, pixelsize):
-        shippos = self.shippos(pixelsize)
+    def gameoverp(self, time, settings, pixelsize, shippospixels = None):
+        if shippospixels == None:
+            shippos = self.shippos(pixelsize)
+        else:
+            shippos = (shippospixels[0]*pixelsize, shippospixels[1]*pixelsize)
         # check if player is off screen
-        if shippos[0] < self.getscroll(time, settings):
+        if shippos[0] < self.getscroll(time, settings, pixelsize):
             return True
         elif shippos[1]+pixelsize > 1:
             return True
