@@ -16,13 +16,20 @@ class Lava(DestructiveFrozenClass):
         self._freeze()
 
     def draw(self, time, settings, screen, posoffset):
+        
         funcoffset = self.posfunction(time)
-        screen.fill((180, 0, 0), self.rect.scaledup(screen, offset = (posoffset[0]+funcoffset[0], posoffset[1]+funcoffset[1])))
+        drawrect = self.rect.scaledup(screen, offset = (posoffset[0]+funcoffset[0], posoffset[1]+funcoffset[1]))
+        # don't draw off screen
+        if(drawrect.right <=0 or drawrect.left > screen.get_width()):
+            return
+        
+        pygame.gfxdraw.box(screen, drawrect, (180, 0, 0))
 
     def collideswithshipp(self, time, settings, shippos, pixelsize):
         funcoffset = self.posfunction(time)
-        posunscaled = (self.rect.x + funcoffset[0], self.rect.y+funcoffset[1])
         
+        posunscaled = (self.rect.x + funcoffset[0], self.rect.y+funcoffset[1])
+
         if posunscaled[0] < shippos[0]+pixelsize and \
            posunscaled[0] + self.rect.w > shippos[0] and \
            posunscaled[1] < shippos[1]+pixelsize and \

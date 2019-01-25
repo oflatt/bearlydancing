@@ -399,6 +399,8 @@ def updatescreen():
             pygame.display.update(Rect(0,0,width, height))
         else:
             updaterects()
+    elif len(dirtyrects) == 0 and len(olddirtyrects) == 0:
+        pygame.display.update(Rect(0,0,width,height))
     else:
         updaterects()
 

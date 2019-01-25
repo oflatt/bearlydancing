@@ -13,6 +13,7 @@ class Game(FrozenClass):
         self.tickfunction = tickfunction
 
         # draw function takes the current time, settings, and screen
+        # it returns a list of dirtyrects to update
         self.drawfunction = drawfunction
 
         # takes the current time

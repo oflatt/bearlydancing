@@ -15,9 +15,14 @@ currentgame = None
 pixelsize = 0.1
 
 def crazysquare(time):
-    time = (time / 2000) % math.sqrt(0.5)
-    return (time * time, 0)
+    
+    time = (time / 1000.0) % 2
 
+    if time < 1:
+        return (0, time/4.0)
+    else:
+        return (0, (1 - (time-1))/4.0)
+    
 def initgridgame(screen):
     global currentgame
     testlavas = [Lava(FRect(.5, .5, .1, .1), crazysquare)]
@@ -28,6 +33,8 @@ def onkey(time, settings, event):
     currentgame = currentgame.onkey(time, settings, event, pixelsize)
 
 def ontick(time, settings):
+    global currentgame
+    currentgame = currentgame.ontick(time, settings)
     
     if currentgame.gameoverp(time, settings, pixelsize):
         pygame.quit()
