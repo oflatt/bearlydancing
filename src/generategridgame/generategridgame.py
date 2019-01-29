@@ -10,10 +10,20 @@ from .Ship import Ship
 from .simulatedifficulty import simulatedifficulty
 
 
-# first test simulateddifficulty
-testlavas = [Lava(FRect(.5, .5, .5, .5), zeroposfunction)]
+def crazysquare(time):
+    
+    time = (time / 1000.0) % 2
 
-print(simulatedifficulty(SubGrid(FRect(0,0,1.5,1), testlavas), 800, None, 0.05, 2))
+    if time < 1:
+        return (0, -time/4.0)
+    else:
+        return (0, -(1 - (time-1))/4.0)
+
+
+# first test simulateddifficulty
+testlavas = [Lava(FRect(.5, .5, .5, .5), crazysquare)]
+
+print(simulatedifficulty(SubGrid(FRect(0,0,1.5,1), testlavas), 1600, None, 0.05, 5))
 
 
 # all coordinates are expressed as a fraction of screen height
@@ -21,14 +31,7 @@ print(simulatedifficulty(SubGrid(FRect(0,0,1.5,1), testlavas), 800, None, 0.05, 
 currentgame = None
 pixelsize = 0.1
 
-def crazysquare(time):
-    
-    time = (time / 1000.0) % 2
 
-    if time < 1:
-        return (0, time/4.0)
-    else:
-        return (0, (1 - (time-1))/4.0)
     
 def initgridgame(screen):
     global currentgame
