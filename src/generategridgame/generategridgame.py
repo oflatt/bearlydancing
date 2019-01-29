@@ -13,7 +13,7 @@ from .simulatedifficulty import simulatedifficulty
 # first test simulateddifficulty
 testlavas = [Lava(FRect(.5, .5, .5, .5), zeroposfunction)]
 
-print(simulatedifficulty(SubGrid(FRect(0,0,1,1), []), 800, None, 0.1))
+print(simulatedifficulty(SubGrid(FRect(0,0,1.5,1), testlavas), 800, None, 0.05, 2))
 
 
 # all coordinates are expressed as a fraction of screen height

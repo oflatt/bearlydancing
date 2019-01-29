@@ -20,6 +20,10 @@ class FRect(FrozenClass):
         self.x += xoffset
         self.y += yoffset
 
+    def center(self, x, y):
+        self.x = x - (self.w/2)
+        self.y = y - (self.h/2)
+
     def __getitem__(self, indices):
         if indices == 0:
             return self.x

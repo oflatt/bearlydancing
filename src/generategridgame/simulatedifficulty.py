@@ -5,9 +5,14 @@ from .GridGame import GridGame
 from .constants import scrollspeed
 
 # test the difficulty of one subgrid
-def simulatedifficulty(subgrid, maxships, settings, pixelsize):
-    numrows = int(subgrid.rect.h/pixelsize)
-    numcols = int(subgrid.rect.w / pixelsize)
+def simulatedifficulty(subgrid, maxships, settings, pixelsize, numofsimulations):
+    s = 0
+    for i in range(8):
+        s = s + simulateonce(subgrid, maxships, settings, pixelsize)
+
+    return s/numofsimulations
+
+def simulateonce(subgrid, maxships, settings, pixelsize):
 
     # pos is in pixel coordinates
     nextposstack = []
@@ -15,6 +20,7 @@ def simulatedifficulty(subgrid, maxships, settings, pixelsize):
     currenttimeposstack = [(int((subgrid.rect.h/2)/pixelsize), 4)]
     shipcount = 0
     deathcount = 0
+    wincount = 0
     game = GridGame([subgrid], Ship())
 
     spawnupchance = 0.35
@@ -47,7 +53,8 @@ def simulatedifficulty(subgrid, maxships, settings, pixelsize):
         
         # also make sure the ship has not gone past the subgrid
         if currentpos[0]*pixelsize >= subgrid.rect.w:
-            # if it has, it does not count as a death
+            # if it has, it made it
+            wincount += 1
             continue
 
         maxshipschance = 2-(2*(len(nextposstack)+len(currenttimeposstack))/maxships)
@@ -61,4 +68,4 @@ def simulatedifficulty(subgrid, maxships, settings, pixelsize):
         if random.random() < spawnbackchance*maxshipschance:
             nextposstack.append((currentpos[0]-1, currentpos[1]-1))
 
-    return float(deathcount) / shipcount
+    return float(wincount)/deathcount
