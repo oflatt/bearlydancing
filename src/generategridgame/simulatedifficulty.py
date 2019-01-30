@@ -79,3 +79,4 @@ def simulateonce(subgrid, maxships, settings, pixelsize):
         nextposstack.append(currentpos)   
 
     return float(wincount)/deathcount
+

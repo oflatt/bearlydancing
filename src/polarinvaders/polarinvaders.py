@@ -28,9 +28,9 @@ class Enemy:
         #bulletSpeed
         self.bS = 3
         #firingRate
-        self.fR = random.randint(firingRate[0],firingRate[1])
+        self.fR = int(10*math.sqrt(random.randint(int(firingRate[0]),int(firingRate[1]))))
         #firingCount
-        self.fC = random.randint(0,self.fR-1)
+        self.fC = random.randint(0,int(self.fR-1))
 
     def update(self):
         self.firing()
@@ -241,29 +241,40 @@ def waves():
         waveCounter = 0
         newWave = False
         doneWave = False
+    print(waveNum)
+    
+
+    # rings of ships move out and turn
     if waveNum == 0:
         if waveCounter%64 == 0 and waveCounter<=192:
             for i in range(8):
-                enemies.append(Enemy(eHealth, math.pi/200, .9, i*math.pi/4, 20, [120, .7, 0], [70-diff,80-diff], enemy, eBullet))
+                enemies.append(Enemy(eHealth, math.pi/200, .9, i*math.pi/4, 20, [120, .7, 0], [70-diff/2,80-diff/2], enemy, eBullet))
         elif waveCounter > 192:
             doneWave = True
+
+    # rings of ships move out
     if waveNum == 1:
         if waveCounter%64 == 0 and waveCounter<=128:
             for i in range(16-4*int(waveCounter/64)):
-                enemies.append(Enemy(eHealth, math.pi/120*(1-waveCounter%128/32), 2, i*2*math.pi/(16-4*int(waveCounter/64)), 20, [int(175-waveCounter*50/64), 2, 0], [70-diff,80-diff], enemy, eBullet))
+                enemies.append(Enemy(eHealth, math.pi/120*(1-waveCounter%128/32), 2, i*2*math.pi/(16-4*int(waveCounter/64)), 20, [int(175-waveCounter*50/64), 2, 0], [70-diff/2,80-diff/2], enemy, eBullet))
         elif waveCounter > 128:
             doneWave = True
+
+    # some ships stay in a line
     if waveNum == 2:
         if waveCounter%50 == 0 and waveCounter<=250:
             for i in range(8):
-                enemies.append(Enemy(eHealth, 0, 1, i*math.pi/4, 20, [300-waveCounter, 1, math.pi/400*(2-((waveCounter%100)/25))/2], [70-diff,70-diff], enemy, eBullet))
+                enemies.append(Enemy(eHealth, 0, 1, i*math.pi/4, 20, [300-waveCounter, 1, math.pi/400*(2-((waveCounter%100)/25))/2], [70-diff/2,70-diff/2], enemy, eBullet))
         elif waveCounter > 250:
             doneWave = True
+
+    # spirol of ships moves out
     if waveNum == 3:
-        if waveCounter%24 == 0 and waveCounter<=696:
-            enemies.append(Enemy(eHealth, math.pi/90, .6, math.pi/2, 20, [200, .6, math.pi/120-.08], [70-diff,70-diff], enemy, eBullet))
+        if waveCounter%6 == 0 and waveCounter<=180:
+            enemies.append(Enemy(eHealth, math.pi/90, .6, math.pi/2, 20, [200, .6, math.pi/120], [70-diff/2,70-diff/2], enemy, eBullet))
         elif waveCounter > 540:
             doneWave = True
+            
     waveCounter+=1
 
 ###
@@ -318,7 +329,7 @@ def init(screen):
     rightBoost = False
     pBullets = []
     enemies = []
-    pHealth = 30
+    pHealth = 3
     waveNum = -1
     newWave = True
     doneWave = True
@@ -406,9 +417,11 @@ def ontick(timein, settings):
     movement()
     remove()
 
+    
 def unpause(currenttime):
     global time
     time = currenttime
+
     
 def creategame():
     return Game("polarinvaders", init, onkey, ontick, ondraw, unpause)
