@@ -30,7 +30,7 @@ if "orangekidregular" in fontlist:
     fontname = "orangekidregular"
 font = pygame.font.SysFont(fontname, 30)
 
-game = creategame()
+game = generategridgame.generategridgame.creategame()
 
 settings = Settings()
 

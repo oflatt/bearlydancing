@@ -23,7 +23,7 @@ def crazysquare(time):
 # first test simulateddifficulty
 testlavas = [Lava(FRect(.5, .5, .5, .5), crazysquare)]
 
-print(simulatedifficulty(SubGrid(FRect(0,0,1.5,1), testlavas), 1600, None, 0.05, 5))
+print(simulatedifficulty(SubGrid(FRect(0,0,1.5,1), testlavas), 1000, None, 0.05))
 
 
 # all coordinates are expressed as a fraction of screen height
