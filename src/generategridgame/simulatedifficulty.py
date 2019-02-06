@@ -6,8 +6,9 @@ from .constants import scrollspeed
 
 # test the difficulty of one subgrid
 def simulatedifficulty(subgrid, maxships, settings, pixelsize):
-    
-    return simulatesmart(subgrid, maxships, settings, pixelsize)
+    result = simulatesmart(subgrid, maxships, settings, pixelsize)
+    print(result)
+    return result
 
 
 # for each particle, when it hits something, rewind time and try again

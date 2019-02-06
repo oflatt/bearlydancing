@@ -1,4 +1,4 @@
-import math, pygame, sys
+import math, pygame, sys, random
 
 from Game import Game
 from FRect import FRect
@@ -8,6 +8,7 @@ from .SubGrid import SubGrid
 from .Lava import Lava, zeroposfunction
 from .Ship import Ship
 from .simulatedifficulty import simulatedifficulty
+from .randomsubgrid import randomgrid
 
 
 def crazysquare(time):
@@ -21,28 +22,54 @@ def crazysquare(time):
 
 
 # first test simulateddifficulty
-testlavas = [Lava(FRect(.5, .5, .5, .5), crazysquare)]
+# testlavas = [Lava(FRect(.5, .5, .5, .5), crazysquare)]
 
-print(simulatedifficulty(SubGrid(FRect(0,0,1.5,1), testlavas), 1000, None, 0.05))
+#print(simulatedifficulty(SubGrid(FRect(0,0,1.5,1), testlavas), 1000, None, 0.05))
 
 
 # all coordinates are expressed as a fraction of screen height
 
 currentgame = None
-pixelsize = 0.1
+pixelsize = 0.05
+gamestarttime = None
 
+def gettime(outsidetime):
+    global gamestarttime
+    if gamestarttime == None:
+        gamestarttime = outsidetime
+        return 0
+    else:
+        return outsidetime-gamestarttime
 
     
+def generatenewgame():
+
+    currentdifficulty = 0.5
+    subgrids = []
+    #for i in range(2):
+    #    subgrids.append(randomgrid(1.4, 0.4, currentdifficulty, pixelsize))
+    subgrids.append(SubGrid(FRect(0,0,1,1), [Lava(FRect(0.5, 0.5, 0.2, 0.2), zeroposfunction)]))
+    subgrids.append(SubGrid(FRect(0,0,1,1), [Lava(FRect(0.5, 0.5, 0.2, 0.2), zeroposfunction)]))
+    subgrids.append(SubGrid(FRect(0,0,1,1), [Lava(0.5, 0.5, 0.2, 0.2)]))
+    global gamestarttime
+    gamestarttime = None
+        
+    return GridGame(subgrids, Ship())
+
+
 def initgridgame(screen):
     global currentgame
-    testlavas = [Lava(FRect(.5, .5, .1, .1), crazysquare)]
-    currentgame = GridGame([SubGrid(FRect(0, 0, 1, 1), testlavas)], Ship())
+    currentgame = generatenewgame()
 
-def onkey(time, settings, event):
+    
+def onkey(outsidetime, settings, event):
+    time = gettime(outsidetime)
     global currentgame
     currentgame = currentgame.onkey(time, settings, event, pixelsize)
 
-def ontick(time, settings):
+    
+def ontick(outsidetime, settings):
+    time = gettime(outsidetime)
     global currentgame
     currentgame = currentgame.ontick(time, settings)
     
@@ -51,7 +78,8 @@ def ontick(time, settings):
         sys.exit()
         
 
-def ondraw(time, settings, screen):
+def ondraw(outsidetime, settings, screen):
+    time = gettime(outsidetime)
     screen.fill((0,0,0))
     currentgame.draw(time, settings, screen, pixelsize)
 

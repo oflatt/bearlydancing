@@ -16,6 +16,7 @@ class GridGame(DestructiveFrozenClass):
         self.rightpresstime = False
         self.uppresstime = False
         self.downpresstime = False
+
         
         self._freeze()
 
@@ -30,6 +31,7 @@ class GridGame(DestructiveFrozenClass):
         self.ship.draw(screen, (shippos[0] + offset[0], shippos[1]+offset[1]), pixelsize)
 
     def ontick(self, time, settings):
+
         
         if self.leftpresstime:
             if time-self.leftpresstime >= keyrepeatspeed:
