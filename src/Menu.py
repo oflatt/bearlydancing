@@ -124,6 +124,9 @@ class Menu(FrozenClass):
         if variables.settings.state == "battle":
             if (not isinstance(classvar.battle, str)):
                 classvar.battle.pause()
+
+        if variables.settings.state == "game":
+            variables.currentgame().pausefunction(variables.settings.current_time)
         variables.settings.menuonq = not variables.settings.menuonq
         self.reset()
         classvar.player.change_of_state()

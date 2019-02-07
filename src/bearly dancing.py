@@ -211,19 +211,18 @@ def ondraw():
     variables.screen.blit(variables.font.render(str(clock.get_fps()), 0, variables.WHITE), [10, variables.font.get_linesize()])
 
         
-    # Go ahead and update the screen with what we've drawn.
-    if variables.settings.state != "game":
-        if len(variables.dirtyrects) > 0 and variables.devmode:
-            pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
+        
+
+    # update the screen
+    if len(variables.dirtyrects) > 0 and variables.devmode:
+        pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
 
 
-        variables.updatescreen()
+    variables.updatescreen()
 
-        # reset dirtyrects
-        variables.olddirtyrects = variables.dirtyrects
-        variables.dirtyrects = []
-    else:
-        pygame.display.flip()    
+    # reset dirtyrects
+    variables.olddirtyrects = variables.dirtyrects
+    variables.dirtyrects = []
 
     
     

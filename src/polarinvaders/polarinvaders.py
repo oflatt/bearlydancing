@@ -7,6 +7,7 @@ from Game import Game
 
 # stored as global
 screen = None
+gamename = "polarinvaders"
 
 class Enemy:
 
@@ -173,40 +174,52 @@ def drawboostimg(screen, boostimage):
     currentIm = pygame.transform.rotate(boostimage, 180*(math.pi/2-theta)/math.pi)
     currentImRect = currentIm.get_rect()
     screen.blit(currentIm, (pos[0]-currentImRect.width/2, pos[1] - currentImRect.height/2))
-    
+
+
+def drawmenu(time, settings, screen):
+    title = getTextPic("polar invaders", screen.get_height()/8, color = (255,255,255))
+    titlerect = title.get_rect()
+    titlerect.center = (0, screen.get_width()/2)
+    titlerect.top = screen.get_height()/5
+    screen.blit(title, titlerect)
         
 def ondraw(time, settings, screenin):
     global screen
     screen = screenin
-    
-    screen.fill((0,0,0))
-    for i in range(len(starValues)):
-        pygame.draw.rect(screen, starValues[i][0],
-                         starValues[i][1], 0)
-    for bullet in eBullets:
-        bullet.display()
-    for enemy in enemies:
-        enemy.display()
-    for bullet in pBullets:
-        bullet.display()
-    global count
-    count += animationSpeed*dTime
+    if gamestate == "play":
 
-    if mainBoost:
-        drawboostimg(screen, mainBooster[int(count)%4].copy())
+        screen.fill((0,0,0))
+        for i in range(len(starValues)):
+            pygame.draw.rect(screen, starValues[i][0],
+                             starValues[i][1], 0)
+        for bullet in eBullets:
+            bullet.display()
+        for enemy in enemies:
+            enemy.display()
+        for bullet in pBullets:
+            bullet.display()
+        global count
+        count += animationSpeed*dTime
 
-    if rightBoost:
-        drawboostimg(screen, leftBooster[int(count)%4].copy())
-        
-    if leftBoost:
-        drawboostimg(screen, rightBooster[int(count)%4].copy())
-    
-    
-    text = getTextPic("score:  " + str(score) + "   health:  " + str(pHealth), int(variables.gettextsize()*0.6), color = (255,min(max(0, pHealth*255/30), 255),min(max(0, pHealth*255/30), 255)), savep = False)
-    textrect = text.get_rect()
-    textrect.center = (width/2, 0)
-    textrect.top = 0
-    screen.blit(text, textrect)
+        if mainBoost:
+            drawboostimg(screen, mainBooster[int(count)%4].copy())
+
+        if rightBoost:
+            drawboostimg(screen, leftBooster[int(count)%4].copy())
+
+        if leftBoost:
+            drawboostimg(screen, rightBooster[int(count)%4].copy())
+
+
+        text = getTextPic("score:  " + str(score) + "   health:  " + str(pHealth), int(variables.gettextsize()*0.6), color = (255,min(max(0, pHealth*255/30), 255),min(max(0, pHealth*255/30), 255)), savep = False)
+        textrect = text.get_rect()
+        textrect.center = (width/2, 0)
+        textrect.top = 0
+        screen.blit(text, textrect)
+    elif gamestate == "menu":
+        drawmenu(time, settings, screenin)
+
+    variables.dirtyupdateall()
 
     
 
@@ -241,7 +254,7 @@ def waves():
         waveCounter = 0
         newWave = False
         doneWave = False
-    print(waveNum)
+    
     
 
     # rings of ships move out and turn
@@ -296,6 +309,7 @@ pBulletSpeed = 7
 firingCount = 0
 firingRate = 10
 
+gamestate = "menu"
 
 def init(screen):
     global cen
@@ -306,6 +320,7 @@ def init(screen):
     global pSize, count, dTheta, pSpeed, animationSpeed, time, dTime, actionHeld
     global mainBoost, leftBoost, rightBoost, pBullets, enemies, pHealth, waveNum
     global newWave, doneWave, waveCounter, eHealth, diff, currentImRect
+    global gamestate
 
 
     score = 0
@@ -348,39 +363,49 @@ def init(screen):
     for i in range(200):
         starValues.append([(255,255,255), (int(random.random()*width), int(random.random()*height), 3, 3)])
 
+    gamestate = "menu"
+
 
 def onkey(time, settings, event):
-    if not event.type in (pygame.KEYDOWN, pygame.KEYUP):
-        return
-    key = event.key
-    
-    global mainBoost
-    global leftBoost
-    global rightBoost
-    global firingCount
-    
-    global pHealth
-    global actionHeld
-    
-    
-    if settings.iskey("left", key):
-        mainBoost = False
-        leftBoost = event.type == pygame.KEYDOWN
-    elif settings.iskey("right", key):
-        mainBoost = False
-        rightBoost = event.type == pygame.KEYDOWN
+    global gamestate
+    if gamestate == "play":
+        if not event.type in (pygame.KEYDOWN, pygame.KEYUP):
+            return
+        key = event.key
 
-    if not leftBoost and not rightBoost:
-        mainBoost = True
+        global mainBoost
+        global leftBoost
+        global rightBoost
+        global firingCount
 
-        
-    if settings.iskey("action", key):
-        actionHeld = (event.type == pygame.KEYDOWN)
+        global pHealth
+        global actionHeld
 
-        
-    if pHealth <= 0:
-        pygame.quit()
-        sys.exit()
+
+        if settings.iskey("left", key):
+            mainBoost = False
+            leftBoost = event.type == pygame.KEYDOWN
+        elif settings.iskey("right", key):
+            mainBoost = False
+            rightBoost = event.type == pygame.KEYDOWN
+
+        if not leftBoost and not rightBoost:
+            mainBoost = True
+
+
+        if settings.iskey("action", key):
+            actionHeld = (event.type == pygame.KEYDOWN)
+
+
+        # exit to main menu on death
+        if pHealth <= 0:
+            if score > settings.getgamedata(gamename):
+                settings.setgamedata(gamename, score)
+            init()
+    elif gamestate == "menu":
+        if event.type in (pygame.KEYDOWN, pygame.KEYUP):
+            if settings.iskey("action", event.key):
+                gamestate = "play"
 
 def handlefiring():
     global firingCount
@@ -400,30 +425,41 @@ def handlefiring():
     
         
 def ontick(timein, settings):
-    global time
-    global dTime
-    dTime = time - timein
-    time = timein
+    if gamestate == "play":
+        global time
+        global dTime
+        dTime = time - timein
+        time = timein
 
-    for bullet in eBullets:
-        bullet.update()
-    for enemy in enemies:
-        enemy.update()
-    for bullet in pBullets:
-        bullet.update()
-    
-    handlefiring()
-    waves()
-    movement()
-    remove()
+        for bullet in eBullets:
+            bullet.update()
+        for enemy in enemies:
+            enemy.update()
+        for bullet in pBullets:
+            bullet.update()
 
+        handlefiring()
+        waves()
+        movement()
+        remove()
+    elif gamestate == "menu":
+        pass
+
+def pause(currenttime):
+    global leftBoost
+    global rightBoost
+    global mainBoost
+    leftBoost = False
+    rightBoost = False
+    mainBoost = True
     
+
 def unpause(currenttime):
     global time
     time = currenttime
 
     
 def creategame():
-    return Game("polarinvaders", init, onkey, ontick, ondraw, unpause)
+    return Game(gamename, init, onkey, ontick, ondraw, pause, unpause)
     
     

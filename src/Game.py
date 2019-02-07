@@ -2,7 +2,7 @@ from FrozenClass import FrozenClass
 
 class Game(FrozenClass):
 
-    def __init__(self, name, initfunction, inputfunction, tickfunction, drawfunction, unpausefunction):
+    def __init__(self, name, initfunction, inputfunction, tickfunction, drawfunction, pausefunction, unpausefunction):
         # takes just the screen
         self.initfunction = initfunction
         
@@ -16,6 +16,9 @@ class Game(FrozenClass):
         # it returns a list of dirtyrects to update
         self.drawfunction = drawfunction
 
+        # takes the current time
+        self.pausefunction = pausefunction
+        
         # takes the current time
         self.unpausefunction = unpausefunction
 
