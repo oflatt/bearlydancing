@@ -11,7 +11,7 @@ from rdraw.rdrawmodify import createshadow
 from rdraw.rdrawflower import makeflower
 from rdraw.rdrawarcade import makecabinet
 from Shadow import Shadow
-
+import special_graphics_loader
 
 today = datetime.date.today()
 christmasp = False
@@ -103,10 +103,8 @@ def addtoGR(filename):
     GR[nicename(filename)] = p
 
 def addsurfaceGR(s, name, dimensions = None):
-    if dimensions == None:
-        dimensions = [s.get_width(), s.get_height()]
-    GR[name] = {"img":s,"w":dimensions[0],"h":dimensions[1]}
-
+    special_graphics_loader.addsurfaceGR(GR, s, name, dimensions)
+    
 # renders text so that the linesize is what matters
 def rendertext(text, color, textheight):
     return scale_pure(variables.font.render(text, 0, color).convert(), textheight, "height")
@@ -129,28 +127,9 @@ for x in picnames:
     if x != "" and x[0] != ".":
         addtoGR(x)
 
-# duplicate and rotate the left arrow
-leftdancearrow = GR["leftdancearrow"]["img"]
-rightdancearrow = pygame.transform.rotate(leftdancearrow,180)
-downdancearrow = pygame.transform.rotate(leftdancearrow,270)
-updancearrow = pygame.transform.rotate(leftdancearrow,90)
-
-pygame.PixelArray(leftdancearrow).replace((255,255,255), variables.brighten(variables.notes_colors[0], -40))
-pygame.PixelArray(rightdancearrow).replace((255,255,255), variables.brighten(variables.notes_colors[3], -40))
-pygame.PixelArray(updancearrow).replace((255,255,255), variables.brighten(variables.notes_colors[2], -40))
-pygame.PixelArray(downdancearrow).replace((255,255,255), variables.brighten(variables.notes_colors[1], -40))
-
-pygame.PixelArray(leftdancearrow).replace((0,0,0), variables.notes_colors[0])
-pygame.PixelArray(rightdancearrow).replace((0,0,0), variables.notes_colors[3])
-pygame.PixelArray(updancearrow).replace((0,0,0), variables.notes_colors[2])
-pygame.PixelArray(downdancearrow).replace((0,0,0), variables.notes_colors[1])
-
-
-GR["leftdancearrow"]["img"] = leftdancearrow
-addsurfaceGR(rightdancearrow, "rightdancearrow")
-addsurfaceGR(updancearrow, "updancearrow")
-addsurfaceGR(downdancearrow, "downdancearrow")
-
+# load special graphics
+special_graphics_loader.load_special_graphics(GR)
+        
 # count the number of player animations
 numofplayerframes = 0
 while "honeydance" + str(numofplayerframes) + "-0" in GR:
