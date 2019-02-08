@@ -346,6 +346,7 @@ def random_beatmap(specs):
     # now if dancepad mode change to dance pad mode
     if variables.settings.dancepadmodep:
         l = convertnotelisttodancepad(l, specs)
+        performdancepadmodenotelistchecks(l)
         
     return Beatmap(tempo, l, specs)
 

@@ -6,6 +6,7 @@ from FrozenClass import FrozenClass
 from graphics import getTextPic, getpicbywidth
 
 dancenamemap = {0:"leftdancearrow",1:"downdancearrow",2:"updancearrow",3:"rightdancearrow"}
+dancenamemapdark = {0:"leftdancearrowdark",1:"downdancearrowdark",2:"updancearrowdark",3:"rightdancearrowdark"}
 
 # compare_within is inclusive, and adds a little on for floating point error
 def compare_around(num, comparedto, within = 0, modulus = 1):
@@ -112,6 +113,10 @@ class Note(FrozenClass):
                 self.drawnormalmode(tempo)
 
     def drawdancepadmode(self, tempo):
+        # if it is not on, don't draw it
+        if not self.ison:
+            return
+        
         picname = dancenamemap[self.getscreenvalue()]
         arroww = variables.dancearrowwidth()
         pic = getpicbywidth(picname, arroww)
@@ -120,7 +125,7 @@ class Note(FrozenClass):
         variables.dirtyrects.append(prect)
 
     def drawnormalmode(self, tempo):
-        width = variables.width / 20
+        width = variables.notewidth()
         height = self.height(tempo)
         borderwidth = 0 # zero signals pygame to draw it filled in
         

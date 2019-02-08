@@ -230,6 +230,9 @@ def getpadypos():
 def dancearrowwidth():
     return width/15
 
+def notewidth():
+    return width / 20
+
 maxdifficulty = 200
 # maxtime is changed in the code, the goal for how long the song should be
 # lv is the level of the enemy

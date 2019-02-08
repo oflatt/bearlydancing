@@ -7,6 +7,8 @@ bugs
 -"l" note was the same note as "a", which cannot be correct
 
 gameplay
+- idle plant minigame
+- beetle sumo minigame
 - random avoid minigame using dp pathfinding
 - idle plant minigame
 - music for polar invaders

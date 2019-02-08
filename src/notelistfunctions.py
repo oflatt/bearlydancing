@@ -238,9 +238,11 @@ def performnotelistchecks(l):
         thrownoteerror('accidental note at same time as non accidental')
     if not notevaluesintegersp(l):
         thrownoteerror('not all values in note list were integers')
-    if variables.settings.dancepadmodep:
-        if not notedurationsmatchp(l, 1):
-            thrownoteerror('not all durations for notes were 1 in dance pad mode')
+
+
+def performdancepadmodenotelistchecks(l):
+    if not notedurationsmatchp(l, 1):
+        thrownoteerror('not all durations for notes were 1 in dance pad mode')
 
 
 def thrownoteerror(errorstring):

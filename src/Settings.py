@@ -60,7 +60,7 @@ class Settings(FrozenClass):
         # since it is expensive
         self.maxvolumeenvelopesperframe = 1
 
-        self.username = "Greg"
+        self.username = "Greg" # the names should always end up overwritten
         self.bearname = "Honey"
 
         # master clock

@@ -1,6 +1,11 @@
-import graphics, pygame, variables, copy
-from play_sound import stop_tone, play_tone, update_tone, play_effect
+import copy
 from pygame import Rect
+
+import graphics, pygame, variables
+from graphics import getpicbywidth
+from play_sound import stop_tone, play_tone, update_tone, play_effect
+
+from Note import dancenamemap, dancenamemapdark
 
 
 padheight = variables.height / 80
@@ -88,29 +93,18 @@ class Beatmap():
                 self.roundmaxcombo = self.currentcombo
         
     def draw(self):
-        w = variables.width / 20
-        ew = w * 1.25
-        padellipseypos = variables.getpadypos() - padheight + padheight / 2 - ew / 4
-        
-        # draw which ones are pressed
-        for x in range(0, 8):
-            padcolor = (180, 180, 180)
-            if self.modifierheldkeys[x] != None:
-                padcolor = (variables.PINK[0]-70, variables.PINK[1]-30, variables.PINK[2]-70)
-            elif self.spacepressedp:
-                padcolor = (variables.PINK[0]-70, variables.PINK[1]-30, variables.PINK[2]-70)
-            
-            if self.held_keys[x] != None or self.modifierheldkeys[x] != None:
-                expos = Beatmap.screenvaltoxpos(x) - w / 8
-                pygame.draw.ellipse(variables.screen, padcolor, [expos,
-                                                                        padellipseypos,
-                                                                        ew, ew / 2])
-                variables.dirtyrects.append(Rect(expos, padellipseypos, ew, ew/2))
-        # draw the notes that are on the screen
-        for n in self.notes:
-            n.draw(self.tempo)
-        
+
         self.draw_pads()
+                    
+        # draw the notes that are on the screen
+        i = 0
+        while i < len(self.notes):
+            self.notes[i].draw(self.tempo)
+            if self.notes[i].pos[1] < 0:
+                break
+            i += 1
+        
+        
 
         # also draw notetime to top left
         if variables.devmode:
@@ -139,25 +133,68 @@ class Beatmap():
         if rotatep:
             pic = pygame.transform.rotate(pic, -45)
         return pic
-            
-    def draw_pads(self):
-        w = variables.width / 20
-        # draw bottom rectangles
-        for x in range(1, 9):
-            padcolor = variables.notes_colors[x-1]
-            if(self.spacepressedp):
-                padcolor = variables.PINK
-            # draw the pads
-            padrect = Rect(Beatmap.screenvaltoxpos(x-1)- w / 8, variables.getpadypos() - padheight, w * 1.25, padheight)
+
+    def draw_one_presspad(self, index):
+        
+        # draw which ones are pressed
+        if not variables.settings.dancepadmodep:
+            w = variables.notewidth()
+            ew = w * 1.25
+            padellipseypos = variables.getpadypos() - padheight + padheight / 2 - ew / 4
+            padcolor = (180, 180, 180)
+            if self.modifierheldkeys[index] != None:
+                padcolor = (variables.PINK[0]-70, variables.PINK[1]-30, variables.PINK[2]-70)
+            elif self.spacepressedp:
+                padcolor = (variables.PINK[0]-70, variables.PINK[1]-30, variables.PINK[2]-70)
+
+            if self.held_keys[index] != None or self.modifierheldkeys[index] != None:
+                expos = Beatmap.screenvaltoxpos(index) - w / 8
+                pygame.draw.ellipse(variables.screen, padcolor, [expos,
+                                                                        padellipseypos,
+                                                                        ew, ew / 2])
+                variables.dirtyrects.append(Rect(expos, padellipseypos, ew, ew/2))
+
+    def draw_one_pad(self, index):
+        w = variables.notewidth()
+        padcolor = variables.notes_colors[index]
+        if(self.spacepressedp):
+            padcolor = variables.PINK
+
+        # draw the pads
+        if variables.settings.dancepadmodep:
+            padrect = Rect(Beatmap.screenvaltoxpos(index), variables.getpadypos()-variables.dancearrowwidth(), variables.dancearrowwidth(), variables.dancearrowwidth())
+            arrowpic = None
+            if self.held_keys[index] != None or self.modifierheldkeys[index] != None:
+                arrowpic = dancenamemap[index]
+            else:
+                arrowpic = dancenamemapdark[index]
+
+            variables.screen.blit(getpicbywidth(arrowpic, variables.dancearrowwidth()), padrect)
+            variables.dirtyrects.append(padrect)
+        else:
+            padrect = Rect(Beatmap.screenvaltoxpos(index)- w / 8, variables.getpadypos() - padheight, w * 1.25, padheight)
             pygame.draw.rect(variables.screen, padcolor, padrect)
             variables.dirtyrects.append(padrect)
 
-            # draw little pads if space pressed
-            if self.spacepressedp:
-                spacing = w*0.05
-                padrect = Rect(Beatmap.screenvaltoxpos(x-1) - w / 8+ spacing/2, variables.getpadypos() - padheight+spacing/2, w * 1.25-spacing, padheight-spacing)
-                pygame.draw.rect(variables.screen, variables.notes_colors[x - 1], padrect)
-                variables.dirtyrects.append(padrect)
+        # draw little pads if space pressed
+        if self.spacepressedp and not variables.settings.dancepadmodep:
+            spacing = w*0.05
+            padrect = Rect(Beatmap.screenvaltoxpos(index) - w / 8+ spacing/2, variables.getpadypos() - padheight+spacing/2, w * 1.25-spacing, padheight-spacing)
+            pygame.draw.rect(variables.screen, variables.notes_colors[index], padrect)
+            variables.dirtyrects.append(padrect)
+
+                
+    def draw_pads(self):
+        numbertodraw = 8
+        if variables.settings.dancepadmodep:
+            numbertodraw = 4
+
+
+        # draw bottom rectangles
+        for x in range(numbertodraw):
+            self.draw_one_presspad(x)
+
+            self.draw_one_pad(x)
             
 
         # draw the feedback (keys then scores, perfect ect)
@@ -170,7 +207,7 @@ class Beatmap():
                 blitp = True
 
             if blitp:
-                bx = Beatmap.screenvaltoxpos(x) - w / 8 
+                bx = Beatmap.screenvaltoxpos(x) - variables.notewidth() / 8 
                 by = variables.getpadypos() - padheight
                 bpic = self.getfeedbackpic(x)
                 brect = Rect(bx, by, bpic.get_width(), bpic.get_height())
@@ -241,6 +278,32 @@ class Beatmap():
         self.feedback_timers[index] = variables.settings.current_time + self.tempo
         self.feedbackcolor[index] = variables.WHITE
 
+    def process_final_score(self, note, endscore):
+        final_note_score = None
+        if endscore < note.beginning_score:
+            final_note_score = s
+        else:
+            final_note_score = note.beginning_score
+
+        note.end_score = endscore
+
+        
+        note.ison = False
+        # if it was missed in the later half, set the height offset for drawing
+        if note.beginning_score != variables.miss_value and endscore == variables.miss_value:
+            note.height_offset = note.pos[1] - variables.getpadypos()
+
+        self.appendscore(final_note_score, note)
+
+        if final_note_score == variables.miss_value:
+            self.setfeedback(note.getscreenvalue(), "miss")
+        elif final_note_score == variables.good_value:
+            self.setfeedback(note.getscreenvalue(), "good")
+        elif final_note_score == variables.ok_value:
+            self.setfeedback(note.getscreenvalue(), "ok")
+        elif final_note_score == variables.perfect_value:
+            self.setfeedback(note.getscreenvalue(), "perfect")
+    
     def onkey(self, key):
         def check_note(np, modifiedp):
             if self.notes[np].beginning_score == None:
@@ -250,11 +313,17 @@ class Beatmap():
                     # check if modifier is correct
                     if not self.notes[np].accidentalp == modifiedp:
                         s = variables.miss_value
+
+                    
                     self.notes[np].beginning_score = s
-                    if s == variables.miss_value:
-                        self.notes[np].ison = False
-                        self.setfeedback(self.notes[np].getscreenvalue(), "miss")
-                        self.appendscore(variables.miss_value, self.notes[np])
+
+                    # just process right away if dancepadmode
+                    if variables.settings.dancepadmodep:
+                        self.process_final_score(self.notes[np], s)
+                    # also if it missed, process right away
+                    elif s == variables.miss_value:
+                        self.process_final_score(self.notes[np], s)
+                    
 
         # returns the value for the sound produced
         def check_place(v, modifiedp):
@@ -312,42 +381,17 @@ class Beatmap():
                     self.notes[np].height_offset = self.notes[np].pos[1] - variables.getpadypos()
 
                 if s != None:
+                    self.process_final_score(self.notes[np], s)
                     
-                    if s < self.notes[np].beginning_score:
-                        final_note_score = s
-                    else:
-                        final_note_score = self.notes[np].beginning_score
+            # potential hard mode: released before a note a miss
 
-                    self.notes[np].end_score = s
-
-                    if s == variables.miss_value:
-                        self.notes[np].height_offset = self.notes[np].pos[1] - variables.getpadypos()
-                        self.notes[np].ison = False
-
-                    self.appendscore(final_note_score, self.notes[np])
-
-                    if final_note_score == variables.miss_value:
-                        self.setfeedback(self.notes[np].getscreenvalue(), "miss")
-                    elif final_note_score == variables.good_value:
-                        self.setfeedback(self.notes[np].getscreenvalue(), "good")
-                    elif final_note_score == variables.ok_value:
-                        self.setfeedback(self.notes[np].getscreenvalue(), "ok")
-                    elif final_note_score == variables.perfect_value:
-                        self.setfeedback(self.notes[np].getscreenvalue(), "perfect")
-            # released before a note, penalty for randomly playing notes not written
-            #else:
-            #    self.appendscore(variables.miss_value)
-            #    self.setfeedback(self.notes[np].getscreenvalue(), "miss")
-
+            
         def check_place(v):
             np = self.get_note_place_from_value_end(v)
             if not np == None:
                 check_note(np)
 
-            # this would make it a miss if there is no note
-            #else:
-            #    self.appendscore(variables.miss_value)
-            #    self.setfeedback(v, "miss")
+            # potential hard mode: make a press without a note a miss
 
         for x in range(8):
             if variables.checkkey("note" + str(x+1), key):
@@ -363,7 +407,7 @@ class Beatmap():
                     stop_tone(self.modifierheldkeys[x])
                 self.modifierheldkeys[x] = None
                 break
-         
+
         if variables.checkkey("notemodifier", key):
             self.spacepressedp = False
 
@@ -387,9 +431,8 @@ class Beatmap():
 
             if self.notes[x].pos[1] - smaller > variables.getpadypos() and self.notes[x].beginning_score == None:
                 if self.notes[x].ison:
-                    self.setfeedback(self.notes[np].getscreenvalue(), "miss")
-                    self.notes[x].ison = False
-                    self.appendscore(variables.miss_value, self.notes[x])
+                    self.notes[x].beginning_score = variables.miss_value
+                    self.process_final_score(self.notes[x], variables.miss_value)
                 elif self.notes[x].pos[1] < 0:
                     # if you are in a part of the list before the screen, don't keep checking
                     # (assuming the list of notes must be ordered by time, of course)
