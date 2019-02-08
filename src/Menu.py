@@ -137,16 +137,20 @@ class Menu(FrozenClass):
             self.state = "name"
             self.option = 0
             play_music("bearhome")
+            # continue being in menu
+            return
 
-            # stop main menu music
+        # stop main menu music
         elif maps.current_map_name == "honeyhome" and self.mainmenup:
             play_music("bearhome")
         else:
             stop_music()
 
-        self.reset()
 
+        
+        self.reset()
         variables.settings.menuonq = False
+        
         
         classvar.player.change_of_state()
         if variables.settings.state == "battle":
