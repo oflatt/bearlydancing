@@ -506,11 +506,13 @@ def movednotes(old_notes, movelength):
 
     #print(str(maxval) + '  ' + str(minval) + '  ' + str(movelength))
 
-    
-    if outsiderangeq(maxval + movelength) and outsiderangeq(minval + movelength):
+
+    # give up if the range is so wide that it would be outside range if moved in either direction
+    if outsiderangeq(maxval + abs(movelength)) and outsiderangeq(minval - abs(movelength)):
         return copy.deepcopy(old_notes)
+    # try again if in one direction it goes off
     elif outsiderangeq(maxval + movelength) or outsiderangeq(minval + movelength):
-        return movednotes(l, randint(-4, 4))
+        return movednotes(old_notes, randint(-4, 4))
     else:
         l = copy.deepcopy(old_notes)
         for n in l:

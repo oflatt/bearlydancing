@@ -5,7 +5,7 @@ import random, copy, math
 from random import randint
 
 def centerwithspecs(lowerbound, upperbound, specs):
-    crange = (lowerbound - upperbound)
+    crange = (upperbound-lowerbound)
     center = lowerbound + crange/2
 
     if hasrule("highervalues", specs):

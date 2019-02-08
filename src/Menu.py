@@ -133,15 +133,35 @@ class Menu(FrozenClass):
         
 
     def resume(self):
+        if self.mainmenup and self.firstbootup:
+            self.state = "name"
+            self.option = 0
+            play_music("bearhome")
+
+            # stop main menu music
+        elif maps.current_map_name == "honeyhome" and self.mainmenup:
+            play_music("bearhome")
+        else:
+            stop_music()
+
         self.reset()
+
         variables.settings.menuonq = False
+        
         classvar.player.change_of_state()
         if variables.settings.state == "battle":
             if not isinstance(classvar.battle, str):
                 classvar.battle.unpause()
 
+            # keep the menu on if it was the main menu, so the player can see first
+            if self.mainmenup:
+                variables.settings.menuonq = True
+
+
+
         if variables.settings.state == "game":
             variables.currentgame().unpausefunction(variables.settings.current_time)
+        self.mainmenup = False
 
         
 
@@ -323,18 +343,7 @@ class Menu(FrozenClass):
             self.option = (self.option + 1) % optionslength
         elif variables.checkkey("enter", key):
             if self.getoption() in ["resume", "play"]:
-                if self.mainmenup and self.firstbootup:
-                    self.state = "name"
-                    self.option = 0
-                    play_music("bearhome")
-                else:
-                    # stop main menu music
-                    if maps.current_map_name == "honeyhome" and self.mainmenup:
-                        play_music("bearhome")
-                    else:
-                        stop_music()
-                    self.mainmenup = False
-                    self.resume()
+                self.resume()
             if self.getoption() == "settings":
                 self.state = "settings"
                 self.settingsmenu.newworkingcopy()

@@ -227,6 +227,12 @@ def notedurationsmatchp(l, num):
             return False
     return True
 
+def notevaluesvalidp(l):
+    for n in l:
+        if outsiderangeq(n.value):
+            return False
+    return True
+
 def performnotelistchecks(l):
     if not notetimeorderedp(l):
         thrownoteerror('note list not ordered properly for time')
@@ -238,6 +244,8 @@ def performnotelistchecks(l):
         thrownoteerror('accidental note at same time as non accidental')
     if not notevaluesintegersp(l):
         thrownoteerror('not all values in note list were integers')
+    if not notevaluesvalidp(l):
+        thrownoteerror('not all not values were valid, one was outside of range.')
 
 
 def performdancepadmodenotelistchecks(l):
