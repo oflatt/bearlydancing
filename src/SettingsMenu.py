@@ -22,7 +22,9 @@ class SettingsMenu(FrozenClass):
 
         self.workingcopy = variables.settings # a copy is created with the first edit
 
-        self.optionsbeforebindings = ["mode", "volume", "autosave"]
+        self.optionsbeforebindings = ["mode", "volume"]
+        self.toggleoptions = ["autosave", "dance pad mode"]
+        self.toggleoptionsvars = ["autosavep", "dancepadmodep"]
         self.windowmodes = ["fullscreen", "windowed"]
         self.optionsafterbindings = ["back"]
         
@@ -32,7 +34,7 @@ class SettingsMenu(FrozenClass):
         self.workingcopy = variables.settings
 
     def draw(self):
-        options = self.optionsbeforebindings + list(self.workingcopy.keydict.keys()) + self.optionsafterbindings
+        options = self.getoptionlist()
         if self.state == "main":
 
             onscreen = options[self.scroll:self.scroll+self.linesperscreen()]
@@ -40,7 +42,7 @@ class SettingsMenu(FrozenClass):
                 ypos = i * variables.getmenutextyspace()
                 keytype = onscreen[i]
                 # if it is not a binding
-                if keytype in self.optionsbeforebindings or keytype in self.optionsafterbindings:
+                if not keytype in self.workingcopy.keydict:
                     title = getTextPic(keytype, variables.gettextsize(), variables.WHITE)
                     variables.screen.blit(title, (variables.getmenutextxoffset(), ypos))
                     # draw dot
@@ -65,10 +67,10 @@ class SettingsMenu(FrozenClass):
                                 pygame.draw.rect(variables.screen, variables.BLUE, (xpos-2, ypos+2, pic.get_width()+4, pic.get_height()+2), 2)
                             xpos += variables.getmenutextxoffset() + pic.get_width()
                             i += 1
-                    elif keytype == "autosave":
+                    elif keytype in self.toggleoptions:
                         xpos = variables.getmenutextxoffset()*2 + title.get_width()
                         text = "off"
-                        if self.workingcopy.autosavep:
+                        if getattr(self.workingcopy, self.toggleoptionsvars[self.toggleoptions.index(keytype)]):
                             text = "on"
                         pic = getTextPic(text, variables.gettextsize(), variables.WHITE)
                         variables.screen.blit(pic, (xpos, ypos))
@@ -149,13 +151,13 @@ class SettingsMenu(FrozenClass):
 
     def getcurrentoptionbindings(self):
         options = self.getoptionlist()
-        if self.option >= len(options)-len(self.optionsafterbindings) or self.option <= len(self.optionsbeforebindings)-1:
+        if not options[self.option] in self.workingcopy.keydict:
             return []
         else:
             return self.workingcopy.keydict[options[self.option]]
 
     def getoptionlist(self):
-        return self.optionsbeforebindings + list(self.workingcopy.keydict.keys()) + self.optionsafterbindings
+        return self.optionsbeforebindings + self.toggleoptions + list(self.workingcopy.keydict.keys()) + self.optionsafterbindings
 
     def gettextpic(self, i, keylist):
         if i > len(keylist)-1:
@@ -200,7 +202,7 @@ class SettingsMenu(FrozenClass):
                 bindingslength = 0
             if optionslist[self.option] == "mode":
                 bindingslength = len(self.windowmodes)
-            if optionslist[self.option] == "autosave":
+            if optionslist[self.option] in self.toggleoptions:
                 bindingslength = 1
             
             if variables.checkkey("up", key):
@@ -250,8 +252,11 @@ class SettingsMenu(FrozenClass):
                     message = self.initiateconfirm()
                 elif optionslist[self.option] == "mode":
                     self.changewindowmode()
-                elif optionslist[self.option] == "autosave":
-                    self.workingcopy.autosavep = not self.workingcopy.autosavep
+                elif optionslist[self.option] in self.toggleoptions:
+                    self.changingcopy()
+                    varname = self.toggleoptionsvars[self.toggleoptions.index(optionslist[self.option])]
+                    oldval = getattr(self.workingcopy, varname)
+                    setattr(self.workingcopy, varname, not oldval)
                 elif self.bindingoption == 0:
                     self.deleteonebinding()
                 elif self.bindingoption == bindingslength-1:

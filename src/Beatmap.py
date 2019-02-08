@@ -281,7 +281,7 @@ class Beatmap():
     def process_final_score(self, note, endscore):
         final_note_score = None
         if endscore < note.beginning_score:
-            final_note_score = s
+            final_note_score = endscore
         else:
             final_note_score = note.beginning_score
 
