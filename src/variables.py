@@ -1,4 +1,5 @@
-import pygame, os, pickle, copy, sys
+import pygame, os, copy, sys
+import dill as pickle
 from pygame import Rect
 from Settings import Settings
 from Properties import Properties

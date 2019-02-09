@@ -5,6 +5,8 @@ from Conversation import Conversation
 from copy import deepcopy
 from Speak import Speak
 
+outofbed = Conversation("outofbed", [], speaksafter = [[],[],[]], switchtheserocks = "bed")
+
 everyyears = Speak("honeyside0", ["Every year the same thing. I'm going into hibernation,",
                                       "and TP makes things difficult."])
 everyyears.side = 'l'

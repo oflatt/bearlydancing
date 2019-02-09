@@ -7,11 +7,13 @@ from graphics import scale_pure, getpic, getTextPic
 from initiatebattle import initiatebattle
 from FrozenClass import FrozenClass
 
-
 class Speak(FrozenClass):
 
     def __init__(self, pic, dialogue, side = None, bottomp = True, options = [], special_battle = "none"):
-        self.pic = pic
+        if pic == None:
+            self.pic = "empty"
+        else:
+            self.pic = pic
 
         # dialogue is a list of strings, one per line
         if type(dialogue) == str:

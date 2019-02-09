@@ -2,6 +2,7 @@
 
 import pygame, os, variables, random, datetime
 from pygame import Rect
+from pygame import Surface
 import string, math
 
 from rdraw.rdrawrock import makerock
@@ -127,6 +128,9 @@ for x in picnames:
     if x != "" and x[0] != ".":
         addtoGR(x)
 
+#add empty surface
+addsurfaceGR(Surface((1,1), pygame.SRCALPHA), "empty")
+        
 # load special graphics
 special_graphics_loader.load_special_graphics(GR)
         

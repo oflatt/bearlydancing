@@ -4,6 +4,7 @@ from initiatestate import initiategame
 from initiatebattle import initiatebattle
 from graphics import getpicbywidth
 from FrozenClass import FrozenClass
+from Speak import Speak
 
 class Conversation(FrozenClass):
 
@@ -32,7 +33,14 @@ class Conversation(FrozenClass):
         
         # a list of Speak
         self.speaks = speaks
+        # convert to speaks if it is a list of strings
+        if len(self.speaks)>0:
+            if type(self.speaks[0]) == str:
+                self.speaks = []
+                for string in speaks:
+                    self.speaks.append(Speak(None, string))
         
+
         # a list of lists of Speak for after the first time they are talked to
         if speaksafter != None:
             if type(speaksafter[0]) == list:

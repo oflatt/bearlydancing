@@ -369,7 +369,9 @@ class Map(FrozenClass):
             newwindshift.xpos += 1
             newwindshift.ypos += random.randint(0, 1)
             self.windeffect.addwindshift(newwindshift)
-    
+
+
+
     def on_tick(self):
         self.windtick()
          
@@ -381,6 +383,7 @@ class Map(FrozenClass):
                 
         for r in self.terrain:
             r.ontick()
+
 
     def checkenemy(self):
         # goes through the list of enemies, adding up all the encounter chances up until that list number

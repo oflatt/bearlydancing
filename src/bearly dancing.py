@@ -140,6 +140,7 @@ def ontick():
             maps.checkconversation()
             maps.checkexit()
             maps.current_map.on_tick()
+            
         elif variables.settings.state == "battle":
             classvar.battle.ontick()
         elif variables.settings.state == "game":

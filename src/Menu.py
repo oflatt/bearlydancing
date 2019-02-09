@@ -46,7 +46,8 @@ class Menu(FrozenClass):
         self.messagetime = 0
         
         self.nameprompts = ["Your name:", "The sleeping bear's name:", "Increase difficulty of game by:",
-                            "Confirm difficulty level "]
+                            "Confirm difficulty level ",
+                            "Wake up the sleeping bear."]
         self.yesno = ChoiceButtons(["yes","no"], 3*variables.gettextsize()/variables.height)
         # so that it starts on "no"
         self.yesno.nextoption()
@@ -213,7 +214,7 @@ class Menu(FrozenClass):
     def drawname(self):
         promptstring = self.nameprompts[self.option]
         extrabuttonwidth = variables.getmenutextxoffset() / 4
-        if self.option == len(self.nameprompts)-1:
+        if self.nameprompts[self.option] == "Confirm difficulty level ":
             reccomendedtext = getTextPic("The reccomended difficulty for new players is 0.", variables.gettextsize(), variables.beginningprompttextcolor)
             variables.screen.blit(reccomendedtext, [variables.width/2 - reccomendedtext.get_width()/2,
                                                     variables.gettextsize()*0])
@@ -273,7 +274,7 @@ class Menu(FrozenClass):
 
 
     def onkeyname(self, key):
-        if variables.checkkey("enter", key) and key != pygame.K_SPACE:
+        if variables.checkkey("enter", key) and (key != pygame.K_SPACE or self.option != 0):
             if len(self.namestring) != 0 or self.option>1:
                 # self.namestring = self.namestring[:1].upper() + self.namestring[1:]
                 if self.option == 0:
@@ -288,20 +289,21 @@ class Menu(FrozenClass):
                         self.setmessage("heyo, have fun")
                 elif self.option == 1:
                     variables.settings.bearname = self.namestring
-                else:
-                    variables.settings.difficulty = self.tempdifficulty
-                    classvar.player.exp = stathandeling.lvexp(self.tempdifficulty + 1)
+                
                     
 
                     
                 self.namestring = ""
                 
-                if self.option == len(self.nameprompts)-1:
+                if self.nameprompts[self.option] == "Confirm difficulty level ":
                     if self.yesno.getoption() in ["n","no","NO"]:
                         self.option -= 1
                     else:
-                        self.mainmenup = False
-                        self.resume()
+                        variables.settings.difficulty = self.tempdifficulty
+                        classvar.player.exp = stathandeling.lvexp(self.tempdifficulty + 1)
+                elif self.option == len(self.nameprompts)-1:
+                    self.mainmenup = False
+                    self.resume()
                 else:
                     self.option += 1
                     
@@ -334,7 +336,7 @@ class Menu(FrozenClass):
                 self.tempdifficulty -= 1
             if self.tempdifficulty > variables.maxdifficulty:
                 self.tempdifficulty = variables.maxdifficulty
-        elif self.option == len(self.nameprompts)-1:
+        elif self.nameprompts[self.option] == "Confirm difficulty level ":
             self.yesno.leftrightonkey(key)
 
 

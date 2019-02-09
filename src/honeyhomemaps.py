@@ -29,11 +29,14 @@ littleletter.background_range = table.background_range.copy()
 
 bed = Rock(["honeywakesup0", "honeywakesup1", "honeywakesup2", "honeywakesup3", "bed"],
            8, 38, None, name = "bed")
+
+
 bed.background_range = pygame.Rect(0,0,9999999,9999999)
 stashlist = []
 for x in range(10):
     stashname = "stash0" + str(x)
     stashlist.append(stashname)
+    
 honeyhome = Map("honeyhouseinside",
                 [bed,
                  table,
@@ -41,7 +44,7 @@ honeyhome = Map("honeyhouseinside",
                  Rock(stashlist, 131, 55, [0, 0.9, 1, 0.1], name="stash")],
                 shadowsp = False)
 
-outofbed = Conversation("outofbed",[], speaksafter = [[],[],[]], switchtheserocks = "bed")
+outofbed = getconversation("outofbed")
 outofbed.storyevent = "bed"
 outofbed.area = [0, 0, insidewidth, insideheight]
 outofbed.eventrequirements = [EventRequirement("bed", -1, len(bed.animations)-1)]
