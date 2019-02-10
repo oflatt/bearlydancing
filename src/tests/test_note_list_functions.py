@@ -18,4 +18,4 @@ class NoteListTests(unittest.TestCase):
         l = [Note(0, 0, 3), Note(0, 3, 1), Note(2, 3, 1), Note(0,3.2,3)]
         self.assertEqual(3, haschordsgreaterthan(l, 1))
         self.assertEqual(None, haschordsgreaterthan(l, 2))
-                         
+
