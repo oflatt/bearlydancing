@@ -243,9 +243,10 @@ def haschordsgreaterthan(l, chordsize):
             if compare_numbers_around(n.time, lasttime):
                 counter += 1
             else:
-                counter = 0
+                counter = 1
         if counter > chordsize:
             return lasttime
+        lasttime = n.time
     return None
 
 def performnotelistchecks(l):
