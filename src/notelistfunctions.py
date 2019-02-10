@@ -171,11 +171,12 @@ def notecollidebesidesselfp(note, l):
         x += 1
     return iscopy
 
+# none if no notes collide
 def anynotescollide(notelist):
-    collisionp = False
+    collisionp = None
     for n in notelist:
         if notecollidebesidesselfp(n, notelist):
-            collisionp = True
+            collisionp = n.time
             break
     return collisionp
 
@@ -233,13 +234,28 @@ def notevaluesvalidp(l):
             return False
     return True
 
+# None if no chords have a number of notes greater than chordsize
+def haschordsgreaterthan(l, chordsize):
+    counter = 0
+    lasttime = None
+    for n in l:
+        if lasttime != None:
+            if compare_numbers_around(n.time, lasttime):
+                counter += 1
+            else:
+                counter = 0
+        if counter > chordsize:
+            return lasttime
+    return None
+
 def performnotelistchecks(l):
     if not notetimeorderedp(l):
         thrownoteerror('note list not ordered properly for time')
     if not notechordorderedp(l):
         thrownoteerror('note list not ordered properly for chords')
-    if anynotescollide(l):
-        thrownoteerror('notes collided')
+    collide = anynotescollide(l)
+    if collide != None:
+        thrownoteerror('notes collided at time ' + str(collide))
     if not noteaccidentalsconsistantp(l):
         thrownoteerror('accidental note at same time as non accidental')
     if not notevaluesintegersp(l):
@@ -251,6 +267,9 @@ def performnotelistchecks(l):
 def performdancepadmodenotelistchecks(l):
     if not notedurationsmatchp(l, 1):
         thrownoteerror('not all durations for notes were 1 in dance pad mode')
+    chordcheck = haschordsgreaterthan(l, 2)
+    if chordcheck != None:
+        thrownoteerror('there exists a chord with more then 2 notes in it at time ' + str(chordcheck) + ' in dance pad mode, which is impossible to play.')
 
 
 def thrownoteerror(errorstring):

@@ -297,11 +297,11 @@ class Menu(FrozenClass):
                 
                 if self.nameprompts[self.option] == "Confirm difficulty level ":
                     if self.yesno.getoption() in ["n","no","NO"]:
-                        self.option -= 1
+                        self.option -= 2
                     else:
                         variables.settings.difficulty = self.tempdifficulty
                         classvar.player.exp = stathandeling.lvexp(self.tempdifficulty + 1)
-                elif self.option == len(self.nameprompts)-1:
+                if self.option == len(self.nameprompts)-1:
                     self.mainmenup = False
                     self.resume()
                 else:

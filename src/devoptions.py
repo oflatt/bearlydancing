@@ -46,6 +46,7 @@ parser.add_argument('--novideomode', "- don't initialize the display or draw any
 
 parser.add_argument('--fasttestmode', "- only load the first couple of maps.", action = 'store_true')
 
+
 args = parser.parse_args()
 
 if args.exportmode:

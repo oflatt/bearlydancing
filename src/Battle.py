@@ -37,10 +37,10 @@ class Battle(FrozenClass):
         
         
         # if the enemy's level is 0 and there have been no battles, the tutorial is triggered
-        self.tutorialp = self.enemy.lv - variables.settings.difficulty == 0 and classvar.player.totalbattles == 0
+        self.tutorialp = self.enemy.lv - variables.settings.difficulty == 0 and classvar.player.totalbattles == 0 and not variables.settings.dancepadmodep
 
         # if the accidental tutorial has not been activated and lv is above the threshhold, trigger accidental tutorial
-        self.accidentaltutorialp = classvar.player.getstoryevent("accidentaltutorial") == 0 and self.enemy.lv >= variables.accidentallvthreshhold
+        self.accidentaltutorialp = classvar.player.getstoryevent("accidentaltutorial") == 0 and self.enemy.lv >= variables.accidentallvthreshhold and not variables.settings.dancepadmodep
 
         # accidental tutorial will never be in the same battle as the normal tutorial
         # or if there are no accidentals in the beatmap
