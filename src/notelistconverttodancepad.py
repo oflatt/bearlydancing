@@ -10,15 +10,22 @@ dancepadtable = {0:(True,False,False,False), 1:(False,True,False,False),
                  8:(False,True,False,True), 9:(False,False,True,True)}
 
 # collisions are simpler for dancepad mode because all notes are only points
+# No more than two notes can exist at the same time, because it's impossible to play with two feet
 def dancepadnotecollidesp(notelist, noteval, notetime):
     i = len(notelist) - 1
     n = None
+    sametimecounter = 0
     while i > 0:
         n = notelist[i]
-        if compare_numbers_around(notetime, n.time, within = 0.01) and noteval == n.value:
-            return True
+        if compare_numbers_around(notetime, n.time, within = 0.01):
+            sametimecounter += 1
+            if noteval == n.value:
+                return True
         elif n.time < notetime:
             break
+
+        if sametimecounter > 1:
+            return True
         
         i += -1
 
