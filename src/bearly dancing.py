@@ -58,70 +58,82 @@ menu.enemyanimation.framerate = (60000/160)*2
 menu.enemyanimation.beginning_time = variables.settings.current_time
 
 
+# key is either a pygame key (an int) or a string for what key was pressed, used for joy stick presses
+def onkeydown(key):
+    # emergency dev quit
+    if variables.devmode and key == variables.devquitkey:
+        pygame.quit()
+        sys.exit()
+
+    # check if the player is pausing the game
+    elif variables.checkkey("escape", key) and not variables.settings.menuonq:
+        menu.pause()
+
+    # menu press, also check exiting from the menu, saving from menu
+    elif variables.settings.menuonq:
+        if variables.checkkey("enter", key) and menu.state == "main":
+            if menu.getoption() == "exit":
+                global done
+                done = True
+            elif menu.getoption() == "save":
+                save(True)
+                variables.saved = True
+            else:
+                menu.onkey(key)
+        else:
+            menu.onkey(key)
+
+    # check for dev battle key
+    elif variables.devmode and key == variables.devengagebattlekey and variables.settings.state == "world":
+        if devbattletest == None:
+            initiatebattle(random_enemy())
+        else:
+            initiatebattle(devbattletest)
+            
+    # process key in minigame
+    elif variables.settings.state == "game" and not variables.settings.menuonq:
+        variables.currentgame().inputfunction(variables.settings.current_time, variables.settings, event)
+
+        
+    elif variables.settings.state == "conversation" and conversations.currentconversation != None:
+        message = conversations.currentconversation.keyevent(key)
+        menu.setmessage(message)
+        # check if it was exited to unhide rocks
+        if variables.settings.state == "world":
+            maps.unhiderock(conversations.currentconversation.unhidethisrock)
+    elif variables.settings.state == "world":
+        if maps.playerenabledp() and maps.current_map.playerenabledp:
+            classvar.player.keypress(key)
+        maps.on_key(key)
+    elif variables.settings.state == "battle":
+        classvar.battle.onkey(key)
+
+def onkeyup(key):
+    if variables.settings.menuonq:
+        menu.onrelease(key)
+    elif variables.settings.state == "world":
+        if maps.playerenabledp() and maps.current_map.playerenabledp:
+            classvar.player.keyrelease(key)
+    elif variables.settings.state == "battle":
+        classvar.battle.onrelease(key)
+    elif variables.settings.state == "conversation" and conversations.currentconversation != None:
+        conversations.currentconversation.keyrelease(key) 
+        
 def onevent(event):
     global done
     #first check for saving and exiting
     if event.type == pygame.QUIT:
         done = True
-    elif event.type == pygame.KEYDOWN and event.key == variables.devquitkey:
-        pygame.quit()
-        sys.exit()
-    elif event.type == pygame.KEYDOWN and variables.checkkey("enter", event.key) and variables.settings.menuonq:
-        if menu.state == "main":
-            if menu.getoption() == "exit":
-                done = True
-            elif menu.getoption() == "save":
-                save(True)
-                variables.saved = True
 
-    # process key in minigame
-    if variables.settings.state == "game" and not variables.settings.menuonq:
-        variables.currentgame().inputfunction(variables.settings.current_time, variables.settings, event)
 
-        
-    # User pressed down on a key
+    # key down
     if event.type == pygame.KEYDOWN:
-        # check for dev battle key
-        if variables.devmode and event.key == variables.devengagebattlekey and variables.settings.state == "world":
-            if devbattletest == None:
-                initiatebattle(random_enemy())
-            else:
-                initiatebattle(devbattletest)
-
-        elif (not variables.settings.menuonq):
-            if variables.settings.state == "conversation" and conversations.currentconversation != None:
-                message = conversations.currentconversation.keyevent(event.key)
-                menu.setmessage(message)
-                # check if it was exited to unhide rocks
-                if variables.settings.state == "world":
-                    maps.unhiderock(conversations.currentconversation.unhidethisrock)
-            elif variables.settings.state == "world":
-                if maps.playerenabledp() and maps.current_map.playerenabledp:
-                    classvar.player.keypress(event.key)
-                maps.on_key(event.key)
-            elif variables.settings.state == "battle":
-                classvar.battle.onkey(event.key)
-
-            # also check if the player is pausing the game
-            if variables.checkkey("escape", event.key):
-                if not variables.settings.menuonq:
-                    menu.pause()
-        else:
-            menu.onkey(event.key)
+        onkeydown(event.key)
 
 
-    # User let up on a key
-    elif event.type == pygame.KEYUP:
-        if (not variables.settings.menuonq):
-            if variables.settings.state == "world":
-                if maps.playerenabledp() and maps.current_map.playerenabledp:
-                    classvar.player.keyrelease(event.key)
-            elif variables.settings.state == "battle":
-                classvar.battle.onrelease(event.key)
-            elif variables.settings.state == "conversation" and conversations.currentconversation != None:
-                conversations.currentconversation.keyrelease(event.key)
-        else:
-            menu.onrelease(event.key)
+    # key up
+    if event.type == pygame.KEYUP:
+        onkeyup(event.key)
 
 
 def ontick():

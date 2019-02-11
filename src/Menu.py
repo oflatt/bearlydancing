@@ -120,6 +120,7 @@ class Menu(FrozenClass):
         self.enemyanimation = newanim
 
     def pause(self):
+        play_effect("onedrum")
         self.pausetime = variables.settings.current_time
         
         if variables.settings.state == "battle":
@@ -254,7 +255,7 @@ class Menu(FrozenClass):
             self.settingsmenu.onrelease(key)
 
     def onkey(self, key):
-        if self.state in ["main", "settings"]:
+        if self.state in ["main"]:
             play_effect("onedrum")
         
         if self.state == "main":

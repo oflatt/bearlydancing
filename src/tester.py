@@ -1,7 +1,11 @@
 import pygame, ctypes, os, time
 
+
+
 # Setup
 pygame.init()
+
+print(pygame.key.name(273))
 
 #master clock
 clock = pygame.time.Clock()

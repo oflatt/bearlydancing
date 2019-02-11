@@ -170,10 +170,13 @@ def getsoundvar(s):
     g = globals()
     return g[s]
         
-def play_effect(s):
+def play_effect(s, volumeoverride = None):
     if variables.settings.soundonp():
         sound = effects[s]
-        otherchannels[0].set_volume(variables.settings.volume)
+        if volumeoverride != None:
+            otherchannels[0].set_volume(volumeoverride)
+        else:
+            otherchannels[0].set_volume(variables.settings.volume)
         otherchannels[0].play(sound)
 
 def play_drum(index, drumpackname):

@@ -1,8 +1,8 @@
 import variables, pygame, copy
+
 from graphics import getTextPic
 from FrozenClass import FrozenClass
-from play_sound import setnewvolume
-
+from play_sound import setnewvolume, play_effect
 
 class SettingsMenu(FrozenClass):
     def __init__(self):
@@ -169,6 +169,8 @@ class SettingsMenu(FrozenClass):
                 textstring = keylist[i]
             elif keylist[i] == None:
                 textstring = "none"
+            elif type(keylist[i]) == str:
+                textstring = keylist[i]
             else:
                 textstring = pygame.key.name(keylist[i])
 
@@ -192,6 +194,8 @@ class SettingsMenu(FrozenClass):
 
     # returns a message to set or None
     def onkey(self, key):
+        print(pygame.key.name(key))
+        play_effect("onedrum", volumeoverride = self.workingcopy.volume)
         if self.state == "main":
             message = None
             optionslist = self.getoptionlist()
@@ -391,18 +395,19 @@ class SettingsMenu(FrozenClass):
 
     def ontick(self):
         t = variables.settings.current_time
-        if self.uptime != None:
-            if t-self.uptime > variables.menuscrollspeed:
-                self.onkey(variables.settings.keydict["up"][0])
-        elif self.downtime != None:
-            if t-self.downtime > variables.menuscrollspeed:
-                self.onkey(variables.settings.keydict["down"][0])
-        elif self.lefttime != None:
-            if t-self.lefttime > variables.menuscrollspeed:
-                self.onkey(variables.settings.keydict["left"][0])
-        elif self.righttime != None:
-            if t-self.righttime > variables.menuscrollspeed:
-                self.onkey(variables.settings.keydict["right"][0])
+        if self.state == "main":
+            if self.uptime != None:
+                if t-self.uptime > variables.menuscrollspeed:
+                    self.onkey(variables.settings.keydict["up"][0])
+            elif self.downtime != None:
+                if t-self.downtime > variables.menuscrollspeed:
+                    self.onkey(variables.settings.keydict["down"][0])
+            elif self.lefttime != None:
+                if t-self.lefttime > variables.menuscrollspeed:
+                    self.onkey(variables.settings.keydict["left"][0])
+            elif self.righttime != None:
+                if t-self.righttime > variables.menuscrollspeed:
+                    self.onkey(variables.settings.keydict["right"][0])
 
         if self.state == "confirm":
             if self.confirmsecondsleft() <= 0:
