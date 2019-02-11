@@ -7,5 +7,5 @@ install:
   - python3 setup.py
 
 script:
-  - python3 src/run_tests.py
+  - python3 src/run_tests.py --novideomode
   
