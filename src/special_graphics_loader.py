@@ -1,4 +1,5 @@
 import pygame
+from pygame import Surface
 
 
 import variables
@@ -10,6 +11,18 @@ def addsurfaceGR(GR, s, name, dimensions = None):
     
 
 def load_special_graphics(GR):
+    #add empty surface
+    addsurfaceGR(GR, Surface((1,1), pygame.SRCALPHA), "empty")
+
+    # down arrow used for conversations
+    DOWNARROW = pygame.Surface([5, 8], pygame.SRCALPHA)
+    pygame.draw.polygon(DOWNARROW, variables.WHITE, [[0, 4], [4, 4], [2, 7]])
+    DOWNARROW.fill(variables.WHITE, pygame.Rect(1, 0, 3, 3))
+    RIGHTARROW = pygame.transform.rotate(DOWNARROW, 90)
+    addsurfaceGR(GR, DOWNARROW, "downarrow")
+    addsurfaceGR(GR, RIGHTARROW, "rightarrow")
+
+    
     # duplicate and rotate the left arrow
     leftdancearrow = GR["leftdancearrow"]["img"]
     rightdancearrow = pygame.transform.rotate(leftdancearrow,180)

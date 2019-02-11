@@ -127,12 +127,10 @@ def getTextPic(text, textheight, color = variables.BLACK, savep = True):
 for x in picnames:
     if x != "" and x[0] != ".":
         addtoGR(x)
-
-#add empty surface
-addsurfaceGR(Surface((1,1), pygame.SRCALPHA), "empty")
         
-# load special graphics
-special_graphics_loader.load_special_graphics(GR)
+# load special graphics, if video is on
+if not variables.args.novideomode:
+    special_graphics_loader.load_special_graphics(GR)
         
 # count the number of player animations
 numofplayerframes = 0
@@ -142,13 +140,6 @@ numofspecialmoveeffects = 0
 while "specialmoveeffect" + str(numofspecialmoveeffects) in GR:
     numofspecialmoveeffects += 1
 
-# down arrow used for conversations
-DOWNARROW = pygame.Surface([5, 8], pygame.SRCALPHA)
-pygame.draw.polygon(DOWNARROW, variables.WHITE, [[0, 4], [4, 4], [2, 7]])
-DOWNARROW.fill(variables.WHITE, pygame.Rect(1, 0, 3, 3))
-RIGHTARROW = pygame.transform.rotate(DOWNARROW, 90)
-addsurfaceGR(DOWNARROW, "downarrow")
-addsurfaceGR(RIGHTARROW, "rightarrow")
 
 
 # for the color of difficulty and combos
