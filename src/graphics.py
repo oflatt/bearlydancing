@@ -123,13 +123,15 @@ def getTextPic(text, textheight, color = variables.BLACK, savep = True):
         
     return TextGR[text][textheight][color]
 
-# add all the pics in the pic folder
-for x in picnames:
-    if x != "" and x[0] != ".":
-        addtoGR(x)
         
-# load special graphics, if video is on
+# load graphics, if video is on
 if not variables.args.novideomode:
+    # add all the pics in the pic folder
+    for x in picnames:
+        if x != "" and x[0] != ".":
+            addtoGR(x)
+
+    
     special_graphics_loader.load_special_graphics(GR)
         
 # count the number of player animations

@@ -194,7 +194,7 @@ class SettingsMenu(FrozenClass):
 
     # returns a message to set or None
     def onkey(self, key):
-        print(pygame.key.name(key))
+        
         play_effect("onedrum", volumeoverride = self.workingcopy.volume)
         if self.state == "main":
             message = None
