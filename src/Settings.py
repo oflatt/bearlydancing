@@ -107,7 +107,10 @@ class Settings(FrozenClass):
         self.gamedata[gamename] = gamedata
 
     def getgamedata(self, gamename):
-        return self.gamedata[gamename]
+        try:
+            return self.gamedata[gamename]
+        except KeyError:
+            return None
 
     def getjoyeventname(self, event):
         eventname = "joyaxis" + str(event.axis)

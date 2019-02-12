@@ -10,8 +10,9 @@ gameplay
 - idle plant minigame
 - beetle sumo minigame
 - random avoid minigame using dp pathfinding
-- idle plant minigame
-- music for polar invaders
+- music for minigames
+- better music system on endpoints
+
 - bosses should use concepts from many enemies faced to give a sense of learning and accomplishment
 - knomi code name- bear winks at you
 - map objects and loading more safely, versioning, safely load with new content
@@ -64,6 +65,7 @@ Knob ideas for the beatmap generator
 
 
 graphics
+- random drumming octopus, drum mode
 - more life to the game- snow animations
 - automatically adjusting resolution, resolution option in settings
 

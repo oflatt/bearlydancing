@@ -2,12 +2,14 @@ from FrozenClass import FrozenClass
 
 class Game(FrozenClass):
 
-    def __init__(self, name, initfunction, inputfunction, tickfunction, drawfunction, pausefunction, unpausefunction):
-        # takes just the screen
+    def __init__(self, name, initfunction, keydownfunction, keyupfunction,
+                 tickfunction, drawfunction, pausefunction, unpausefunction):
+        # takes settings and the screen
         self.initfunction = initfunction
         
         # input function takes the current time, settings,  and the event
-        self.inputfunction = inputfunction
+        self.keydownfunction = keydownfunction
+        self.keyupfunction = keyupfunction
 
         # tick function takes the current time, settings
         self.tickfunction = tickfunction

@@ -1,9 +1,11 @@
 import pygame, os, copy, sys
+import platform
 import dill as pickle
 from pygame import Rect
+
+
 from Settings import Settings
 from Properties import Properties
-from sys import platform
 from random import randint
 from Game import Game
 
@@ -19,6 +21,8 @@ except ImportError:
     except ImportError:
         from pathtoselfmac import pathtoself
 
+
+pypyp = platform.python_implementation() == "PyPy"
 
 
 # load settings
@@ -102,10 +106,10 @@ else:
     mode = modes[0]
     ratio = mode[0]/mode[1]
 
-    if platform == 'win32':
+    if sys.platform == 'win32':
         import ctypes
         ctypes.windll.user32.SetProcessDPIAware()
-    elif platform == 'darwin':
+    elif sys.platform == 'darwin':
         import AppKit
         AppKit.NSMenu.setMenuBarVisible_(False)
         

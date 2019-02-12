@@ -92,7 +92,7 @@ def onkeydown(key):
             
     # process key in minigame
     elif variables.settings.state == "game" and not variables.settings.menuonq:
-        variables.currentgame().inputfunction(variables.settings.current_time, variables.settings, event)
+        variables.currentgame().keydownfunction(variables.settings.current_time, variables.settings, key)
 
         
     elif variables.settings.state == "conversation" and conversations.currentconversation != None:
@@ -117,7 +117,10 @@ def onkeyup(key):
     elif variables.settings.state == "battle":
         classvar.battle.onrelease(key)
     elif variables.settings.state == "conversation" and conversations.currentconversation != None:
-        conversations.currentconversation.keyrelease(key) 
+        conversations.currentconversation.keyrelease(key)
+    elif variables.settings.state == "game":
+        variables.currentgame().keyupfunction(variables.settings.current_time, variables.settings, key)
+    
         
 def onevent(event):
     global done
@@ -156,7 +159,7 @@ def onslowtick():
         joy = pygame.joystick.Joystick(i)
         if not joy.get_init():
             joy.init()
-        
+            
 def ontick():
     # set the saved message if needed
     if (variables.saved):
@@ -265,31 +268,35 @@ def ondraw():
     
 
 # -------- Main Program Loop -----------
-while not done:
-    # add the past tick to the current time
-    if not variables.generatingbeatmapp:
-        variables.settings.current_time += clock.get_time()
-    else:
-        # set it to false, done generating
-        variables.generatingbeatmapp = False
-        # do not add the time to the clock
-        clock.get_time()
-
-
-    # --- Event Processing-
-    for event in pygame.event.get():
-        onevent(event)
-    
+def main():
+    while not done:
         
-    # --- Game Logic
-    ontick()   
-    
-    # --- Drawing Code
-    ondraw()
-    
-    # We want as many frames as possible to reduce likelyhood for mismatch with screen refresh and tearing
-    clock.tick_busy_loop(0)
+        # add the past tick to the current time
+        if not variables.generatingbeatmapp:
+            variables.settings.current_time += clock.get_time()
+        else:
+            # set it to false, done generating
+            variables.generatingbeatmapp = False
+            # do not add the time to the clock
+            clock.get_time()
 
+
+        # --- Event Processing-
+        for event in pygame.event.get():
+            onevent(event)
+
+
+        # --- Game Logic
+        ontick()   
+
+        # --- Drawing Code
+        ondraw()
+
+        # We want as many frames as possible to reduce likelyhood for mismatch with screen refresh and tearing
+        clock.tick_busy_loop(0)
+
+
+main()
 
 # Close the window and quit, this is after the main loop has finished
 pygame.quit()

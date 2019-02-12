@@ -13,12 +13,13 @@ def initiategame(gamename):
     if callable(variables.games[gamename]):
         variables.games[gamename] = variables.games[gamename]()
 
-    variables.games[gamename].initfunction(variables.screen)
+    variables.games[gamename].initfunction(variables.settings, variables.screen)
 
     classvar.player.change_of_state()
-    play_effect("engagebattle")
+    
     stop_music()
     
+
 
 
 def returntoworld():
