@@ -129,18 +129,42 @@ def onevent(event):
     # key down
     if event.type == pygame.KEYDOWN:
         onkeydown(event.key)
+    elif event.type == pygame.JOYBUTTONDOWN:
+        onkeydown("joy" + str(event.button))
 
+
+    if event.type == pygame.JOYAXISMOTION:
+        keydown = variables.settings.joyaxistokeydown(event)
+        if keydown != None:
+            onkeydown(keydown)
+        else:
+            keyup = variables.settings.joyaxistokeyup(event)
+            if keyup != None:
+                onkeyup(keyup)
 
     # key up
     if event.type == pygame.KEYUP:
         onkeyup(event.key)
+    elif event.type == pygame.JOYBUTTONUP:
+        onkeyup("joy" + str(event.button))
 
 
+# goes every half second, used for detecting controllers
+def onslowtick():
+    # detect and register controllers
+    for i in range(pygame.joystick.get_count()):
+        joy = pygame.joystick.Joystick(i)
+        if not joy.get_init():
+            joy.init()
+        
 def ontick():
     # set the saved message if needed
     if (variables.saved):
         menu.saved()
         variables.saved = False
+
+    if variables.settings.slowtickp():
+        onslowtick()
 
     
     if variables.settings.state == "world" or (variables.settings.state == "conversation" and variables.settings.backgroundstate == "world"):
@@ -258,7 +282,7 @@ while not done:
     
         
     # --- Game Logic
-    ontick()    
+    ontick()   
     
     # --- Drawing Code
     ondraw()

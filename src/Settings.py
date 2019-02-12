@@ -2,16 +2,17 @@ import pygame
 from collections import OrderedDict
 from FrozenClass import FrozenClass
 
+
 class Settings(FrozenClass):
 
     def __init__(self):
         # keybindings
         self.keydict = OrderedDict()
-        self.keydict["up"] =[pygame.K_UP, pygame.K_w]
-        self.keydict["down"] = [pygame.K_DOWN, pygame.K_s]
-        self.keydict["left"] = [pygame.K_LEFT, pygame.K_a]
-        self.keydict["right"] = [pygame.K_RIGHT, pygame.K_d]
-        self.keydict["action"] = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_KP_ENTER]
+        self.keydict["up"] =[pygame.K_UP, pygame.K_w, "joyup"]
+        self.keydict["down"] = [pygame.K_DOWN, pygame.K_s, "joydown"]
+        self.keydict["left"] = [pygame.K_LEFT, pygame.K_a, "joyleft"]
+        self.keydict["right"] = [pygame.K_RIGHT, pygame.K_d, "joyright"]
+        self.keydict["action"] = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_KP_ENTER, "joy0"]
         self.keydict["zoom"] = [pygame.K_z]
         self.keydict["note1"] = [pygame.K_a]
         self.keydict["note2"] = [pygame.K_s]
@@ -31,7 +32,7 @@ class Settings(FrozenClass):
         self.keydict["note7modified"] = [pygame.K_p]
         self.keydict["note8modified"] = [pygame.K_LEFTBRACKET]
         
-        self.keydict["escape"] = [pygame.K_ESCAPE]
+        self.keydict["escape"] = [pygame.K_ESCAPE, "joy7"]
 
 
         # normal setting stuff
@@ -74,11 +75,26 @@ class Settings(FrozenClass):
         # gamedata is a dict that can be populated by Game objects
         self.gamedata = {}
         self.currentgame = None
+
+        self.lastslowtick = 0
+
+        # used to keep track of the state of joystick
+        self.stickthreshhold = 0.2
+        self.stickrightpressed = False
+        self.stickleftpressed = False
+        self.stickuppressed = False
+        self.stickdownpressed = False
         
         self._freeze()
 
     def iskey(self,binding, pygamekey):
         return pygamekey in self.keydict[binding]
+
+    def slowtickp(self):
+        if self.current_time - self.lastslowtick >= 500:
+            self.lastslowtick = self.current_time
+            return True
+        return False
         
     def soundonp(self):
         return self.volume != 0
@@ -90,8 +106,49 @@ class Settings(FrozenClass):
         elif self.zoomlevel > 2:
             self.zoomlevel = 0
 
-    def setgamedata(gamename, gamedata):
+    def setgamedata(self, gamename, gamedata):
         self.gamedata[gamename] = gamedata
 
-    def getgamedata(gamename):
+    def getgamedata(self, gamename):
         return self.gamedata[gamename]
+
+    def joyaxistokeydown(self, event):
+        if event.axis == 0:
+            if event.value > self.stickthreshhold:
+                if not self.stickrightpressed:
+                    self.stickrightpressed = True
+                    return "joyright"
+            if event.value < -self.stickthreshhold:
+                if not self.stickleftpressed:
+                    self.stickleftpressed = True
+                    return "joyleft"
+        else:
+            if event.value > self.stickthreshhold:
+                if not self.stickdownpressed:
+                    self.stickdownpressed = True
+                    return "joydown"
+            if event.value < -self.stickthreshhold:
+                if not self.stickuppressed:
+                    self.stickuppressed = True
+                    return "joyup"
+
+        return None
+
+    def joyaxistokeyup(self, event):
+        if event.axis == 0:
+            if event.value < self.stickthreshhold and event.value > -self.stickthreshhold:
+                if self.stickrightpressed:
+                    self.stickrightpressed = False
+                    return "joyright"
+                elif self.stickleftpressed:
+                    self.stickleftpressed = False
+                    return "joyleft"
+        else:
+            if event.value < self.stickthreshhold and event.value > -self.stickthreshhold:
+                if self.stickuppressed:
+                    self.stickuppressed = False
+                    return "joyup"
+                elif self.stickdownpressed:
+                    self.stickdownpressed = False
+                    return "joydown"
+        return None
