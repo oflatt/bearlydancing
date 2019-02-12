@@ -8,10 +8,10 @@ class Settings(FrozenClass):
     def __init__(self):
         # keybindings
         self.keydict = OrderedDict()
-        self.keydict["up"] =[pygame.K_UP, pygame.K_w, "joyup"]
-        self.keydict["down"] = [pygame.K_DOWN, pygame.K_s, "joydown"]
-        self.keydict["left"] = [pygame.K_LEFT, pygame.K_a, "joyleft"]
-        self.keydict["right"] = [pygame.K_RIGHT, pygame.K_d, "joyright"]
+        self.keydict["up"] =[pygame.K_UP, pygame.K_w, "joyaxis1-"]
+        self.keydict["down"] = [pygame.K_DOWN, pygame.K_s, "joyaxis1+"]
+        self.keydict["left"] = [pygame.K_LEFT, pygame.K_a, "joyaxis0-"]
+        self.keydict["right"] = [pygame.K_RIGHT, pygame.K_d, "joyaxis0+"]
         self.keydict["action"] = [pygame.K_SPACE, pygame.K_RETURN, pygame.K_KP_ENTER, "joy0"]
         self.keydict["zoom"] = [pygame.K_z]
         self.keydict["note1"] = [pygame.K_a]
@@ -78,12 +78,9 @@ class Settings(FrozenClass):
 
         self.lastslowtick = 0
 
-        # used to keep track of the state of joystick
+        # used to keep track of the state of joystick, a set containing all joy stick axis that are pressed. Example: {"joyaxis0+"} is the x-axis to the right
+        self.joyaxispressed = set()
         self.stickthreshhold = 0.2
-        self.stickrightpressed = False
-        self.stickleftpressed = False
-        self.stickuppressed = False
-        self.stickdownpressed = False
         
         self._freeze()
 
@@ -112,43 +109,38 @@ class Settings(FrozenClass):
     def getgamedata(self, gamename):
         return self.gamedata[gamename]
 
-    def joyaxistokeydown(self, event):
-        if event.axis == 0:
-            if event.value > self.stickthreshhold:
-                if not self.stickrightpressed:
-                    self.stickrightpressed = True
-                    return "joyright"
-            if event.value < -self.stickthreshhold:
-                if not self.stickleftpressed:
-                    self.stickleftpressed = True
-                    return "joyleft"
+    def getjoyeventname(self, event):
+        eventname = "joyaxis" + str(event.axis)
+        if event.value > 0:
+            eventname = eventname + "+"
         else:
-            if event.value > self.stickthreshhold:
-                if not self.stickdownpressed:
-                    self.stickdownpressed = True
-                    return "joydown"
-            if event.value < -self.stickthreshhold:
-                if not self.stickuppressed:
-                    self.stickuppressed = True
-                    return "joyup"
+            eventname = eventname + "-"
+        return eventname
 
-        return None
+    def joyaxistokeydown(self, event):
+        presslist = []
+
+        #joy = pygame.joystick.Joystick(i)
+        
+        if event.value > self.stickthreshhold or event.value < -self.stickthreshhold:
+            eventname = self.getjoyeventname(event)
+            
+            if not eventname in self.joyaxispressed:
+                self.joyaxispressed.add(eventname)
+                return eventname
+
+        return presslist
 
     def joyaxistokeyup(self, event):
-        if event.axis == 0:
-            if event.value < self.stickthreshhold and event.value > -self.stickthreshhold:
-                if self.stickrightpressed:
-                    self.stickrightpressed = False
-                    return "joyright"
-                elif self.stickleftpressed:
-                    self.stickleftpressed = False
-                    return "joyleft"
-        else:
-            if event.value < self.stickthreshhold and event.value > -self.stickthreshhold:
-                if self.stickuppressed:
-                    self.stickuppressed = False
-                    return "joyup"
-                elif self.stickdownpressed:
-                    self.stickdownpressed = False
-                    return "joydown"
-        return None
+        if event.value < self.stickthreshhold and event.value > -self.stickthreshhold:
+            eventname = self.getjoyeventname(event)
+            event.value = -event.value
+            eventnameopposite = self.getjoyeventname(event)
+            
+            if eventname in self.joyaxispressed:
+                self.joyaxispressed.remove(eventname)
+                return eventname
+            if eventnameopposite in self.joyaxispressed:
+                self.joyaxispressed.remove(eventnameopposite)
+                return eventnameopposite
+        
