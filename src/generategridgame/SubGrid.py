@@ -1,3 +1,5 @@
+import pygame
+from pygame import Rect
 
 from DestructiveFrozenClass import DestructiveFrozenClass
 
@@ -13,6 +15,7 @@ class SubGrid(DestructiveFrozenClass):
 
 
     def draw(self, time, settings, screen, offset):
+        pygame.gfxdraw.box(screen, Rect((self.rect[0]+offset[0])*screen.get_height(), 0, 1, screen.get_height()), (80, 80, 80))
         for l in self.lavas:
             l.draw(time, settings, screen, (self.rect[0] + offset[0], self.rect[1] + offset[1]))
 

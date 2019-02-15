@@ -7,6 +7,7 @@ bugs
 -"l" note was the same note as "a", which cannot be correct
 
 gameplay
+- wolfram music http://tones.wolfram.com/generate/G1R3GnsJYz0ImX9KYVUwB8IwEuFTmmQkaDfuGy2md7Z97x56
 - idle plant minigame
 - beetle sumo minigame
 - random avoid minigame using dp pathfinding

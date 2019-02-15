@@ -7,7 +7,7 @@ class Game(FrozenClass):
         # takes settings and the screen
         self.initfunction = initfunction
         
-        # input function takes the current time, settings,  and the event
+        # input function takes the current time, settings,  and the key
         self.keydownfunction = keydownfunction
         self.keyupfunction = keyupfunction
 

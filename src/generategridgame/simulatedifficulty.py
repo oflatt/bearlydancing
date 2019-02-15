@@ -1,13 +1,15 @@
 import random
 
+from variables import devprint
+
 from .Ship import Ship
 from .GridGame import GridGame
-from .constants import scrollspeed
+from .constants import basescrollspeed
 
 # test the difficulty of one subgrid
 def simulatedifficulty(subgrid, maxships, settings, pixelsize):
     result = simulatesmart(subgrid, maxships, settings, pixelsize)
-    print(result)
+    devprint(result)
     return result
 
 
@@ -15,7 +17,7 @@ def simulatedifficulty(subgrid, maxships, settings, pixelsize):
 # if you get hit by the beginning of the bounding box due to scrolling, give up
 def simulatesmart(subgrid, loopcount, settings, pixelsize):
     # time increment will decide how quickly the ship moves, needs to be high enough to escape scroll
-    timeincrement = (1000.0/scrollspeed)/5
+    timeincrement = (1000.0/basescrollspeed)/5
     maxdeaths = int(subgrid.rect.w/pixelsize)*4
     rightprobabilities = (0.7, 0.1, 0.1, 0.1)
     leftprobabilities = (0.1, 0.7, 0.1, 0.1)
@@ -98,8 +100,8 @@ def simulatesmart(subgrid, loopcount, settings, pixelsize):
                 ypos -= 1
             time += timeincrement
 
-    print(wincount)
-    print(deathcount)
+    devprint(wincount)
+    devprint(deathcount)
     return float(wincount)/deathcount
             
 
@@ -132,7 +134,7 @@ def simulateonce(subgrid, maxships, settings, pixelsize):
 
 
     # how much to increment time when moving- make it so that there is a good chance to continue moving forward
-    timeincrement = (1000.0/scrollspeed)/2
+    timeincrement = (1000.0/basescrollspeed)/2
     
     # all ships in currenttimesposstack are being simulated at time time
     time = 0

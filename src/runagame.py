@@ -34,7 +34,7 @@ game = generategridgame.generategridgame.creategame()
 
 settings = Settings()
 
-game.initfunction(screen)
+game.initfunction(settings, screen)
 
 while running:
     time = pygame.time.get_ticks()
@@ -44,7 +44,9 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
-        game.inputfunction(time, settings, event)
+            game.keydownfunction(time, settings, event.key)
+        elif event.type == pygame.KEYUP:
+            game.keyupfunction(time, settings, event.key)
         
     
     game.tickfunction(time, settings)

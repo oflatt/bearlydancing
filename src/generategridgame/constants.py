@@ -1,4 +1,7 @@
 
-keyrepeatspeed = 100
+
+basekeyrepeatspeed = 100
 # scroll speed is pixels per second
-scrollspeed = 2
+basescrollspeed = 3
+
+subgridsperlevel = 5

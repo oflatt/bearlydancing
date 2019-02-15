@@ -3,12 +3,18 @@ import pygame
 from DestructiveFrozenClass import DestructiveFrozenClass
 
 
-from .constants import keyrepeatspeed, scrollspeed
+from .constants import basekeyrepeatspeed, basescrollspeed
 
 class GridGame(DestructiveFrozenClass):
 
     def __init__(self, subgrids, ship):
         self.subgrids = subgrids
+        # offset subgrids
+        offset = 0
+        for s in self.subgrids:
+            s.rect.x += offset
+            offset += s.rect.w
+            
         self.ship = ship
         self.shippospixels = (5, 5)
         # false or a number when being held that encodes the last time pos was updated
@@ -26,52 +32,62 @@ class GridGame(DestructiveFrozenClass):
     def draw(self, time, settings, screen, pixelsize):
         offset = (-self.getscroll(time, settings, pixelsize), 0)
         for s in self.subgrids:
+            # don't draw if off the screen
+            if offset[0] + s.rect[0] > screen.get_width()/screen.get_height():
+                break
             s.draw(time, settings, screen, offset)
+            
         shippos = self.shippos(pixelsize)
         self.ship.draw(screen, (shippos[0] + offset[0], shippos[1]+offset[1]), pixelsize)
 
-    def ontick(self, time, settings):
+    def getkeyrepeatspeed(self, time, pixelsize):
+        return basekeyrepeatspeed /100 * self.getscrollspeed(time, pixelsize)
+        
+    def ontick(self, time, settings, pixelsize):
 
         
         if self.leftpresstime:
-            if time-self.leftpresstime >= keyrepeatspeed:
+            if time-self.leftpresstime >= self.getkeyrepeatspeed(time, pixelsize):
                 self = self.destructiveset("shippospixels", (self.shippospixels[0]-1, self.shippospixels[1]))
                 self = self.destructiveset("leftpresstime", time)
         if self.rightpresstime:
-            if time-self.rightpresstime >= keyrepeatspeed:
+            if time-self.rightpresstime >= self.getkeyrepeatspeed(time, pixelsize):
                 self = self.destructiveset("shippospixels", (self.shippospixels[0]+1, self.shippospixels[1]))
                 self = self.destructiveset("rightpresstime", time)
         if self.uppresstime:
-            if time-self.uppresstime >= keyrepeatspeed:
+            if time-self.uppresstime >= self.getkeyrepeatspeed(time, pixelsize):
                 self = self.destructiveset("shippospixels", (self.shippospixels[0], self.shippospixels[1]-1))
                 self = self.destructiveset("uppresstime", time)
         if self.downpresstime:
-            if time-self.downpresstime >= keyrepeatspeed:
+            if time-self.downpresstime >= self.getkeyrepeatspeed(time, pixelsize):
                 self = self.destructiveset("shippospixels", (self.shippospixels[0], self.shippospixels[1]+1))
                 self = self.destructiveset("downpresstime", time)
         return self
 
-    def onkey(self, time, settings, event, pixelsize):
 
-        
-        if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-            keyreplace = False
-            if event.type == pygame.KEYDOWN:
-                keyreplace = time-keyrepeatspeed-1
-                
-            if settings.iskey("left", event.key):
-                self = self.destructiveset("leftpresstime", keyreplace)
-            elif settings.iskey("right", event.key):
-                self = self.destructiveset("rightpresstime", keyreplace)
-            elif settings.iskey("up", event.key):
-                self = self.destructiveset("uppresstime",keyreplace)
-            elif settings.iskey("down", event.key):
-                self = self.destructiveset("downpresstime", keyreplace)
+    
+    def onkey(self, time, settings, key, pixelsize, keydownp):
+        keyreplace = False
+        if keydownp:
+            keyreplace = time-self.getkeyrepeatspeed(time, pixelsize)-1
+
+        if settings.iskey("left", key):
+            self = self.destructiveset("leftpresstime", keyreplace)
+        elif settings.iskey("right", key):
+            self = self.destructiveset("rightpresstime", keyreplace)
+        elif settings.iskey("up", key):
+            self = self.destructiveset("uppresstime",keyreplace)
+        elif settings.iskey("down", key):
+            self = self.destructiveset("downpresstime", keyreplace)
     
         return self
 
+    def getscrollspeed(self, time, pixelsize):
+        return (basescrollspeed*time/2000) * pixelsize
+
     def getscroll(self, time, settings, pixelsize):
-        return time/1000 * scrollspeed * pixelsize
+        # double the scroll speed every two seconds
+        return time/1000 * self.getscrollspeed(time, pixelsize)
 
     def gameoverp(self, time, settings, pixelsize, shippospixels = None):
         if shippospixels == None:
