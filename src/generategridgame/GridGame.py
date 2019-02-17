@@ -3,11 +3,11 @@ import pygame
 from DestructiveFrozenClass import DestructiveFrozenClass
 
 
-from .constants import basekeyrepeatspeed, basescrollspeed
+from .constants import basekeyrepeatspeed, basescrollspeed, basescrollgrowthrate
 
 class GridGame(DestructiveFrozenClass):
 
-    def __init__(self, subgrids, ship):
+    def __init__(self, subgrids, ship, scrollgrowthrate = basescrollgrowthrate):
         self.subgrids = subgrids
         # offset subgrids
         offset = 0
@@ -23,6 +23,7 @@ class GridGame(DestructiveFrozenClass):
         self.uppresstime = False
         self.downpresstime = False
 
+        self.scrollgrowthrate = scrollgrowthrate
         
         self._freeze()
 
@@ -41,7 +42,7 @@ class GridGame(DestructiveFrozenClass):
         self.ship.draw(screen, (shippos[0] + offset[0], shippos[1]+offset[1]), pixelsize)
 
     def getkeyrepeatspeed(self, time, pixelsize):
-        return basekeyrepeatspeed /100 * self.getscrollspeed(time, pixelsize)
+        return (1000.0/self.getscrollspeed(time, pixelsize))/basekeyrepeatspeed
         
     def ontick(self, time, settings, pixelsize):
 
@@ -83,11 +84,11 @@ class GridGame(DestructiveFrozenClass):
         return self
 
     def getscrollspeed(self, time, pixelsize):
-        return (basescrollspeed*time/2000) * pixelsize
+        return basescrollspeed + (basescrollspeed*time/1000*self.scrollgrowthrate)
 
     def getscroll(self, time, settings, pixelsize):
         # double the scroll speed every two seconds
-        return time/1000 * self.getscrollspeed(time, pixelsize)
+        return time/1000 * self.getscrollspeed(time, pixelsize) * pixelsize
 
     def gameoverp(self, time, settings, pixelsize, shippospixels = None):
         if shippospixels == None:

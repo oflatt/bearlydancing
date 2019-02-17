@@ -1,5 +1,6 @@
 #!/usr/bin/python
-import pygame, variables, copy, os, sys
+import pygame, variables, copy, os, sys, gc, random
+from platform import python_implementation
 from pygame import Rect
 
 
@@ -270,7 +271,9 @@ def ondraw():
 # -------- Main Program Loop -----------
 def main():
     while not done:
-        
+        # garbage collect if pypy
+        if python_implementation() == "PyPy":
+            gc.collect_step()
         # add the past tick to the current time
         if not variables.generatingbeatmapp:
             variables.settings.current_time += clock.get_time()

@@ -12,7 +12,7 @@ maxiterations = 10
 
 def randomgrid(width, safewidth, targetdifficulty, pixelsize):
     devprint("generating grid with difficulty " + str(targetdifficulty))
-    lavacount = int(math.log(0.5/targetdifficulty, 1.8))
+    lavacount = int(math.log(0.5/targetdifficulty, 2))
     lavas = []
 
     def addlava():
@@ -42,6 +42,7 @@ def randomgrid(width, safewidth, targetdifficulty, pixelsize):
             addlava()
         else:
             devprint("remove lava")
+            devprint("lavas: " + str(len(lavas)))
             lavas.pop(random.randrange(len(lavas)))
         difficulty = newdifficulty
         newdifficulty = getdifficulty()
