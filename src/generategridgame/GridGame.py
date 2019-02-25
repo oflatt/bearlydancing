@@ -1,9 +1,10 @@
 import pygame
+from pygame import Rect
 
 from DestructiveFrozenClass import DestructiveFrozenClass
 
 
-from .constants import basekeyrepeatspeed, basescrollspeed, basescrollgrowthrate
+from .constants import baseplayerspeed, basescrollspeed, basescrollgrowthrate
 
 class GridGame(DestructiveFrozenClass):
 
@@ -41,28 +42,43 @@ class GridGame(DestructiveFrozenClass):
         shippos = self.shippos(pixelsize)
         self.ship.draw(screen, (shippos[0] + offset[0], shippos[1]+offset[1]), pixelsize)
 
-    def getkeyrepeatspeed(self, time, pixelsize):
-        return (1000.0/self.getscrollspeed(time, pixelsize))/basekeyrepeatspeed
-        
-    def ontick(self, time, settings, pixelsize):
+        # draw edges of screen
+        bwidth = max(1, pixelsize*screen.get_height()/8)
+        pygame.gfxdraw.box(screen, Rect(0, 0, screen.get_width(), bwidth), (255, 0, 0))
+        pygame.gfxdraw.box(screen, Rect(0, 0, bwidth, screen.get_height()), (255, 0, 0))
+        pygame.gfxdraw.box(screen, Rect(0, screen.get_height()-bwidth, screen.get_width(), bwidth), (255, 0, 0))
 
         
-        if self.leftpresstime:
-            if time-self.leftpresstime >= self.getkeyrepeatspeed(time, pixelsize):
-                self = self.destructiveset("shippospixels", (self.shippospixels[0]-1, self.shippospixels[1]))
-                self = self.destructiveset("leftpresstime", time)
-        if self.rightpresstime:
-            if time-self.rightpresstime >= self.getkeyrepeatspeed(time, pixelsize):
-                self = self.destructiveset("shippospixels", (self.shippospixels[0]+1, self.shippospixels[1]))
-                self = self.destructiveset("rightpresstime", time)
-        if self.uppresstime:
-            if time-self.uppresstime >= self.getkeyrepeatspeed(time, pixelsize):
-                self = self.destructiveset("shippospixels", (self.shippospixels[0], self.shippospixels[1]-1))
-                self = self.destructiveset("uppresstime", time)
-        if self.downpresstime:
-            if time-self.downpresstime >= self.getkeyrepeatspeed(time, pixelsize):
-                self = self.destructiveset("shippospixels", (self.shippospixels[0], self.shippospixels[1]+1))
-                self = self.destructiveset("downpresstime", time)
+        
+    def ontick(self, time, settings, pixelsize):
+    
+        if self.leftpresstime != False:
+            # subtract scroll speed to normalize movement
+            newx = self.shippospixels[0]- ((self.getplayerspeed(time, pixelsize)-self.getscrollspeed(time, pixelsize))*(time-self.leftpresstime)/1000.0)
+            self = self.destructiveset("shippospixels",
+                                       (newx,
+                                        self.shippospixels[1]))
+            self = self.destructiveset("leftpresstime", time)
+            
+        if self.rightpresstime != False:
+            newx = self.shippospixels[0]+(self.getplayerspeed(time, pixelsize)+self.getscrollspeed(time, pixelsize))*(time-self.rightpresstime)/1000.0
+            self = self.destructiveset("shippospixels",
+                                       (newx, self.shippospixels[1]))
+            self = self.destructiveset("rightpresstime", time)
+            
+        if self.uppresstime != False:
+            self = self.destructiveset("shippospixels",
+                                       (self.shippospixels[0],
+                                        self.shippospixels[1]-(self.getplayerspeed(time, pixelsize))*(time-self.uppresstime)/1000.0))
+            self = self.destructiveset("uppresstime", time)
+            
+        if self.downpresstime != False:
+            self = self.destructiveset("shippospixels",
+                                       (self.shippospixels[0],
+                                        self.shippospixels[1]+(self.getplayerspeed(time, pixelsize))*(time-self.downpresstime)/1000.0))
+            self = self.destructiveset("downpresstime", time)
+
+            
         return self
 
 
@@ -70,7 +86,7 @@ class GridGame(DestructiveFrozenClass):
     def onkey(self, time, settings, key, pixelsize, keydownp):
         keyreplace = False
         if keydownp:
-            keyreplace = time-self.getkeyrepeatspeed(time, pixelsize)-1
+            keyreplace = time
 
         if settings.iskey("left", key):
             self = self.destructiveset("leftpresstime", keyreplace)
@@ -89,6 +105,9 @@ class GridGame(DestructiveFrozenClass):
     def getscroll(self, time, settings, pixelsize):
         # double the scroll speed every two seconds
         return time/1000 * self.getscrollspeed(time, pixelsize) * pixelsize
+
+    def getplayerspeed(self, time, pixelsize):
+        return self.getscrollspeed(time, pixelsize)*2
 
     def gameoverp(self, time, settings, pixelsize, shippospixels = None):
         if shippospixels == None:

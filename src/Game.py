@@ -11,6 +11,7 @@ class Game(FrozenClass):
         self.keydownfunction = keydownfunction
         self.keyupfunction = keyupfunction
 
+        
         # tick function takes the current time, settings
         self.tickfunction = tickfunction
 

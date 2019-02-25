@@ -23,7 +23,7 @@ def randomgrid(width, safewidth, targetdifficulty, pixelsize):
         lavas.append(Lava(newFRect, zeroposfunction))
 
     def getdifficulty():
-        return simulatedifficulty(SubGrid(FRect(0,0,width,1), lavas), 150, None, pixelsize)
+        return simulatedifficulty(SubGrid(FRect(0,0,width,1), lavas), 100, None, pixelsize)
 
     def withindifficultyp(diff):
         return abs(targetdifficulty-diff) < targetdifficulty/5

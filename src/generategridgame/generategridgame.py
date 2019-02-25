@@ -60,6 +60,7 @@ def generatenewgame():
 
 def initgridgame(settings, screen):
     global currentgame
+    currentgame = None
     currentgame = generatenewgame()
 
     

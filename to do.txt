@@ -76,3 +76,6 @@ Sophie:
 - update scare square
 - better dancing animations (polar giraffe)
 - some enemies outlined in black (snake, scare square has potential)
+
+megalovania
+sstzlzzzkzjzgzsgjmmtzlzzzkzjzgzsgjnntzlzzzkzjzgzsgj

@@ -30,8 +30,10 @@ if "orangekidregular" in fontlist:
     fontname = "orangekidregular"
 font = pygame.font.SysFont(fontname, 30)
 
-#game = generategridgame.generategridgame.creategame()
-game = creategame()
+# run grid game
+game = generategridgame.generategridgame.creategame()
+# run polar invaders
+#game = creategame()
 settings = Settings()
 
 game.initfunction(settings, screen)

@@ -1,11 +1,11 @@
 
 
-# a multiplier on scroll speed
-basekeyrepeatspeed = 2
-
 # scroll speed is pixels per second
 basescrollspeed = 3
 
+# a multiplier on scroll speed
+baseplayerspeed = 2.5
+
 basescrollgrowthrate = 0.1
 
-subgridsperlevel = 5
+subgridsperlevel = 8
