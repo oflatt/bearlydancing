@@ -18,7 +18,7 @@ def addlump(pointlist, startpoint, endpoint, radius, addtoy = True):
             pointlist[t%listlen][1] += math.sin(radians) * radius
         else:
             pointlist[t%listlen][0] += math.sin(radians) * radius
-        
+
 def makerock():
     outlinecolor = (105, 105, 105)
     insidegrey = randint(115, 130)

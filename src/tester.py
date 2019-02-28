@@ -1,9 +1,21 @@
+import pygame_sdl2
+pygame_sdl2.import_as_pygame()
 import pygame, ctypes, os, time
-
+ 
 
 
 # Setup
+sample_rate = 22050
+pygame.mixer.pre_init(sample_rate, 16, 2, 512)
+pygame.mixer.init()
 pygame.init()
+
+import numpy
+
+array = numpy.zeros((200, 2))
+print(array.data)
+a = pygame.mixer.Sound(buffer=array.data)
+a.play()
 
 print(pygame.key.name(273))
 

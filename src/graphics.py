@@ -5,12 +5,15 @@ from pygame import Rect
 from pygame import Surface
 import string, math
 
+
 from rdraw.rdrawrock import makerock
 from rdraw.rdrawtree import maketree, makechristmastree
 from rdraw.rdrawland import makegrassland, makesnowland
 from rdraw.rdrawmodify import createshadow
 from rdraw.rdrawflower import makeflower
 from rdraw.rdrawarcade import makecabinet
+from rdraw.rdrawsoil import drawpot
+
 from Shadow import Shadow
 import special_graphics_loader
 
@@ -366,12 +369,14 @@ def generategraphic(generatingfunction, graphicname, newworldoverride = False):
     filename = graphicname + str(variables.generatedgraphicsused[graphicname]-1) + ".png"
 
     if not os.path.exists(variables.pathtoself + "/pics/" + filename):
-        pygame.image.save(generatingfunction(), variables.pathtoself + "/pics/" + filename)
-        addtoGR(filename)
+        newpic = generatingfunction()
+        pygame.image.save(newpic, variables.pathtoself + "/pics/" + filename)
+        addsurfaceGR(newpic, nicename(filename))
     elif variables.newworldeachloadq or (newworldoverride and variables.allownewworldoverridep):
+        newpic = generatingfunction()
         os.remove(variables.pathtoself + "/pics/" + filename)
-        pygame.image.save(generatingfunction(), variables.pathtoself + "/pics/" + filename)
-        addtoGR(filename)
+        pygame.image.save(newpic, variables.pathtoself + "/pics/" + filename)
+        addsurfaceGR(newpic, nicename(filename))
 
     endofgeneration()
     return nicename(filename)
@@ -418,3 +423,8 @@ def arcadecabinet(gamename):
     def callmakecabinet():
         return makecabinet(gamename)
     return generategraphic(callmakecabinet, "randomarcadecabinet")
+
+def flowerpot(potwidth):
+    def calldrawpot():
+        return drawpot(potwidth)
+    return generategraphic(calldrawpot, "randompot")

@@ -1,4 +1,6 @@
 #!/usr/bin/python
+#import pygame_sdl2
+#pygame_sdl2.import_as_pygame()
 import pygame, variables, copy, os, sys, gc, random
 from platform import python_implementation
 from pygame import Rect

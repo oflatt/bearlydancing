@@ -1,7 +1,8 @@
 import pygame
 
 from polarinvaders.polarinvaders import creategame
-import generategridgame.generategridgame
+#import generategridgame.generategridgame
+import growgame.growgame
 
 import pygame, ctypes, os, time
 
@@ -31,7 +32,7 @@ if "orangekidregular" in fontlist:
 font = pygame.font.SysFont(fontname, 30)
 
 # run grid game
-game = generategridgame.generategridgame.creategame()
+game = growgame.growgame.creategame()
 # run polar invaders
 #game = creategame()
 settings = Settings()

@@ -50,7 +50,7 @@ def generatenewgame():
     subgrids.append(SubGrid(FRect(0,0,0.4,1), []))
     for i in range(constants.subgridsperlevel):
         subgrids.append(randomgrid(2, 0.1, currentdifficulty, pixelsize))
-        currentdifficulty -= currentdifficulty/3
+        currentdifficulty -= currentdifficulty/2
     
     global gamestarttime
     gamestarttime = None
