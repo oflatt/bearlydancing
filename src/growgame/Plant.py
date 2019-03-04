@@ -3,7 +3,7 @@ from DestructiveFrozenClass import DestructiveFrozenClass
 
 from graphics import flowerpot, getpic
 
-potpic = flowerpot(10)
+potpic = flowerpot(20)
 
 class Plant(DestructiveFrozenClass):
 
