@@ -4,6 +4,8 @@ pygame
 - checking if a surface has width or height 0 before scaling to avoid segfault
 - switch to pygame_sdl2
 
+- make calling _freeze automatic
+
 bugs
 -"l" note was the same note as "a", which cannot be correct
 

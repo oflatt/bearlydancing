@@ -61,3 +61,15 @@ class DestructiveFrozenClassTests(unittest.TestCase):
         t.data.append("blue")
         self.assertEqual(t.data, ["green", "blue"])
         self.assertEqual(deepcopied.data, ["green"])
+
+    def test_nested(self):
+
+        t = TestClassFrozen(TestClassFrozen("green"))
+        
+        t.data = 2
+        with self.assertRaises(AttributeError):
+            t.data
+
+        t = TestClassFrozen(TestClassFrozen(t))
+        t = t.destructiveset("data", TestClassFrozen("testargval"))
+        self.assertEqual(1, t.data.data)

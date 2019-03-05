@@ -1,7 +1,7 @@
 import unittest        
-import devoptions        
+import devoptions
 
-
+devoptions.args.novideomode = True
 
     
 testsuite = unittest.TestSuite()

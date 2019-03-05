@@ -14,6 +14,8 @@ from rdraw.rdrawflower import makeflower
 from rdraw.rdrawarcade import makecabinet
 from rdraw.rdrawsoil import drawpot
 
+from growgame.drawplant import drawplant
+
 from Shadow import Shadow
 import special_graphics_loader
 
@@ -428,3 +430,10 @@ def flowerpot(potwidth):
     def calldrawpot():
         return drawpot(potwidth)
     return generategraphic(calldrawpot, "randompot")
+
+# for grow game
+def makeplant(plant):
+    def callplant():
+        return drawplant(plant)
+
+    return generategraphic(callplant, "randomplant")
