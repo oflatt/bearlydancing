@@ -9,7 +9,7 @@ from variables import brighten
 from .constants import potwidth
 
 
-def shiftpointlist(pointlistin, shiftchance):
+def shiftpointlist(pointlistin, shiftchance, widthscalar, heightscalar):
     l = pointlistin.copy()
     shiftamount = 0
 
@@ -20,17 +20,17 @@ def shiftpointlist(pointlistin, shiftchance):
             else:
                 shiftamount -= 1
 
-        l[i] = (l[i][0], l[i][1]+shiftamount)
-        l[-i-1] = (l[-i-1][0], l[-i-1][1]+shiftamount)
+        l[i] = (l[i][0]*widthscalar, l[i][1]*heightscalar+shiftamount)
+        l[-i-1] = (l[-i-1][0]*widthscalar, l[-i-1][1]*heightscalar+shiftamount)
 
     return l
 
 
-def shiftpointlists(plantshapelist, shiftchance):
+def shiftpointlists(plantshapelist, shiftchance, widthscalar, heightscalar):
     listofpolygons = []
 
     for plantshape in plantshapelist:
-        listofpolygons.append(shiftpointlist(plantshape.polygonlist, shiftchance))
+        listofpolygons.append(shiftpointlist(plantshape.polygonlist, shiftchance, widthscalar, heightscalar))
 
     for plist in listofpolygons:
         if len(plist) % 2 != 0:
@@ -38,8 +38,8 @@ def shiftpointlists(plantshapelist, shiftchance):
     return listofpolygons
 
 
-def transformtopointlists(plantshapelist, shiftchance, angle, offset):
-    listofpolygonlists = shiftpointlists(plantshapelist, shiftchance)
+def transformtopointlists(plantshapelist, shiftchance, angle, offset, widthscalar, heightscalar):
+    listofpolygonlists = shiftpointlists(plantshapelist, shiftchance, widthscalar, heightscalar)
 
     for i in range(len(listofpolygonlists)):
         listofpolygonlists[i] = rotatepointlist(listofpolygonlists[i], angle, offsetresult=offset)
@@ -48,11 +48,17 @@ def transformtopointlists(plantshapelist, shiftchance, angle, offset):
 
 def drawplant(head_node):
     surface = Surface((40, 40), SRCALPHA)
-
-    firstx = potwidth * random.random() * head_node.brancharea + surface.get_width()/2
+    
+    
     
     # the stack has the node, the currentx, and the currenty for each node in it
-    stack = [head_node, firstx, surface.get_height()-1]
+    stack = []
+
+    for i in range(head_node.repeatnumseparate):
+        stack.append(head_node)
+        firstx = potwidth * random.random() * head_node.brancharea + surface.get_width()/2
+        stack.append(firstx)
+        stack.append(surface.get_height()-1)
     
     callcount = 0
 
@@ -84,7 +90,11 @@ def drawplant(head_node):
             # pick a random angle out of the list
             angle = randomspacings.pop(random.randint(0, len(randomspacings)-1))
 
-            pointliststransformed = transformtopointlists(node.plantshapelist, node.shiftchance, angle, (currentx-node.anchor[0], currenty-node.anchor[1]))
+            widthscalar = 1 + random.random()*node.widthvariance
+            heightscalar = 1 + random.random()*node.heightvariance
+            pointliststransformed = transformtopointlists(node.plantshapelist, node.shiftchance, angle,
+                                                          (currentx-node.anchor[0], currenty-node.anchor[1]),
+                                                          widthscalar, heightscalar)
 
 
             for i in range(len(pointliststransformed)):
@@ -96,18 +106,22 @@ def drawplant(head_node):
             
             # find the new currentx and currenty
             mainlistlen = len(node.plantshapelist[0].polygonlist)
-            randindex = random.randint(int(mainlistlen/2 - mainlistlen*node.brancharea),
-                                       int(mainlistlen/2 + mainlistlen*node.brancharea))
             mainltranslated = pointliststransformed[0]
-            futurex = mainltranslated[randindex][0]
-            futurey = mainltranslated[randindex][1]
 
+            
             # add all the children at the current position
-            for n in node.children:
-                stack.append(n)
-                stack.append(futurex)
-                stack.append(futurey)
+            for childnode in node.children:
+                for i in range(childnode.repeatnumseparate):
+                    
+                    randindex = random.randint(int(mainlistlen/2 - mainlistlen*childnode.brancharea),
+                                               int(mainlistlen/2 + mainlistlen*childnode.brancharea))
+                    futurex = mainltranslated[randindex][0]
+                    futurey = mainltranslated[randindex][1]
+                    stack.append(childnode)
+                    stack.append(futurex)
+                    stack.append(futurey)
 
+                
     # draw dirt clumps at bottom
     clumpscale = 0.1
     for i in range(3):

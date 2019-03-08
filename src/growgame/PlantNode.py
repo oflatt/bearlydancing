@@ -27,10 +27,14 @@ class PlantNode(DestructiveFrozenClass):
         self.repeatnumcircle = repeatnumcircle
 
         # corresponds to how many petals/branches to make at different spots
-        # example: repeatnumseperate of 3 and repeatnumcircle of 5 would be three groups of 5 petals
-        self.repeatnumseperate = 1
+        # example: repeatnumseparate of 3 and repeatnumcircle of 5 would be three groups of 5 petals
+        self.repeatnumseparate = 1
 
+        # stretching and shifting
         self.shiftchance = 0.15
+        # max  percent of height that can be added on
+        self.heightvariance = 0.1
+        self.widthvariance = 0.1
 
         # what percent of the plant you can branch from
         self.brancharea = 0.05
