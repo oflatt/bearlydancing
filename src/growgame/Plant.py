@@ -4,7 +4,7 @@ from DestructiveFrozenClass import DestructiveFrozenClass
 from graphics import getpic, makeplant
 
 
-from .constants import potpic
+from .growgraphics import potpic
 from .drawplant import drawplant
 
 

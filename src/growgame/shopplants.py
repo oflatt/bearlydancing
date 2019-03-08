@@ -42,7 +42,7 @@ for x in range(petal_numofpoints):
 
     
 petal_shape = PlantShape(petal_list, (0, 0, 200), (0, 0, 120))
-petalnode = PlantNode([petal_shape], 4, (0, 0), math.pi/2)
+petalnode = PlantNode([petal_shape], 5, (0, 0), math.pi*2 / 5)
 starter_flower = PlantNode([bigstem_plantshape], 1, (0, 0), math.pi/10, children = [petalnode])
 
 addshopplant(ShopPlant("blue flower", starter_flower, 0))
