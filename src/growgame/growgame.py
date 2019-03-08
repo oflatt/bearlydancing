@@ -19,6 +19,7 @@ def ontick(outsidetime, settings):
         
 
 def ondraw(outsidetime, settings, screen):
+    screen.fill((0,0,0))
     settings.getgamedata("growgame").draw(outsidetime, settings, screen)
 
 def onpause(time):

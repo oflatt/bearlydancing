@@ -16,6 +16,8 @@ import tests.test_destructive
 addTestModule(tests.test_destructive)
 import tests.test_rdraw
 addTestModule(tests.test_rdraw)
+import tests.test_pointlist_functions
+addTestModule(tests.test_pointlist_functions)
 
 runner = unittest.TextTestRunner()
 result = runner.run(testsuite)

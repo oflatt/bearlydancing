@@ -432,8 +432,8 @@ def flowerpot(potwidth):
     return generategraphic(calldrawpot, "randompot")
 
 # for grow game
-def makeplant(plant):
+def makeplant(plantnode):
     def callplant():
-        return drawplant(plant)
+        return drawplant(plantnode)
 
     return generategraphic(callplant, "randomplant")

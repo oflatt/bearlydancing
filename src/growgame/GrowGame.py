@@ -1,6 +1,9 @@
 from DestructiveFrozenClass import DestructiveFrozenClass
 from .Garden import Garden
 
+from .shopplants import getplantbyname
+from .Plant import Plant
+
 class GrowGame(DestructiveFrozenClass):
 
     def __init__(self):
@@ -8,6 +11,7 @@ class GrowGame(DestructiveFrozenClass):
         self.state = 'play'
         self.scale = 12
         self.garden = Garden()
+        self.garden.addplant(Plant(getplantbyname("blue flower").headnode))
         self._freeze()
 
 
