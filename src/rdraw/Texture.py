@@ -24,7 +24,7 @@ class Texture(FrozenClass):
         # distruibution for the next pixel
         # can be uniform or geometric
         self.distruibution = "uniform"
-
+        
         # if true it only picks one of the directions to add out of the ones picked
         self.pickonedirp = False
 
@@ -48,14 +48,14 @@ class Texture(FrozenClass):
         # the bounds that pixels will have a chance to initiate the texture
         self.texturingbounds = [None, None, None, None]
 
-        # per pixel, vary the colors by this much
+        # per pixel, vary the colors by this much (on either side, so a variance of 5 is + or - 5)
         self.redvariancefactor = 0
         self.greenvariancefactor = 0
         self.bluevariancefactor = 0
         
-        self.redvarianceperspawn = 0
-        self.greenvarianceperspawn = 0
-        self.bluevarianceperspawn = 0
+        self.redvarianceperspawn = 2
+        self.greenvarianceperspawn = 2
+        self.bluevarianceperspawn = 2
 
         # change the colors by this every time you move vertically
         # ex: (10, 10, 10) would make the color brighter as you move down

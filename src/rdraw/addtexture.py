@@ -1,5 +1,5 @@
 import random, pygame
-from Texture import Texture
+from .Texture import Texture
 
 # fills a polygon with a point in the polygon
 # s is the surface, firstpoint is the starting point, fillcolor is the color to fill

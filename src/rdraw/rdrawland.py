@@ -1,8 +1,8 @@
 import pygame, variables, random, math
 from pygame import draw
 from random import randint
-from Texture import Texture
-from addtexture import addtexture
+from .Texture import Texture
+from .addtexture import addtexture
 from pygame import Rect
 from .rdrawtree import snowclump
 from .rdrawrock import addlump

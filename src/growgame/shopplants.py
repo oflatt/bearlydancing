@@ -2,9 +2,12 @@ import math
 
 from DestructiveFrozenClass import DestructiveFrozenClass
 from variables import brighten
+from rdraw.pointlist import listarc
+from rdraw.Texture import Texture
 
 from .PlantNode import PlantNode
 from .PlantShape import PlantShape
+
 
 class ShopPlant(DestructiveFrozenClass):
 
@@ -40,9 +43,18 @@ def add_starter():
         petal_list.append((x, 4*math.sin(x/petal_numofpoints * math.pi)))
 
 
+    middlecolor = (241, 252, 63)
+    middletexture = Texture(brighten(middlecolor, -50), 0.25, 0.1, 0.1, acceptedcolors = [middlecolor])
+
+    middleradius = 2.5
+    middlelist = listarc(-middleradius, 0, middleradius*2, middleradius, 8)
+    middleshape = PlantShape(middlelist, middlecolor, brighten(middlecolor, -30))
+    middlenode = PlantNode([middleshape], 1, (0, 0), math.pi/20)
+
     petal_shape = PlantShape(petal_list, (0, 0, 200), (0, 0, 120))
     petalnode = PlantNode([petal_shape], 5, (0, 0), math.pi*2 / 5)
-    starter_flower = PlantNode([bigstem_plantshape], 1, (0, 0), math.pi/10, children = [petalnode])
+    starter_flower = PlantNode([bigstem_plantshape], 1, (0, 0), math.pi/10, children = [middlenode, petalnode])
+    
 
     
     addshopplant(ShopPlant("blue flower", starter_flower, 0))
@@ -86,4 +98,4 @@ def add_rose():
 
 
 add_starter()
-add_rose()
+#add_rose()

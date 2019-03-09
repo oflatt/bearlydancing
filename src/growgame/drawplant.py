@@ -1,10 +1,10 @@
 import math, random
 from pygame import gfxdraw
-from pygame import Surface, SRCALPHA
+from pygame import Surface, SRCALPHA, Rect
 
-from rdraw.pointlist import rotatepointlist
+from rdraw.pointlist import rotatepointlist, offsetpointlist, getlistbounds
 from rdraw.rdrawsoil import dirtcolor
-from variables import brighten
+from variables import brighten, devprint
 
 from .constants import potwidth
 
@@ -38,14 +38,15 @@ def shiftpointlists(plantshapelist, shiftchance, widthscalar, heightscalar):
     return listofpolygons
 
 
-def transformtopointlists(plantshapelist, shiftchance, angle, offset, widthscalar, heightscalar):
+
+# returns a list of transformed polygon lists from the shapelist
+def transformtopointlists(plantshapelist, shiftchance, angle, widthscalar, heightscalar):
     listofpolygonlists = shiftpointlists(plantshapelist, shiftchance, widthscalar, heightscalar)
 
     for i in range(len(listofpolygonlists)):
-        listofpolygonlists[i] = rotatepointlist(listofpolygonlists[i], angle, offsetresult=offset)
+        listofpolygonlists[i] = rotatepointlist(listofpolygonlists[i], angle, offsetresult=(0,0))
     
     return listofpolygonlists
-
 
 
 # returns a list of index positions in a polygon list on which to spawn new nodes
@@ -90,10 +91,49 @@ def getfuturenodeindexpositions(numberofnodes, polygonlistlength, percentofbranc
         raise Exception("Bad number of indexes")
     return indexes
 
+
+# returns a new or the old surface with the input node added
+# also returns the polygon list for the first node that has been translated, along with the offset for that polygon list
+def surface_with_node(surface, node, angle, currentoffset, widthscalar, heightscalar):
+    transformedlists = transformtopointlists(node.plantshapelist,
+                                        node.shiftchance, angle,
+                                        widthscalar, heightscalar)
+
+    mainloffset = None
+    mainltranslated = None
     
+    # go through all the plantshapes and their corresponding transformed lists
+    for i in range(len(transformedlists)):
+        currentlist = transformedlists[i]
+        bounds = getlistbounds(currentlist)
+        
+        surfaceoffset = (currentoffset[0]-node.anchor[0]+bounds[0], currentoffset[1]-node.anchor[1]+bounds[1])
+        print(surfaceoffset)
+
+        # make the surface
+        shape_surface = Surface((bounds.width, bounds.height), SRCALPHA)
+        # translate points into this surface
+        shiftedlist = offsetpointlist(currentlist, (-bounds[0], -bounds[1]))
+        if i == 0:
+            mainloffset = surfaceoffset
+            mainltranslated = shiftedlist
+
+        # draw the plant shape onto the new surface
+        plantshape = node.plantshapelist[i]
+        if plantshape.fillcolor != None:
+            gfxdraw.filled_polygon(shape_surface, shiftedlist, plantshape.fillcolor)
+        if plantshape.outlinecolor != None:
+            gfxdraw.polygon(shape_surface, shiftedlist, plantshape.outlinecolor)
+
+        # now blit onto the input surface
+        surface.blit(shape_surface, surfaceoffset)
+                
+    return surface, mainltranslated, mainloffset
 
 
 def drawplant(head_node):
+    devprint("drawing plant")
+    
     surface = Surface((40, 40), SRCALPHA)
     
     
@@ -138,20 +178,12 @@ def drawplant(head_node):
 
             widthscalar = 1 + random.random()*node.widthvariance
             heightscalar = 1 + random.random()*node.heightvariance
-            pointliststransformed = transformtopointlists(node.plantshapelist, node.shiftchance, angle,
-                                                          (currentx-node.anchor[0], currenty-node.anchor[1]),
-                                                          widthscalar, heightscalar)
 
-
-            for i in range(len(pointliststransformed)):
-                if node.plantshapelist[i].fillcolor != None:
-                    gfxdraw.filled_polygon(surface, pointliststransformed[i], node.plantshapelist[i].fillcolor)
-                if node.plantshapelist[i].outlinecolor != None:
-                    gfxdraw.polygon(surface, pointliststransformed[i], node.plantshapelist[i].outlinecolor)
+            # now add the current node
+            surface, mainltranslated, mainloffset = surface_with_node(surface, node, angle, (currentx, currenty), widthscalar, heightscalar)
 
             
             # find the new currentx and currenty
-            mainltranslated = pointliststransformed[0]
             mainlistlen = len(mainltranslated)
 
             
@@ -159,8 +191,8 @@ def drawplant(head_node):
             for childnode in node.children:
                 futureindexpositions = getfuturenodeindexpositions(childnode.repeatnumseparate, mainlistlen, childnode.brancharea)
                 for i in range(childnode.repeatnumseparate):
-                    futurex = mainltranslated[futureindexpositions[i]][0]
-                    futurey = mainltranslated[futureindexpositions[i]][1]
+                    futurex = mainltranslated[futureindexpositions[i]][0]+mainloffset[0]
+                    futurey = mainltranslated[futureindexpositions[i]][1]+mainloffset[1]
                     stack.append(childnode)
                     stack.append(futurex)
                     stack.append(futurey)

@@ -11,7 +11,7 @@ class GrowGame(DestructiveFrozenClass):
         self.state = 'play'
         self.scale = 12
         self.garden = Garden()
-        self.garden.addplant(Plant(getplantbyname("rose").headnode))
+        self.garden.addplant(Plant(getplantbyname("blue flower").headnode))
         self._freeze()
 
 
