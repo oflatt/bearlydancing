@@ -44,11 +44,12 @@ def add_starter():
 
 
     middlecolor = (241, 252, 63)
-    middletexture = Texture(brighten(middlecolor, -50), 0.25, 0.1, 0.1, acceptedcolors = [middlecolor])
+    middletexture = Texture(brighten(middlecolor, -50), 0.2, 0.05, 0.05, acceptedcolors = [middlecolor])
 
     middleradius = 2.5
     middlelist = listarc(-middleradius, 0, middleradius*2, middleradius, 8)
     middleshape = PlantShape(middlelist, middlecolor, brighten(middlecolor, -30))
+    middleshape = middleshape.destructiveset("texture", middletexture)
     middlenode = PlantNode([middleshape], 1, (0, 0), math.pi/20)
 
     petal_shape = PlantShape(petal_list, (0, 0, 200), (0, 0, 120))
@@ -72,6 +73,7 @@ def add_rose():
     petalnode = petalnode.destructiveset("anglevariance", 0.3)
     petalnode = petalnode.destructiveset("heightvariance", 0.2)
     petalnode = petalnode.destructiveset("widthvariance", 1)
+    petalnode = petalnode.destructiveset("brancharea", 0)
 
     
     innerpetal_list = [(0, 0)]
@@ -84,6 +86,7 @@ def add_rose():
     innerpetalnode = PlantNode([innerpetal_shape], 4, (0, 0), 0)
     innerpetalnode = innerpetalnode.destructiveset("anglevariance", 0)
     innerpetalnode = innerpetalnode.destructiveset("heightvariance", 0.4)
+    innerpetalnode = innerpetalnode.destructiveset("brancharea", 0)
 
     spikes_list = [(0, 0.5), (2, 0)]
     spikes_shape = PlantShape(spikes_list, (50, 70, 50), brighten((50, 85, 50), 20))
@@ -98,4 +101,4 @@ def add_rose():
 
 
 add_starter()
-#add_rose()
+add_rose()

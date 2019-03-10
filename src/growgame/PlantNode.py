@@ -21,7 +21,9 @@ class PlantNode(DestructiveFrozenClass):
         self.anglespace = anglespace
 
         # offset the angle in a random direction, makes things droop down
+        # angle offset is relative to the angle of the parent node
         self.angleoffset = 0
+        
         
         # corresponds to number of petals/branches to make that are identical, in a circle at the same spot
         self.repeatnumcircle = repeatnumcircle

@@ -2,8 +2,9 @@ import math, random
 from pygame import gfxdraw
 from pygame import Surface, SRCALPHA, Rect
 
-from rdraw.pointlist import rotatepointlist, offsetpointlist, getlistbounds
+from rdraw.pointlist import rotatepointlist, offsetpointlist, getlistbounds, listangleatindex
 from rdraw.rdrawsoil import dirtcolor
+from rdraw.addtexture import addtexture
 from variables import brighten, devprint
 
 from .constants import potwidth
@@ -94,6 +95,7 @@ def getfuturenodeindexpositions(numberofnodes, polygonlistlength, percentofbranc
 
 # returns a new or the old surface with the input node added
 # also returns the polygon list for the first node that has been translated, along with the offset for that polygon list
+# finally, it returns an offset needed because of any resizing of the surface
 def surface_with_node(surface, node, angle, currentoffset, widthscalar, heightscalar):
     transformedlists = transformtopointlists(node.plantshapelist,
                                         node.shiftchance, angle,
@@ -101,19 +103,20 @@ def surface_with_node(surface, node, angle, currentoffset, widthscalar, heightsc
 
     mainloffset = None
     mainltranslated = None
+    resizing_offset = (0, 0)
     
     # go through all the plantshapes and their corresponding transformed lists
     for i in range(len(transformedlists)):
         currentlist = transformedlists[i]
         bounds = getlistbounds(currentlist)
         
-        surfaceoffset = (currentoffset[0]-node.anchor[0]+bounds[0], currentoffset[1]-node.anchor[1]+bounds[1])
-        print(surfaceoffset)
+        surfaceoffset = Rect(currentoffset[0]-node.anchor[0]+bounds[0], currentoffset[1]-node.anchor[1]+bounds[1], bounds.width, bounds.height)
 
         # make the surface
         shape_surface = Surface((bounds.width, bounds.height), SRCALPHA)
         # translate points into this surface
         shiftedlist = offsetpointlist(currentlist, (-bounds[0], -bounds[1]))
+        # save the first list for other nodes to go off of
         if i == 0:
             mainloffset = surfaceoffset
             mainltranslated = shiftedlist
@@ -125,32 +128,50 @@ def surface_with_node(surface, node, angle, currentoffset, widthscalar, heightsc
         if plantshape.outlinecolor != None:
             gfxdraw.polygon(shape_surface, shiftedlist, plantshape.outlinecolor)
 
-        # now blit onto the input surface
+
+        # apply the texture if any
+        if plantshape.texture != None:
+            addtexture(shape_surface, plantshape.texture)
+            
+        # now check if resizing is needed
+        newsurfacerect = surface.get_rect().union(surfaceoffset)
+        if not newsurfacerect == surface.get_rect():
+            new_surface = Surface((newsurfacerect.width, newsurfacerect.height), SRCALPHA)
+            new_surface.blit(surface, (-newsurfacerect.x, -newsurfacerect.y))
+            resizing_offset = (resizing_offset[0]-newsurfacerect.x, resizing_offset[1]-newsurfacerect.y)
+            currentoffset = (currentoffset[0]-newsurfacerect.x, currentoffset[1]-newsurfacerect.y)
+            devprint("Resized surface to " + str(new_surface.get_width()) + " by " + str(new_surface.get_height()))
+
         surface.blit(shape_surface, surfaceoffset)
                 
-    return surface, mainltranslated, mainloffset
+    return surface, mainltranslated, mainloffset, resizing_offset
 
 
 def drawplant(head_node):
     devprint("drawing plant")
     
-    surface = Surface((40, 40), SRCALPHA)
+    surface = Surface((40, 43), SRCALPHA)
     
     
     # the stack has the node, the currentx, and the currenty for each node in it
+    # currentx and currenty are without resizing of the surface
     stack = []
+    # keeps track of offset needed because of resizing the surface
+    resizeoffset = (0, 0)
 
     for i in range(head_node.repeatnumseparate):
         stack.append(head_node)
         firstx = potwidth * random.random() * head_node.brancharea + surface.get_width()/2
         stack.append(firstx)
-        stack.append(surface.get_height()-1)
+        stack.append(surface.get_height()-3)
+        stack.append(math.pi/2) # base angle strait up to start with
     
     callcount = 0
 
     while len(stack) != 0 and callcount < 1000:
         
         callcount += 1
+        base_angle = stack.pop()
         currenty = stack.pop()
         currentx = stack.pop()
         node = stack.pop()
@@ -164,7 +185,7 @@ def drawplant(head_node):
         startspacing = random.uniform(-node.anglevariance*node.anglespace, node.anglevariance*node.anglespace)/2 * random.choice((-1, 1))
         
         # start angle so that it points up on average
-        angle = -math.pi/2 + startspacing - (spacingLength/2)  + node.angleoffset*random.choice((-1, 1))
+        angle = -base_angle + startspacing - (spacingLength/2)  + node.angleoffset*random.choice((-1, 1))
 
         # update the random spacing to be final angles
         for i in range(len(randomspacings)):
@@ -180,7 +201,8 @@ def drawplant(head_node):
             heightscalar = 1 + random.random()*node.heightvariance
 
             # now add the current node
-            surface, mainltranslated, mainloffset = surface_with_node(surface, node, angle, (currentx, currenty), widthscalar, heightscalar)
+            surface, mainltranslated, mainloffset, resizing_offset = surface_with_node(surface, node, angle, (currentx, currenty), widthscalar, heightscalar)
+            resizeoffset = (resizeoffset[0] + resizing_offset[0], resizeoffset[1]+resizeoffset[1])
 
             
             # find the new currentx and currenty
@@ -196,6 +218,7 @@ def drawplant(head_node):
                     stack.append(childnode)
                     stack.append(futurex)
                     stack.append(futurey)
+                    stack.append(listangleatindex(mainltranslated, futureindexpositions[i]))
 
                 
     # draw dirt clumps at bottom

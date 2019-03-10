@@ -396,6 +396,7 @@ def checkkey(name, key):
 def combinerects(rect1, rect2):
     return rect1.union(rect2)
 
+
 def dirtyupdateall():
     global dirtyrects
     dirtyrects = [Rect(0, 0, width, height)]
