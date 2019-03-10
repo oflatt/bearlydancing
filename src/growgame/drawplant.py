@@ -130,8 +130,8 @@ def surface_with_node(surface, node, angle, currentoffset, widthscalar, heightsc
 
 
         # apply the texture if any
-        if plantshape.texture != None:
-            addtexture(shape_surface, plantshape.texture)
+        for ptexture in plantshape.textures:
+            addtexture(shape_surface, ptexture)
             
         # now check if resizing is needed
         newsurfacerect = surface.get_rect().union(surfaceoffset)
@@ -151,6 +151,7 @@ def drawplant(head_node):
     devprint("drawing plant")
     
     surface = Surface((40, 43), SRCALPHA)
+    rootpos = (surface.get_width()/2, surface.get_height()-3)
     
     
     # the stack has the node, the currentx, and the currenty for each node in it
@@ -161,9 +162,9 @@ def drawplant(head_node):
 
     for i in range(head_node.repeatnumseparate):
         stack.append(head_node)
-        firstx = potwidth * random.random() * head_node.brancharea + surface.get_width()/2
+        firstx = potwidth * random.random() * head_node.brancharea + rootpos[0]
         stack.append(firstx)
-        stack.append(surface.get_height()-3)
+        stack.append(rootpos[1])
         stack.append(math.pi/2) # base angle strait up to start with
     
     callcount = 0
@@ -222,12 +223,12 @@ def drawplant(head_node):
 
                 
     # draw dirt clumps at bottom
-    clumpscale = 0.1
-    for i in range(3):
+    clumpscale = 0.15
+    for i in range(5):
         gfxdraw.filled_circle(surface, int(surface.get_width()/2 - clumpscale + (2+i)*clumpscale),
                        int(surface.get_height()-1),
                        int(random.uniform(surface.get_width()*clumpscale/2,
                                           surface.get_width()*clumpscale)),
                         brighten(dirtcolor, -10))
         
-    return surface
+    return surface, (rootpos[0] + resizeoffset[0], rootpos[1] + resizeoffset[1]) 

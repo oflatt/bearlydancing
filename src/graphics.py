@@ -433,7 +433,12 @@ def flowerpot(potwidth):
 
 # for grow game
 def makeplant(plantnode):
+    plantpos = None
     def callplant():
-        return drawplant(plantnode)
-
-    return generategraphic(callplant, "randomplant")
+        nonlocal plantpos
+        surface, pos = drawplant(plantnode)
+        plantpos = pos
+        return surface
+    plantname = generategraphic(callplant, "randomplant")
+    
+    return plantname, plantpos

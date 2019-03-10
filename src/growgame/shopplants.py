@@ -19,6 +19,9 @@ class ShopPlant(DestructiveFrozenClass):
 
 shopplants = []
 
+def getallplants():
+    return shopplants
+
 def getplantbyname(name):
     for p in shopplants:
         if p.name == name:
@@ -49,12 +52,12 @@ def add_starter():
     middleradius = 2.5
     middlelist = listarc(-middleradius, 0, middleradius*2, middleradius, 8)
     middleshape = PlantShape(middlelist, middlecolor, brighten(middlecolor, -30))
-    middleshape = middleshape.destructiveset("texture", middletexture)
-    middlenode = PlantNode([middleshape], 1, (0, 0), math.pi/20)
+    middleshape = middleshape.destructiveset("textures", [middletexture])
+    middlenode = PlantNode([middleshape], 1, math.pi/20)
 
     petal_shape = PlantShape(petal_list, (0, 0, 200), (0, 0, 120))
-    petalnode = PlantNode([petal_shape], 5, (0, 0), math.pi*2 / 5)
-    starter_flower = PlantNode([bigstem_plantshape], 1, (0, 0), math.pi/10, children = [middlenode, petalnode])
+    petalnode = PlantNode([petal_shape], 5, math.pi*2 / 5)
+    starter_flower = PlantNode([bigstem_plantshape], 1, math.pi/10, children = [middlenode, petalnode])
     
 
     
@@ -69,7 +72,7 @@ def add_rose():
         petal_list.append((x*0.75, 2*math.sin((1-(x**1.5/petal_numofpoints**1.5)) * math.pi)))
 
     petal_shape = PlantShape(petal_list, (120, 0, 0), (180, 0, 0))
-    petalnode = PlantNode([petal_shape], 4, (0, 0), math.pi/8)
+    petalnode = PlantNode([petal_shape], 4, math.pi/8)
     petalnode = petalnode.destructiveset("anglevariance", 0.3)
     petalnode = petalnode.destructiveset("heightvariance", 0.2)
     petalnode = petalnode.destructiveset("widthvariance", 1)
@@ -83,22 +86,36 @@ def add_rose():
         innerpetal_list.append((x*0.75, 1.5*math.sin((1-(x**1.5/innerpetal_numofpoints**1.5)) * math.pi)))
 
     innerpetal_shape = PlantShape(innerpetal_list, (100, 0, 0), (120, 0, 0))
-    innerpetalnode = PlantNode([innerpetal_shape], 4, (0, 0), 0)
+    innerpetalnode = PlantNode([innerpetal_shape], 4, 0)
     innerpetalnode = innerpetalnode.destructiveset("anglevariance", 0)
     innerpetalnode = innerpetalnode.destructiveset("heightvariance", 0.4)
     innerpetalnode = innerpetalnode.destructiveset("brancharea", 0)
 
     spikes_list = [(0, 0.5), (2, 0)]
     spikes_shape = PlantShape(spikes_list, (50, 70, 50), brighten((50, 85, 50), 20))
-    spikes_node = PlantNode([spikes_shape], 1, (0, 0), math.pi)
+    spikes_node = PlantNode([spikes_shape], 1, math.pi)
     spikes_node = spikes_node.destructiveset("angleoffset", math.pi/2)
     spikes_node = spikes_node.destructiveset("repeatnumseparate", 4)
     spikes_node = spikes_node.destructiveset("brancharea", 1)
     
-    rose = PlantNode([bigstem_plantshape], 1, (0, 0), math.pi/10, children = [petalnode, innerpetalnode, spikes_node])
+    rose = PlantNode([bigstem_plantshape], 1, math.pi/10, children = [petalnode, innerpetalnode, spikes_node])
 
     addshopplant(ShopPlant("rose", rose, 20))
 
 
+def add_cactus():
+    body_list = [(0,0)]
+    body_numofpoints = 16
+    for x in range(body_numofpoints):
+        body_list.append((x, 5*math.sin(x**1.5/body_numofpoints**1.5 * math.pi/2 + math.pi/2)))
+        
+    cactuscolor = (29, 183, 55)
+    body_shape = PlantShape(body_list, cactuscolor, brighten(cactuscolor, 20))
+    body_node = PlantNode([body_shape], 1, math.pi/5)
+
+    addshopplant(ShopPlant("cactus", body_node, 40))
+
+    
 add_starter()
 add_rose()
+add_cactus()
