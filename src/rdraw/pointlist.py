@@ -87,7 +87,7 @@ def listangleatindex(polygonlist, index):
     beforeindex = index-1
     afterindex = (index+1)%len(polygonlist)
     tries = 0
-    while tries != len(polygonlist):
+    while tries != len(polygonlist) and beforeindex != index:
         if polygonlist[beforeindex] == polygonlist[index]:
             beforeindex += -1
             tries += 1
@@ -96,7 +96,7 @@ def listangleatindex(polygonlist, index):
 
     while tries != len(polygonlist):
         if polygonlist[afterindex] == polygonlist[index]:
-            afterindex += 1
+            afterindex = (afterindex + 1) % len(polygonlist)
             tries += 1
         else:
             break

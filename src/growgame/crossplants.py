@@ -7,9 +7,9 @@ from .Plant import Plant
 from .PlantNode import PlantNode
 from .PlantShape import PlantShape
 
-crossnodeschance = 0.3
+crossnodeschance = 0.2
 scalenumberchance = 0.2
-
+crosscolorschance = 0.2
 
 def colorvariation(color):
     def processone(n):
@@ -31,17 +31,31 @@ def combineshapes(nodes):
     def randshape():
         return random.choice(random.choice(alllists))
 
-    newattr = []
-    for i in range(max(1, int(averagesize))):
-        shapes = (randshape(), randshape())
-
+    def getrandomcolors():
         randomcolorindex = random.randint(0, len(shapes)-1)
         randomoutlinecolorindex = randomcolorindex
         if random.random() < 0.1:
             randomoutlinecolorindex = random.randint(0, len(shapes)-1)
 
-        randomcolor = colorvariation(shapes[randomcolorindex].fillcolor)
-        randomoutlinecolor = colorvariation(shapes[randomoutlinecolorindex].outlinecolor)
+        return colorvariation(shapes[randomcolorindex].fillcolor), colorvariation(shapes[randomoutlinecolorindex].outlinecolor)
+
+    def randomcombinecolors(c1, c2):
+        firstweight = random.uniform(0.25, 0.75)
+        secondweight = 1-firstweight
+        return (int(c1[0]*firstweight+c2[0]*secondweight),
+                int(c1[1]*firstweight+c2[1]*secondweight),
+                int(c1[2]*firstweight+c2[2]*secondweight))
+
+    newattr = []
+    for i in range(max(1, int(averagesize))):
+        shapes = (randshape(), randshape())
+
+        randomcolor, randomoutlinecolor = getrandomcolors()
+
+        if random.random() < crosscolorschance:
+            secondcolor, secondoutlinecolor = getrandomcolors()
+            randomcolor = randomcombinecolors(randomcolor, secondcolor)
+            randomoutlinecolor = randomcombinecolors(randomcolor, secondcolor)
         
         newshape = PlantShape(random.choice(shapes).polygonlist, randomcolor, randomoutlinecolor,
                               random.choice(shapes).textures, completelistp = True)
@@ -81,6 +95,17 @@ def crossnodes(nodes):
                 newattr = attr
             
             pnode = pnode.destructiveset(attrkey, newattr)
+
+    # hand tuned attributes
+
+    # chance to pick difference nodes for the repeat numbers
+    if random.random() < 0.1:
+        pnode = pnode.destructiveset("repeatnumseparate", nodes[random.randint(0, len(nodes)-1)].repeatnumseparate)
+        pnode = pnode.destructiveset("repeatnumcircle", nodes[random.randint(0, len(nodes)-1)].repeatnumcircle)
+    else:
+        repeatnumindex = random.randint(0, len(nodes)-1)
+        pnode = pnode.destructiveset("repeatnumseparate", nodes[repeatnumindex].repeatnumseparate)
+        pnode = pnode.destructiveset("repeatnumcircle", nodes[repeatnumindex].repeatnumcircle)
     
     return pnode
 
@@ -144,11 +169,14 @@ def random_node_at_layer(layerlists : List[List[PlantNode]], layerindex):
             random_layer = random.randint(layerindex, maxlayer)
         elif random.random() < 0.05:
             random_layer = random.randint(0, layerindex)
-        devprint(random_layer)
         return random_node_from_layer(random_layer)
 
     # chance to cross nodes
-    return copy.deepcopy(random_node())
+    if random.random() < crossnodeschance:
+        devprint("crossing nodes")
+        return crossnodes([random_node(), random_node()])
+    else:
+        return copy.deepcopy(random_node())
 
 
 # destroys one layerlist, returning a plant head node
