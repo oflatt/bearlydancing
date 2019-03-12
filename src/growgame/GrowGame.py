@@ -15,7 +15,7 @@ class GrowGame(DestructiveFrozenClass):
 
         self.state = 'play'
         self.basescale = int(variables.height / 20 / 6)
-        self.scale = self.basescale
+        self.zoom = 0
 
         self.shopplants = make_shopplant_list()
         self.garden = Garden()
@@ -42,12 +42,14 @@ class GrowGame(DestructiveFrozenClass):
         raise Exception("No shopplant with name " + str(name))
 
 
+    def scale(self):
+        return self.basescale * (1/(1+self.zoom))
 
     def draw(self, time, settings, screen):
-        initialy = variables.height/4
+        initialy = variables.height/9
 
-        initialxspacing = 20*self.basescale
-        xspacing = 50*self.basescale
+        initialxspacing = 20*self.scale()
+        xspacing = 50*self.scale()
 
         def initialx():
             return initialxspacing + self.currentrowoffset
@@ -61,7 +63,7 @@ class GrowGame(DestructiveFrozenClass):
             self = self.destructiveset("currentrowoffset", self.currentrowoffset + xspacing)
 
         
-        self.garden.draw(time, settings, screen, self.basescale, initialx(), xspacing)
+        self.garden.draw(time, settings, screen, self.scale(), initialx(), xspacing)
         gfxdraw.box(screen, Rect(cursorx(), initialy, xspacing/15, xspacing/15), (211, 214, 64))
 
         return self
@@ -76,4 +78,6 @@ class GrowGame(DestructiveFrozenClass):
         elif settings.iskey("left", key):
             if self.cursorx > 0:
                 self = self.destructiveset("cursorx", (self.cursorx-1)%self.current_row_length())
+        elif settings.iskey("zoom", key):
+            self =self.destructiveset("zoom", (self.zoom + 1)% 3)
         return self

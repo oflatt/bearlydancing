@@ -13,7 +13,7 @@ class Garden(DestructiveFrozenClass):
     def draw(self, time, settings, screen, scale, initialx, xspacing):
         for i in range(len(self.plants)):
             self.plants[i].draw(time, settings, screen, scale,
-                                (xspacing*i+initialx, variables.height*3/4))
+                                (xspacing*i+initialx, 0))
             
     def addplant(self, newplant):
         self.plants.append(newplant)
