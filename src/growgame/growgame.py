@@ -8,7 +8,8 @@ def initgame(settings, screen):
 
     
 def onkeydown(outsidetime, settings, key):
-    pass
+    game = settings.getgamedata("growgame")
+    settings.setgamedata("growgame", game.onkeydown(key, settings))
 
 def onkeyup(outsidetime, settings, key):
     pass
@@ -20,7 +21,8 @@ def ontick(outsidetime, settings):
 
 def ondraw(outsidetime, settings, screen):
     screen.fill((0,0,0))
-    settings.getgamedata("growgame").draw(outsidetime, settings, screen)
+    data = settings.getgamedata("growgame").draw(outsidetime, settings, screen)
+    settings.setgamedata("growgame", data)
 
 def onpause(time):
     pass

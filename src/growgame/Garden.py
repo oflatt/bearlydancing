@@ -10,9 +10,7 @@ class Garden(DestructiveFrozenClass):
         self.plants = []
         self._freeze()
 
-    def draw(self, time, settings, screen, scale):
-        initialx = 20*scale
-        xspacing = 50*scale
+    def draw(self, time, settings, screen, scale, initialx, xspacing):
         for i in range(len(self.plants)):
             self.plants[i].draw(time, settings, screen, scale,
                                 (xspacing*i+initialx, variables.height*3/4))
