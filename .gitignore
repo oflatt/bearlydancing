@@ -3,6 +3,11 @@ random*
 save0*
 savebackup*
 
+# mypy
+*/.mypy_cache/*
+.mypy_cache/*
+
+
 # virtual env
 env/*
 

@@ -1,4 +1,4 @@
-dependencies = ["pygame", "numpy", "cx-Freeze"]
+dependencies = ["pygame", "numpy", "cx-Freeze", "typing"]
 dependencies.append("dill")
 
 from sys import platform

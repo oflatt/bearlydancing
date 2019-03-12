@@ -8,4 +8,5 @@ install:
 
 script:
   - python3 src/test_suite.py
+  - mypy src/bearly\ dancing.py
   

@@ -1,15 +1,17 @@
+from typing import List, Tuple
+
 from DestructiveFrozenClass import DestructiveFrozenClass
 
 
 class PlantNode(DestructiveFrozenClass):
 
     def __init__(self, plantshapelist, repeatnumcircle, anglespace, children = [], anchor = (0, 0)):
-
+        
         # a list of PlantShape to make one petal/leaf
-        self.plantshapelist = plantshapelist
+        self.plantshapelist : List[Tuple[float, float]] = plantshapelist
 
         # where in the plantshapelist the base of the shape is
-        self.anchor = anchor
+        self.anchor : Tuple[float, float] = anchor
 
         # child PlantNodes
         self.children = children

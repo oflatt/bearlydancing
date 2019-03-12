@@ -2,6 +2,7 @@ import pygame, os, copy, sys
 import platform
 import dill as pickle
 from pygame import Rect
+from typing import List
 
 
 from Settings import Settings
@@ -104,7 +105,8 @@ else:
 
     modes = pygame.display.list_modes()
     mode = modes[0]
-    ratio = mode[0]/mode[1]
+    if not mode is None:
+        ratio = mode[0]/mode[1]
 
     if sys.platform == 'win32':
         import ctypes
@@ -121,8 +123,9 @@ else:
 
 #(ctypes.windll.user32.GetSystemMetrics(0),ctypes.windll.user32.GetSystemMetrics(1))
 # Set the width and height of the screen [width,height]
-height = mode[1]
-width = mode[0]
+if not mode is None:
+    height = mode[1]
+    width = mode[0]
 
 if testsmallp:
     height = int(height/2)
@@ -145,9 +148,9 @@ if not args.novideomode:
 # this is used so that time does not continue durng the frame that it generates the beatmap
 generatingbeatmapp = False
 
-olddirtyrects = []
+olddirtyrects : List[Rect] = []
 # keep track of areas of the screen to update. Blitting is done regardless of dirty rects, but when a dirtyrect is appended to this list it is updated twice- this frame and next
-dirtyrects = []
+dirtyrects : List[Rect] = []
 #screen = pygame.Surface([height, width])
 
 unrounded_displayscale = height*0.0025

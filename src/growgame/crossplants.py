@@ -5,6 +5,7 @@ from .PlantNode import PlantNode
 from .PlantShape import PlantShape
 
 combinenodeschance = 0.5
+scalenumberchance = 0.2
 
 
 def combinechildren(nodes):
@@ -68,6 +69,13 @@ def crossnodes(nodes):
                 newattr = combinechildren(nodes)
             elif attrkey == "plantshapelist":
                 newattr = combineshapes(nodes)
+            elif type(attr) == float or type(attr) == int:
+                if random.random() < 0.2:
+                    newattr = attr*random.uniform(0.5, 1.5)*random.choice((-1, 1))
+                    if type(attr) == int:
+                        newattr = int(attr)
+                else:
+                    newattr = attr
             else:
                 newattr = attr
             
