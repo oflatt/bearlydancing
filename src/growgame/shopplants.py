@@ -35,7 +35,11 @@ def addshopplant(shopplant):
 
 bigstem_list = [(0,0)]
 for x in range(20):
-    bigstem_list.append((x, 0.25))
+    bigstem_list.append((x, -0.25))
+    if x == 20-1:
+        bigstem_list.append((x, 0.0))
+print(bigstem_list)
+        
 bigstem_plantshape = PlantShape(bigstem_list, (0, 200, 0), (0, 120, 0))
 
 def add_starter():
@@ -69,11 +73,11 @@ def add_rose():
     petal_numofpoints = 13
     
     for x in range(petal_numofpoints):
-        petal_list.append((x*0.75, 2*math.sin((1-(x**1.5/petal_numofpoints**1.5)) * math.pi)))
+        petal_list.append((x*0.75, -(2*math.sin((1-(x**1.5/petal_numofpoints**1.5)) * math.pi))))
 
     petal_shape = PlantShape(petal_list, (120, 0, 0), (180, 0, 0))
     petalnode = PlantNode([petal_shape], 4, math.pi/8)
-    petalnode = petalnode.destructiveset("anglevariance", 0.3)
+    petalnode = petalnode.destructiveset("anglevariance", 0.1)
     petalnode = petalnode.destructiveset("heightvariance", 0.2)
     petalnode = petalnode.destructiveset("widthvariance", 1)
     petalnode = petalnode.destructiveset("brancharea", 0)
@@ -83,7 +87,8 @@ def add_rose():
     innerpetal_numofpoints = 13
     
     for x in range(innerpetal_numofpoints):
-        innerpetal_list.append((x*0.75, 1.5*math.sin((1-(x**1.5/innerpetal_numofpoints**1.5)) * math.pi)))
+        innerpetal_list.append((x*0.75, -(1.5*math.sin((1-(x**1.5/innerpetal_numofpoints**1.5)) * math.pi))))
+    
 
     innerpetal_shape = PlantShape(innerpetal_list, (100, 0, 0), (120, 0, 0))
     innerpetalnode = PlantNode([innerpetal_shape], 4, 0)
@@ -104,16 +109,34 @@ def add_rose():
 
 
 def add_cactus():
+    spike_list = [(0, 0), (1.5, 0)]
+    spikecolor = (80, 80, 80)
+    spikes_shape = PlantShape(spike_list, spikecolor, spikecolor)
+    spike_node = PlantNode([spikes_shape], 1, math.pi/4)
+    spike_node = spike_node.destructiveset("repeatnumseparate", 10)
+    spike_node = spike_node.destructiveset("brancharea", 1)
+    spike_node = spike_node.destructiveset("shiftchance", 0.05)
+    
     body_list = [(0,0)]
-    body_numofpoints = 16
+    body_numofpoints = 20
+    roundedness = 3.5
     for x in range(body_numofpoints):
-        body_list.append((x, 5*math.sin(x**1.5/body_numofpoints**1.5 * math.pi/2 + math.pi/2)))
-        
-    cactuscolor = (29, 183, 55)
-    body_shape = PlantShape(body_list, cactuscolor, brighten(cactuscolor, 20))
-    body_node = PlantNode([body_shape], 1, math.pi/5)
+        body_list.append((x, -(5*math.sin(x**roundedness/body_numofpoints**roundedness * math.pi/2 + math.pi/2))))
 
+
+    cactuscolor = (29, 183, 55)
+    spiketexture = Texture(spikecolor, 0.1, 0.15, 0.05, acceptedcolors = [cactuscolor])
+
+    body_shape = PlantShape(body_list, cactuscolor, brighten(cactuscolor, -20))
+    body_shape = body_shape.destructiveset("textures", [spiketexture])
+    body_node = PlantNode([body_shape], 1, math.pi/5, children = [spike_node])
+    body_node = body_node.destructiveset("shiftchance", 0.0)
+    body_node = body_node.destructiveset("widthvariance", 0.4)
+    body_node = body_node.destructiveset("heightvariance", 0.4)
+    
+    
     addshopplant(ShopPlant("cactus", body_node, 40))
+
 
     
 add_starter()

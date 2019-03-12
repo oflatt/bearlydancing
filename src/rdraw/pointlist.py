@@ -1,4 +1,4 @@
-import math
+import math, numpy
 from pygame import Rect
 
 # starts at startx and starty as the left side of the circle
@@ -16,12 +16,13 @@ def listarc(startx, starty, width, height, numofpoints):
     return pointlist
 
 
-# returns a new list with rotated points
+# returns a new list with rotated points, counter clockwise
 def rotatepointlist(l, angle, offsetresult = (0,0)):
+
     newl = []
     for p in l:
-        newl.append((p[0]*math.cos(angle)-p[1]*math.sin(angle) + offsetresult[0],
-                     p[1]*math.cos(angle)+p[0]*math.sin(angle) + offsetresult[1]))
+        newl.append((p[0]*math.cos(angle)-(-p[1])*math.sin(angle) + offsetresult[0],
+                     -((-p[1])*math.cos(angle)+p[0]*math.sin(angle)) + offsetresult[1]))
 
     return newl
 
@@ -53,13 +54,63 @@ def getlistbounds(polygonlist):
     bounds[3] += 2
     return Rect(bounds[0], bounds[1], bounds[2]-bounds[0], bounds[3]-bounds[1])
 
-# find the angle tangent to the point at the index in the clockwise direction
-# does this by taking the vector to the next point and rotating it
+
+
+def unit_vector(vector):
+    """ Returns the unit vector of the vector.  """
+    return vector / numpy.linalg.norm(vector)
+
+
+def angle_between(v1, v2):
+    """ Returns the angle in radians between vectors 'v1' and 'v2'::
+
+            >>> angle_between((1, 0, 0), (0, 1, 0))
+            1.5707963267948966
+            >>> angle_between((1, 0, 0), (1, 0, 0))
+            0.0
+            >>> angle_between((1, 0, 0), (-1, 0, 0))
+            3.141592653589793
+    """
+    v1_u = unit_vector(v1)
+    v2_u = unit_vector(v2)
+
+    return numpy.arccos(numpy.clip(numpy.dot(v1_u, v2_u), -1.0, 1.0))
+
+# returns the angle between the vectors in the clockwise direction
+def counterclockwise_angle(v1, v2):
+    dot = v1[0]*v2[0] + (v1[1])*(v2[1])      # dot product between [v1[0], (-v1[1])] and [v2[0], (-v2[1])]
+    det = v1[0]*(v2[1]) - (v1[1])*v2[0]      # determinant
+    return math.atan2(det, dot)  # atan2(y, x) or atan2(sin, cos)
+
+
 def listangleatindex(polygonlist, index):
     beforeindex = index-1
     afterindex = (index+1)%len(polygonlist)
-    #v1 = (polygonlist[index][1]-polygonlist[beforeindex][1], polygonlist[index][0]-polygonlist[beforeindex][0])
-    v2 = (polygonlist[index][1]-polygonlist[afterindex][1], polygonlist[index][0]-polygonlist[afterindex][0])
-    #angle1 = math.atan2(v1[1], v1[0])
-    angle2 = math.atan2(v2[1], v2[0])
-    return angle2-(math.pi/2)
+    tries = 0
+    while tries != len(polygonlist):
+        if polygonlist[beforeindex] == polygonlist[index]:
+            beforeindex += -1
+            tries += 1
+        else:
+            break
+
+    while tries != len(polygonlist):
+        if polygonlist[afterindex] == polygonlist[index]:
+            afterindex += 1
+            tries += 1
+        else:
+            break
+    
+    v1 = (polygonlist[beforeindex][0]-polygonlist[index][0],
+          -(polygonlist[beforeindex][1]-polygonlist[index][1]))
+    v2 = (polygonlist[afterindex][0]-polygonlist[index][0],
+          -(polygonlist[afterindex][1]-polygonlist[index][1]))
+
+
+
+    angleofv2 = math.atan2(v2[1], v2[0])
+    angleofv1 = math.atan2(v1[1], v1[0])
+    angle_between_directional = counterclockwise_angle(v1, v2)
+        
+    return float(angleofv2 + math.pi - abs(angle_between_directional)/2) % (math.pi*2)
+

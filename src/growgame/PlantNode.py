@@ -33,7 +33,7 @@ class PlantNode(DestructiveFrozenClass):
         self.repeatnumseparate = 1
 
         # stretching and shifting
-        self.shiftchance = 0.15
+        self.shiftchance = 0.1
         # max  percent of height that can be added on
         self.heightvariance = 0.1
         self.widthvariance = 0.1

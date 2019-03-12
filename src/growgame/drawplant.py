@@ -10,28 +10,50 @@ from variables import brighten, devprint
 from .constants import potwidth
 
 
-def shiftpointlist(pointlistin, shiftchance, widthscalar, heightscalar):
-    l = pointlistin.copy()
-    shiftamount = 0
-
-    for i in range(int(len(l)/2)): 
-        if random.random() < shiftchance + shiftchance*i/len(l):
+def addtoshiftlist(shiftlist, newmaxx, shiftchance):
+    
+    numbertoadd = newmaxx-len(shiftlist)+2
+    if len(shiftlist) == 0:
+        currentshiftamount = 0
+    else:
+        currentshiftamount = shiftlist[-1]
+    for i in range(int(numbertoadd)):
+        if random.random() < shiftchance + shiftchance*(i+newmaxx)/newmaxx:
             if random.random() < 0.5:
-                shiftamount += 1
+                currentshiftamount += 1
             else:
-                shiftamount -= 1
+                currentshiftamount -= 1
+                
+        shiftlist.append(currentshiftamount)
 
-        l[i] = (l[i][0]*heightscalar, l[i][1]*widthscalar+shiftamount)
-        l[-i-1] = (l[-i-1][0]*heightscalar, l[-i-1][1]*widthscalar+shiftamount)
+# offsetlist is a shared list of the shift amounds for each x position in the list
+def shiftpointlist(pointlistin, shiftlist, shiftchance, widthscalar, heightscalar):
+    l = pointlistin.copy()
+
+    maxx = pointlistin[int(len(pointlistin)/2)][0]
+    if len(shiftlist) <= maxx:
+        addtoshiftlist(shiftlist, maxx, shiftchance)
+
+    for i in range(int(len(l)/2)):
+        newx = l[i][0]*heightscalar
+        # use the x pos as the index into shiftlist
+        currentshift = shiftlist[int(l[i][0])]
+        l[i] = (newx, l[i][1]*widthscalar+ currentshift)
+        l[-i-1] = (newx, l[-i-1][1]*widthscalar+currentshift)
 
     return l
 
 
+# shifts point lists together and returns a list of polygon lists
 def shiftpointlists(plantshapelist, shiftchance, widthscalar, heightscalar):
     listofpolygons = []
+    shiftlist = []
+
+    # approximate how many shifts are needed with length of list
+    addtoshiftlist(shiftlist, len(plantshapelist[0].polygonlist)/2, shiftchance)
 
     for plantshape in plantshapelist:
-        listofpolygons.append(shiftpointlist(plantshape.polygonlist, shiftchance, widthscalar, heightscalar))
+        listofpolygons.append(shiftpointlist(plantshape.polygonlist, shiftlist, shiftchance, widthscalar, heightscalar))
 
     for plist in listofpolygons:
         if len(plist) % 2 != 0:
@@ -67,7 +89,7 @@ def getfuturenodeindexpositions(numberofnodes, polygonlistlength, percentofbranc
 
     # normalize it to fit into 1
     normalize_factor = 1.0/total
-    normalize_factor = normalize_factor * (polygonlistlength/2) * percentofbranch
+    normalize_factor = normalize_factor * polygonlistlength * percentofbranch
 
     # offset
     offset = (polygonlistlength/2) - (polygonlistlength/2)*percentofbranch
@@ -82,10 +104,7 @@ def getfuturenodeindexpositions(numberofnodes, polygonlistlength, percentofbranc
     for i in range(len(dispersedpositions)):
         currentpos += dispersedpositions[i] * normalize_factor
         # half chance to be on the other side
-        if random.random() < 0.5:
-            indexes.append(int(polygonlistlength-currentpos))
-        else:
-            indexes.append(int(currentpos))
+        indexes.append(int(currentpos))
 
     # should be the same length as number of nodes
     if not numberofnodes == len(indexes):
@@ -186,7 +205,7 @@ def drawplant(head_node):
         startspacing = random.uniform(-node.anglevariance*node.anglespace, node.anglevariance*node.anglespace)/2 * random.choice((-1, 1))
         
         # start angle so that it points up on average
-        angle = -base_angle + startspacing - (spacingLength/2)  + node.angleoffset*random.choice((-1, 1))
+        angle = base_angle + startspacing - (spacingLength/2)  + node.angleoffset*random.choice((-1, 1))
 
         # update the random spacing to be final angles
         for i in range(len(randomspacings)):
@@ -221,14 +240,17 @@ def drawplant(head_node):
                     stack.append(futurey)
                     stack.append(listangleatindex(mainltranslated, futureindexpositions[i]))
 
+    finalsurfaceanchor = (rootpos[0] + resizeoffset[0], rootpos[1]+resizeoffset[1])
                 
     # draw dirt clumps at bottom
-    clumpscale = 0.15
-    for i in range(5):
-        gfxdraw.filled_circle(surface, int(surface.get_width()/2 - clumpscale + (2+i)*clumpscale),
-                       int(surface.get_height()-1),
-                       int(random.uniform(surface.get_width()*clumpscale/2,
-                                          surface.get_width()*clumpscale)),
+    clumpradius = 4
+    clumprange = 14
+    clumpnum = 4
+    
+    for i in range(clumpnum):
+        gfxdraw.filled_circle(surface, int(finalsurfaceanchor[0] + i * clumprange/clumpnum - clumprange/2),
+                       int(finalsurfaceanchor[1]),
+                       int(random.uniform(clumpradius/2, clumpradius)),
                         brighten(dirtcolor, -10))
         
-    return surface, (rootpos[0] + resizeoffset[0], rootpos[1] + resizeoffset[1]) 
+    return surface, finalsurfaceanchor 
