@@ -92,6 +92,14 @@ def texturepoint(surface, x, y, t, bounds):
     # each point is a list of xpos, ypos, invisibleq
     points = [[x, y, False]]
     pointcolor = t.color
+
+    if t.acceptedcolorsspawn != None:
+        p = points[0]
+        pcolor = surface.get_at(p[0:2])
+        pcolorreduced = (pcolor[0], pcolor[1], pcolor[2])
+        if not (pcolor in t.acceptedcolorsspawn or pcolorreduced in t.acceptedcolorsspawn):
+            return
+    
     # vary it by the spawn variance
     pointcolor = (pointcolor[0]+random.randint(-t.redvarianceperspawn, t.redvarianceperspawn), pointcolor[1]+random.randint(-t.greenvarianceperspawn, t.greenvarianceperspawn), pointcolor[2]+random.randint(-t.bluevarianceperspawn, t.bluevarianceperspawn))
 

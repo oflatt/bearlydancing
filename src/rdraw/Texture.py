@@ -38,6 +38,9 @@ class Texture(FrozenClass):
         # if acceptedcolors is a list, the color to paint on must be in it
         self.acceptedcolors = acceptedcolors
 
+        # like acceptedcolors but only checked on spawn of a texture point
+        self.acceptedcolorsspawn = None
+
         # if backtrack mode is off, it will not return back in the direction of the first point
         self.backtrackmodeonq = False
 

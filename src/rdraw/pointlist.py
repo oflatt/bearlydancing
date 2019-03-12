@@ -111,6 +111,24 @@ def listangleatindex(polygonlist, index):
     angleofv2 = math.atan2(v2[1], v2[0])
     angleofv1 = math.atan2(v1[1], v1[0])
     angle_between_directional = counterclockwise_angle(v1, v2)
-        
+    
     return float(angleofv2 + math.pi - abs(angle_between_directional)/2) % (math.pi*2)
 
+def linelist_to_shapelist(l):
+    newl = l.copy()
+    for item in reversed(l):
+        newl.append(item)
+    return newl
+
+
+def scalepointlist(l, widthscale, heightscale):
+    newl = []
+    for i in range(len(l)):
+        newl.append((l[i][0]*heightscale, l[i][1]*widthscale))
+    return newl
+
+def flippointlist(l):
+    newl = []
+    for p in l:
+        newl.append((p[0], -p[1]))
+    return newl

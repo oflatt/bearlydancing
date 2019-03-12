@@ -23,7 +23,7 @@ class PlantShape(DestructiveFrozenClass):
             if not len(self.polygonlist) % 2 == 0:
                 raise Exception("polygon list length must be even")
             for i in range(int(len(self.polygonlist)/2)):
-                if not self.polygonlist[i][0] == self.polygonlist[-i][0]:
+                if not self.polygonlist[i][0] == self.polygonlist[-(i+1)][0]:
                     raise Exception("polygon list x positions in second half must correspond to x positions in first half")
 
         

@@ -248,9 +248,9 @@ def drawplant(head_node):
     clumpnum = 4
     
     for i in range(clumpnum):
-        gfxdraw.filled_circle(surface, int(finalsurfaceanchor[0] + i * clumprange/clumpnum - clumprange/2),
+        gfxdraw.filled_circle(surface, int(finalsurfaceanchor[0] + i * clumprange/clumpnum - clumprange/2)+1,
                        int(finalsurfaceanchor[1]),
-                       int(random.uniform(clumpradius/2, clumpradius)),
+                       int(random.uniform(clumpradius/3, clumpradius)),
                         brighten(dirtcolor, -10))
         
     return surface, finalsurfaceanchor 

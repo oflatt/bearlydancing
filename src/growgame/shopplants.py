@@ -2,7 +2,7 @@ import math
 
 from DestructiveFrozenClass import DestructiveFrozenClass
 from variables import brighten
-from rdraw.pointlist import listarc
+from rdraw.pointlist import listarc, linelist_to_shapelist, scalepointlist, flippointlist
 from rdraw.Texture import Texture
 
 from .PlantNode import PlantNode
@@ -38,7 +38,6 @@ for x in range(20):
     bigstem_list.append((x, -0.25))
     if x == 20-1:
         bigstem_list.append((x, 0.0))
-print(bigstem_list)
         
 bigstem_plantshape = PlantShape(bigstem_list, (0, 200, 0), (0, 120, 0))
 
@@ -125,15 +124,32 @@ def add_cactus():
 
 
     cactuscolor = (29, 183, 55)
-    spiketexture = Texture(spikecolor, 0.1, 0.15, 0.05, acceptedcolors = [cactuscolor])
+    cactuslinecolor = brighten(cactuscolor, -20)
+    spiketexture = Texture(spikecolor, 0.1, 0.2, 0.05)
+    spiketexture.acceptedcolorsspawn = [cactuscolor, cactuslinecolor]
 
-    body_shape = PlantShape(body_list, cactuscolor, brighten(cactuscolor, -20))
+    
+    bodylineshapes = []
+    number_of_lines = 2
+    for i in range(number_of_lines):
+        bodylinelist = scalepointlist(body_list, 1-((i+1)/(number_of_lines+1)), 1)
+        rightlinelist = flippointlist(bodylinelist)
+        bodylinelist = linelist_to_shapelist(bodylinelist)
+        rightlinelist = linelist_to_shapelist(rightlinelist)
+        bodylineshapes.append(PlantShape(bodylinelist, brighten(cactuscolor, -40), cactuslinecolor,completelistp = True, textures = [spiketexture]))
+        bodylineshapes.append(PlantShape(rightlinelist,brighten(cactuscolor, -40), cactuslinecolor, completelistp = True, textures = [spiketexture]))
+
+    body_shape = PlantShape(body_list, cactuscolor, brighten(cactuslinecolor, -20))
     body_shape = body_shape.destructiveset("textures", [spiketexture])
-    body_node = PlantNode([body_shape], 1, math.pi/5, children = [spike_node])
+    body_node = PlantNode([body_shape] + bodylineshapes, 1, math.pi/5, children = [spike_node])
     body_node = body_node.destructiveset("shiftchance", 0.0)
     body_node = body_node.destructiveset("widthvariance", 0.4)
     body_node = body_node.destructiveset("heightvariance", 0.4)
     
+
+    
+
+
     
     addshopplant(ShopPlant("cactus", body_node, 40))
 
