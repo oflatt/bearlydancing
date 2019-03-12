@@ -4,6 +4,7 @@ import pygame, os, variables, random, datetime
 from pygame import Rect
 from pygame import Surface
 import string, math
+from typing import Union, Dict, List, Tuple
 
 
 from rdraw.rdrawrock import makerock
@@ -85,16 +86,21 @@ def simport(filename):
 
 
 # GR is the master dictionary of all image assets
-GR = {}
+# keys are the name of the pic, and values are a dictionary with width, height, and the img
+GR : Dict[str, Dict[str, Union[Surface, int]]] = {}
+
 # TextGR is a dictionary of dictionaries for scaled text images and also has another dictionary layer for color
-TextGR = {}
+
+ColorType = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
+GRType = Dict[str , Dict[float, Dict[ColorType, Surface]]]
+TextGR : GRType = {}
 # SGR is a dictionary of dictionaries. The inner dictionaries contain scales as the keys and images as the values
 # the purpose of SGR is to keep a list of all the scaled pictures for use
-SGR = {}
+SGR : GRType = {}
 # an SGR for masks
-MGR = {}
+MGR : GRType = {}
 # an SGR for shadows
-shadowGR = {}
+shadowGR : GRType = {}
 
 picnames = os.listdir(variables.pathtoself + "/pics")
 

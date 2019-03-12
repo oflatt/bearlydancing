@@ -2,7 +2,7 @@ import pygame, os, copy, sys
 import platform
 import dill as pickle
 from pygame import Rect
-from typing import List
+from typing import List, Dict
 
 
 from Settings import Settings
@@ -202,7 +202,7 @@ font = pygame.font.Font(os.path.join(pathtoself, 'orangekidregular.ttf'), 30)
 
 # map stuff
 # keys are filenames like randompinetree and values are the number generated
-generatedgraphicsused = {}
+generatedgraphicsused : Dict[str, int] = {}
 
 def num_of_generated_graphics_used():
     s = 0
@@ -286,7 +286,7 @@ def getbuttonpadding():
     return int(width/70)
 
 # used to ensure that no duplicate names exist
-conversationnames = []
+conversationnames : List[str] = []
 
 # menu
 beginningprompttextcolor = BLUE

@@ -17,7 +17,7 @@ from mapsvars import *
 housewidth = GR["honeyhouseoutside"]["w"]
 househeight = GR["honeyhouseoutside"]["h"]
 houserock = Rock("honeyhouseoutside", housewidth, 0,
-                 [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())])
+                 [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())]) # type: ignore
 
 # honeyhome#####################################################################################
 insidewidth = GR["honeyhouseinside"]["w"]

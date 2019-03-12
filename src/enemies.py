@@ -1,7 +1,9 @@
+import random, copy
+from typing import List, Union
+
 from Enemy import Enemy
 from Animation import Animation
 from graphics import GR
-import random, copy
 
 defaultanimspeed = 1000
 
@@ -30,7 +32,9 @@ for a in stevehat:
     a.relativeframerate = True
     a.loopp = False
 
-steveanimation = Animation(["scarysteven00", "scarysteven01", "scarysteven02", "scarysteven03", "scarysteven04"]+stevewave+stevehat, defaultanimspeed)
+stevelist : List[Union[Animation, str]] = ["scarysteven00", "scarysteven01", "scarysteven02", "scarysteven03", "scarysteven04"]+stevewave+stevehat # type: ignore
+    
+steveanimation = Animation(stevelist, defaultanimspeed)
 steveanimation.updatealwaysbattle = True
             
 animations = []

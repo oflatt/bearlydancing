@@ -47,8 +47,9 @@ from enemies import devbattletest
 import copy
 if variables.testspecs != None:
     testenemy = copy.copy(random_enemy("woods"))
-    testenemy.lv = variables.testspecs['lv']
-    testenemy.beatmaprules = variables.testspecs['rules']
+    if not variables.testspecs is None:
+        testenemy.lv = variables.testspecs['lv']
+        testenemy.beatmaprules = variables.testspecs['rules']
     initiatebattle(testenemy)
     menu.firstbootup = False
     variables.settings.menuonq = False
