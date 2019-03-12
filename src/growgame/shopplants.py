@@ -1,37 +1,17 @@
 import math
 
-from DestructiveFrozenClass import DestructiveFrozenClass
+
 from variables import brighten
 from rdraw.pointlist import listarc, linelist_to_shapelist, scalepointlist, flippointlist
 from rdraw.Texture import Texture
 
+from .ShopPlant import ShopPlant
 from .PlantNode import PlantNode
 from .PlantShape import PlantShape
 from .crossplants import crossplants
 
 
-class ShopPlant(DestructiveFrozenClass):
 
-    def __init__(self, name, headnode, cost):
-        self.name = name
-        self.headnode = headnode
-        self.cost = cost
-        self._freeze()
-
-shopplants = []
-
-def getallplants():
-    return shopplants
-
-def getplantbyname(name):
-    for p in shopplants:
-        if p.name == name:
-            return p
-    raise Exception("No shopplant with name " + str(name))
-
-
-def addshopplant(shopplant):
-    shopplants.append(shopplant)
 
 
 bigstem_list = [(0,0)]
@@ -42,7 +22,7 @@ for x in range(20):
         
 bigstem_plantshape = PlantShape(bigstem_list, (0, 200, 0), (0, 120, 0))
 
-def add_starter():
+def makestarter():
     # make the starter flower
     petal_list = [(0, 0)]
     petal_numofpoints = 13
@@ -65,10 +45,10 @@ def add_starter():
     
 
     
-    addshopplant(ShopPlant("blue flower", starter_flower, 0))
+    return (ShopPlant("blue flower", starter_flower, 0))
 
 
-def add_rose():
+def makerose():
     petal_list = [(0, 0)]
     petal_numofpoints = 13
     
@@ -105,10 +85,10 @@ def add_rose():
     
     rose = PlantNode([bigstem_plantshape], 1, math.pi/10, children = [petalnode, innerpetalnode, spikes_node])
 
-    addshopplant(ShopPlant("rose", rose, 20))
+    return (ShopPlant("rose", rose, 20))
 
 
-def add_cactus():
+def makecactus():
     spike_list = [(0, 0), (1.5, 0)]
     spikecolor = (80, 80, 80)
     spikes_shape = PlantShape(spike_list, spikecolor, spikecolor)
@@ -152,14 +132,18 @@ def add_cactus():
 
 
     
-    addshopplant(ShopPlant("cactus", body_node, 40))
+    return (ShopPlant("cactus", body_node, 40))
 
 
-def add_cross(plant1, plant2):
-    addshopplant(ShopPlant( "cross", crossplants(plant1, plant2).headnode, 80))
+def makecross(plant1, plant2):
+    return (ShopPlant( "cross", crossplants(plant1, plant2).headnode, 80))
     
-    
-add_starter()
-add_rose()
-add_cactus()
-add_cross(shopplants[0], shopplants[1])
+
+def make_shopplant_list():
+    l = []
+    l.append(makestarter())
+    l.append(makerose())
+    l.append(makecactus())
+    l.append(makecross(l[0], l[1]))
+    return l
+
