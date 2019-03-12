@@ -7,6 +7,7 @@ from rdraw.Texture import Texture
 
 from .PlantNode import PlantNode
 from .PlantShape import PlantShape
+from .crossplants import crossplants
 
 
 class ShopPlant(DestructiveFrozenClass):
@@ -154,7 +155,11 @@ def add_cactus():
     addshopplant(ShopPlant("cactus", body_node, 40))
 
 
+def add_cross(plant1, plant2):
+    addshopplant(ShopPlant( "cross", crossplants(plant1, plant2).headnode, 80))
+    
     
 add_starter()
 add_rose()
 add_cactus()
+add_cross(shopplants[0], shopplants[1])

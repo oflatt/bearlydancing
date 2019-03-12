@@ -41,7 +41,6 @@ class PlantNode(DestructiveFrozenClass):
         # what percent of the plant you can branch from
         self.brancharea = 0.05
 
-        
-        
+                
         self._freeze()
 
