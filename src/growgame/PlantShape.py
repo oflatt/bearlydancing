@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 from DestructiveFrozenClass import DestructiveFrozenClass
 
 
@@ -12,6 +14,7 @@ class PlantShape(DestructiveFrozenClass):
         # polygonlist must be a list of even numbered points that makes a loop, and the second half must have the same x positions as the first half
         # the points must go clockwise
 
+        self.polygonlist : List[Tuple[float, float]] = []
         
         if not completelistp:
             self.polygonlist = halfpolygonlist.copy()
@@ -26,6 +29,8 @@ class PlantShape(DestructiveFrozenClass):
                 if not self.polygonlist[i][0] == self.polygonlist[-(i+1)][0]:
                     raise Exception("polygon list x positions in second half must correspond to x positions in first half")
 
+
+            
         
 
         

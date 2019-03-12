@@ -76,7 +76,7 @@ def angle_between(v1, v2):
 
     return numpy.arccos(numpy.clip(numpy.dot(v1_u, v2_u), -1.0, 1.0))
 
-# returns the angle between the vectors in the clockwise direction
+# returns the angle between the vectors in the clockwise direction, with classic math axis
 def counterclockwise_angle(v1, v2):
     dot = v1[0]*v2[0] + (v1[1])*(v2[1])      # dot product between [v1[0], (-v1[1])] and [v2[0], (-v2[1])]
     det = v1[0]*(v2[1]) - (v1[1])*v2[0]      # determinant
@@ -100,18 +100,16 @@ def listangleatindex(polygonlist, index):
             tries += 1
         else:
             break
-    
+
     v1 = (polygonlist[beforeindex][0]-polygonlist[index][0],
           -(polygonlist[beforeindex][1]-polygonlist[index][1]))
     v2 = (polygonlist[afterindex][0]-polygonlist[index][0],
           -(polygonlist[afterindex][1]-polygonlist[index][1]))
 
-
-
     angleofv2 = math.atan2(v2[1], v2[0])
     angleofv1 = math.atan2(v1[1], v1[0])
     angle_between_directional = counterclockwise_angle(v1, v2)
-    
+
     return float(angleofv2 + math.pi - abs(angle_between_directional)/2) % (math.pi*2)
 
 def linelist_to_shapelist(l):

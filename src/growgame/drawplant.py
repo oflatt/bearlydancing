@@ -64,8 +64,10 @@ def shiftpointlists(plantshapelist, shiftchance, widthscalar, heightscalar):
 
 # returns a list of transformed polygon lists from the shapelist
 def transformtopointlists(plantshapelist, shiftchance, angle, widthscalar, heightscalar):
+    
     listofpolygonlists = shiftpointlists(plantshapelist, shiftchance, widthscalar, heightscalar)
-
+    
+    
     for i in range(len(listofpolygonlists)):
         listofpolygonlists[i] = rotatepointlist(listofpolygonlists[i], angle, offsetresult=(0,0))
     
@@ -123,26 +125,25 @@ def surface_with_node(surface, node, angle, currentoffset, widthscalar, heightsc
     mainloffset = None
     mainltranslated = None
     resizing_offset = (0, 0)
-    
+    bounds = None
+
+    def surface_offset():
+        return Rect(currentoffset[0]-node.anchor[0]+bounds[0], currentoffset[1]-node.anchor[1]+bounds[1], bounds.width, bounds.height)
+
     # go through all the plantshapes and their corresponding transformed lists
     for i in range(len(transformedlists)):
         currentlist = transformedlists[i]
         bounds = getlistbounds(currentlist)
-        
-        surfaceoffset = Rect(currentoffset[0]-node.anchor[0]+bounds[0], currentoffset[1]-node.anchor[1]+bounds[1], bounds.width, bounds.height)
 
         # make the surface
         shape_surface = Surface((bounds.width, bounds.height), SRCALPHA)
         # translate points into this surface
         shiftedlist = offsetpointlist(currentlist, (-bounds[0], -bounds[1]))
-        # save the first list for other nodes to go off of
-        if i == 0:
-            mainloffset = surfaceoffset
-            mainltranslated = shiftedlist
 
         # draw the plant shape onto the new surface
         plantshape = node.plantshapelist[i]
         if plantshape.fillcolor != None:
+        
             gfxdraw.filled_polygon(shape_surface, shiftedlist, plantshape.fillcolor)
         if plantshape.outlinecolor != None:
             gfxdraw.polygon(shape_surface, shiftedlist, plantshape.outlinecolor)
@@ -151,17 +152,33 @@ def surface_with_node(surface, node, angle, currentoffset, widthscalar, heightsc
         # apply the texture if any
         for ptexture in plantshape.textures:
             addtexture(shape_surface, ptexture)
+
             
         # now check if resizing is needed
-        newsurfacerect = surface.get_rect().union(surfaceoffset)
+        newsurfacerect = surface.get_rect().union(surface_offset())
+        
         if not newsurfacerect == surface.get_rect():
             new_surface = Surface((newsurfacerect.width, newsurfacerect.height), SRCALPHA)
             new_surface.blit(surface, (-newsurfacerect.x, -newsurfacerect.y))
+
             resizing_offset = (resizing_offset[0]-newsurfacerect.x, resizing_offset[1]-newsurfacerect.y)
+
             currentoffset = (currentoffset[0]-newsurfacerect.x, currentoffset[1]-newsurfacerect.y)
+
+            if not mainloffset is None:
+                mainloffset = (mainloffset[0] - newsurfacerect.x, currentoffset[1]-newsurfacerect.y)
+
+            surface = new_surface
+            
             devprint("Resized surface to " + str(new_surface.get_width()) + " by " + str(new_surface.get_height()))
 
-        surface.blit(shape_surface, surfaceoffset)
+        surface.blit(shape_surface, surface_offset())
+
+        # also save the first list for other nodes to go off of
+        if i == 0:
+            mainloffset = surface_offset()
+            mainltranslated = shiftedlist
+            
                 
     return surface, mainltranslated, mainloffset, resizing_offset
 
@@ -221,8 +238,8 @@ def drawplant(head_node):
             heightscalar = 1 + random.random()*node.heightvariance
 
             # now add the current node
-            surface, mainltranslated, mainloffset, resizing_offset = surface_with_node(surface, node, angle, (currentx, currenty), widthscalar, heightscalar)
-            resizeoffset = (resizeoffset[0] + resizing_offset[0], resizeoffset[1]+resizeoffset[1])
+            surface, mainltranslated, mainloffset, withnode_resizing_offset = surface_with_node(surface, node, angle, (currentx, currenty), widthscalar, heightscalar)
+            resizeoffset = (resizeoffset[0] + withnode_resizing_offset[0], resizeoffset[1]+withnode_resizing_offset[1])
 
             
             # find the new currentx and currenty
@@ -238,7 +255,8 @@ def drawplant(head_node):
                     stack.append(childnode)
                     stack.append(futurex)
                     stack.append(futurey)
-                    stack.append(listangleatindex(mainltranslated, futureindexpositions[i]))
+                    futureangle = listangleatindex(mainltranslated, futureindexpositions[i])
+                    stack.append(futureangle)
 
     finalsurfaceanchor = (rootpos[0] + resizeoffset[0], rootpos[1]+resizeoffset[1])
                 

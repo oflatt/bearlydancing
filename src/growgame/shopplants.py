@@ -1,4 +1,4 @@
-import math
+import math, random
 
 
 from variables import brighten
@@ -14,11 +14,11 @@ from .crossplants import crossplants
 
 
 
-bigstem_list = [(0,0)]
+bigstem_list = [(0.0,0.0)]
 for x in range(20):
-    bigstem_list.append((x, -0.25))
+    bigstem_list.append((float(x), -0.25))
     if x == 20-1:
-        bigstem_list.append((x, 0.0))
+        bigstem_list.append((float(x), 0.0))
         
 bigstem_plantshape = PlantShape(bigstem_list, (0, 200, 0), (0, 120, 0))
 
@@ -128,15 +128,30 @@ def makecactus():
     body_node = body_node.destructiveset("heightvariance", 0.4)
     
 
-    
-
-
-    
+        
     return (ShopPlant("cactus", body_node, 40))
 
 
 def makecross(plant1, plant2):
     return (ShopPlant( "cross", crossplants(plant1, plant2).headnode, 80))
+
+
+def maketestplant():
+    lineup = []
+    for y in range(10):
+        lineup.append((0, y))
+    lineup = linelist_to_shapelist(lineup)
+    
+    shape1 = PlantShape(lineup, (200, 0, 0), (100, 0, 0), completelistp = True)
+    shape2 = PlantShape(lineup, (0, 255, 0), (0, 100, 0), completelistp = True)
+    shape3 = PlantShape(lineup, (0, 0, 255), (0, 0, 100), completelistp = True)
+    node1 = PlantNode([shape1], 1, 0)
+    node1 = node1.destructivesetfields({"anglevariance" : 0, "brancharea" : 0, "shiftchance" : 0})
+    node2 = PlantNode([shape2], 1, 0/5, children = [node1])
+    node2 = node2.destructivesetfields({"anglevariance" : 0, "brancharea" : 0, "shiftchance" : 0})
+    node3 = PlantNode([shape3], 1, 0/5, children = [node2])
+    node3 = node3.destructivesetfields({"anglevariance" : 0, "brancharea" : 0, "shiftchance" : 0})
+    return ShopPlant("test", node3, 0)
     
 
 def make_shopplant_list():
@@ -144,6 +159,8 @@ def make_shopplant_list():
     l.append(makestarter())
     l.append(makerose())
     l.append(makecactus())
-    l.append(makecross(l[0], l[1]))
+    #l.append(maketestplant())
+    for i in range(5):
+        l.append(makecross(l[random.randint(0, 2)], l[random.randint(0, 2)]))
     return l
 

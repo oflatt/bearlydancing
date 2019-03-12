@@ -38,3 +38,8 @@ class PointListTests(unittest.TestCase):
 
         l = [(2.0, 1.0), (1.0, 2.0), (0.0, 1.0)]
         assert_compare_within(listangleatindex(l, 1), math.pi+math.pi/2)
+
+        l = [(0.0, 0.0), (1.0, 0.0), (2.0, 0.0), (2.0, 0.0), (1.0, 0.0), (0.0, 0.0)]
+        assert_compare_within(listangleatindex(l, 2), 0.0)
+        assert_compare_within(listangleatindex(l, 3), 0.0)
+
