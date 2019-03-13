@@ -1,3 +1,6 @@
+from pygame import Rect, gfxdraw, Surface
+
+
 import variables
 from DestructiveFrozenClass import DestructiveFrozenClass
 
@@ -10,10 +13,32 @@ class Garden(DestructiveFrozenClass):
         self.plants = []
         self._freeze()
 
-    def draw(self, time, settings, screen, scale, initialx, xspacing):
-        for i in range(len(self.plants)):
-            self.plants[i].draw(time, settings, screen, scale,
-                                (xspacing*i+initialx, 0))
+    # returns the x position at which the cursor was drawn
+    def draw(self, time, settings, screen : Surface, scale, bottomypos : float, cursoroffset = 0, drawcursorindex = None, nodraw = False):
+        xspace = screen.get_width()/50
+        currentx = xspace
+        cursordrawpos = None
+        
+        for i in range(cursoroffset, len(self.plants)):
+            currentpos = (currentx, bottomypos)
+            if not nodraw:
+                self.plants[i].draw(time, settings, screen, scale,
+                                    currentpos)
+            if drawcursorindex == i:
+                potpos = self.plants[i].pot_pos(currentpos, scale)
+                cursordrawpos = Rect(potpos[0]-xspace, potpos[1]-xspace,
+                                     xspace, xspace)
+                gfxdraw.box(screen, cursordrawpos, (211, 214, 64))
+            currentx += self.plants[i].plantwidth*scale + xspace
+        
+        return cursordrawpos
+
+    # returns the x position of the end of the currently highlighted plant
+    def get_xpos_end_of_cursor_plant(self, cursorx : int, scale : float, oldcursoroffset : float, screen : Surface) -> float:
+        rect = self.draw(0, None, screen, scale, 0.0, cursoroffset = oldcursoroffset, drawcursorindex = cursorx, nodraw = True)
+        if rect != None:
+            rect.x += (self.plants[cursorx].plantwidth-self.plants[cursorx].plantbasexoffset)*scale 
+        return rect
             
     def addplant(self, newplant):
         self.plants.append(newplant)

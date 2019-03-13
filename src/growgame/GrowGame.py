@@ -29,8 +29,9 @@ class GrowGame(DestructiveFrozenClass):
         self.cursorx = 0
         self.cursory = 0
 
-        # for drawing- keeps track of the current scroll of the picture horizontally
-        self.currentrowoffset = 0
+        # how many items to scroll to keep things on screen
+        self.lastcursoroffset = 0
+
             
         self._freeze()
 
@@ -46,25 +47,17 @@ class GrowGame(DestructiveFrozenClass):
         return self.basescale * (1/(1+self.zoom))
 
     def draw(self, time, settings, screen):
-        initialy = variables.height/9
+        rowyspacing = variables.height/2
 
-        initialxspacing = 20*self.scale()
-        xspacing = 50*self.scale()
+        newcursoroffset = self.lastcursoroffset
+        while self.garden.get_xpos_end_of_cursor_plant(self.cursorx, self.scale(), newcursoroffset, screen) == None:
+            newcursoroffset -= 1
+        while self.garden.get_xpos_end_of_cursor_plant(self.cursorx, self.scale(), newcursoroffset, screen)[0] > variables.width:
+            newcursoroffset += 1
+            
+        self.garden.draw(time, settings, screen, self.scale(), rowyspacing, cursoroffset = newcursoroffset, drawcursorindex = self.cursorx)
 
-        def initialx():
-            return initialxspacing + self.currentrowoffset
-
-        def cursorx():
-            return initialx() + self.cursorx*xspacing - xspacing/3
-
-        while cursorx()+xspacing > screen.get_width():
-            self = self.destructiveset("currentrowoffset", self.currentrowoffset - xspacing)
-        while cursorx() < 0:
-            self = self.destructiveset("currentrowoffset", self.currentrowoffset + xspacing)
-
-        
-        self.garden.draw(time, settings, screen, self.scale(), initialx(), xspacing)
-        gfxdraw.box(screen, Rect(cursorx(), initialy, xspacing/15, xspacing/15), (211, 214, 64))
+        self = self.destructiveset("lastcursoroffset", newcursoroffset)
 
         return self
 
@@ -80,4 +73,6 @@ class GrowGame(DestructiveFrozenClass):
                 self = self.destructiveset("cursorx", (self.cursorx-1)%self.current_row_length())
         elif settings.iskey("zoom", key):
             self =self.destructiveset("zoom", (self.zoom + 1)% 3)
+            # also reset the offset for recalculation
+            self = self.destructiveset("lastcursoroffset", 0)
         return self

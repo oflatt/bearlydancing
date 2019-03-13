@@ -16,19 +16,25 @@ class Plant(DestructiveFrozenClass):
         self.pic, self.posoffset = makeplant(self.headnode)
         self.potpic = randompotpic()
 
-        self.plantbaseoffset = self.plantbaseoffset(1, (0,0))
+        potsurface = getpic(self.potpic, 1)
+        self.plantbasexoffset =  (self.posoffset[0] - potsurface.get_width()/2)
+                                 
+        pic = getpic(self.pic, 1)
+        self.plantwidth = pic.get_width()
         
         self._freeze()
 
-    def plantbaseoffset(self, scale, baseposition):
+
+    def pot_pos(self, bottom_position, scale):
         potsurface = getpic(self.potpic, scale)
-        return ((self.posoffset[0]*scale - potsurface.get_width()/2),
-                (self.posoffset[1]*scale - potsurface.get_height()/4))
+        return (bottom_position[0]+self.plantbasexoffset*scale, bottom_position[1]-potsurface.get_height())
+        
 
     def draw(self, time, settings, screen, scale, position):
         pic = getpic(self.pic, scale)
         potsurface = getpic(self.potpic, scale)
-                  
-        screen.blit(potsurface, (position[0]+self.plantbaseoffset[0]*scale,
-                                 position[1]+self.plantbaseoffset[1]*scale))
-        screen.blit(pic, position)
+        potpos = self.pot_pos(position, scale)
+        
+        screen.blit(potsurface, potpos)
+        screen.blit(pic, (position[0],
+                          -self.posoffset[1]*scale+ potpos[1] + 5*scale))
