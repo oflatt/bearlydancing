@@ -161,6 +161,6 @@ def make_shopplant_list():
     l.append(makecactus())
     #l.append(maketestplant())
     for i in range(10):
-        l.append(makecross(l[random.randint(0, 2)], l[random.randint(0, 2)]))
+        l.append(makecross(l[random.randint(0, 0)], l[random.randint(1, 1)]))
     return l
 

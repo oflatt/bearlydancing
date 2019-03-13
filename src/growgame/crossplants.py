@@ -1,6 +1,10 @@
 import random, copy
 from typing import List
 
+from colormath.color_objects import sRGBColor, HSLColor
+from colormath import color_conversions
+
+
 from variables import devprint
 
 from .Plant import Plant
@@ -11,6 +15,8 @@ crossnodeschance = 0.2
 scalenumberchance = 0.2
 crosscolorschance = 0.5
 texturematchchance = 0.5
+# for picking plant shapes, usually take from one node
+donernodechance = 0.7
 
 def colorvariation(color):
     def processone(n):
@@ -19,6 +25,69 @@ def colorvariation(color):
     return (processone(color[0]),
             processone(color[1]),
             processone(color[2]))
+
+def circle_ave(a0, a1, circlerange):
+    r = (a0+a1)/2., ((a0+a1+circlerange)/2.)%circlerange
+    if min(abs(a1-r[0]), abs(a0-r[0])) < min(abs(a0-r[1]), abs(a1-r[1])):
+        return r[0]
+    else:
+        return r[1]
+
+def randomcombinecolors(c1, c2):
+    weight1 = random.uniform(0, 1)
+    return combinecolorswithweights(c1, c2, weight1)
+
+def randomcombinecolors(c1, c2, firstweight):
+    firstweight = random.uniform(0.25, 0.75)
+    # extra chance to make it lopsided
+    if random.random() < 0.5:
+        firstweight = firstweight / random.uniform(2, 4)
+        
+    secondweight = 1-firstweight
+
+    c = sRGBColor(c1[0], c1[1], c1[2], is_upscaled = True)
+    c2 = sRGBColor(c2[0], c2[1], c2[2], is_upscaled = True)
+    
+    hsl1 = color_conversions.convert_color(c, HSLColor)
+    hsl2 = color_conversions.convert_color(c2, HSLColor)
+    hue1 = hsl1.hsl_h
+    hue2 = hsl2.hsl_h
+
+    # jank recombination of hue
+    # make hue2 the greater one
+    if hue2 > hue1:
+        temp = hue1
+        hue1 = hue2
+        hue2 = temp
+
+    # shrink green region to make recombination work- green is from 75 to 150
+        
+    recombinecount = 0
+    if hue1 > 75:
+        subtract = min((hue1-75), 25)
+        hue1 = hue1 - subtract
+        recombinecount += 1
+    if hue2 > 75:
+        subtract = min((hue2-75), 25)
+        hue2 = hue2 - subtract
+        recombinecount += 1
+        
+    new_hue = circle_ave(hue1, hue2, circlerange = 360-25)
+    # add both if it was found on the greater side of the circle
+    if new_hue > hue2 and recombinecount > 0:
+        recombinecount = 2
+    
+    # convert back with green
+    if new_hue > 75:
+        new_hue = new_hue + (min(new_hue-75, 25)/2) * recombinecount
+    
+    new_hsl = HSLColor(new_hue,
+                       hsl1.hsl_s*firstweight+hsl2.hsl_s*(1-firstweight),
+                       hsl1.hsl_l*firstweight+hsl2.hsl_l*(1-firstweight))
+    rgb = color_conversions.convert_color(new_hsl, sRGBColor)
+    pygame_rgb = (int(rgb.rgb_r * 255), int(rgb.rgb_g * 255), int(rgb.rgb_b * 255))
+    
+    return pygame_rgb
 
 # make the texture from the originalshape work with the new shape
 def fix_textures(newshape, originalshape):
@@ -73,7 +142,7 @@ def fix_textures(newshape, originalshape):
                 if random.random() < scalenumberchance:
                     setattr(t, a, getattr(t, a) * random.uniform(0.5, 2))
 
-
+# TODO make set of shapes more likly
 def combineshapes(nodes):
     alllists = []
     averagesize = 0
@@ -82,9 +151,15 @@ def combineshapes(nodes):
         averagesize += len(getattr(n, "plantshapelist"))
     averagesize = averagesize/len(alllists)
     averagesize = averagesize + random.uniform(0, averagesize/2)
+    donernode = random.choice(nodes)
+    donerlist = copy.copy(donernode.plantshapelist)
+    
 
     def randshape():
-        return random.choice(random.choice(alllists))
+        if len(donerlist) > 0 and random.random() < donernodechance:
+            return donerlist.pop(random.randint(0, len(donerlist)-1))
+        else:                
+            return random.choice(random.choice(alllists))
 
     def getrandomcolors():
         randomcolorindex = random.randint(0, len(shapes)-1)
@@ -93,16 +168,6 @@ def combineshapes(nodes):
             randomoutlinecolorindex = random.randint(0, len(shapes)-1)
 
         return colorvariation(shapes[randomcolorindex].fillcolor), colorvariation(shapes[randomoutlinecolorindex].outlinecolor)
-
-    def randomcombinecolors(c1, c2):
-        firstweight = random.uniform(0.25, 0.75)
-        # extra chance to make it lopsided
-        if random.random() < 0.5:
-            firstweight = firstweight / random.uniform(2, 4)
-        secondweight = 1-firstweight
-        return (int(c1[0]*firstweight+c2[0]*secondweight),
-                int(c1[1]*firstweight+c2[1]*secondweight),
-                int(c1[2]*firstweight+c2[2]*secondweight))
 
     newattr = []
     for i in range(max(1, int(averagesize))):
@@ -295,5 +360,4 @@ def crossplants(plant1, plant2):
         layer_list.append(new_layer)
 
     
-    print(layer_list)
     return Plant(layer_list_to_node(layer_list))

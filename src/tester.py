@@ -1,5 +1,5 @@
-import pygame_sdl2
-pygame_sdl2.import_as_pygame()
+#import pygame_sdl2
+#pygame_sdl2.import_as_pygame()
 import pygame, ctypes, os, time
  
 
@@ -72,6 +72,23 @@ bigpic = pygame.image.load(os.path.join('pics', "randomgrassland0.png")).convert
 
 bigpics = [bigpic.subsurface([0,0,int(bigpic.get_width()/2), bigpic.get_height()]),
            bigpic.subsurface([int(bigpic.get_width()/2),0,int(bigpic.get_width()/2), bigpic.get_height()])]
+
+
+######
+from colormath.color_objects import sRGBColor, HSLColor
+c = sRGBColor(255, 0, 0, is_upscaled = True)
+c2 = sRGBColor(0, 0, 255, is_upscaled = True)
+from colormath import color_conversions
+converted = color_conversions.convert_color(c, HSLColor)
+converted2 = color_conversions.convert_color(c2, HSLColor)
+print(converted.hsl_h)
+print(converted2.hsl_h)
+final = HSLColor((converted.hsl_h/2 + converted2.hsl_h/2), converted.hsl_s/2 + converted2.hsl_s/2, converted.hsl_l/2 + converted2.hsl_l/2)
+print(final)
+print(color_conversions.convert_color(final, sRGBColor))
+
+
+#####
 
 while running:
     for event in pygame.event.get():

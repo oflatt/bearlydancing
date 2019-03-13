@@ -18,6 +18,9 @@ import tests.test_rdraw
 addTestModule(tests.test_rdraw)
 import tests.test_pointlist_functions
 addTestModule(tests.test_pointlist_functions)
+import tests.test_drawplant
+addTestModule(tests.test_drawplant)
+
 
 runner = unittest.TextTestRunner()
 result = runner.run(testsuite)

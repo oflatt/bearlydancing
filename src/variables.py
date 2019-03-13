@@ -343,6 +343,8 @@ def draw_loading_text(string):
     screen.blit(text, [xpos, ypos])
 
 def draw_loading_tips():
+    if args.novideomode:
+        return
     text = pygame.transform.scale2x(font.render("tip: use the escape key to pause the game", 0, WHITE).convert())
     xpos = int((width / 2) - (text.get_width() / 2))
     ypos = int((height / 2) - text.get_height() - height/10) - text.get_height()*2.5
@@ -350,15 +352,18 @@ def draw_loading_tips():
     screen.blit(text, [xpos, ypos]) 
 
 def draw_graphic_name(name):
-    text = font.render(name, 0, WHITE).convert()
-    xpos = int((width / 2) - (text.get_width() / 2))
-    ypos = int((height -text.get_height() - height/20))
-    textrect = Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height())
-    pygame.draw.rect(screen, BLACK, textrect)
-    screen.blit(text, [xpos, ypos])
-    pygame.display.update(textrect)
+    if not args.novideomode:
+        text = font.render(name, 0, WHITE).convert()
+        xpos = int((width / 2) - (text.get_width() / 2))
+        ypos = int((height -text.get_height() - height/20))
+        textrect = Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height())
+        pygame.draw.rect(screen, BLACK, textrect)
+        screen.blit(text, [xpos, ypos])
+        pygame.display.update(textrect)
     
 def draw_progress_bar():
+    if args.novideomode:
+        return
     #clear all the events so it does not crash
     pygame.event.get()
     numused = num_of_generated_graphics_used()
