@@ -9,7 +9,8 @@ from .PlantShape import PlantShape
 
 crossnodeschance = 0.2
 scalenumberchance = 0.2
-crosscolorschance = 0.2
+crosscolorschance = 0.5
+texturematchchance = 0.5
 
 def colorvariation(color):
     def processone(n):
@@ -18,6 +19,60 @@ def colorvariation(color):
     return (processone(color[0]),
             processone(color[1]),
             processone(color[2]))
+
+# make the texture from the originalshape work with the new shape
+def fix_textures(newshape, originalshape):
+    for t in newshape.textures:
+        # fix stopcolors
+        t.stopcolors = []
+        for c in t.stopcolors:
+            if c == originalshape.fillcolor:
+                t.stopcolors.append(newshape.fillcolor)
+            elif c == originalshape.outlinecolor:
+                t.stopcolors.append(newshape.outlinecolor)
+            else:
+                t.stopcolors.append(newshape.outlinecolor)
+
+        # fix stopcolors
+        t.stopcolors = []
+        for c in t.stopcolors:
+            if c == originalshape.fillcolor:
+                t.stopcolors.append(newshape.fillcolor)
+            elif c == originalshape.outlinecolor:
+                t.stopcolors.append(newshape.outlinecolor)
+            else:
+                t.stopcolors.append(newshape.outlinecolor)
+
+        # fix acceptedcolors
+        t.acceptedcolors = []
+        for c in t.acceptedcolors:
+            if c == originalshape.fillcolor:
+                t.acceptedcolors.append(newshape.fillcolor)
+            elif c == originalshape.outlinecolor:
+                t.acceptedcolors.append(newshape.outlinecolor)
+            else:
+                t.acceptedcolors.append(newshape.outlinecolor)
+
+        # fix stopcolors
+        t.acceptedcolorsspawn = []
+        for c in t.acceptedcolorsspawn:
+            if c == originalshape.fillcolor:
+                t.acceptedcolorsspawn.append(newshape.fillcolor)
+            elif c == originalshape.outlinecolor:
+                t.acceptedcolorsspawn.append(newshape.outlinecolor)
+            else:
+                t.acceptedcolorsspawn.append(newshape.outlinecolor)
+
+        # randomly change numbers
+        attributes = dir(t)
+        for a in attributes:
+            if a[0] == "_":
+                pass
+
+            if type(getattr(t, a)) == float or type(getattr(t, a)) == int:
+                if random.random() < scalenumberchance:
+                    setattr(t, a, getattr(t, a) * random.uniform(0.5, 2))
+
 
 def combineshapes(nodes):
     alllists = []
@@ -41,6 +96,9 @@ def combineshapes(nodes):
 
     def randomcombinecolors(c1, c2):
         firstweight = random.uniform(0.25, 0.75)
+        # extra chance to make it lopsided
+        if random.random() < 0.5:
+            firstweight = firstweight / random.uniform(2, 4)
         secondweight = 1-firstweight
         return (int(c1[0]*firstweight+c2[0]*secondweight),
                 int(c1[1]*firstweight+c2[1]*secondweight),
@@ -56,11 +114,24 @@ def combineshapes(nodes):
             secondcolor, secondoutlinecolor = getrandomcolors()
             randomcolor = randomcombinecolors(randomcolor, secondcolor)
             randomoutlinecolor = randomcombinecolors(randomcolor, secondcolor)
+
+        randompolygonlistindex = random.randint(0, len(shapes)-1)
+        donernode = nodes[randompolygonlistindex]
+        if random.random() < texturematchchance:
+            originaltextureshape = shapes[randompolygonlistindex]
+        else:
+            originaltextureshape = random.choice(shapes)
+
+        randomtextures = copy.deepcopy(originaltextureshape.textures)
         
-        newshape = PlantShape(random.choice(shapes).polygonlist, randomcolor, randomoutlinecolor,
-                              random.choice(shapes).textures, completelistp = True)
+        newshape = PlantShape(shapes[randompolygonlistindex].polygonlist,
+                              randomcolor, randomoutlinecolor,
+                              randomtextures, completelistp = True)
+
+        fix_textures(newshape, originaltextureshape)
+        
         newattr.append(newshape)
-    return newattr
+    return newattr, donernode
     
 
 def crossnodes(nodes):
@@ -83,7 +154,7 @@ def crossnodes(nodes):
             if attrkey == "children":
                 newattr = [] # ignore children because we are only crossing two nodes
             elif attrkey == "plantshapelist":
-                newattr = combineshapes(nodes)
+                newattr, shapedonernode = combineshapes(nodes)
             elif type(attr) == float or type(attr) == int:
                 if random.random() < 0.2:
                     newattr = attr*random.uniform(0.5, 2)*random.choice((-1, 1))
@@ -106,6 +177,14 @@ def crossnodes(nodes):
         repeatnumindex = random.randint(0, len(nodes)-1)
         pnode = pnode.destructiveset("repeatnumseparate", nodes[repeatnumindex].repeatnumseparate)
         pnode = pnode.destructiveset("repeatnumcircle", nodes[repeatnumindex].repeatnumcircle)
+
+    # make repeat numbers closer to doner node's
+    if random.random() < 0.8:
+        donerweight = random.uniform(0.25, 0.75)
+        pnode = pnode.destructiveset("repeatnumseparate",
+                                     int(pnode.repeatnumseparate*(1-donerweight) + shapedonernode.repeatnumseparate*donerweight))
+        pnode = pnode.destructiveset("repeatnumcircle",
+                                     int(pnode.repeatnumcircle*(1-donerweight) + shapedonernode.repeatnumcircle*donerweight))
     
     return pnode
 
