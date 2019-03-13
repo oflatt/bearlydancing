@@ -1,4 +1,4 @@
-import random, copy
+import random, copy, math
 from typing import List
 
 from colormath.color_objects import sRGBColor, HSLColor
@@ -14,11 +14,17 @@ from .PlantShape import PlantShape
 
 # chance that when adding nodes to a layer, a node from a layer after that node is picked
 def picknodeafterlayerchance(currentlayer):
-    return 0.05 + max(currentlayer*0.2, 0.25)
+    pickp = random.random() < 0.03 + min(currentlayer*0.2, 0.25)
+    if pickp:
+        devprint("picking node after layer at layer " + str(currentlayer))
+    return pickp
 
 # chance that when adding nodes to a layer, a node from an earlier layer in the original plants is added
-def picknodebeforelayerchance(currentlayer):
-    return 0.03
+def picknodebeforelayerp(currentlayer):
+    pickp = random.random() < 0.02 + (currentlayer-1)*0.01
+    if pickp:
+        devprint("Picking node before layer at layer " + str(currentlayer))
+    return pickp
 
 # chance when adding nodes to cross two nodes together
 crossnodeschance = 0.4
@@ -29,11 +35,14 @@ colormatchdonershapechance = 0.6
 # chance that the texture of a plant shape follows it when being crossed with another plant shape
 texturematchchance = 0.5
 
+# chance that the outline is picked seperately from the inner color of a plant shape
+outlinedifferentcolorchance = 0.1
+
 # chance that an attribute of a node gets scaled randomly
 scalenumberchance = 0.2
 
 # chance to mix colors instead of picking one color
-crosscolorschance = 0.7
+crosscolorschance = 0.8
 
 # chance that a shape is picked from the primary node when mixing two nodes together
 donernodechance = 0.8
@@ -187,8 +196,10 @@ def combineshapes(nodes):
         randomcolorindex = random.randint(0, len(shapes)-1)
         if random.random() < colormatchdonershapechance:
             randomcolorindex = 0
+        
+
         randomoutlinecolorindex = randomcolorindex
-        if random.random() < 0.1:
+        if random.random() < outlinedifferentcolorchance:
             randomoutlinecolorindex = random.randint(0, len(shapes)-1)
 
         return colorvariation(shapes[randomcolorindex].fillcolor), colorvariation(shapes[randomoutlinecolorindex].outlinecolor)
@@ -202,7 +213,9 @@ def combineshapes(nodes):
         randomcolor, randomoutlinecolor = getrandomcolors(shapes)
 
         if random.random() < crosscolorschance:
-            secondcolor, secondoutlinecolor = getrandomcolors(shapes)
+            secondcolor = shapes[1].fillcolor
+            secondoutlinecolor = shapes[1].outlinecolor
+            
             randomcolor = randomcombinecolors(randomcolor, secondcolor)
             randomoutlinecolor = randomcombinecolors(randomcolor, secondcolor)
 
@@ -222,7 +235,8 @@ def combineshapes(nodes):
         
         newattr.append(newshape)
     return newattr, donernode
-    
+
+
 
 def crossnodes(nodes):
     def randnode():
@@ -245,19 +259,12 @@ def crossnodes(nodes):
                 newattr = [] # ignore children because we are only crossing two nodes
             elif attrkey == "plantshapelist":
                 newattr, shapedonernode = combineshapes(nodes)
-            elif type(attr) == float or type(attr) == int:
-                if random.random() < 0.2:
-                    newattr = attr*random.uniform(0.5, 2)*random.choice((-1, 1))
-                    if type(attr) == int:
-                        newattr = int(attr)
-                else:
-                    newattr = attr
             else:
                 newattr = attr
             
             pnode = pnode.destructiveset(attrkey, newattr)
 
-    #### hand tuned attributes
+    #### hand tuned attributes, which override the randomly picked ones above
 
 
     # chance to pick difference nodes for the repeat numbers
@@ -340,7 +347,7 @@ def random_node_at_layer(layerlists : List[List[List[PlantNode]]], layerindex, a
 
         # if all of the nodes have been chosen before pick a new one
         if len(possiblenodes) == 0:
-            return random.choice(random.choice(possibleplantlayerlists))
+            return random.choice(random.choice(random.choice(possibleplantlayerlists)))
         else:
             return random.choice(possiblenodes)
     
@@ -351,19 +358,32 @@ def random_node_at_layer(layerlists : List[List[List[PlantNode]]], layerindex, a
 
         if layerindex > maxlayer:
             random_layer = random.randint(0, maxlayer)
-        elif random.random() < picknodeafterlayerchance(layerindex): # chance for after index
+        elif picknodeafterlayerchance(layerindex): # chance for after index
             random_layer = random.randint(layerindex, maxlayer)
-        elif random.random() < picknodebeforelayerchance(layerindex):
+        elif picknodebeforelayerp(layerindex):
             random_layer = random.randint(0, max(layerindex-1, 0))
         return random_node_from_layer(random_layer)
 
     # chance to cross nodes
+    chosen_node = None
+    original_node = None
     if random.random() < crossnodeschance:
         devprint("crossing nodes")
-        return crossnodes([random_node(), random_node()]), None
+        chosen_node =  crossnodes([random_node(), random_node()])
     else:
         original_node = random_node()
-        return copy.deepcopy(random_node()), original_node
+        chosen_node = copy.deepcopy(random_node())
+    
+
+
+    # if layer index is one, usually make it point up, always fixes if angle offset is math.pi/2 or more, since that is horizontal
+    if layerindex == 0:
+        if random.random() < abs(chosen_node.angleoffset)/(math.pi/2):
+            devprint("fixing first node's angle offset to be 0")
+            chosen_node = chosen_node.destructiveset("angleoffset", 0)
+        
+
+    return chosen_node, original_node
 
 
 # destroys one layerlist, returning a plant head node
@@ -394,6 +414,29 @@ def get_newplant_number_of_layers(plant1_layer_list, plant2_layer_list):
     return num_of_layers
 
 
+
+def randomly_scale_attributes(node):
+    attributes = dir(object.__getattribute__(node, "item"))
+
+    # pick randomly in the attributes
+    for attrkey in attributes:
+        if attrkey[0] == '_':
+            pass
+        else:
+            attr = getattr(node, attrkey)
+            newattr = None
+            
+            if type(attr) == float or type(attr) == int:
+                if random.random() < scalenumberchance:
+                    newattr = attr*random.uniform(0.5, 2)*random.choice((-1, 1))
+                    if type(attr) == int:
+                        newattr = int(attr)
+                else:
+                    newattr = attr
+                node = node.destructiveset(attrkey, newattr)
+    return node
+
+                
 def crossplants(plant1, plant2):
     plant1_layer_list : List[List[PlantNode]] = get_plant_layer_list(plant1)
     plant2_layer_list : List[List[PlantNode]] = get_plant_layer_list(plant2)
@@ -408,6 +451,10 @@ def crossplants(plant1, plant2):
         original_nodes = []
         for not_used in range(layer_size):
             newnode, originalnode = random_node_at_layer((plant1_layer_list, plant2_layer_list), i, original_nodes)
+
+            # also randomly change attributes
+            newnode = randomly_scale_attributes(newnode)
+            
             new_layer.append(newnode)
             original_nodes.append(originalnode)
             
