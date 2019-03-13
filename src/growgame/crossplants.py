@@ -11,12 +11,32 @@ from .Plant import Plant
 from .PlantNode import PlantNode
 from .PlantShape import PlantShape
 
-crossnodeschance = 0.2
-scalenumberchance = 0.2
-crosscolorschance = 0.5
+
+# chance that when adding nodes to a layer, a node from a layer after that node is picked
+def picknodeafterlayerchance(currentlayer):
+    return 0.05 + max(currentlayer*0.2, 0.25)
+
+# chance that when adding nodes to a layer, a node from an earlier layer in the original plants is added
+def picknodebeforelayerchance(currentlayer):
+    return 0.03
+
+# chance when adding nodes to cross two nodes together
+crossnodeschance = 0.4
+
+
+# chance that a shape retains it's color when being combined with another shape
+colormatchdonershapechance = 0.6
+# chance that the texture of a plant shape follows it when being crossed with another plant shape
 texturematchchance = 0.5
-# for picking plant shapes, usually take from one node
-donernodechance = 0.7
+
+# chance that an attribute of a node gets scaled randomly
+scalenumberchance = 0.2
+
+# chance to mix colors instead of picking one color
+crosscolorschance = 0.7
+
+# chance that a shape is picked from the primary node when mixing two nodes together
+donernodechance = 0.8
 
 def colorvariation(color):
     def processone(n):
@@ -34,10 +54,11 @@ def circle_ave(a0, a1, circlerange):
         return r[1]
 
 def randomcombinecolors(c1, c2):
+    devprint("combine colors")
     weight1 = random.uniform(0, 1)
-    return combinecolorswithweights(c1, c2, weight1)
+    return combinecolors(c1, c2, weight1)
 
-def randomcombinecolors(c1, c2, firstweight):
+def combinecolors(c1, c2, firstweight):
     firstweight = random.uniform(0.25, 0.75)
     # extra chance to make it lopsided
     if random.random() < 0.5:
@@ -142,7 +163,7 @@ def fix_textures(newshape, originalshape):
                 if random.random() < scalenumberchance:
                     setattr(t, a, getattr(t, a) * random.uniform(0.5, 2))
 
-# TODO make set of shapes more likly
+# when combining two plant nodes, combine all their shapes
 def combineshapes(nodes):
     alllists = []
     averagesize = 0
@@ -151,6 +172,7 @@ def combineshapes(nodes):
         averagesize += len(getattr(n, "plantshapelist"))
     averagesize = averagesize/len(alllists)
     averagesize = averagesize + random.uniform(0, averagesize/2)
+    # primary node in combining
     donernode = random.choice(nodes)
     donerlist = copy.copy(donernode.plantshapelist)
     
@@ -161,8 +183,10 @@ def combineshapes(nodes):
         else:                
             return random.choice(random.choice(alllists))
 
-    def getrandomcolors():
+    def getrandomcolors(shapes):
         randomcolorindex = random.randint(0, len(shapes)-1)
+        if random.random() < colormatchdonershapechance:
+            randomcolorindex = 0
         randomoutlinecolorindex = randomcolorindex
         if random.random() < 0.1:
             randomoutlinecolorindex = random.randint(0, len(shapes)-1)
@@ -172,24 +196,25 @@ def combineshapes(nodes):
     newattr = []
     for i in range(max(1, int(averagesize))):
         shapes = (randshape(), randshape())
+        # primary shape in combining two shapes
+        donershape = shapes[0]
 
-        randomcolor, randomoutlinecolor = getrandomcolors()
+        randomcolor, randomoutlinecolor = getrandomcolors(shapes)
 
         if random.random() < crosscolorschance:
-            secondcolor, secondoutlinecolor = getrandomcolors()
+            secondcolor, secondoutlinecolor = getrandomcolors(shapes)
             randomcolor = randomcombinecolors(randomcolor, secondcolor)
             randomoutlinecolor = randomcombinecolors(randomcolor, secondcolor)
 
-        randompolygonlistindex = random.randint(0, len(shapes)-1)
-        donernode = nodes[randompolygonlistindex]
+        
         if random.random() < texturematchchance:
-            originaltextureshape = shapes[randompolygonlistindex]
+            originaltextureshape = donershape
         else:
             originaltextureshape = random.choice(shapes)
 
         randomtextures = copy.deepcopy(originaltextureshape.textures)
         
-        newshape = PlantShape(shapes[randompolygonlistindex].polygonlist,
+        newshape = PlantShape(donershape.polygonlist,
                               randomcolor, randomoutlinecolor,
                               randomtextures, completelistp = True)
 
@@ -232,7 +257,8 @@ def crossnodes(nodes):
             
             pnode = pnode.destructiveset(attrkey, newattr)
 
-    # hand tuned attributes
+    #### hand tuned attributes
+
 
     # chance to pick difference nodes for the repeat numbers
     if random.random() < 0.1:
@@ -244,8 +270,8 @@ def crossnodes(nodes):
         pnode = pnode.destructiveset("repeatnumcircle", nodes[repeatnumindex].repeatnumcircle)
 
     # make repeat numbers closer to doner node's
-    if random.random() < 0.8:
-        donerweight = random.uniform(0.25, 0.75)
+    if random.random() < 0.9:
+        donerweight = random.uniform(0, 0.75)
         pnode = pnode.destructiveset("repeatnumseparate",
                                      int(pnode.repeatnumseparate*(1-donerweight) + shapedonernode.repeatnumseparate*donerweight))
         pnode = pnode.destructiveset("repeatnumcircle",
@@ -287,21 +313,37 @@ def random_layer_size(layerlists : List[List[List[PlantNode]]], layerindex) -> i
         return max(1, random.randint(int(average*0.7), int(average*1.3)))
 
 
+# layerlists is the layerlists for the different plants
 # layerindex refers to which layer is currently being created in the new plant
-def random_node_at_layer(layerlists : List[List[PlantNode]], layerindex):
+# addedsofar is a list of nodes added at this layer so far, to make duplicates less likely
+# returns the new node to add to the plant layer and the original node it came from or None if it came from multiple nodes
+def random_node_at_layer(layerlists : List[List[List[PlantNode]]], layerindex, addedsofar : List[PlantNode]):
+    
     devprint("random node at layer " + str(layerindex))
-    # sort by length
+    # sort by length so that we can access layers that exist
     layerlists = sorted(layerlists, key = len)
     maxlayer = len(layerlists[-1])-1
+
     
-    def random_node_from_layer(layerindex):
+    def random_node_from_layer(chosenlayerindex):
         # choose an i such that all the layers on i and over have enough layers
         i = 0
-        while len(layerlists[i])-1 < layerindex:
+        while len(layerlists[i])-1 < chosenlayerindex:
             i += 1
-        randomlayerlist = layerlists[random.randint(i, layerindex)]
-        # choose a random node in that layer list
-        return random.choice(randomlayerlist[layerindex])
+
+        possibleplantlayerlists = layerlists[i:]
+        possiblenodes = []
+        for plantlayerlist in possibleplantlayerlists:
+            for potentialnode in plantlayerlist[chosenlayerindex]:
+                if not potentialnode in addedsofar:
+                    possiblenodes.append(potentialnode)
+
+        # if all of the nodes have been chosen before pick a new one
+        if len(possiblenodes) == 0:
+            return random.choice(random.choice(possibleplantlayerlists))
+        else:
+            return random.choice(possiblenodes)
+    
     
     def random_node():
         # most of the time pick from one of the same layer in the else
@@ -309,18 +351,19 @@ def random_node_at_layer(layerlists : List[List[PlantNode]], layerindex):
 
         if layerindex > maxlayer:
             random_layer = random.randint(0, maxlayer)
-        elif random.random() < 0.3: # chance for after index
+        elif random.random() < picknodeafterlayerchance(layerindex): # chance for after index
             random_layer = random.randint(layerindex, maxlayer)
-        elif random.random() < 0.05:
-            random_layer = random.randint(0, layerindex)
+        elif random.random() < picknodebeforelayerchance(layerindex):
+            random_layer = random.randint(0, max(layerindex-1, 0))
         return random_node_from_layer(random_layer)
 
     # chance to cross nodes
     if random.random() < crossnodeschance:
         devprint("crossing nodes")
-        return crossnodes([random_node(), random_node()])
+        return crossnodes([random_node(), random_node()]), None
     else:
-        return copy.deepcopy(random_node())
+        original_node = random_node()
+        return copy.deepcopy(random_node()), original_node
 
 
 # destroys one layerlist, returning a plant head node
@@ -339,24 +382,35 @@ def layer_list_to_node(layerlist : List[List[PlantNode]]):
     return layerlist[0][0]
 
 
-def crossplants(plant1, plant2):
-    plant1_layer_list = get_plant_layer_list(plant1)
-    plant2_layer_list = get_plant_layer_list(plant2)
+def get_newplant_number_of_layers(plant1_layer_list, plant2_layer_list):
     smallerlength = min(len(plant1_layer_list), len(plant2_layer_list))
     biggerlength = max(len(plant1_layer_list), len(plant2_layer_list))
-
+    
     # pick some number between their layers and also have a chance to add 1
-    newplant_num_of_layers = random.randint(smallerlength, biggerlength)
+    num_of_layers = random.randint(smallerlength, biggerlength)
     if random.random() < 0.2:
-        newplant_num_of_layers += 1 
+        num_of_layers += 1
 
+    return num_of_layers
+
+
+def crossplants(plant1, plant2):
+    plant1_layer_list : List[List[PlantNode]] = get_plant_layer_list(plant1)
+    plant2_layer_list : List[List[PlantNode]] = get_plant_layer_list(plant2)
+
+    newplant_num_of_layers = get_newplant_number_of_layers(plant1_layer_list, plant2_layer_list)
+    
     # add layers
     layer_list : List[List[PlantNode]] = [] # the new plant's layer list
     for i in range(newplant_num_of_layers):
         layer_size = random_layer_size([plant1_layer_list, plant2_layer_list], i)
         new_layer = []
+        original_nodes = []
         for not_used in range(layer_size):
-            new_layer.append(random_node_at_layer((plant1_layer_list, plant2_layer_list), i))
+            newnode, originalnode = random_node_at_layer((plant1_layer_list, plant2_layer_list), i, original_nodes)
+            new_layer.append(newnode)
+            original_nodes.append(originalnode)
+            
         layer_list.append(new_layer)
 
     
