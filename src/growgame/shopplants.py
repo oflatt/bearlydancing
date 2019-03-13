@@ -1,7 +1,7 @@
-import math, random
+import math, random, copy
 
 
-from variables import brighten
+from variables import brighten, devprint
 from rdraw.pointlist import listarc, linelist_to_shapelist, scalepointlist, flippointlist
 from rdraw.Texture import Texture
 
@@ -132,6 +132,50 @@ def makecactus():
     return (ShopPlant("cactus", body_node, 40))
 
 
+def testcactus():
+    spikecolor = (80, 80, 80)
+    
+    body_list = [(0,0)]
+    body_numofpoints = 20
+    roundedness = 3.5
+    for x in range(body_numofpoints):
+        body_list.append((x, -(5*math.sin(x**roundedness/body_numofpoints**roundedness * math.pi/2 + math.pi/2))))
+
+
+    cactuscolor = (29, 183, 55)
+    cactuslinecolor = brighten(cactuscolor, -20)
+    spiketexture = Texture(spikecolor, 0.1, 0.2, 0.05)
+    spiketexture.acceptedcolorsspawn = [cactuscolor, cactuslinecolor]
+
+    
+    bodylineshapes = []
+    number_of_lines = 2
+    for i in range(number_of_lines):
+        bodylinelist = scalepointlist(body_list, 1-((i+1)/(number_of_lines+1)), 1)
+        rightlinelist = flippointlist(bodylinelist)
+        bodylinelist = linelist_to_shapelist(bodylinelist)
+        rightlinelist = linelist_to_shapelist(rightlinelist)
+        bodylineshapes.append(PlantShape(bodylinelist, brighten(cactuscolor, -40), cactuslinecolor,completelistp = True, textures = [spiketexture]))
+        bodylineshapes.append(PlantShape(rightlinelist,brighten(cactuscolor, -40), cactuslinecolor, completelistp = True, textures = [spiketexture]))
+
+    body_shape = PlantShape(body_list, cactuscolor, brighten(cactuslinecolor, -20))
+    body_shape = body_shape.destructiveset("textures", [spiketexture])
+    body_node = PlantNode([body_shape] + bodylineshapes, 1, math.pi/5, children =[])
+    body_node = body_node.destructiveset("shiftchance", 0.0)
+    body_node = body_node.destructiveset("widthvariance", 0.4)
+    body_node = body_node.destructiveset("heightvariance", 0.4)
+    
+
+    body_node2 = copy.deepcopy(body_node)
+    body_node2 = body_node2.destructiveset("repeatnumseparate", 5)
+    body_node2 = body_node2.destructiveset("brancharea", 1)
+    
+
+    body_node = body_node.destructiveset("children", [body_node2])
+        
+    return (ShopPlant("testcactus", body_node, 40))
+
+
 def makecross(plant1, plant2):
     return (ShopPlant( "cross", crossplants(plant1, plant2).headnode, 80))
 
@@ -155,12 +199,22 @@ def maketestplant():
     
 
 def make_shopplant_list():
-    l = []
-    l.append(makestarter())
-    l.append(makerose())
-    l.append(makecactus())
+    shopplantlist = []
+    shopplantlist.append(makestarter())
+    shopplantlist.append(makerose())
+    shopplantlist.append(makecactus())
+    #shopplantlist.append(testcactus())
+    
+    numberofshopplants = len(shopplantlist)
     #l.append(maketestplant())
-    for i in range(10):
-        l.append(makecross(l[random.randint(0, 0)], l[random.randint(1, 1)]))
-    return l
+    def addcombinationscheat():
+        for i in range(10):
+            plant1index = random.randint(0, numberofshopplants-1)
+            plant2index = random.randint(0, numberofshopplants-1)
+            plant1 = shopplantlist[plant1index]
+            plant2 = shopplantlist[plant2index]
+            devprint("###### making cross between " + plant1.name + " and " + plant2.name)
+            shopplantlist.append(makecross(plant1, plant2))
+    addcombinationscheat()
+    return shopplantlist
 

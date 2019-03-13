@@ -47,13 +47,21 @@ crosscolorschance = 0.8
 # chance that a shape is picked from the primary node when mixing two nodes together
 donernodechance = 0.8
 
-def colorvariation(color):
-    def processone(n):
-        return min(255, (max(0, n + random.randint(-2, 2)))*random.uniform(1/1.2, 1.2))
-        
-    return (processone(color[0]),
-            processone(color[1]),
-            processone(color[2]))
+def randomprocessonecolorfunction():
+    offset1 = random.randint(-2, 2)
+    multiplier1 = random.uniform(1/1.2, 1.2)
+    def processonefunction(n):
+        return min(255, (max(0, n + offset1))*multiplier1)
+    return processonefunction
+
+def colorvariation_list(colorlist):
+    f1 = randomprocessonecolorfunction()
+    f2 = randomprocessonecolorfunction()
+    f3 = randomprocessonecolorfunction()
+    newl = []
+    for c in colorlist:
+        newl.append((f1(c[0]), f2(c[1]), f3(c[2])))
+    return newl
 
 def circle_ave(a0, a1, circlerange):
     r = (a0+a1)/2., ((a0+a1+circlerange)/2.)%circlerange
@@ -202,7 +210,7 @@ def combineshapes(nodes):
         if random.random() < outlinedifferentcolorchance:
             randomoutlinecolorindex = random.randint(0, len(shapes)-1)
 
-        return colorvariation(shapes[randomcolorindex].fillcolor), colorvariation(shapes[randomoutlinecolorindex].outlinecolor)
+        return colorvariation_list((shapes[randomcolorindex].fillcolor, shapes[randomoutlinecolorindex].outlinecolor))
 
     newattr = []
     for i in range(max(1, int(averagesize))):
@@ -217,7 +225,7 @@ def combineshapes(nodes):
             secondoutlinecolor = shapes[1].outlinecolor
             
             randomcolor = randomcombinecolors(randomcolor, secondcolor)
-            randomoutlinecolor = randomcombinecolors(randomcolor, secondcolor)
+            randomoutlinecolor = randomcombinecolors(randomoutlinecolor, secondoutlinecolor)
 
         
         if random.random() < texturematchchance:
@@ -268,7 +276,8 @@ def crossnodes(nodes):
 
 
     # chance to pick difference nodes for the repeat numbers
-    if random.random() < 0.1:
+    if random.random() < 0.01:
+        devprint("repeat nums from different nodes")
         pnode = pnode.destructiveset("repeatnumseparate", nodes[random.randint(0, len(nodes)-1)].repeatnumseparate)
         pnode = pnode.destructiveset("repeatnumcircle", nodes[random.randint(0, len(nodes)-1)].repeatnumcircle)
     else:
@@ -276,14 +285,6 @@ def crossnodes(nodes):
         pnode = pnode.destructiveset("repeatnumseparate", nodes[repeatnumindex].repeatnumseparate)
         pnode = pnode.destructiveset("repeatnumcircle", nodes[repeatnumindex].repeatnumcircle)
 
-    # make repeat numbers closer to doner node's
-    if random.random() < 0.9:
-        donerweight = random.uniform(0, 0.75)
-        pnode = pnode.destructiveset("repeatnumseparate",
-                                     int(pnode.repeatnumseparate*(1-donerweight) + shapedonernode.repeatnumseparate*donerweight))
-        pnode = pnode.destructiveset("repeatnumcircle",
-                                     int(pnode.repeatnumcircle*(1-donerweight) + shapedonernode.repeatnumcircle*donerweight))
-    
     return pnode
 
 def get_plant_layer_list(plant) -> List[List[PlantNode]]:
