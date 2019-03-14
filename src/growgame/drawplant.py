@@ -117,18 +117,19 @@ def getfuturenodeindexpositions(numberofnodes, polygonlistlength, percentofbranc
 # returns a new or the old surface with the input node added
 # also returns the polygon list for the first node that has been translated, along with the offset for that polygon list
 # finally, it returns an offset needed because of any resizing of the surface
-def surface_with_node(surface, node, angle, currentoffset, widthscalar, heightscalar):
+def surface_with_node(surface, node, angle, offset_in, current_resize_offset, widthscalar, heightscalar):
     transformedlists = transformtopointlists(node.plantshapelist,
                                         node.shiftchance, angle,
                                         widthscalar, heightscalar)
 
     mainloffset = None
     mainltranslated = None
-    resizing_offset = (0, 0)
-    bounds = None
 
-    def surface_offset():
-        return Rect(currentoffset[0]-node.anchor[0]+bounds[0], currentoffset[1]-node.anchor[1]+bounds[1], bounds.width, bounds.height)
+    def currentoffset():
+        return (offset_in[0] + current_resize_offset[0], offset_in[1] + current_resize_offset[1])
+
+    def surface_offset(pointlist_bounds):
+        return Rect(currentoffset()[0]-node.anchor[0]+pointlist_bounds[0], currentoffset()[1]-node.anchor[1]+pointlist_bounds[1], pointlist_bounds.width, pointlist_bounds.height)
 
     # go through all the plantshapes and their corresponding transformed lists
     for i in range(len(transformedlists)):
@@ -155,32 +156,31 @@ def surface_with_node(surface, node, angle, currentoffset, widthscalar, heightsc
 
             
         # now check if resizing is needed
-        newsurfacerect = surface.get_rect().union(surface_offset())
+        newsurfacerect = surface.get_rect().union(surface_offset(bounds))
         
         if not newsurfacerect == surface.get_rect():
+            
             new_surface = Surface((newsurfacerect.width, newsurfacerect.height), SRCALPHA)
             new_surface.blit(surface, (-newsurfacerect.x, -newsurfacerect.y))
 
-            resizing_offset = (resizing_offset[0]-newsurfacerect.x, resizing_offset[1]-newsurfacerect.y)
-
-            currentoffset = (currentoffset[0]-newsurfacerect.x, currentoffset[1]-newsurfacerect.y)
-
-            if not mainloffset is None:
-                mainloffset = (mainloffset[0] - newsurfacerect.x, currentoffset[1]-newsurfacerect.y)
+            current_resize_offset = (current_resize_offset[0]-newsurfacerect.x, current_resize_offset[1]-newsurfacerect.y)
 
             surface = new_surface
             
             devprint("Resized surface to " + str(new_surface.get_width()) + " by " + str(new_surface.get_height()))
 
-        surface.blit(shape_surface, surface_offset())
+        surface.blit(shape_surface, surface_offset(bounds))
 
         # also save the first list for other nodes to go off of
         if i == 0:
-            mainloffset = surface_offset()
+            # save the offset of l without the resizing
+            mainloffset = surface_offset(bounds)
+            # also remove the current resize offset
+            mainloffset = (mainloffset[0] - current_resize_offset[0], mainloffset[1]-current_resize_offset[1])
             mainltranslated = shiftedlist
             
-                
-    return surface, mainltranslated, mainloffset, resizing_offset
+            
+    return surface, mainltranslated, mainloffset, current_resize_offset
 
 
 def drawplant(head_node):
@@ -238,8 +238,8 @@ def drawplant(head_node):
             heightscalar = 1 + random.random()*node.heightvariance
 
             # now add the current node
-            surface, mainltranslated, mainloffset, withnode_resizing_offset = surface_with_node(surface, node, angle, (currentx, currenty), widthscalar, heightscalar)
-            resizeoffset = (resizeoffset[0] + withnode_resizing_offset[0], resizeoffset[1]+withnode_resizing_offset[1])
+            surface, mainltranslated, mainloffset, new_resize_offset = surface_with_node(surface, node, angle, (currentx, currenty), resizeoffset,  widthscalar, heightscalar)
+            resizeoffset = new_resize_offset
 
             
             # find the new currentx and currenty

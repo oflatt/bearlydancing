@@ -166,9 +166,11 @@ def testcactus():
     body_node = body_node.destructiveset("heightvariance", 0.4)
     
 
+    body_node3 = copy.deepcopy(body_node)
     body_node2 = copy.deepcopy(body_node)
     body_node2 = body_node2.destructiveset("repeatnumseparate", 5)
     body_node2 = body_node2.destructiveset("brancharea", 1)
+    body_node2 = body_node2.destructiveset("children", [body_node3])
     
 
     body_node = body_node.destructiveset("children", [body_node2])
@@ -182,17 +184,17 @@ def makecross(plant1, plant2):
 
 def maketestplant():
     lineup = []
-    for y in range(10):
-        lineup.append((0, y))
+    for y in range(30):
+        lineup.append((y, 0))
     lineup = linelist_to_shapelist(lineup)
     
     shape1 = PlantShape(lineup, (200, 0, 0), (100, 0, 0), completelistp = True)
     shape2 = PlantShape(lineup, (0, 255, 0), (0, 100, 0), completelistp = True)
     shape3 = PlantShape(lineup, (0, 0, 255), (0, 0, 100), completelistp = True)
     node1 = PlantNode([shape1], 1, 0)
-    node1 = node1.destructivesetfields({"anglevariance" : 0, "brancharea" : 0, "shiftchance" : 0})
+    node1 = node1.destructivesetfields({"anglevariance" : 0, "brancharea" : 0, "shiftchance" : 0, "angleoffset" : math.pi/2})
     node2 = PlantNode([shape2], 1, 0/5, children = [node1])
-    node2 = node2.destructivesetfields({"anglevariance" : 0, "brancharea" : 0, "shiftchance" : 0})
+    node2 = node2.destructivesetfields({"anglevariance" : 0, "brancharea" : 0, "shiftchance" : 0, "angleoffset" : 0})
     node3 = PlantNode([shape3], 1, 0/5, children = [node2])
     node3 = node3.destructivesetfields({"anglevariance" : 0, "brancharea" : 0, "shiftchance" : 0})
     return ShopPlant("test", node3, 0)
@@ -200,13 +202,18 @@ def maketestplant():
 
 def make_shopplant_list():
     shopplantlist = []
-    shopplantlist.append(makestarter())
-    shopplantlist.append(makerose())
-    shopplantlist.append(makecactus())
-    #shopplantlist.append(testcactus())
-    
+    def addnormalshopplants():    
+        shopplantlist.append(makestarter())
+        shopplantlist.append(makerose())
+        shopplantlist.append(makecactus())
+    addnormalshopplants()
+
     numberofshopplants = len(shopplantlist)
-    #l.append(maketestplant())
+
+
+    shopplantlist.append(testcactus())
+    shopplantlist.append(maketestplant())
+
     def addcombinationscheat():
         for i in range(10):
             plant1index = random.randint(0, numberofshopplants-1)
