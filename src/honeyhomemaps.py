@@ -44,12 +44,6 @@ honeyhome = Map("honeyhouseinside",
                  Rock(stashlist, 131, 55, [0, 0.9, 1, 0.1], name="stash")],
                 shadowsp = False)
 
-outofbed = getconversation("outofbed")
-outofbed.storyevent = "bed"
-outofbed.area = [0, 0, insidewidth, insideheight]
-outofbed.eventrequirements = [EventRequirement("bed", -1, len(bed.animations)-1)]
-outofbed.showbutton = False
-
 eatfromstash = Conversation("eatfromstash",
                             [],
                             speaksafter = [[],[],[],[],[],[],[],[],
@@ -68,7 +62,7 @@ blockexit = getconversation("hungry")
 blockexit.area = doorexit.area
 blockexit.eventrequirements = [EventRequirement("letter", -1, 1)]
 
-honeyhome.conversations = [eatfromstash, outofbed, blockexit]
+honeyhome.conversations = [eatfromstash, blockexit]
 
 honeyhome.startpoint = [28, 39]
 

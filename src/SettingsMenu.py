@@ -303,7 +303,10 @@ class SettingsMenu(FrozenClass):
             return message
 
     def initiateconfirm(self):
-        if self.workingcopy == variables.settings:
+        if self.workingcopy.state == "battle" and self.workingcopy.dancepadmodep != variables.settings.dancepadmodep:
+           self.workingcopy.dancepadmodep = variables.settings.dancepadmodep
+           return "cannot change dance pad mode while in battle"
+        elif self.workingcopy == variables.settings:
             self.exitsettingsmenu()
             return "confirmed without change"
         else:

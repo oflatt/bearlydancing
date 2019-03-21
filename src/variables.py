@@ -230,7 +230,7 @@ numofrounds = 2
 
 accidentallvthreshhold=8
 
-dancepadlevelincrease = 5
+dancepadlevelincrease = 4
 
 def getpadypos():
     return height*(13/16)

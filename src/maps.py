@@ -26,6 +26,9 @@ from mapsvars import *
 
 from honeyhomemaps import *
 
+def getbed():
+    return bed
+
 if not fasttestmodep:
     from forestmaps import *
     from snowmaps import *
@@ -253,7 +256,7 @@ def unhiderock(rockname):
 
 def playerenabledp():
     # just check if they have gotten out of bed at the beginning- from honeyhomemaps
-    return not outofbed.activatedp()
+    return classvar.player.getstoryevent("bed") >= len(getbed().animations)-1
 
 # calls the grassland music when appropriate
 def musictick():

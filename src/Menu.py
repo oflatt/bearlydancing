@@ -1,4 +1,5 @@
 import graphics, variables, pygame, enemies, classvar, maps, random, stathandeling, copy
+
 from pygame import Rect
 from classvar import player
 from graphics import getpicbyheight, getTextPic, getpic, difficultytocolor
@@ -303,8 +304,17 @@ class Menu(FrozenClass):
                         variables.settings.difficulty = self.tempdifficulty
                         classvar.player.exp = stathandeling.lvexp(self.tempdifficulty + 1)
                 if self.option == len(self.nameprompts)-1:
-                    self.mainmenup = False
-                    self.resume()
+                    # check if bear needs to be woken up
+                    if player.getstoryevent("bed") < len(maps.getbed().animations)-1:
+                        maps.getbed().nextanimation()
+                        player.addstoryevent("bed")
+
+                        if player.getstoryevent("bed") == len(maps.getbed().animations)-1:
+                            self.mainmenup = False
+                            self.resume()
+                    else:
+                        self.mainmenup = False
+                        self.resume()
                 else:
                     self.option += 1
                     
