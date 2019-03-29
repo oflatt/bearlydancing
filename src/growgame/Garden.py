@@ -13,8 +13,44 @@ class Garden(DestructiveFrozenClass):
         self.plants = []
         self._freeze()
 
+
+    def drawwood(self, time, settings, screen, scale, currentxscroll, bottomypos):
+
+        shelfwidth = currentxscroll + screen.get_width()
+        
+        
+        shelfheight = 7*scale
+        shelfdepth = 18*scale
+        shelfdepthoffset = 7*scale
+        shelfyoffset = 2*scale
+        frontcolor = (127, 88, 26)
+
+        frontrect = Rect(-currentxscroll+10*scale, bottomypos-shelfheight+shelfyoffset, 80*scale, shelfheight)
+
+        # draw depth
+        depthplist = [(frontrect[0], frontrect[1]),
+                      (frontrect[0]+shelfdepthoffset, frontrect[1]-shelfheight),
+                      (frontrect[0]+frontrect.width+shelfdepthoffset,
+                       frontrect[1]-shelfheight),
+                      (frontrect[0]+frontrect.width, frontrect[1])]
+        gfxdraw.filled_polygon(screen, depthplist, variables.brighten(frontcolor, 13))
+        
+        # draw front
+        gfxdraw.box(screen, frontrect, frontcolor)
+
+        # draw right side
+        rsideplist = [depthplist[-2], depthplist[-1],
+                      (frontrect[0]+frontrect.width, frontrect[1]+shelfheight),
+                      (depthplist[-2][0], depthplist[-2][1]+shelfheight)]
+        gfxdraw.filled_polygon(screen, rsideplist, variables.brighten(frontcolor, -3))
+
     # returns the x position at which the cursor was drawn
-    def draw(self, time, settings, screen : Surface, scale, bottomypos : float, cursoroffset = 0, drawcursorindex = None, nodraw = False):
+    def draw(self, time, settings, screen : Surface, scale, bottomypos : float, cursoroffset = 0, currentxscroll = 0, drawcursorindex = None, nodraw = False):
+
+        # first draw wood
+        if not nodraw:
+            self.drawwood(time, settings, screen, scale, currentxscroll, bottomypos)
+        
         xspace = screen.get_width()/50
         currentx = xspace
         cursordrawpos = None
@@ -34,7 +70,7 @@ class Garden(DestructiveFrozenClass):
         return cursordrawpos
 
     # returns the x position of the end of the currently highlighted plant
-    def get_xpos_end_of_cursor_plant(self, cursorx : int, scale : float, oldcursoroffset : float, screen : Surface) -> float:
+    def get_xpos_end_of_cursor_plant(self, cursorx : int, scale : float, oldcursoroffset : float, screen : Surface) -> Rect:
         rect = self.draw(0, None, screen, scale, 0.0, cursoroffset = oldcursoroffset, drawcursorindex = cursorx, nodraw = True)
         if rect != None:
             rect.x += (self.plants[cursorx].plantwidth-self.plants[cursorx].plantbasexoffset)*scale 

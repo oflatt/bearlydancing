@@ -54,8 +54,14 @@ class GrowGame(DestructiveFrozenClass):
             newcursoroffset -= 1
         while self.garden.get_xpos_end_of_cursor_plant(self.cursorx, self.scale(), newcursoroffset, screen)[0] > variables.width:
             newcursoroffset += 1
+
+        # now to get how much it will scroll, calculate based upon a version without scrolling
+        if newcursoroffset > 0:
+            currentxscroll = self.garden.get_xpos_end_of_cursor_plant(newcursoroffset-1, self.scale(), 0, screen)[0]
+        else:
+            currentxscroll = 0
             
-        self.garden.draw(time, settings, screen, self.scale(), rowyspacing, cursoroffset = newcursoroffset, drawcursorindex = self.cursorx)
+        self.garden.draw(time, settings, screen, self.scale(), rowyspacing, currentxscroll = currentxscroll, cursoroffset = newcursoroffset, drawcursorindex = self.cursorx)
 
         self = self.destructiveset("lastcursoroffset", newcursoroffset)
 

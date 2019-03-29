@@ -211,8 +211,8 @@ def make_shopplant_list():
     numberofshopplants = len(shopplantlist)
 
 
-    shopplantlist.append(testcactus())
-    shopplantlist.append(maketestplant())
+    #shopplantlist.append(testcactus())
+    #shopplantlist.append(maketestplant())
 
     def addcombinationscheat():
         for i in range(10):

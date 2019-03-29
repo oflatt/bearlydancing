@@ -1,13 +1,16 @@
 import pygame
 from pygame import Surface
-
+from devoptions import args
 
 import variables
 
 def addsurfaceGR(GR, s, name, dimensions = None):
     if dimensions == None:
         dimensions = [s.get_width(), s.get_height()]
-    GR[name] = {"img":s.convert_alpha(),"w":dimensions[0],"h":dimensions[1]}
+    if args.novideomode:
+        GR[name] = {"img":s,"w":dimensions[0],"h":dimensions[1]}
+    else:
+        GR[name] = {"img":s.convert_alpha(),"w":dimensions[0],"h":dimensions[1]}
 
 
 def adddancearrows(GR):
