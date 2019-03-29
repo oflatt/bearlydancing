@@ -22,9 +22,23 @@ for x in range(20):
         
 bigstem_plantshape = PlantShape(bigstem_list, (0, 200, 0), (0, 120, 0))
 
+
+def sunflower():
+    flower_stem_list = [(0.0,0.0)]
+    
+    for x in range(40):
+        flower_stem_list.append((x,1.0))
+
+    stem_plant_shape = PlantShape(flower_stem_list, (0, 200, 0), (0, 120, 0))
+    
+    stem_node = PlantNode([stem_plant_shape], 1, math.pi/5)
+
+    return ShopPlant("Sunflower", stem_node, 80)
+            
+    
 def makestarter():
     # make the starter flower
-    petal_list = [(0, 0)]
+    petal_list = [(0.0, 0.0)]
     petal_numofpoints = 13
     for x in range(petal_numofpoints):
         petal_list.append((x, 4*math.sin(x/petal_numofpoints * math.pi)))
@@ -36,16 +50,20 @@ def makestarter():
     middleradius = 2.5
     middlelist = listarc(-middleradius, 0, middleradius*2, middleradius, 8)
     middleshape = PlantShape(middlelist, middlecolor, brighten(middlecolor, -30))
+    
+    # set the texture of the middle of the flower to fill in some dark pixels
     middleshape = middleshape.destructiveset("textures", [middletexture])
+    
     middlenode = PlantNode([middleshape], 1, math.pi/20)
 
     petal_shape = PlantShape(petal_list, (0, 0, 200), (0, 0, 120))
     petalnode = PlantNode([petal_shape], 5, math.pi*2 / 5)
+    
     starter_flower = PlantNode([bigstem_plantshape], 1, math.pi/10, children = [middlenode, petalnode])
     
 
     
-    return (ShopPlant("blue flower", starter_flower, 0))
+    return ShopPlant("blue flower", starter_flower, 0)
 
 
 def makerose():
@@ -129,7 +147,7 @@ def makecactus():
     
 
         
-    return (ShopPlant("cactus", body_node, 40))
+    return ShopPlant("cactus", body_node, 40)
 
 
 def testcactus():
@@ -175,11 +193,13 @@ def testcactus():
 
     body_node = body_node.destructiveset("children", [body_node2])
         
-    return (ShopPlant("testcactus", body_node, 40))
+    return ShopPlant("testcactus", body_node, 40)
+
+
 
 
 def makecross(plant1, plant2):
-    return (ShopPlant( "cross", crossplants(plant1, plant2).headnode, 80))
+    return ShopPlant( "cross", crossplants(plant1, plant2).headnode, 80)
 
 
 def maketestplant():
@@ -206,6 +226,7 @@ def make_shopplant_list():
         shopplantlist.append(makestarter())
         shopplantlist.append(makerose())
         shopplantlist.append(makecactus())
+        shopplantlist.append(sunflower())
     addnormalshopplants()
 
     numberofshopplants = len(shopplantlist)

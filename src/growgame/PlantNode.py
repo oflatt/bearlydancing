@@ -2,13 +2,15 @@ from typing import List, Tuple
 
 from DestructiveFrozenClass import DestructiveFrozenClass
 
+from .PlantShape import PlantShape
+
 
 class PlantNode(DestructiveFrozenClass):
 
     def __init__(self, plantshapelist, repeatnumcircle, anglespace, children = [], anchor = (0, 0)):
         
         # a list of PlantShape to make one petal/leaf
-        self.plantshapelist : List[Tuple[float, float]] = plantshapelist
+        self.plantshapelist : List[PlantShape] = plantshapelist
 
         # where in the plantshapelist the base of the shape is
         self.anchor : Tuple[float, float] = anchor
