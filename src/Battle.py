@@ -12,6 +12,11 @@ from Soundpack import max_sample
 from initiatestate import returntoworld
 
 
+
+def enemypic_height():
+    return variables.height/5.0
+
+
 # battle is the class that runs the battle- information about the game such as storyeventonwin is stored in enemy
 class Battle(FrozenClass):
 
@@ -289,12 +294,13 @@ class Battle(FrozenClass):
         # draw enemy first
         if self.state != "dance":
             self.enemy.animation.reset() # if not dancing, use first frame
-        epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
             
 
+        # draw enemy
+        self.enemy.animation.draw_topright(variables.screen, enemypic_height())
+            
         playerpicandrect = self.getplayerpicandrect()
         
-        variables.screen.blit(epic, [w - epic.get_width(), 0])
 
         # draw the player
         if self.state == "dance":
@@ -409,10 +415,10 @@ class Battle(FrozenClass):
         playermaxh = stathandeling.max_health(p.lv())
         healthh = h * (1 / 18)
         enemyhealthh = h * (1 / 50)
-        e = self.enemy
-        epicw = epic.get_width()
-        epich = epic.get_height()
-        percenthealthlefte = e.health / stathandeling.max_health(e.lv)
+        
+        epich = enemypic_height()
+        epicw = self.enemy.animation.pic_width(epich)
+        percenthealthlefte = self.enemy.health / stathandeling.max_health(self.enemy.lv)
         healthbarcolor = variables.GREEN
         if p.health != playermaxh:
             percenthealthleft = p.health / playermaxh
@@ -432,8 +438,7 @@ class Battle(FrozenClass):
             variables.dirtyrects.append(Rect(coordinates[0], coordinates[1], ptext.get_width(), ptext.get_height()))
 
     def updatescreenforenemy(self):
-        epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
-        variables.dirtyrects.append(Rect(variables.width-epic.get_width(), 0, epic.get_width(), epic.get_height()))
+        self.enemy.animation.update_topright(enemypic_height())
 
     def partofbeatlist(self):
         pofbeatlist = [0]

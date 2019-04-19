@@ -42,6 +42,7 @@ sound
 - playback mode- have computer replay song perfectly after finishing a battle
 
 battle
+- circles that give a visual cue around the note about to be played like lyrica
 - battle code is ugly and convoluted with all the time/health variables
 
 - melodicmode:

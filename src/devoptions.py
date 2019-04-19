@@ -24,7 +24,8 @@ fasttestmodep = False
 lvcheat = 0
 
 # if None it does nothing, if it is a dictionary for "specs" it goes directly into a battle with those specs
-testspecs = None#{'maxtime' : 20, 'lv' : 4, 'rules' : ["alternating"]}
+testspecs = {'maxtime' : 20, 'lv' : 4, 'rules' : ["alternating"]}
+testenemy = "yoyo"
 
 devlosebattlekey = pygame.K_BACKSLASH
 devwinbattlekey = pygame.K_END

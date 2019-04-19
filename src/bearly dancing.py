@@ -42,17 +42,24 @@ done = False
 
 # if the testspecs are set, use it and initiate a battle
 from initiatebattle import initiatebattle
+import enemies
 from enemies import random_enemy
 from enemies import devbattletest
 import copy
-if variables.testspecs != None:
-    testenemy = copy.copy(random_enemy("woods"))
-    if not variables.testspecs is None:
-        testenemy.lv = variables.testspecs['lv']
-        testenemy.beatmaprules = variables.testspecs['rules']
+
+
+if variables.testenemy != None or variables.testspecs != None:
+    if variables.testenemy != None:
+        testenemy = copy.copy(enemies.enemyforspecialbattle(variables.testenemy))
+    else:
+        testenemy = copy.copy(random_enemy("woods"))
+    
+    testenemy.lv = variables.testspecs['lv']
+    testenemy.beatmapspecs = variables.testspecs
     initiatebattle(testenemy)
     menu.firstbootup = False
     variables.settings.menuonq = False
+
 
 # play main menu music
 from play_sound import play_music

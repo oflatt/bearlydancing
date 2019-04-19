@@ -6,6 +6,7 @@ from pygame import Surface
 import string, math
 from typing import Union, Dict, List, Tuple
 
+from variables import devprint
 
 from rdraw.rdrawrock import makerock
 from rdraw.rdrawtree import maketree, makechristmastree
@@ -134,17 +135,31 @@ def getTextPic(text, textheight, color = variables.BLACK, savep = True):
         
     return TextGR[text][textheight][color]
 
-        
-# load graphics, if video is on
-if not variables.args.novideomode:
+
+
+def load_pics_folder():
     # add all the pics in the pic folder
     for x in picnames:
         if x != "" and x[0] != ".":
-            addtoGR(x)
+            fullxpath = variables.pathtoself + "/pics" + "/" + x
+            # if it is a subfolder, add pics in that folder
+            if os.path.isdir(fullxpath):
+                subpicnames = os.listdir(fullxpath)
+                for subpic in subpicnames:
+                    if x != "" and x[0] != ".":
+                        addtoGR(x + "/" + subpic)
+            else:
+                addtoGR(x)
 
     
     special_graphics_loader.load_special_graphics(GR)
+
         
+# load graphics, if video is on
+if not variables.args.novideomode:
+    load_pics_folder()
+
+    
 # count the number of player animations
 numofplayerframes = 0
 while "honeydance" + str(numofplayerframes) + "-0" in GR:

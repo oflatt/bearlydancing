@@ -1,5 +1,8 @@
 
+from pygame import Rect
+
 import variables
+from graphics import getpicbyheight
 
 class Animation():
 
@@ -34,6 +37,21 @@ class Animation():
             return self.pics[framenum].current_frame(self.framerate)
         else:
             return self.pics[framenum]
+
+    ### The following three functions are used as an interface in conjuction with MultiPartAnimation. MultiPartAnimation has no current_frame function
+        
+    # draws but does not update the screen
+    def draw_topright(self, screen, height):
+        epic = getpicbyheight(self.current_frame(), height)
+        screen.blit(epic, [variables.width - epic.get_width(), 0])
+
+    def update_topright(self, height):
+        epic = getpicbyheight(self.current_frame(), height)
+        variables.dirtyrects.append(Rect(variables.width-epic.get_width(), 0, epic.get_width(), epic.get_height()))
+
+    def pic_width(self, height):
+        epic = getpicbyheight(self.current_frame(), height)
+        return epic.get_width()
 
     def framenum(self, outerframerate):
         f = self.framerate

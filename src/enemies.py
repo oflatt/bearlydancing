@@ -3,9 +3,46 @@ from typing import List, Union
 
 from Enemy import Enemy
 from Animation import Animation
-from graphics import GR
+from MultiPartAnimation import AnimationPart, MultiPartAnimation
+from graphics import getpic
 
 defaultanimspeed = 1000
+
+# build the octopus
+octopus_parts = []
+# load the head
+octopus_head = []
+for i in range(3):
+    octopus_head.append(AnimationPart("octopus/00" + str(i+1)))
+octopus_arms = []
+for i in range(8):
+    armupdown = []
+    armindexstring = str(i*2+4)
+    if len(armindexstring) == 1:
+        beginning = "octopus/00"
+    else:
+        beginning = "octopus/0"
+    
+    armupdown.append(AnimationPart(beginning + armindexstring))
+
+    armindexstring = str(i*2+4+1)
+    if len(armindexstring) == 1:
+        beginning = "octopus/00"
+    else:
+        beginning = "octopus/0"
+    
+    armupdown.append(AnimationPart(beginning + armindexstring))
+    octopus_arms.append(armupdown)
+# add the body of the octopus
+octopus_parts.append([AnimationPart("octopus/020")])
+
+# now flip the list, because the body and the arms are drawn before the head
+octopus_parts.reverse()
+
+octopus_animation = MultiPartAnimation(octopus_parts,
+                                       getpic("octopus/000").get_width(),
+                                       getpic("octopus/000").get_height())
+
 
 raisewing = Animation(["flyingchimney7", "flyingchimney4"], 100, False)
 lowerwing = Animation(["flyingchimney5", "flyingchimney6"], 60, False)
@@ -107,6 +144,8 @@ addEnemy("snow fly", ["melodic", "repeatvariation", "doublenotes"],
 
 addEnemy("polar giraffe", ["melodic", "combinemelodies"],
          Animation(["polargiraffe0", "polargiraffe1"], defaultanimspeed))
+
+addEnemy("yoyo", [], octopus_animation)
 
 woodsenemies = getenemies(["perp", "spoe", "croc", "bogo", "rad turtle"])
 snowenemies = getenemies(["pile o' snow", "snow fly", "polar giraffe"])
