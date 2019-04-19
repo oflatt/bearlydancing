@@ -2,6 +2,7 @@
 from typing import List
 
 import variables
+from variables import devprint
 from graphics import getpic, addsurfaceGR
 
 
@@ -25,7 +26,7 @@ class MultiPartAnimation():
     # The outer list has all the lists that are drawn simultaneously, in order.
     # The inner list is all the variations for a part (AnimationParts)
     def __init__(self, parts_nested : List[List[AnimationPart]], unscaled_width, unscaled_height):
-
+        
         self.parts_nested = parts_nested
         self.updatealwaysbattle = False
 
@@ -57,7 +58,7 @@ class MultiPartAnimation():
             
             epic = getpic(animpart.picname, scale = scaling_factor)
             
-            screen.blit(epic, [variables.width - self.unscaled_width*scaling_factor + animpart.rel_x*scaling_factor+rightoffset, 0 + animpart.rel_y*scaling_factor+topoffset])
+            screen.blit(epic, [variables.width - self.unscaled_width*scaling_factor + animpart.rel_x*scaling_factor-rightoffset, animpart.rel_y*scaling_factor+topoffset])
 
         
     def update_topright(self, height, topoffset = 0, rightoffset= 0):

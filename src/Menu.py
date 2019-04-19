@@ -207,9 +207,12 @@ class Menu(FrozenClass):
                           dotwidth])
         
         if self.mainmenup:
-            enemyframe = getpicbyheight(self.enemyanimation.current_frame(), variables.height/5)
-            variables.screen.blit(enemyframe,
-                                  [int(variables.width/2 - enemyframe.get_width()/2), (len(opics) + 1) * variables.getmenutextyspace()])
+            enemywidth = self.enemyanimation.pic_width(variables.height/5)
+            self.enemyanimation.draw_topright(variables.screen,
+                                              variables.height/5,
+                                              topoffset = (len(opics) + 1) * variables.getmenutextyspace(),
+                                              rightoffset = int(variables.width/2 - enemywidth/2))
+            
 
 
     # in drawname option is used as how far they have gotten through the process

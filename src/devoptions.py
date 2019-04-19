@@ -26,7 +26,9 @@ fasttestmodep = False
 lvcheat = 0
 
 # if None it does nothing, if it is a dictionary for "specs" it goes directly into a battle with those specs
-testspecs : Optional[Dict[str, object]] = {'maxtime' : 20, 'lv' : 4, 'rules' : ["alternating"]}
+testspecs : Optional[Dict[str, object]] = {'maxtime' : 20, 'lv' : 4,
+                                           'rules' : ["alternating"],
+                                           'volumeenvelope' : 'bell'}
 testenemy : Optional[str] = "yoyo"
 
 devlosebattlekey = pygame.K_BACKSLASH

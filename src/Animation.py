@@ -41,9 +41,9 @@ class Animation():
     ### The following three functions are used as an interface in conjuction with MultiPartAnimation. MultiPartAnimation has no current_frame function
         
     # draws but does not update the screen
-    def draw_topright(self, screen, height):
+    def draw_topright(self, screen, height, topoffset = 0, rightoffset = 0):
         epic = getpicbyheight(self.current_frame(), height)
-        screen.blit(epic, [variables.width - epic.get_width(), 0])
+        screen.blit(epic, [variables.width - epic.get_width()-rightoffset, 0+topoffset])
 
     def update_topright(self, height):
         epic = getpicbyheight(self.current_frame(), height)

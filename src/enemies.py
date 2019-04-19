@@ -1,6 +1,8 @@
 import random, copy
 from typing import List, Union
 
+
+from variables import devprint
 from Enemy import Enemy
 from Animation import Animation
 from MultiPartAnimation import AnimationPart, MultiPartAnimation
@@ -14,6 +16,7 @@ octopus_parts = []
 octopus_head = []
 for i in range(3):
     octopus_head.append(AnimationPart("octopus/00" + str(i+1)))
+octopus_parts.append(octopus_head)
 octopus_arms = []
 for i in range(8):
     armupdown = []
@@ -32,7 +35,9 @@ for i in range(8):
         beginning = "octopus/0"
     
     armupdown.append(AnimationPart(beginning + armindexstring))
+    devprint(armupdown[0].rel_x)
     octopus_arms.append(armupdown)
+octopus_parts.extend(octopus_arms)
 # add the body of the octopus
 octopus_parts.append([AnimationPart("octopus/020")])
 
