@@ -48,7 +48,7 @@ from enemies import devbattletest
 import copy
 
 
-if variables.testenemy != None or variables.testspecs != None:
+if not variables.testspecs is None:
     if variables.testenemy != None:
         testenemy = copy.copy(enemies.enemyforspecialbattle(variables.testenemy))
     else:

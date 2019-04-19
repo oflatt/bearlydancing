@@ -1,4 +1,6 @@
 import argparse, pygame
+from typing import Optional, Dict
+
 
 testsmallp = False
 devmode = True
@@ -24,8 +26,8 @@ fasttestmodep = False
 lvcheat = 0
 
 # if None it does nothing, if it is a dictionary for "specs" it goes directly into a battle with those specs
-testspecs = {'maxtime' : 20, 'lv' : 4, 'rules' : ["alternating"]}
-testenemy = "yoyo"
+testspecs : Optional[Dict[str, object]] = {'maxtime' : 20, 'lv' : 4, 'rules' : ["alternating"]}
+testenemy : Optional[str] = "yoyo"
 
 devlosebattlekey = pygame.K_BACKSLASH
 devwinbattlekey = pygame.K_END
