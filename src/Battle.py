@@ -14,7 +14,7 @@ from initiatestate import returntoworld
 
 
 def enemypic_height():
-    return variables.height/5.0
+    return variables.height/4.0
 
 
 # battle is the class that runs the battle- information about the game such as storyeventonwin is stored in enemy
@@ -577,6 +577,9 @@ class Battle(FrozenClass):
                 currentb.scores = []
                 maps.engage_conversation(self.tutorialconversations[3], True)
                 self.exittutorial()
+
+    def drummermodep(self):
+        return "drummer" in self.beatmaps[self.current_beatmap].enemyspecs["rules"]
         
     # for things like the attack animation
     def ontick(self):
@@ -585,7 +588,7 @@ class Battle(FrozenClass):
             currentb = self.beatmaps[self.current_beatmap]
             olddrum = currentb.drumcounter
             currentb.ontick()
-            if currentb.drumcounter > olddrum:
+            if currentb.drumcounter > olddrum and not self.drummermodep():
                 self.drumbeat(currentb.drumcounter%4)
         
         dt = variables.settings.current_time - self.animationtime
@@ -693,6 +696,12 @@ class Battle(FrozenClass):
                     self.beatmaps[self.current_beatmap].onkey(key)
             else:
                 self.beatmaps[self.current_beatmap].onkey(key)
+
+            # check for octopus animation change
+            if self.drummermodep():
+                for noteindex in range(8):
+                    if variables.checkkey("note" + str(noteindex+1), key):
+                        self.enemy.animation.change_frame(variables.octopusarmtomultipartpart[noteindex], newframe = 1)
         elif self.state == "choose":
             if variables.checkkey("enter", key):
                 if self.battlechoice.current_option == 0:
@@ -748,7 +757,14 @@ class Battle(FrozenClass):
             else:
                 releasep = True
         if releasep:
+            # check for octopus animation change
+            if self.drummermodep():
+                for noteindex in range(8):
+                    if variables.checkkey("note" + str(noteindex+1), key):
+                        self.enemy.animation.change_frame(variables.octopusarmtomultipartpart[noteindex], newframe = 0)
+
             self.beatmaps[self.current_beatmap].onrelease(key)
+            
 
     def addexp(self):
         self.state = "exp"

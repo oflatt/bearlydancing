@@ -232,6 +232,13 @@ accidentallvthreshhold=8
 
 dancepadlevelincrease = 4
 
+numberofoctopusheads = 3
+octopusarmdraworder = [4, 3, 6, 2, 7, 1, 0, 5]
+octopusarmtomultipartpart = []
+for armnum in range(8):
+    octopusarmtodraw.append(octopusarmdraworder.index(armnum)+1) # add one because the body is drawn first
+octopusarmtodraw.reverse()
+
 def getpadypos():
     return height*(13/16)
 

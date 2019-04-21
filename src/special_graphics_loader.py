@@ -57,7 +57,6 @@ def adddancearrows(GR):
     addsurfaceGR(GR, downdancearrowdark, "downdancearrowdark")
     
 def load_special_graphics(GR):
-    GR["octopus/000"]
     
     #add empty surface
     addsurfaceGR(GR, Surface((1,1), pygame.SRCALPHA), "empty")

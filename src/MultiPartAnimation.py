@@ -1,4 +1,5 @@
 
+from pygame import Rect
 from typing import List
 
 import variables
@@ -28,7 +29,8 @@ class MultiPartAnimation():
     def __init__(self, parts_nested : List[List[AnimationPart]], unscaled_width, unscaled_height):
         
         self.parts_nested = parts_nested
-        self.updatealwaysbattle = False
+        # default true for updating for multi part
+        self.updatealwaysbattle = True
 
         self.unscaled_width = unscaled_width
         self.unscaled_height = unscaled_height

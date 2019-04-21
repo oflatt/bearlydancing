@@ -305,6 +305,8 @@ class Beatmap():
             self.setfeedback(note.getscreenvalue(), "perfect")
     
     def onkey(self, key):
+        
+        
         def check_note(np, modifiedp):
             if self.notes[np].beginning_score == None:
                 s = self.pos_to_score(self.notes[np].pos[1] - padheight)
@@ -346,6 +348,7 @@ class Beatmap():
             return sound_value
 
         def playnotepressed(kp, modifiedp):
+            
             v = check_place(kp, modifiedp)
             v = simple_value_in_key(v)
             if self.spacepressedp or modifiedp:
