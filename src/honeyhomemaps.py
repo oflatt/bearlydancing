@@ -132,7 +132,10 @@ b = GR["horizontal"]["w"] / 10
 
 #stands for random pine tree
 rpt = graphics.pinetree()
-rgrassland = graphics.grassland(900, 500)
+outsidewidth = 900
+outsideheight = 500
+
+rgrassland = graphics.grassland(outsidewidth, outsideheight)
 treerock = Rock(rpt, 3.5 * b + housewidth, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + GR[rpt]["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock("meangreen0", treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
@@ -169,8 +172,7 @@ outside1 = Map(rgrassland,
 outside1.populate_with("pinetree", 4, [cleararearect])
 outside1.populate_with("flower", randint(3, 7), [cleararearect])
 
-outsidewidth = GR[rgrassland]["w"]
-outsideheight = GR[rgrassland]["h"]
+
 outside1.startpoint = [b * 8, b * 4]
 outside1.exitareas = [Exit("right", False, 'outside2', "left", "same"),
                       Exit("left", False, 'jeremyhome', "right",

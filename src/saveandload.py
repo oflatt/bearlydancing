@@ -6,6 +6,7 @@ import dill as pickle
 from stathandeling import explv, lvexp
 from play_sound import soundpackkeys, scales
 from initiatestate import initiategame
+import devoptions
 
 def loadmaps(mapdict):
     maps.set_new_maps(mapdict)
@@ -49,42 +50,42 @@ def save(manualp):
         
 # returns a menu
 def load():
+    
     m = Menu()
     save0path = variables.savepath
-    if (os.path.isfile(save0path)):
-        if os.path.getsize(save0path) > 0:
-            with open(save0path, "rb") as f:
-                loadedlist = pickle.load(f)
-                tempplayer = None
-                mapsdict, tempcname, tempplayer, classvar.battle, maps.current_map_name, floatingtemp = loadedlist
-                if not variables.dontloadplayer:
-                    classvar.player = tempplayer
-                else:
-                    classvar.player.xpos = tempplayer.xpos
-                    classvar.player.ypos = tempplayer.ypos
-                    for x in range(50):
-                        classvar.player.addstoryevent("bed")
-             
-                if variables.lvcheat != 0:
-                    classvar.player.exp = lvexp(explv(classvar.player.exp)+variables.lvcheat)
-                if variables.addallrewards:
-                    for k in soundpackkeys:
-                        classvar.player.addreward(k)
-                    for k in scales.keys():
-                        classvar.player.addreward(k)
-                    
-                if not variables.dontloadmapsdict:
-                    conversations.floatingconversations = floatingtemp
-                    loadmaps(mapsdict)
-                    if tempcname in conversations.floatingconversations.keys():
-                        conversations.currentconversation = conversations.floatingconversations[tempckey]
-                    else:
-                        if tempcname != None:
-                            conversations.currentconversation = maps.map_dict[maps.current_map_name].getconversation(tempcname)
+    if not devoptions.args.restart and (os.path.isfile(save0path)) and os.path.getsize(save0path) > 0:
+        with open(save0path, "rb") as f:
+            loadedlist = pickle.load(f)
+            tempplayer = None
+            mapsdict, tempcname, tempplayer, classvar.battle, maps.current_map_name, floatingtemp = loadedlist
+            if not variables.dontloadplayer:
+                classvar.player = tempplayer
+            else:
+                classvar.player.xpos = tempplayer.xpos
+                classvar.player.ypos = tempplayer.ypos
+                for x in range(50):
+                    classvar.player.addstoryevent("bed")
 
-                maps.change_map_nonteleporting(maps.current_map_name)
-                # don't start at beginning
-                m.firstbootup = False
+            if variables.lvcheat != 0:
+                classvar.player.exp = lvexp(explv(classvar.player.exp)+variables.lvcheat)
+            if variables.addallrewards:
+                for k in soundpackkeys:
+                    classvar.player.addreward(k)
+                for k in scales.keys():
+                    classvar.player.addreward(k)
+
+            if not variables.dontloadmapsdict:
+                conversations.floatingconversations = floatingtemp
+                loadmaps(mapsdict)
+                if tempcname in conversations.floatingconversations.keys():
+                    conversations.currentconversation = conversations.floatingconversations[tempckey]
+                else:
+                    if tempcname != None:
+                        conversations.currentconversation = maps.map_dict[maps.current_map_name].getconversation(tempcname)
+
+            maps.change_map_nonteleporting(maps.current_map_name)
+            # don't start at beginning
+            m.firstbootup = False
                 
     if (not isinstance(classvar.battle, str)):
         classvar.battle.reset_enemy()

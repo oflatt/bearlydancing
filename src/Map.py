@@ -14,6 +14,7 @@ from Animation import Animation
 from Wind import Wind
 from WindEffect import WindEffect
 from WindShift import WindShift
+from OutsideBaseImage import OutsideBaseImage
 
 extraarea = 50
 TREEMASK = Mask((variables.TREEWIDTH, variables.TREEHEIGHT))
@@ -35,8 +36,17 @@ class Map(FrozenClass):
         self.rightbound = rightbound
         self.bottombound = bottombound
         self.leftbound = leftbound
-        # base is a string for a pic in GR
+
+        # base is a string for a pic in GR or a OutsideBaseImage
+        if type(base) == OutsideBaseImage:
+            self.mab_base_collision_areas = base.collision_areas
+            base = base.image_name
+        else:
+            self.mab_base_collision_areas = []
+            
         self.base = base
+            
+        
         # terrain is a list of Rock
         self.terrain = terrain
         # final image is the name of the image for the background

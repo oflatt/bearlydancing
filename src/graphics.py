@@ -7,10 +7,11 @@ import string, math
 from typing import Union, Dict, List, Tuple
 
 from variables import devprint
+from OutsideBaseImage import OutsideBaseImage
 
 from rdraw.rdrawrock import makerock
 from rdraw.rdrawtree import maketree, makechristmastree
-from rdraw.rdrawland import makegrassland, makesnowland
+from rdraw.rdrawland import makegrassland, makesnowland, path_collisions
 from rdraw.rdrawmodify import createshadow
 from rdraw.rdrawflower import makeflower
 from rdraw.rdrawarcade import makecabinet
@@ -431,13 +432,13 @@ def grassland(width, height, leftpath = True, rightpath = True, uppath = False, 
     def callgrasslandfunction():
         return makegrassland(width, height, leftpath, rightpath, uppath, downpath)
     
-    return generategraphic(callgrasslandfunction, "randomgrassland")
+    return OutsideBaseImage(generategraphic(callgrasslandfunction, "randomgrassland"), path_collisions(width, height, leftpath, rightpath, uppath, downpath))
 
-def snowland(width, height, grasstosnowp = False):
+def snowland(width, height, grasstosnowp = False, leftpath = True, rightpath = True, uppath = False, downpath = False):
     def callsnowland():
-        return makesnowland(width, height, grasstosnowp)
+        return makesnowland(width, height, grasstosnowp, leftpath, rightpath, uppath, downpath)
 
-    return generategraphic(callsnowland, "randomsnowland")
+    return OutsideBaseImage(generategraphic(callsnowland, "randomsnowland"), path_collisions(width, height, leftpath, rightpath, uppath, downpath))
 
 def flower():
     return generategraphic(makeflower, "randomflower")

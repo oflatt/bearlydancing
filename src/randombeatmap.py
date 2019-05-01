@@ -255,7 +255,7 @@ def addlayer(notelist, time, specs, valuestouse = [], specialmarkers = []):
 
 def maxtimefromspecs(specs):
     maxtime = specs['maxtime']
-    return maxtime + specs['lv']*2
+    return maxtime + int(specs['lv']*3)
 
 # loops through until maxtime, adding layers
 # returns a tuple with a list of notes and the new time

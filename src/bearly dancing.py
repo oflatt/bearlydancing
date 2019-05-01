@@ -18,6 +18,7 @@ import maps
 import conversations, classvar
 from saveandload import save, load
 
+
 # save the properties to record how many things needed to be loaded
 variables.save_properties()
 
