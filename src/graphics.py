@@ -7,6 +7,7 @@ import string, math
 from typing import Union, Dict, List, Tuple
 
 from variables import devprint
+import devoptions
 from OutsideBaseImage import OutsideBaseImage
 
 from rdraw.rdrawrock import makerock
@@ -55,7 +56,7 @@ def sscale_customfactor(img, factor, rounded = True):
         endsize = variables.unrounded_displayscale
     return pygame.transform.scale(img, [int(w*endsize*factor), int(h*endsize*factor)])
 
-#use if you want pictures where the smaller dimension is a set size
+# use if you want pictures where the smaller dimension is a set size
 def scale_pure(img, s, side = None):
     w = img.get_width()
     h = img.get_height()
@@ -69,9 +70,9 @@ def scale_pure(img, s, side = None):
         smaller = w
     return pygame.transform.scale(img, [int((w/smaller) * s), int((h/smaller) * s)])
 
-def importpic(filename):
+def importpic(filename, subpicp):
     
-    pic = pygame.image.load(os.path.join(variables.pathtoself, os.path.join('pics', filename)))
+    pic = pygame.image.load(filename)
     # a list of types of pictures with no alpha in them
     backgrounds = ["randomgrassland", "randomsnowland"]
     
@@ -80,9 +81,10 @@ def importpic(filename):
     else:
         return pic.convert_alpha()
 
+    
 #simport returns a dictionary with an image and what its new dimensions would be if scaled
-def simport(filename):
-    p = importpic(filename)
+def simport(filename, subpicp):
+    p = importpic(filename, subpicp)
     dimensions = [p.get_width(), p.get_height()]
     return {"img":p, "w":dimensions[0], "h":dimensions[1]}
 
@@ -104,17 +106,22 @@ MGR : GRType = {}
 # an SGR for shadows
 shadowGR : GRType = {}
 
-picnames = os.listdir(variables.pathtoself + "/pics")
 
-def nicename(filename):
-    return filename.replace(".png", "").lower()
+
+def nicename(filename, subpicp = False):
+    if subpicp:
+        return os.path.basename(os.path.dirname(filename)) + \
+            "/" + os.path.basename(filename).replace(".png", "").lower()
+    else:
+        return os.path.basename(filename).replace(".png", "").lower()
+
 
 def typename(filename):
     return nicename(filename).rstrip(string.digits)
 
-def addtoGR(filename):
-    p = simport(filename)
-    GR[nicename(filename)] = p
+def addtoGR(filename, subpicp = False):
+    p = simport(filename, subpicp)
+    GR[nicename(filename, subpicp)] = p
 
 def addsurfaceGR(s, name, dimensions = None):
     special_graphics_loader.addsurfaceGR(GR, s, name, dimensions)
@@ -138,27 +145,34 @@ def getTextPic(text, textheight, color = variables.BLACK, savep = True):
 
 
 
-def load_pics_folder():
+def load_pics_folder(picfolderpath):
     # add all the pics in the pic folder
-    for x in picnames:
+    picfolder = os.listdir(picfolderpath)
+    for x in picfolder:
         if x != "" and x[0] != ".":
-            fullxpath = variables.pathtoself + "/pics" + "/" + x
+            fullxpath = os.path.join(picfolderpath, x)
+            
             # if it is a subfolder, add pics in that folder
             if os.path.isdir(fullxpath):
-                subpicnames = os.listdir(fullxpath)
-                for subpic in subpicnames:
-                    if x != "" and x[0] != ".":
-                        addtoGR(x + "/" + subpic)
+                subpicfolder = os.listdir(fullxpath)
+                for subpic in subpicfolder:
+                    if subpic != "" and subpic[0] != ".":
+                        addtoGR(os.path.join(fullxpath, subpic), True)
             else:
-                addtoGR(x)
+                addtoGR(fullxpath)
 
     
     special_graphics_loader.load_special_graphics(GR)
 
-        
+
+    
+
 # load graphics, if video is on
-if not variables.args.novideomode:
-    load_pics_folder()
+if not devoptions.args.novideomode:
+    load_pics_folder(variables.pathtoself + "/pics")
+                                
+    if os.path.isdir(variables.graphicssavefolderpath):
+        load_pics_folder(variables.graphicssavefolderpath)
 
     
 # count the number of player animations
@@ -392,18 +406,22 @@ def generategraphic(generatingfunction, graphicname, newworldoverride = False):
     
     filename = graphicname + str(variables.generatedgraphicsused[graphicname]-1) + ".png"
 
-    if not os.path.exists(variables.pathtoself + "/pics/" + filename):
+    filepath = os.path.join(variables.graphicssavefolderpath,  filename)
+    
+    
+    if not os.path.exists(filepath):
         newpic = generatingfunction()
-        pygame.image.save(newpic, variables.pathtoself + "/pics/" + filename)
-        addsurfaceGR(newpic, nicename(filename))
-    elif variables.newworldeachloadq or (newworldoverride and variables.allownewworldoverridep):
+        pygame.image.save(newpic, filepath)
+        addsurfaceGR(newpic, nicename(filepath))
+                                
+    elif devoptions.newworldeachloadq or (newworldoverride and devoptions.allownewworldoverridep):
         newpic = generatingfunction()
-        os.remove(variables.pathtoself + "/pics/" + filename)
-        pygame.image.save(newpic, variables.pathtoself + "/pics/" + filename)
-        addsurfaceGR(newpic, nicename(filename))
+        os.remove(filepath)
+        pygame.image.save(newpic, filepath)
+        addsurfaceGR(newpic, nicename(filepath))
 
     endofgeneration()
-    return nicename(filename)
+    return nicename(filepath)
     
 def pinetree():
     nicetreename = generategraphic(maketree, "randompinetree")

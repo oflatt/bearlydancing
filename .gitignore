@@ -1,7 +1,6 @@
 # for this project
-random*
-save0*
-savebackup*
+save0/*
+savebackup/*
 
 # mypy
 */.mypy_cache/*

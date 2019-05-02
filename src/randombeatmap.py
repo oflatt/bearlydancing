@@ -17,6 +17,7 @@ from notelistconverttodancepad import convertnotelisttodancepad
 import random, copy
 from random import randint
 import variables, math
+import devoptions
 
 
 ''' rule types for beatmaps that are stored in rules in the specs dictionary
@@ -204,7 +205,7 @@ def speciallayer(notelist, time, specs, specialmarkers):
 
         time = finalstarttime + (finalstarttime - middletime)
 
-        if variables.devmode:
+        if devoptions.devmode:
             print("Combined melodies- oldtime: " + str(oldtime) + \
                   " melodyduration: " + str(melodyduration) + " newtime: " + str(time))
         
@@ -304,7 +305,7 @@ def random_beatmap(specs):
     if variables.settings.dancepadmodep:
         specs['lv'] = specs['lv'] + variables.dancepadlevelincrease
     
-    if variables.devmode:
+    if devoptions.devmode:
         print()
         print('output of:')
         print("   " + str(specs['rules']) + " lv: " + str(specs['lv']))
@@ -333,7 +334,7 @@ def random_beatmap(specs):
     # tempo is milliseconds per beat
     tempo = (1200 * 3) / (math.sqrt(lv)*0.4+ 0.08*lv + 3.5)
 
-    if variables.devmode:
+    if devoptions.devmode:
         printnotelist(l)
 
     # then perform checks
@@ -526,7 +527,7 @@ def movednotes(old_notes, movelength):
 # startingtime is the time the main loop left off
 # maxtime is the (soft) limit on time to use
 def repetition(time, movelength, listofnotes, repeatduration, specs, maxtime, skipduration):
-    if variables.devmode:
+    if devoptions.devmode:
         print('repetition: time: ' + str(time) + ' repeatduration: ' +
               str(repeatduration) + ' last note time: ' +
               str(listofnotes[-1].time) + ' list depth: ' +
@@ -538,7 +539,7 @@ def repetition(time, movelength, listofnotes, repeatduration, specs, maxtime, sk
         newtimeandlist =  repeatvaluesrepetition(time, movelength, listofnotes, repeatduration, specs, maxtime, skipduration = skipduration)
     else:
         newtimeandlist = normalrepetition(time, movelength, listofnotes, repeatduration, specs, maxtime, skipduration = skipduration)
-    if variables.devmode:
+    if devoptions.devmode:
         print('newtime: ' + str(newtimeandlist['time']))
     return newtimeandlist
 
@@ -599,7 +600,7 @@ def normalrepetition(time, movelength, listofnotes, repeatduration, specs, maxti
         notestoadd = variation_of_notes(notestoadd, specs)
 
     if hasrule('repeatmove', specs):
-        if variables.devmode and iterations == 0:
+        if devoptions.devmode and iterations == 0:
             print("movelength: " + str(movelength))
         notestoadd = movednotes(notestoadd, movelength)
 
@@ -651,11 +652,11 @@ def normalrepetition(time, movelength, listofnotes, repeatduration, specs, maxti
             newrepeatduration = getrepeatduration(l, specs, maxtime, newtime)
             returnval = normalrepetition(newtime, movelength, l, newrepeatduration, specs, maxtime, iterations+1)
         else:
-            if variables.devmode:
+            if devoptions.devmode:
                 print(str(iterations+1) + " times")
         return returnval
     else:
-        if variables.devmode:
+        if devoptions.devmode:
             print(str(iterations+1) + " times")
         return {'time': newtime, 'list': l}
 

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, copy, conversations, play_sound
+import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, copy, conversations, play_sound, devoptions
 from ChoiceButtons import ChoiceButtons
 from Button import Button
 from Note import Note
@@ -372,7 +372,6 @@ class Battle(FrozenClass):
                 text = variables.font.render("you win!", 0, variables.WHITE)
             textscaled = sscale(text)
             variables.screen.blit(textscaled, [w / 2 - (textscaled.get_width() / 2), h / 2])
-            self.drawscoretable()
 
         
         elif self.state == "exp" or self.state == "got exp":
@@ -436,6 +435,9 @@ class Battle(FrozenClass):
             coordinates = [(variables.width / 2) - (ptext.get_width() / 2) - epich, variables.getpadypos() - ptext.get_height() - 10]
             variables.screen.blit(ptext, coordinates)
             variables.dirtyrects.append(Rect(coordinates[0], coordinates[1], ptext.get_width(), ptext.get_height()))
+
+        if self.state == "lose" or self.state == "win" or self.state == "exp" or self.state == "got exp":
+            self.drawscoretable()
 
     def updatescreenforenemy(self):
         self.enemy.animation.update_topright(enemypic_height())
@@ -685,7 +687,7 @@ class Battle(FrozenClass):
             variables.settings.scaleindex = (variables.settings.scaleindex + offset) % len(classvar.player.scales)
             self.battlechoice.buttons[-1].assign_text(self.getscalename())
         
-        if(variables.devmode):
+        if(devoptions.devmode):
             if(key == variables.devlosebattlekey):
                 self.lose()
             elif(key == variables.devwinbattlekey):

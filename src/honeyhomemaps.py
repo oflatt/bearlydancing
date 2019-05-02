@@ -9,7 +9,7 @@ from Exit import Exit
 from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
-from variables import displayscale, fasttestmodep
+from variables import displayscale
 from EventRequirement import EventRequirement
 from random import randint
 from mapsvars import *

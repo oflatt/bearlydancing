@@ -18,9 +18,10 @@ from Exit import Exit
 from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
-from variables import displayscale, fasttestmodep
+from variables import displayscale
 from EventRequirement import EventRequirement
 from random import randint
+import devoptions
 
 from mapsvars import *
 
@@ -29,7 +30,7 @@ from honeyhomemaps import *
 def getbed():
     return bed
 
-if not fasttestmodep:
+if not devoptions.fasttestmodep:
     from forestmaps import *
     from snowmaps import *
 
@@ -50,7 +51,7 @@ def get_map_coded(name):
     return m
 
 def get_mapdict():
-    if fasttestmodep:
+    if devoptions.fasttestmodep:
         return {"honeyhome": honeyhome,"letter":letter,"outside1":outside1}
     else:
         stringlist = [home_map_name]

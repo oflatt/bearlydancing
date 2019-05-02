@@ -1,6 +1,7 @@
 import copy
 from pygame import Rect
 
+import devoptions
 import graphics, pygame, variables
 from graphics import getpicbywidth
 from play_sound import stop_tone, play_tone, update_tone, play_effect
@@ -107,7 +108,7 @@ class Beatmap():
         
 
         # also draw notetime to top left
-        if variables.devmode:
+        if devoptions.devmode:
             notetimetext = variables.font.render(str(self.notetime()), 0, variables.WHITE)
             variables.screen.blit(notetimetext, [10, 2*variables.font.get_linesize()])
 

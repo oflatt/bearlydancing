@@ -10,7 +10,9 @@ from Properties import Properties
 from random import randint
 from Game import Game
 
-from devoptions import *
+import devoptions
+from devoptions import devprint
+
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 # for export need the commented section
@@ -27,16 +29,20 @@ pypyp = platform.python_implementation() == "PyPy"
 
 
 # load settings
+os.makedirs("save0", exist_ok=True)
+os.makedirs("save0/graphics", exist_ok=True)
 savefolderpath = os.path.join(pathtoself, "save0/")
+graphicssavefolderpath = os.path.join(savefolderpath, "graphics/")
 manualsavebackuppath = os.path.join(pathtoself, "savebackup/");
 settingspath = os.path.join(savefolderpath, "bdsettings.txt")
 savepath = os.path.join(savefolderpath, "bdsave.txt")
 settings = Settings()
-if not dontloadsettings:
+if not devoptions.dontloadsettings:
     if (os.path.isfile(os.path.abspath(settingspath))):
         if os.path.getsize(os.path.abspath(settingspath)) > 0:
             with open(settingspath, "rb") as f:
                 settings = pickle.load(f)
+                print(settings.state)
 settings.menuonq = True
 
 
@@ -94,7 +100,7 @@ icon = pygame.image.load(os.path.join(pathtoself, "icon.png"))
 
 mode = None
 
-if args.novideomode:
+if devoptions.args.novideomode:
     mode = (1200, 700)
 else:
     pygame.display.set_icon(icon)
@@ -127,7 +133,7 @@ if not mode is None:
     height = mode[1]
     width = mode[0]
 
-if testsmallp:
+if devoptions.testsmallp:
     height = int(height/2)
     width = int(width/2)
 
@@ -142,7 +148,7 @@ def setscreen(windowmode):
         flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
         screen = pygame.display.set_mode((width, height), flags, 32)
 
-if not args.novideomode:
+if not devoptions.args.novideomode:
     setscreen(settings.windowmode)
 
 # this is used so that time does not continue durng the frame that it generates the beatmap
@@ -312,7 +318,7 @@ def getdotwidth():
 
 #world
 playerspeed = 0.07
-if devmode:
+if devoptions.devmode:
     playerspeed *= 2
 accelpixelpermillisecond = 0.2359/1000
 floatinessagainstreality = 0.6
@@ -350,7 +356,7 @@ def draw_loading_text(string):
     screen.blit(text, [xpos, ypos])
 
 def draw_loading_tips():
-    if args.novideomode:
+    if devoptions.args.novideomode:
         return
     text = pygame.transform.scale2x(font.render("tip: use the escape key to pause the game", 0, WHITE).convert())
     xpos = int((width / 2) - (text.get_width() / 2))
@@ -359,7 +365,7 @@ def draw_loading_tips():
     screen.blit(text, [xpos, ypos]) 
 
 def draw_graphic_name(name):
-    if not args.novideomode:
+    if not devoptions.args.novideomode:
         text = font.render(name, 0, WHITE).convert()
         xpos = int((width / 2) - (text.get_width() / 2))
         ypos = int((height -text.get_height() - height/20))
@@ -369,7 +375,7 @@ def draw_graphic_name(name):
         pygame.display.update(textrect)
     
 def draw_progress_bar():
-    if args.novideomode:
+    if devoptions.args.novideomode:
         return
     #clear all the events so it does not crash
     pygame.event.get()

@@ -58,7 +58,7 @@ def load():
             loadedlist = pickle.load(f)
             tempplayer = None
             mapsdict, tempcname, tempplayer, classvar.battle, maps.current_map_name, floatingtemp = loadedlist
-            if not variables.dontloadplayer:
+            if not devoptions.dontloadplayer:
                 classvar.player = tempplayer
             else:
                 classvar.player.xpos = tempplayer.xpos
@@ -66,15 +66,15 @@ def load():
                 for x in range(50):
                     classvar.player.addstoryevent("bed")
 
-            if variables.lvcheat != 0:
-                classvar.player.exp = lvexp(explv(classvar.player.exp)+variables.lvcheat)
-            if variables.addallrewards:
+            if devoptions.lvcheat != 0:
+                classvar.player.exp = lvexp(explv(classvar.player.exp)+devoptions.lvcheat)
+            if devoptions.addallrewards:
                 for k in soundpackkeys:
                     classvar.player.addreward(k)
                 for k in scales.keys():
                     classvar.player.addreward(k)
 
-            if not variables.dontloadmapsdict:
+            if not devoptions.dontloadmapsdict:
                 conversations.floatingconversations = floatingtemp
                 loadmaps(mapsdict)
                 if tempcname in conversations.floatingconversations.keys():
@@ -86,7 +86,7 @@ def load():
             maps.change_map_nonteleporting(maps.current_map_name)
             # don't start at beginning
             m.firstbootup = False
-                
+    
     if (not isinstance(classvar.battle, str)):
         classvar.battle.reset_enemy()
 

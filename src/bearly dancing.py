@@ -9,9 +9,14 @@ from pygame import Rect
 variables.load_properties()
 variables.draw_loading_tips()
 
+import devoptions
+
 # determine if everything should be re-loaded
-if not os.path.isfile(os.path.abspath(variables.settingspath)) and not variables.newworldnever:
-    variables.newworldeachloadq = True
+if devoptions.args.restart or \
+   (not os.path.isfile(os.path.abspath(variables.settingspath)) and \
+    not devoptions.newworldnever):
+    devoptions.newworldeachloadq = True
+
 
 # now go ahead and load everything in
 import maps
@@ -32,7 +37,7 @@ menu = load()
 maps.new_scale_offset()
 
 # for skipsteve add the event
-if variables.skipsteve:
+if devoptions.skipsteve:
     classvar.player.addstoryevent("beatsteve")
 
 #clear all the events so it does not mess up the game when it loads
@@ -49,14 +54,14 @@ from enemies import devbattletest
 import copy
 
 
-if not variables.testspecs is None:
-    if variables.testenemy != None:
+if not devoptions.testspecs is None:
+    if devoptions.testenemy != None:
         testenemy = copy.copy(enemies.enemyforspecialbattle(variables.testenemy))
     else:
         testenemy = copy.copy(random_enemy("woods"))
     
-    testenemy.lv = variables.testspecs['lv']
-    testenemy.beatmapspecs = variables.testspecs
+    testenemy.lv = devoptions.testspecs['lv']
+    testenemy.beatmapspecs = devoptions.testspecs
     initiatebattle(testenemy)
     menu.firstbootup = False
     variables.settings.menuonq = False
@@ -73,7 +78,7 @@ menu.enemyanimation.beginning_time = variables.settings.current_time
 # key is either a pygame key (an int) or a string for what key was pressed, used for joy stick presses
 def onkeydown(key):
     # emergency dev quit
-    if variables.devmode and key == variables.devquitkey:
+    if devoptions.devmode and key == variables.devquitkey:
         pygame.quit()
         sys.exit()
 
@@ -96,7 +101,7 @@ def onkeydown(key):
             menu.onkey(key)
 
     # check for dev battle key
-    elif variables.devmode and key == variables.devengagebattlekey and variables.settings.state == "world":
+    elif devoptions.devmode and key == variables.devengagebattlekey and variables.settings.state == "world":
         if devbattletest == None:
             initiatebattle(random_enemy())
         else:
@@ -253,7 +258,7 @@ def ondraw():
 
 
     
-    if variables.testsmallp:
+    if devoptions.testsmallp:
         # blit red boarder for testing
         variables.screen.fill(variables.RED, Rect(variables.width, 0, 10, variables.height))
         variables.screen.fill(variables.RED, Rect(0, variables.height, variables.width, 10))
@@ -266,7 +271,7 @@ def ondraw():
         
 
     # update the screen
-    if len(variables.dirtyrects) > 0 and variables.devmode:
+    if len(variables.dirtyrects) > 0 and devoptions.devmode:
         pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
 
 
