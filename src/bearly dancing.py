@@ -56,7 +56,7 @@ import copy
 
 if not devoptions.testspecs is None:
     if devoptions.testenemy != None:
-        testenemy = copy.copy(enemies.enemyforspecialbattle(variables.testenemy))
+        testenemy = copy.copy(enemies.enemyforspecialbattle(devoptions.testenemy))
     else:
         testenemy = copy.copy(random_enemy("woods"))
     

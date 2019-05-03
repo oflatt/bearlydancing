@@ -29,11 +29,13 @@ pypyp = platform.python_implementation() == "PyPy"
 
 
 # load settings
-os.makedirs("save0", exist_ok=True)
-os.makedirs("save0/graphics", exist_ok=True)
 savefolderpath = os.path.join(pathtoself, "save0/")
 graphicssavefolderpath = os.path.join(savefolderpath, "graphics/")
-manualsavebackuppath = os.path.join(pathtoself, "savebackup/");
+manualsavebackuppath = os.path.join(pathtoself, "savebackup/")
+os.makedirs(savefolderpath, exist_ok=True)
+os.makedirs(graphicssavefolderpath, exist_ok=True)
+os.makedirs(manualsavebackuppath, exist_ok = True)
+
 settingspath = os.path.join(savefolderpath, "bdsettings.txt")
 savepath = os.path.join(savefolderpath, "bdsave.txt")
 settings = Settings()
