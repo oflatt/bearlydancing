@@ -4,8 +4,10 @@ from graphics import GR
 
 
 # Coordinates for maps are based on the base of each map respectively
-honeyw = GR["honeyside0"]["w"]
-honeyh = GR["honeyside0"]["h"]
+honeyw = 21#GR["honeyside0"]["w"]
+
+honeyh = 29#GR["honeyside0"]["h"]
+
 honeyfeetheight = honeyh * (3 / 29)
 extraarea = 50
 

@@ -4,11 +4,9 @@ import pygame, random, math
 from pygame import Mask, Rect
 
 
-import variables, classvar, stathandeling, graphics
-from Battle import Battle
+import variables, classvar, stathandeling, graphics, devoptions, initiatebattle
 from graphics import getpic, GR
 from Rock import Rock
-from initiatebattle import initiatebattle
 from FrozenClass import FrozenClass
 from Animation import Animation
 from Wind import Wind
@@ -27,6 +25,9 @@ FBASE = Mask((5,5))
 FBASE.fill()
 FLOWERMASK.draw(FBASE, (1, 0))
 
+ROCKMASK = Mask((variables.ROCKMAXRADIUS*2, variables.ROCKMAXRADIUS*2))
+ROCKMASK.fill()
+
 interact = Animation(["interactionbutton0", "interactionbutton1"], 1000)
 
 class Map(FrozenClass):
@@ -39,10 +40,10 @@ class Map(FrozenClass):
 
         # base is a string for a pic in GR or a OutsideBaseImage
         if type(base) == OutsideBaseImage:
-            self.mab_base_collision_areas = base.collision_areas
+            self.map_base_collision_areas = base.collision_areas
             base = base.image_name
         else:
-            self.mab_base_collision_areas = []
+            self.map_base_collision_areas = []
             
         self.base = base
             
@@ -51,8 +52,6 @@ class Map(FrozenClass):
         self.terrain = terrain
         # final image is the name of the image for the background
         self.finalimage = base
-
-        self.set_map_scale_offset()
 
         self.lastx = None #none until you exit the map for the first time
         self.lasty = None
@@ -69,9 +68,6 @@ class Map(FrozenClass):
         self.encounterchecksnotactivated = 0
         self.conversations = []  # list of conversation on the map
         self.isscaled = False  # if scale stuff has been called
-
-        self.map_width = GR[base]["w"]
-        self.map_height = GR[base]["h"]
         
         self.playerenabledp = True
 
@@ -85,6 +81,12 @@ class Map(FrozenClass):
         
         self._freeze()
 
+    def map_width(self):
+        return GR[self.finalimage]["w"]
+
+    def map_height(self):
+        return GR[self.finalimage]["h"]
+
     # clear wind stuff before saving
     def preparetosave(self):
         self.windlist = []
@@ -93,7 +95,7 @@ class Map(FrozenClass):
             r.windeffect = WindEffect()
 
     # this describes if the map should be scaled up because it doesn't fit well in the screen
-    def set_map_scale_offset(self):
+    def map_scale_offset(self):
         mapw = GR[self.base]["w"] * variables.displayscale
         maph = GR[self.base]["h"] * variables.displayscale
         if mapw < maph:
@@ -101,19 +103,72 @@ class Map(FrozenClass):
         else:
             smaller = maph
         if maph < variables.height:
-            self.map_scale_offset = variables.height / smaller
+            return variables.height / smaller
         else:
-            self.map_scale_offset = 1
+            return 1
 
     def clearrockfunctions(self):
         for r in self.terrain:
             r.clearfunctions()
+
+
+    def valid_populate_rockp(self, xpos, ypos, new_rock_mask, rocknormwidth, rocknormheight, rocklist, colliderects, terraincollidep):
+        def collidewithonep(xpos, ypos, existing_rock):
+            return new_rock_mask.overlap(existing_rock.get_mask(),
+                                         [int(existing_rock.x-xpos),
+                                          int(existing_rock.y-ypos)])
+
+        def maskwithrectcollidep(xpos, ypos, mask, rect):
+            maskrects = mask.get_bounding_rects()
+            for colliderect in maskrects:
+                colliderect.x += xpos
+                colliderect.y += ypos
+                
+                if rect.colliderect(colliderect):
+                    return True
+            return False
+        
+        
+        collisiontracker = False
+
+        # check if it collides with the colliderects given to the populate function. These colliderects check the entire box of the rock, not just the mask
+        testrect = Rect(xpos, ypos, rocknormwidth, rocknormheight)
+        for crect in colliderects:
+            if crect.colliderect(testrect):
+                collisiontracker = True
+                break
+
+        # check if it collides with the base collisions (this is to prevent trees growing on the path)
+        for crect in self.map_base_collision_areas:
+            if maskwithrectcollidep(xpos, ypos, new_rock_mask, crect):
+                collisiontracker = True
+                break
+
+        # for grey rocks, don't collide with other terrain
+        if terraincollidep:
+            # check against the terrain
+            if not collisiontracker:
+                for existing_rock in self.terrain:
+                    if collidewithonep(xpos, ypos, existing_rock):
+                        collisiontracker = True
+                        break
+
+            # check against the rocklist given (new rocks)
+            if not collisiontracker:
+                for existing_rock in rocklist:
+                    if collidewithonep(xpos, ypos, existing_rock):
+                        collisiontracker = True
+                        break
+
+        return collisiontracker
 
     # puts a number of one kind of object into the map randomly
     # call with greyrocks before trees
     # if the randomly generated coordinates collide with anything, they are skipped
     # colliderects is a list of rects in which rocks cannot be spawned- no part of it can be displayed in it
     def populate_with(self, rocktype, number, colliderects = []):
+
+        terraincollidep = True
         width = GR[self.base]["w"]
         height = GR[self.base]["h"]
         
@@ -132,70 +187,39 @@ class Map(FrozenClass):
         rocknormheight = None
         xconstraints = None
         yconstraints = None
-        rmask = None
+        new_rock_mask = None
         if pinetreep:
             yconstraints = [-int(treeh/2), height-int(treeh/2)]
             xconstraints = [0, width-treew]
             rocknormwidth = treew
             rocknormheight = treeh
-            rmask = TREEMASK
-        if greyrockp:
+            new_rock_mask = TREEMASK
+        elif greyrockp:
             rocknormwidth = variables.ROCKMAXRADIUS*2
             rocknormheight = variables.ROCKMAXRADIUS*2
-            rmask = None # do no collision detection
+            new_rock_mask = ROCKMASK
+            terraincollidep = False
         elif flowerp:
             rocknormwidth = FLOWERMASK.get_size()[0]
             rocknormheight = FLOWERMASK.get_size()[1]
-            rmask = FLOWERMASK
+            new_rock_mask = FLOWERMASK
+        else:
+            raise Exception("Unrecognized rock type " + rocktype + " for populate_with")
 
         if not pinetreep:
             xconstraints = [0, width-rocknormwidth]
             yconstraints = [0, height-rocknormheight]
-
-        def collidewithonep(xpos, ypos, rock):
-            #don't do collision with placing rocks
-            if not rmask == None:
-                currentmask = rock.get_mask()
-                overlapp = rmask.overlap(currentmask, [int(rock.x-xpos), int(rock.y-ypos)])
-                
-            # else it is a grey rock, don't do collision detection
-            else:
-                overlapp = False
-                
-            return overlapp
         
-        def collidesp(xpos, ypos, rocklist):
-            collisiontracker = False
-
-            # check if it collides with the colliderects given to the populate function
-            testrect = Rect(xpos, ypos, rocknormwidth, rocknormheight)
-            for crect in colliderects:
-                if crect.colliderect(testrect):
-                    collisiontracker = True
-                    break
-
-            # check against the terrain
-            if not collisiontracker:
-                for r in self.terrain:
-                    if collidewithonep(xpos, ypos, r):
-                        collisiontracker = True
-                        break
-
-            # check against the rocklist given (new rocks)
-            if not collisiontracker:
-                for r in rocklist:
-                    if collidewithonep(xpos, ypos, r):
-                        collisiontracker = True
-                        break
-                    
-            return collisiontracker
 
         # first generate the y-values for the rocks
         ypositions = [random.randint(yconstraints[0],yconstraints[1]) for _ in range(number)]
         newrocks = []
         for randy in ypositions:
             randx = random.randint(xconstraints[0], xconstraints[1])
-            if not collidesp(randx, randy, newrocks):
+            if not self.valid_populate_rockp(randx, randy, new_rock_mask,
+                                             rocknormwidth, rocknormheight,
+                                             newrocks, colliderects,
+                                             terraincollidep):
                 if pinetreep:
                     if rocktype == "snowpinetree":
                         newrocks.append(Rock(graphics.snowpinetree(), randx, randy, variables.TREECOLLIDESECTION))
@@ -215,8 +239,8 @@ class Map(FrozenClass):
         honeyheight = GR[classvar.player.left_animation.pics[0]]["h"]
         halfhoneyw = int(honeywidth/2)
         halfhoneyh = int(honeyheight/2)
-        mapw = self.map_width
-        maph = self.map_height
+        mapw = self.map_width()
+        maph = self.map_height()
         
         for e in self.exitareas:
             if e.area == "left" or e.area == "l":
@@ -251,7 +275,7 @@ class Map(FrozenClass):
         offset = [-drawpos[0], -drawpos[1]]
 
         if self.screenxoffset() == 0:
-            mapbaserect = Rect(drawpos[0], drawpos[1], self.map_width*variables.compscale()+1, self.map_height*variables.compscale()+1)
+            mapbaserect = Rect(drawpos[0], drawpos[1], self.map_width()*variables.compscale()+1, self.map_height()*variables.compscale()+1)
             variables.screen.blit(getpic(self.finalimage, variables.compscale()), (0,0), mapbaserect)
         else:
             variables.screen.blit(getpic(self.finalimage, variables.compscale()), (self.screenxoffset(),offset[1]))
@@ -334,7 +358,7 @@ class Map(FrozenClass):
         return currentconversation
 
     def screenxoffset(self):
-        drawwidth = self.map_width * variables.compscale()
+        drawwidth = self.map_width() * variables.compscale()
         
         if drawwidth < variables.width:
             return int((variables.width-drawwidth)/2)
@@ -348,7 +372,7 @@ class Map(FrozenClass):
             i = 0
             while i < len(self.windlist):
                 wind = self.windlist[i]
-                if wind.windpos() > self.map_width:
+                if wind.windpos() > self.map_width():
                     self.windlist.pop(i)
                 else:
                     i = i + 1
@@ -427,7 +451,7 @@ class Map(FrozenClass):
                         currentenemy.lv = random.randint(self.lvrange[0], self.lvrange[1])
                     else:
                         currentenemy.lv = self.lvrange[0]
-                    initiatebattle(currentenemy)
+                    initiatebattle.initiatebattle(currentenemy)
             else:
                 self.encounterchecksnotactivated += 1    
         else:

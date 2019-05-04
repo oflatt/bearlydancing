@@ -1,10 +1,8 @@
 #!/usr/bin/python
 #Oliver Flatt works on Classes
-import variables, pygame, classvar
-from Battle import Battle
+import variables, pygame, classvar, initiatebattle
 from ChoiceButtons import ChoiceButtons
 from graphics import scale_pure, getpic, getTextPic
-from initiatebattle import initiatebattle
 from FrozenClass import FrozenClass
 
 class Speak(FrozenClass):
@@ -29,7 +27,8 @@ class Speak(FrozenClass):
         self.line = 0
         self.releaseexit = False
         self.dialogue_initializedp = False
-        self.wraplines()
+        # set to true on the first draw, and lines get wrapped
+        self.lines_wrappedp = False
 
         self.state = "talking"
 
@@ -51,6 +50,9 @@ class Speak(FrozenClass):
         self.state = "talking"
 
     def wraplines(self):
+        if self.lines_wrappedp:
+            return
+        
         index = 0
         while index < len(self.dialogue):
             linedrawn = self.linepic(index)
@@ -60,11 +62,15 @@ class Speak(FrozenClass):
                 self.dialogue[index] = self.dialogue[index][:cutpoint] + "-"
             else:
                 index += 1
+
+        self.lines_wrappedp = True
     
     def linepic(self, index):
         return getTextPic(self.dialogue[index], variables.gettextsize(), variables.WHITE)
 
     def draw(self):
+        self.wraplines()
+        
         if not self.dialogue_initializedp:
             self.initialize_dialogue()
         
@@ -129,7 +135,7 @@ class Speak(FrozenClass):
         if self.state == "done":
             if choice in [None, "y", "yes"]:
                 if self.special_battle != "none":
-                    initiatebattle(self.special_battle)
+                    initiatebattle.initiatebattle(self.special_battle)
                     returnstate = "specialbattle"
 
             self.reset()

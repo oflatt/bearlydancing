@@ -3,6 +3,11 @@ language: python
 python:
   - "3.6"
 
+dist: xenial
+
+services:
+  - xvfb
+
 install:
   - python3 setup.py
 

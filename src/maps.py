@@ -1,18 +1,20 @@
 #!/usr/bin/python
 
-import variables, pygame
-variables.draw_loading_text("generating sounds (1/3)")
-pygame.display.flip()
+import pygame
+import variables, devoptions
+if not devoptions.args.novideomode:
+    variables.draw_loading_text("generating sounds (1/3)")
+    pygame.display.flip()
 from play_sound import play_music, grasslandmusictick, initiategrasslandmusic
 
-variables.draw_loading_text("importing graphics (2/3)")
-pygame.display.flip()
+if not devoptions.args.novideomode:
+    variables.draw_loading_text("importing graphics (2/3)")
+    pygame.display.flip()
 
 import classvar, enemies, graphics, copy, conversations
 from Animation import Animation
 from graphics import scale_pure
 from graphics import GR
-from Map import Map
 from Rock import Rock
 from Exit import Exit
 from pygame import Rect
@@ -21,7 +23,6 @@ from Speak import Speak
 from variables import displayscale
 from EventRequirement import EventRequirement
 from random import randint
-import devoptions
 
 from mapsvars import *
 
@@ -88,7 +89,7 @@ for key in map_dict:
 
 def new_scale_offset():
     global current_map
-    variables.scaleoffset = current_map.map_scale_offset
+    variables.scaleoffset = current_map.map_scale_offset()
     classvar.player.new_scale_offset()
 
 def change_map_nonteleporting(name):
@@ -116,9 +117,11 @@ def change_map(name, newx, newy):
 
     #now current map is the new one
     change_map_nonteleporting(name)
-
-    halfhoneywidth = int(honeyw/2)*current_map.map_scale_offset
-    halfhoneyheight = int(honeyh/2) * current_map.map_scale_offset
+    honeyw = GR["honeyside0"]["w"]
+    honeyh = GR["honeyside0"]["h"]
+    
+    halfhoneywidth = int(honeyw/2)*current_map.map_scale_offset()
+    halfhoneyheight = int(honeyh/2) * current_map.map_scale_offset()
     # now handle newx and newy if they are a string
     if newx == "right" or newx == "r":
         xpos = GR[current_map.base]["w"] - halfhoneywidth-1
@@ -144,7 +147,7 @@ def change_map(name, newx, newy):
         if ypos > GR[current_map.base]["h"] - honeyh:
             ypos = GR[current_map.base]["h"] - honeyh
     else:
-        ypos *= current_map.map_scale_offset
+        ypos *= current_map.map_scale_offset()
 
     #for uselastposq
     if current_map.uselastposq and current_map.lastx != None:

@@ -1,7 +1,7 @@
 import variables, classvar
+import initiatebattle
 from pygame import Rect
 from initiatestate import initiategame
-from initiatebattle import initiatebattle
 from graphics import getpicbywidth
 from FrozenClass import FrozenClass
 from Speak import Speak
@@ -146,7 +146,7 @@ class Conversation(FrozenClass):
                 variables.settings.state = variables.settings.backgroundstate
                 classvar.battle.unpause()
         else:
-            initiatebattle(self.special_battle)
+            initiatebattle.initiatebattle(self.special_battle)
 
         if self.loadgameonend != None:
             initiategame(self.loadgameonend)

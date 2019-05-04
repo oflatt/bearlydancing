@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import pygame, variables, maps, stathandeling, math, play_sound
+import pygame, variables, stathandeling, math, play_sound, devoptions
 from variables import sign
 from random import randint
 from random import uniform
@@ -47,8 +47,12 @@ class Player(FrozenClass):
                                   "honeyback0", "honeyback2"], 200)
         self.current_animation = self.right_animation
 
-        self.normal_width = GR[self.right_animation.pics[1]]["w"]
-        self.normal_height = GR[self.right_animation.pics[1]]["h"]
+        if devoptions.args.novideomode:
+            self.normal_width = 20
+            self.normal_height = 30
+        else:
+            self.normal_width = GR[self.right_animation.pics[1]]["w"]
+            self.normal_height = GR[self.right_animation.pics[1]]["h"]
         self.collidesection = (0, self.normal_height * (26/29), self.normal_width, self.normal_height/2)
         self.exp = stathandeling.lvexp(1)
         self.health = stathandeling.max_health(1)
@@ -82,7 +86,7 @@ class Player(FrozenClass):
         return int(self.normal_width*variables.compscale()*0.25)
 
     # drawpos handles the positions for view- this means scaling the coordinates up by compscale
-    def update_drawpos(self):
+    def update_drawpos(self, current_map):
         self.oldmapdrawx = self.mapdrawx
         self.oldmapdrawy = self.mapdrawy
         self.olddrawx = self.drawx
@@ -90,9 +94,9 @@ class Player(FrozenClass):
         
         x = self.xpos * variables.compscale()
         y = self.ypos * variables.compscale()
-        m = maps.current_map
-        w = m.map_width * variables.compscale()
-        h = m.map_height * variables.compscale()
+        
+        w = current_map.map_width() * variables.compscale()
+        h = current_map.map_height() * variables.compscale()
         
         pwidth = self.normal_width * variables.compscale()
         pheight = self.normal_height * variables.compscale()
@@ -130,16 +134,16 @@ class Player(FrozenClass):
             self.drawy = screenhh - hpheight
 
         # then add the map's x offset for drawing small maps in the middle
-        self.drawx += m.screenxoffset()
-        self.mapdrawx -= m.screenxoffset()
+        self.drawx += current_map.screenxoffset()
+        self.mapdrawx -= current_map.screenxoffset()
 
         #round to nearest pixel
         self.mapdrawx = int(self.mapdrawx)
         self.mapdrawy = int(self.mapdrawy)
 
-    def drawsnowtrail(self):
-        m = maps.current_map
-        background = getpic(m.finalimage, variables.compscale())
+    def drawsnowtrail(self, current_map):
+        
+        background = getpic(current_map.finalimage, variables.compscale())
         feetw = self.collidesection[2]*variables.compscale()
         pathradius = feetw*0.3
         footoffsetx = self.collidesection[0]*variables.compscale()+feetw/2
@@ -220,11 +224,11 @@ class Player(FrozenClass):
         else:
             self.feetsnowclumps = []
         
-    def draw(self):
-        mapbasename = maps.current_map.finalimage
+    def draw(self, current_map):
+        mapbasename = current_map.finalimage
         snowp = mapbasename[0:14] == "randomsnowland"
 
-        if maps.current_map.shadowsp:
+        if current_map.shadowsp:
             shadow = self.current_shadow()
             variables.screen.blit(shadow.surface, [self.drawx + shadow.xoffset, self.drawy + shadow.yoffset])
         
@@ -244,7 +248,7 @@ class Player(FrozenClass):
             else:
                 bearrect = Rect(self.drawx-variables.compscale()*3, self.drawy-variables.compscale()*3, self.normal_width*variables.compscale()+6*variables.compscale(), self.normal_height*variables.compscale() + 6 * variables.compscale())
 
-            if maps.current_map.shadowsp:
+            if current_map.shadowsp:
                 shadowrect = Rect(self.drawx+shadow.xoffset, self.drawy+shadow.yoffset, shadow.surface.get_width()+variables.compscale()*3, shadow.surface.get_height()+variables.compscale() *3)
             
                 variables.dirtyrects.append(variables.combinerects(shadowrect, bearrect))
@@ -254,7 +258,7 @@ class Player(FrozenClass):
         # for snow draw trail
         if snowp:
             if not self.olddrawx == None and self.ismoving():
-                self.drawsnowtrail()
+                self.drawsnowtrail(current_map)
 
             
             # now draw snow clumps on bear
@@ -329,7 +333,7 @@ class Player(FrozenClass):
                 self.yspeed = -s
         self.change_animation()
 
-    def collisioncheck(self, xpos, ypos):
+    def collisioncheck(self, xpos, ypos, current_map):
         cmask = getmask(self.right_animation.pics[1], self.collidesection)
         #checks if the player collides with a rock
         def rockcollisioncheck(arock, x, y):
@@ -342,7 +346,7 @@ class Player(FrozenClass):
         iscollision = False
 
         playermaskrect = cmask.get_bounding_rects()[0]
-        m = maps.current_map
+        m = current_map
         t = m.terrain
         colliderects = m.colliderects
         numofrocks = len(t)
@@ -350,11 +354,11 @@ class Player(FrozenClass):
         #first check for edges of map, this is the left
         if xpos < 0 and m.leftbound:
             iscollision = True
-        elif xpos+self.normal_width>m.map_width and m.rightbound:
+        elif xpos+self.normal_width>m.map_width() and m.rightbound:
             iscollision = True
         elif ypos < 0 and m.topbound:
             iscollision = True
-        elif ypos+self.normal_height>m.map_height and m.bottombound:
+        elif ypos+self.normal_height>m.map_height() and m.bottombound:
             iscollision = True
         else:
             #make playerR only the feet
@@ -375,7 +379,7 @@ class Player(FrozenClass):
         return iscollision
     
     #moves with collision detection
-    def move(self):
+    def move(self, current_map):
         # save old for use in going back if collide in new map
         self.oldxpos = self.xpos
         self.oldypos = self.ypos
@@ -390,14 +394,14 @@ class Player(FrozenClass):
         #collision detection
         iscollisionx = False
         iscollisiony= False
-        m = maps.current_map
+        m = current_map
 
 
         if not self.xspeed == 0:
-            iscollisionx = self.collisioncheck(movedxpos, self.ypos)
+            iscollisionx = self.collisioncheck(movedxpos, self.ypos, current_map)
             
         if not self.yspeed == 0:
-            iscollisiony = self.collisioncheck(self.xpos, movedypos)
+            iscollisiony = self.collisioncheck(self.xpos, movedypos, current_map)
 
         if not iscollisionx:
             self.xpos = movedxpos

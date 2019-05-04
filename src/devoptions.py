@@ -26,10 +26,10 @@ fasttestmodep = False
 lvcheat = 0
 
 # if None it does nothing, if it is a dictionary for "specs" it goes directly into a battle with those specs
-testspecs : Optional[Dict[str, object]] = {'maxtime' : 20, 'lv' : 4,
-                                           'rules' : ["drummer"],
-                                           'volumeenvelope' : 'bell'}
-testenemy : Optional[str] = "yoyo"
+testspecs : Optional[Dict[str, object]] = None#{'maxtime' : 20, 'lv' : 4,
+                                           #'rules' : ["drummer"],
+                                           #'volumeenvelope' : 'bell'}
+testenemy : Optional[str] = None#"yoyo"
 
 devlosebattlekey = pygame.K_BACKSLASH
 devwinbattlekey = pygame.K_END
@@ -52,6 +52,8 @@ parser.add_argument('--novideomode', "- don't initialize the display or draw any
 parser.add_argument('--fasttestmode', "- only load the first couple of maps.", action = 'store_true')
 
 parser.add_argument('--restart', "- don't load the save when starting", action = 'store_true')
+
+parser.add_argument('--testsuitemode', "- don't run the game loop", action = 'store_true')
 
 
 args = parser.parse_args()

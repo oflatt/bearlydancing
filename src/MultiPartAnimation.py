@@ -2,7 +2,7 @@
 from pygame import Rect
 from typing import List
 
-import variables
+import variables, devoptions
 from variables import devprint
 from graphics import getpic, addsurfaceGR
 
@@ -11,11 +11,18 @@ from graphics import getpic, addsurfaceGR
 class AnimationPart():
 
     def __init__(self, picname: str):
-        unclipped = getpic(picname)
-        bounds = unclipped.get_bounding_rect()
-        cropped = unclipped.subsurface(bounds).copy()
+        bounds = Rect(0,0,0,0)
+        
+        if not devoptions.args.novideomode:
+            unclipped = getpic(picname)
+            bounds = unclipped.get_bounding_rect()
+            cropped = unclipped.subsurface(bounds).copy()
+
         cropped_name = picname + "_cropped"
-        addsurfaceGR(cropped, cropped_name)
+
+        if not devoptions.args.novideomode:
+            addsurfaceGR(cropped, cropped_name)
+
         self.picname = cropped_name
         self.rel_x = bounds.x
         self.rel_y = bounds.y

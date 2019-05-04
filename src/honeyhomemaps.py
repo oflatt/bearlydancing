@@ -1,9 +1,9 @@
 import variables, classvar, enemies, graphics, pygame, copy
+import Map
 from conversations import getconversation
 from Animation import Animation
 from graphics import scale_pure
 from graphics import GR
-from Map import Map
 from Rock import Rock
 from Exit import Exit
 from pygame import Rect
@@ -13,6 +13,10 @@ from variables import displayscale
 from EventRequirement import EventRequirement
 from random import randint
 from mapsvars import *
+
+
+
+
 
 housewidth = GR["honeyhouseoutside"]["w"]
 househeight = GR["honeyhouseoutside"]["h"]
@@ -37,7 +41,7 @@ for x in range(10):
     stashname = "stash0" + str(x)
     stashlist.append(stashname)
     
-honeyhome = Map("honeyhouseinside",
+honeyhome = Map.Map("honeyhouseinside",
                 [bed,
                  table,
                  littleletter,
@@ -111,7 +115,7 @@ w1.background_range = None
 w2 = Rock("tplunchtext", b * 5 - s2.get_width() / 2, b * 4.5, None)
 w2.background_range = None
 
-letter = Map("backgroundforpaper", [bigpaper,
+letter = Map.Map("backgroundforpaper", [bigpaper,
                                         w1,
                                         w2],
              shadowsp = False)
@@ -162,7 +166,7 @@ chimneybattlec.special_battle = chimneye
 beatchimneyc = getconversation("beatchimneyc")
 makeconversationreward(beatchimneyc, chimneybattlec.special_battle, "chromatic")
 
-outside1 = Map(rgrassland,
+outside1 = Map.Map(rgrassland,
                [houserock,
                 Rock(graphics.greyrock(), 6.5 * b, 7.5 * b, variables.ROCKCOLLIDESECTION),
                 treerock,

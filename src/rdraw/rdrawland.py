@@ -1,4 +1,4 @@
-import pygame, variables, random, math
+import pygame, variables, random, math, devoptions
 from pygame import draw
 from random import randint
 from .Texture import Texture
@@ -328,4 +328,5 @@ def path_collisions(width, height, leftpath, rightpath, uppath, downpath):
         collide_rects.append(horizontal)
     if vertical != None:
         collide_rects.append(vertical)
+    
     return collide_rects

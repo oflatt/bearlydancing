@@ -2,7 +2,7 @@ import random, copy
 from typing import List, Union
 
 
-import variables
+import variables, devoptions
 from variables import devprint
 from Enemy import Enemy
 from Animation import Animation
@@ -37,9 +37,15 @@ octopus_parts.append([AnimationPart("octopus/body")])
 # now flip the list, because the body and the arms are drawn before the head
 octopus_parts.reverse()
 
+octopus_width = 20 # dummy values for novideomode
+octopus_height = 20
+if not devoptions.args.novideomode:
+    octopus_width = getpic("octopus/body").get_width()
+    octopus_height = getpic("octopus/body").get_height()
+
 octopus_animation = MultiPartAnimation(octopus_parts,
-                                       getpic("octopus/body").get_width(),
-                                       getpic("octopus/body").get_height())
+                                       octopus_width,
+                                       octopus_height)
 
 
 raisewing = Animation(["flyingchimney7", "flyingchimney4"], 100, False)

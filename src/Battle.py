@@ -688,9 +688,9 @@ class Battle(FrozenClass):
             self.battlechoice.buttons[-1].assign_text(self.getscalename())
         
         if(devoptions.devmode):
-            if(key == variables.devlosebattlekey):
+            if(key == devoptions.devlosebattlekey):
                 self.lose()
-            elif(key == variables.devwinbattlekey):
+            elif(key == devoptions.devwinbattlekey):
                 self.win()
         if self.state == 'dance':
             if self.tutorialp:

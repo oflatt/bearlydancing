@@ -9,31 +9,18 @@ class ChoiceButtons(FrozenClass):
         self.options = options
         self.current_option = 0
         self.buttons = []
-        self.maxwidth = 0
 
-        for s in options:
-            newb = Button(0, ypos, s, buttontextsize)
+        for optiontext in self.options:
+            newb = Button(0, ypos, optiontext, buttontextsize)
             self.buttons.append(newb)
-            if newb.width()/variables.width > self.maxwidth:
-                # devide by width because positions are multipliers of width
-                self.maxwidth = newb.width()/variables.width
         
-        spacing = self.maxwidth / 4
-        length = len(self.buttons)
-        self.length = length
-        centering = (1 - length * self.maxwidth - (length-1) * spacing) / 2
-        
-        for i in range(self.length):
-            self.buttons[i].screenwidthoverride = self.maxwidth
-            self.buttons[i].x = i * (self.maxwidth + spacing) + centering
-
         self._freeze()
             
     def nextoption(self):
-        self.current_option = (self.current_option + 1) % self.length
+        self.current_option = (self.current_option + 1) % len(self.buttons)
 
     def previousoption(self):
-        self.current_option = (self.current_option-1) % self.length
+        self.current_option = (self.current_option-1) % len(self.buttons)
 
     def getoption(self):
         return self.options[self.current_option]
@@ -45,6 +32,22 @@ class ChoiceButtons(FrozenClass):
             self.nextoption()
             
     def draw(self):
+        # position things with correct spacing
+        maxwidth = 0
+
+        for button in self.buttons:
+            if button.width()/variables.width > maxwidth:
+                # divide by width because positions are multipliers of width
+                maxwidth = newb.width()/variables.width
+        
+        spacing = maxwidth / 4
+        length = len(self.buttons)
+        centering = (1 - length * maxwidth - (length-1) * spacing) / 2
+        
+        for i in range(self.length):
+            self.buttons[i].screenwidthoverride = maxwidth
+            self.buttons[i].x = i * (maxwidth + spacing) + centering
+        
         for i in range(self.length):
             b = self.buttons[i]
             if i == self.current_option:

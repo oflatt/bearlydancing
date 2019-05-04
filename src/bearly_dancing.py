@@ -55,7 +55,8 @@ import copy
 
 
 if not devoptions.testspecs is None:
-    if devoptions.testenemy != None:
+    
+    if devoptions.testenemy is None:
         testenemy = copy.copy(enemies.enemyforspecialbattle(devoptions.testenemy))
     else:
         testenemy = copy.copy(random_enemy("woods"))
@@ -78,7 +79,7 @@ menu.enemyanimation.beginning_time = variables.settings.current_time
 # key is either a pygame key (an int) or a string for what key was pressed, used for joy stick presses
 def onkeydown(key):
     # emergency dev quit
-    if devoptions.devmode and key == variables.devquitkey:
+    if devoptions.devmode and key == devoptions.devquitkey:
         pygame.quit()
         sys.exit()
 
@@ -101,7 +102,7 @@ def onkeydown(key):
             menu.onkey(key)
 
     # check for dev battle key
-    elif devoptions.devmode and key == variables.devengagebattlekey and variables.settings.state == "world":
+    elif devoptions.devmode and key == devoptions.devengagebattlekey and variables.settings.state == "world":
         if devbattletest == None:
             initiatebattle(random_enemy())
         else:
@@ -192,7 +193,7 @@ def ontick():
         
     if (not variables.settings.menuonq):
         if variables.settings.state == "world":
-            classvar.player.move()
+            classvar.player.move(maps.current_map)
             maps.checkconversation()
             maps.checkexit()
             maps.current_map.on_tick()
@@ -208,6 +209,8 @@ def ondraw():
 
     
     def draw_world():
+        current_map = maps.current_map
+        
         #fill edges in with black
         screenxoffset = maps.current_map.screenxoffset()
         if screenxoffset != 0:
@@ -216,11 +219,11 @@ def ondraw():
             variables.screen.fill(variables.BLACK,
                                   Rect(variables.width-screenxoffset-2, 0, screenxoffset+3, variables.height))
             
-        classvar.player.update_drawpos()
+        classvar.player.update_drawpos(current_map)
         
         maps.current_map.draw([classvar.player.mapdrawx, classvar.player.mapdrawy])
         if maps.playerenabledp() and maps.current_map.playerenabledp:
-            classvar.player.draw()
+            classvar.player.draw(current_map)
         maps.current_map.draw_foreground([classvar.player.mapdrawx, classvar.player.mapdrawy])
 
 
@@ -315,8 +318,9 @@ def main():
         clock.tick_busy_loop(0)
 
 
-main()
+if not devoptions.args.testsuitemode:
+    main()
 
-# Close the window and quit, this is after the main loop has finished
-pygame.quit()
+    # Close the window and quit, this is after the main loop has finished
+    pygame.quit()
 

@@ -39,7 +39,7 @@ os.makedirs(manualsavebackuppath, exist_ok = True)
 settingspath = os.path.join(savefolderpath, "bdsettings.txt")
 savepath = os.path.join(savefolderpath, "bdsave.txt")
 settings = Settings()
-if not devoptions.dontloadsettings:
+if not devoptions.args.restart and not devoptions.dontloadsettings:
     if (os.path.isfile(os.path.abspath(settingspath))):
         if os.path.getsize(os.path.abspath(settingspath)) > 0:
             with open(settingspath, "rb") as f:
@@ -351,6 +351,8 @@ def save_properties():
         pickle.dump(properties, f)
 
 def draw_loading_text(string):
+    if devoptions.args.novideomode:
+        return
     text = pygame.transform.scale2x(font.render(string, 0, WHITE).convert())
     xpos = int((width / 2) - (text.get_width() / 2))
     ypos = int((height / 2) - text.get_height() - height/10)
