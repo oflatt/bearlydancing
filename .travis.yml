@@ -12,6 +12,7 @@ install:
   - python3 setup.py
 
 script:
+  - export AUDIODEV=null
   - python3 src/test_suite.py
   - mypy src/bearly\ dancing.py
   
