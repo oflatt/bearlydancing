@@ -38,17 +38,17 @@ class ChoiceButtons(FrozenClass):
         for button in self.buttons:
             if button.width()/variables.width > maxwidth:
                 # divide by width because positions are multipliers of width
-                maxwidth = newb.width()/variables.width
+                maxwidth = button.width()/variables.width
         
         spacing = maxwidth / 4
         length = len(self.buttons)
         centering = (1 - length * maxwidth - (length-1) * spacing) / 2
         
-        for i in range(self.length):
+        for i in range(len(self.buttons)):
             self.buttons[i].screenwidthoverride = maxwidth
             self.buttons[i].x = i * (maxwidth + spacing) + centering
         
-        for i in range(self.length):
+        for i in range(len(self.buttons)):
             b = self.buttons[i]
             if i == self.current_option:
                 b.draw(True)

@@ -15,19 +15,6 @@ from WindShift import WindShift
 from OutsideBaseImage import OutsideBaseImage
 
 extraarea = 50
-TREEMASK = Mask((variables.TREEWIDTH, variables.TREEHEIGHT))
-BASEMASK = Mask((25, 15))
-BASEMASK.fill()
-TREEMASK.draw(BASEMASK,
-              (int(variables.TREEWIDTH)-13, variables.TREEHEIGHT-15))
-FLOWERMASK = Mask((7, 5))
-FBASE = Mask((5,5))
-FBASE.fill()
-FLOWERMASK.draw(FBASE, (1, 0))
-
-ROCKMASK = Mask((variables.ROCKMAXRADIUS*2, variables.ROCKMAXRADIUS*2))
-ROCKMASK.fill()
-
 interact = Animation(["interactionbutton0", "interactionbutton1"], 1000)
 
 class Map(FrozenClass):
@@ -112,7 +99,9 @@ class Map(FrozenClass):
             r.clearfunctions()
 
 
-    def valid_populate_rockp(self, xpos, ypos, new_rock_mask, rocknormwidth, rocknormheight, rocklist, colliderects, terraincollidep):
+    def valid_populate_rockp(self, xpos, ypos, new_rock_mask, rocklist, colliderects, terraincollidep):
+        new_rock_width, new_rock_height = new_rock_mask.get_size()
+        
         def collidewithonep(xpos, ypos, existing_rock):
             return new_rock_mask.overlap(existing_rock.get_mask(),
                                          [int(existing_rock.x-xpos),
@@ -123,7 +112,7 @@ class Map(FrozenClass):
             for colliderect in maskrects:
                 colliderect.x += xpos
                 colliderect.y += ypos
-                
+                devoptions.devprint(colliderect)
                 if rect.colliderect(colliderect):
                     return True
             return False
@@ -132,9 +121,9 @@ class Map(FrozenClass):
         collisiontracker = False
 
         # check if it collides with the colliderects given to the populate function. These colliderects check the entire box of the rock, not just the mask
-        testrect = Rect(xpos, ypos, rocknormwidth, rocknormheight)
+        new_rock_rect = Rect(xpos, ypos, new_rock_width, new_rock_height)
         for crect in colliderects:
-            if crect.colliderect(testrect):
+            if crect.colliderect(new_rock_rect):
                 collisiontracker = True
                 break
 
@@ -160,17 +149,16 @@ class Map(FrozenClass):
                         collisiontracker = True
                         break
 
-        return collisiontracker
+        return not collisiontracker
 
     # puts a number of one kind of object into the map randomly
     # call with greyrocks before trees
     # if the randomly generated coordinates collide with anything, they are skipped
     # colliderects is a list of rects in which rocks cannot be spawned- no part of it can be displayed in it
-    def populate_with(self, rocktype, number, colliderects = []):
-
+    def populate_with(self, rocktype, number_to_populate_with, colliderects = []):
         terraincollidep = True
-        width = GR[self.base]["w"]
-        height = GR[self.base]["h"]
+        map_width = GR[self.base]["w"]
+        map_height = GR[self.base]["h"]
         
         treew = variables.TREEWIDTH
         treeh = variables.TREEHEIGHT
@@ -181,55 +169,51 @@ class Map(FrozenClass):
         pinetreep = rocktype == "pinetree" or rocktype == "pine tree" or rocktype == "snowpinetree"
         flowerp = rocktype == "flower"
 
-        # set width and height of rock generated, the constraints for where they are generated,
-        # and the mask to be used for collision tests
-        rocknormwidth = None
-        rocknormheight = None
-        xconstraints = None
-        yconstraints = None
-        new_rock_mask = None
+        rock_collide_section = None
+        rock_generating_function = None
         if pinetreep:
-            yconstraints = [-int(treeh/2), height-int(treeh/2)]
-            xconstraints = [0, width-treew]
-            rocknormwidth = treew
-            rocknormheight = treeh
-            new_rock_mask = TREEMASK
+            if rocktype == "snowpinetree":
+                rock_generating_function = graphics.snowpinetree
+                rock_collide_section = variables.TREECOLLIDESECTION
+            else:
+                rock_generating_function = graphics.pinetree
+                rock_collide_section = variables.TREECOLLIDESECTION
         elif greyrockp:
-            rocknormwidth = variables.ROCKMAXRADIUS*2
-            rocknormheight = variables.ROCKMAXRADIUS*2
-            new_rock_mask = ROCKMASK
             terraincollidep = False
+            rock_generating_function = graphics.greyrock
+            rock_collide_section = variables.ROCKCOLLIDESECTION
         elif flowerp:
-            rocknormwidth = FLOWERMASK.get_size()[0]
-            rocknormheight = FLOWERMASK.get_size()[1]
-            new_rock_mask = FLOWERMASK
+            rock_generating_function = graphics.flower
+            rock_collide_section = variables.FLOWERCOLLIDESECTION
         else:
-            raise Exception("Unrecognized rock type " + rocktype + " for populate_with")
+            raise Exception("unrecognized rock type " + rocktype + " for populate_with")
 
-        if not pinetreep:
-            xconstraints = [0, width-rocknormwidth]
-            yconstraints = [0, height-rocknormheight]
-        
 
         # first generate the y-values for the rocks
-        ypositions = [random.randint(yconstraints[0],yconstraints[1]) for _ in range(number)]
         newrocks = []
-        for randy in ypositions:
-            randx = random.randint(xconstraints[0], xconstraints[1])
-            if not self.valid_populate_rockp(randx, randy, new_rock_mask,
-                                             rocknormwidth, rocknormheight,
-                                             newrocks, colliderects,
-                                             terraincollidep):
-                if pinetreep:
-                    if rocktype == "snowpinetree":
-                        newrocks.append(Rock(graphics.snowpinetree(), randx, randy, variables.TREECOLLIDESECTION))
-                    else:
-                        newrocks.append(Rock(graphics.pinetree(), randx, randy, variables.TREECOLLIDESECTION))
-                elif greyrockp:
-                    newrocks.append(Rock(graphics.greyrock(), randx, randy, variables.ROCKCOLLIDESECTION))
-                elif flowerp:
-                    newrocks.append(Rock(graphics.flower(), randx, randy, variables.FLOWERCOLLIDESECTION))
-                    
+        # cached potential rock is a cached call to the generating function
+        cached_potential_graphic = None
+        
+        
+        for rock_index in range(number_to_populate_with):
+
+            if cached_potential_graphic == None:
+                cached_potential_graphic = rock_generating_function()
+
+            potential_width = graphics.getpic(cached_potential_graphic).get_width()
+            potential_height = graphics.getpic(cached_potential_graphic).get_height()
+            
+            randx = random.randint(int(-potential_width/2), int(map_width + potential_width/2))
+            randy = random.randint(int(-potential_height/2), int(map_height + potential_height/2))
+
+            potential_rock_with_position = Rock(cached_potential_graphic, randx, randy, rock_collide_section)
+            
+            if self.valid_populate_rockp(randx, randy, potential_rock_with_position.get_mask(),
+                                         newrocks, colliderects,
+                                         terraincollidep):
+                newrocks.append(potential_rock_with_position)
+                cached_potential_graphic = None
+
         self.terrain.extend(newrocks)
 
     # now used to set the exitareas, for shorthand

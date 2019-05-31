@@ -54,6 +54,7 @@ def load():
     m = Menu()
     save0path = variables.savepath
     if not devoptions.args.restart and (os.path.isfile(save0path)) and os.path.getsize(save0path) > 0:
+        devoptions.devprint("loading save")
         with open(save0path, "rb") as f:
             loadedlist = pickle.load(f)
             tempplayer = None

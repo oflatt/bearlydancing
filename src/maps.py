@@ -160,7 +160,7 @@ def change_map(name, newx, newy):
     else:
         classvar.player.soft_change_of_state()
 
-    if classvar.player.collisioncheck(classvar.player.xpos, classvar.player.ypos):
+    if classvar.player.collisioncheck(classvar.player.xpos, classvar.player.ypos, current_map):
         change_map_nonteleporting(oldmapname)
         classvar.player.soft_change_of_state()
         classvar.player.teleport(oldplayerx, oldplayery)

@@ -1,4 +1,4 @@
-import variables, classvar, enemies, graphics, random, pygame, copy
+import variables, classvar, enemies, graphics, random, pygame, copy, devoptions
 from conversations import getconversation
 from Animation import Animation
 from graphics import scale_pure
@@ -125,7 +125,6 @@ def make_rock_or_sheep_rocks():
     bigx += 30
     addgroup(6, 6, bigx)
     return rocklist
-
 
 outside4 = Map(rgrassland, [])
 outside4.populate_with("greyrock", 40)

@@ -1,6 +1,7 @@
 import unittest        
 import devoptions
 devoptions.args.testsuitemode = True
+devoptions.args.restart = True
 import bearly_dancing
     
 testsuite = unittest.TestSuite()
