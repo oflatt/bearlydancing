@@ -205,6 +205,9 @@ def brighten(c, amount):
                 max(0, min(c[1]+amount, 255)),
                 max(0, min(c[2]+amount, 255)))
 
+def darken(c, amount):
+    return brighten(c, -amount)
+
 # font
 font = pygame.font.Font(os.path.join(pathtoself, 'orangekidregular.ttf'), 30)
 
@@ -250,11 +253,23 @@ octopusarmtomultipartpart.reverse()
 def getpadypos():
     return height*(13/16)
 
+def getpadheight():
+    return height / 80.0
+
+def get_border_width():
+    return max(1, int(getpadheight()/3))
+    
 def dancearrowwidth():
     return width/15
 
 def notewidth():
     return width / 20
+
+def noteendwidth():
+    return notewidth()*1.25
+
+def noteendwidthoffset():
+    return (noteendwidth()-notewidth())/2
 
 maxdifficulty = 200
 # maxtime is changed in the code, the goal for how long the song should be

@@ -32,6 +32,7 @@ sound
 - load own sounds using the bowl pianoputer as example
 - random generation of wave?
 - add noise to one of the synthesizers- "noisey" given to you by a noisy character
+- vary the volume on drums
 - different drums for different enemies, multiple drum samples
   - which wave to start with
   - chance to flip sign with noise
@@ -43,6 +44,7 @@ sound
 
 battle
 - circles that give a visual cue around the note about to be played like lyrica
+- change color of note while holding note
 - battle code is ugly and convoluted with all the time/health variables
 
 - melodicmode:
@@ -58,6 +60,7 @@ rules ideas
 - repeating with variation chance to redo all of the rest of the notes? epecially halfway through or power of 2?
 - two simple melodies, then both at same time
 - left hand repeats while right is a song
+- repeating combinations- shift but change one section, ect
 
 - chance while holding a note to start a new note (don't always just add the duration of the note to the current time
 
