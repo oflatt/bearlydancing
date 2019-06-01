@@ -2,9 +2,10 @@ Bearly Dancing To-Do List
 
 pygame
 - checking if a surface has width or height 0 before scaling to avoid segfault
-- switch to pygame_sdl2
+- switch to pygame_sdl2 for production
 
-- make calling _freeze automatic
+- make calling _freeze automatic for frozen objects
+- destructive object for lists?
 
 bugs
 -"l" note was the same note as "a", which cannot be correct
@@ -85,4 +86,14 @@ Sophie:
 - some enemies outlined in black (snake, scare square has potential)
 
 megalovania
-sstzlzzzkzjzgzsgjmmtzlzzzkzjzgzsgjnntzlzzzkzjzgzsgj
+sstzlzzzkzjzgzsgj
+mmtzlzzzkzjzgzsgj
+nntzlzzzkzjzgzsgj
+bbtzlzzzkzjzgzsgj
+sfgjgzggzgzgzszsz
+gzggzjzkzjgsgjz
+tzlzjzgzezjzgzf
+bmsbmsfmsfgsfgjfllllllllttttrrrr
+ieieieiekdkdkdkdjdjdjdjdejejwjwj
+ieieieiekdkdkdkdjdjdjdjdejejwjwj
+777777779999777745555555522222222

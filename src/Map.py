@@ -112,7 +112,6 @@ class Map(FrozenClass):
             for colliderect in maskrects:
                 colliderect.x += xpos
                 colliderect.y += ypos
-                devoptions.devprint(colliderect)
                 if rect.colliderect(colliderect):
                     return True
             return False
