@@ -28,6 +28,8 @@ christmasp = False
 if today.month == 12:
     christmasp = True
 
+                   
+
 def sscale(img, rounded = True):
     w = img.get_width()
     h = img.get_height()
@@ -35,7 +37,7 @@ def sscale(img, rounded = True):
         endsize = variables.displayscale
     else:
         endsize = variables.unrounded_displayscale
-    return pygame.transform.scale(img, [int(w*endsize), int(h*endsize)])
+    return variables.transformscale(img, [int(w*endsize), int(h*endsize)])
 
 #like sscale but instead of returning a scaled pic, it returns what the dimensions of the new pic would have been
 def sscale_dimensions(img, rounded = True):
@@ -54,7 +56,7 @@ def sscale_customfactor(img, factor, rounded = True):
         endsize = variables.displayscale
     else:
         endsize = variables.unrounded_displayscale
-    return pygame.transform.scale(img, [int(w*endsize*factor), int(h*endsize*factor)])
+    return variables.transformscale(img, [int(w*endsize*factor), int(h*endsize*factor)])
 
 # use if you want pictures where the smaller dimension is a set size
 def scale_pure(img, s, side = None):
@@ -68,7 +70,7 @@ def scale_pure(img, s, side = None):
         smaller = h
     else:
         smaller = w
-    return pygame.transform.scale(img, [int((w/smaller) * s), int((h/smaller) * s)])
+    return variables.transformscale(img, [int((w/smaller) * s), int((h/smaller) * s)])
 
 def importpic(filename, subpicp):
     
@@ -221,7 +223,7 @@ def getpic(picname, scale = None):
             return SGR[picname][scale]
         else:
             scaledimage = GR[picname]
-            scaledimage = pygame.transform.scale(scaledimage["img"], [int(scaledimage["w"]*scale), int(scaledimage["h"]*scale)])
+            scaledimage = variables.transformscale(scaledimage["img"], [int(scaledimage["w"]*scale), int(scaledimage["h"]*scale)])
             scaledimage = finalprocessimage(scaledimage)
             if picexistsp:
                 SGR[picname][scale] = scaledimage
@@ -275,7 +277,7 @@ def getshadow(picname, scale = None):
     if picexistsp and scale in shadowGR[sname]:
         return shadowGR[sname][scale]
     else:
-        shadowpic = pygame.transform.scale(sunscaled.surface, (int(scale*sunscaled.surface.get_width()), int(scale*sunscaled.surface.get_height())))
+        shadowpic = variables.transformscale(sunscaled.surface, (int(scale*sunscaled.surface.get_width()), int(scale*sunscaled.surface.get_height())))
         shadowpic = finalprocessimage(shadowpic)
         shadow = Shadow(shadowpic, sunscaled.xoffset*scale, sunscaled.yoffset*scale)
         if picexistsp:

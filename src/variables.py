@@ -437,6 +437,25 @@ def combinerects(rect1, rect2):
     return rect1.union(rect2)
 
 
+# wraps pygame transform.scale so that it checks width and height are not zero to avoid segfault
+def transformscale(img, newdimensions):
+    if img.get_width() == 0 or img.get_height() == 0:
+        return img
+    else:
+        return pygame.transform.scale(img, newdimensions)
+
+def transformrotozoom(img, angle, scale):
+    if img.get_width() == 0 or img.get_height() == 0:
+        return img
+    else:
+        return pygame.transform.rotozoom(img, angle, scale)
+
+def transformrotate(img, degrees):
+    if img.get_width() == 0 or img.get_height() == 0:
+        return img
+    else:
+        return pygame.transform.rotate(img, degrees)
+
 def dirtyupdateall():
     global dirtyrects
     dirtyrects = [Rect(0, 0, width, height)]

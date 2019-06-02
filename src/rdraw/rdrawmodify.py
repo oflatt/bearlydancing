@@ -57,7 +57,7 @@ def findanchor(surface, checklist = [], greatestfrom = 1, xchangedir = -1):
 def rotate(surface, angleradians, offset):
     angle = angleradians*180 / math.pi
     pivot = surface.get_rect().center
-    rotated_image = pygame.transform.rotozoom(surface, -angle, 1)  # Rotate the image.
+    rotated_image = variables.transformrotozoom(surface, -angle, 1)  # Rotate the image.
     rotated_offset = offset.rotate(angle)  # Rotate the offset vector.
     
     # Add the offset vector to the center/pivot point to shift the rect.
@@ -71,7 +71,7 @@ def rotateandsquish(surface, angleradians, offset, rotateportion = 0.75, scaling
     rotated_offset = copy.deepcopy(offset)
     
     # scale height by scaling first
-    firstscalingimage = pygame.transform.scale(surface, (surface.get_width(), int(surface.get_height()*scaling)))
+    firstscalingimage = variables.transformscale(surface, (surface.get_width(), int(surface.get_height()*scaling)))
     
     rotated_offset = pygame.Vector2(rotated_offset.x, rotated_offset.y * scaling)
     
@@ -79,7 +79,7 @@ def rotateandsquish(surface, angleradians, offset, rotateportion = 0.75, scaling
 
     
     # rotate the image
-    rotated_image = pygame.transform.rotozoom(firstscalingimage, -angledegrees*rotateportion, 1)
+    rotated_image = variables.transformrotozoom(firstscalingimage, -angledegrees*rotateportion, 1)
     
     
     # Rotate the offset vector.
@@ -92,7 +92,7 @@ def rotateandsquish(surface, angleradians, offset, rotateportion = 0.75, scaling
 
     
     # scale the rest of the way to the angle
-    scaled_image = pygame.transform.scale(rotated_image, (rotated_image.get_width(), int(newheight)))
+    scaled_image = variables.transformscale(rotated_image, (rotated_image.get_width(), int(newheight)))
 
     # scale the vector the same way
     rotated_offset = pygame.Vector2(rotated_offset.x, rotated_offset.y * int(newheight)/rotated_image.get_height())

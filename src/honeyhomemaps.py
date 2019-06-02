@@ -87,7 +87,7 @@ honeyhome.uselastposq = True
 # letter########################################################################################
 paperscale = int((GR["honeyhouseinside"]["h"]/GR["paper"]["h"])+1) # so it is as big as inside to put the text in it
 
-GR["backgroundforpaper"]["img"] = pygame.transform.scale(GR["backgroundforpaper"]["img"],
+GR["backgroundforpaper"]["img"] = variables.transformscale(GR["backgroundforpaper"]["img"],
                                                          [GR["backgroundforpaper"]["w"]*paperscale,
                                                           GR["backgroundforpaper"]["h"]*paperscale])
                                                           
@@ -95,7 +95,7 @@ GR["backgroundforpaper"]["w"] *= paperscale
 GR["backgroundforpaper"]["h"] *= paperscale
 b = GR['backgroundforpaper']['w'] / 10
 
-GR["paper"]["img"] = pygame.transform.scale(GR["paper"]["img"],
+GR["paper"]["img"] = variables.transformscale(GR["paper"]["img"],
                                             [GR["paper"]["w"]*paperscale,
                                              GR["paper"]["h"]*paperscale])
 GR["paper"]["w"] *= paperscale
@@ -105,8 +105,8 @@ bigpaper.background_range = None  # always in front
 s1 = variables.font.render("I stole your lunch.", 0, variables.BLACK).convert()
 s2 = variables.font.render("-Trash Panda", 0, variables.BLACK).convert()
 lettertextscalefactor = (GR["paper"]['w'] * (3/4)) / s1.get_width()
-s1 = pygame.transform.scale(s1, [int(lettertextscalefactor*s1.get_width()), int(lettertextscalefactor*s1.get_height())])
-s2 = pygame.transform.scale(s2, [int(lettertextscalefactor*s2.get_width()), int(lettertextscalefactor*s2.get_height())])
+s1 = variables.transformscale(s1, [int(lettertextscalefactor*s1.get_width()), int(lettertextscalefactor*s1.get_height())])
+s2 = variables.transformscale(s2, [int(lettertextscalefactor*s2.get_width()), int(lettertextscalefactor*s2.get_height())])
 graphics.addsurfaceGR(s1, "stolelunchtext", [s1.get_width(), s1.get_height()])
 graphics.addsurfaceGR(s2, "tplunchtext", [s2.get_width(), s2.get_height()])
 
