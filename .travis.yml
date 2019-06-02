@@ -11,8 +11,12 @@ services:
 install:
   - python3 setup.py
 
+env:
+  # avoid ALSA errors for audio
+  - AUDIODEV=null
+
+
 script:
-  - export AUDIODEV=null
   - python3 src/test_suite.py
-  - mypy src/bearly\ dancing.py
+  - mypy src/bearly_dancing.py
   
