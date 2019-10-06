@@ -1,10 +1,10 @@
 from Game import Game
-from .GrowGame import GrowGame
+from .Game import Game
 
 
 def initgame(settings, screen):
     if settings.getgamedata("growgame") == None:
-        settings.setgamedata("growgame", GrowGame())
+        settings.setgamedata("growgame", Game())
 
     
 def onkeydown(outsidetime, settings, key):

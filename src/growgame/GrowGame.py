@@ -9,7 +9,7 @@ from .shopplants import make_shopplant_list
 from .constants import potsperrow
 from .Plant import Plant
 
-class GrowGame(DestructiveFrozenClass):
+class Game(DestructiveFrozenClass):
 
     def __init__(self):
 
