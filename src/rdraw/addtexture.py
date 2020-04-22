@@ -95,6 +95,7 @@ def texturepoint(surface, x, y, t, bounds):
     # each point is a list of xpos, ypos, invisibleq
     points = [[x, y, False]]
     pointcolor = t.color
+    print(pointcolor)
 
     if t.acceptedcolorsspawn != None:
         p = points[0]
@@ -107,6 +108,8 @@ def texturepoint(surface, x, y, t, bounds):
     pointcolor = (constrain_color(pointcolor[0]+random.randint(-t.redvarianceperspawn, t.redvarianceperspawn)),
                   constrain_color(pointcolor[1]+random.randint(-t.greenvarianceperspawn, t.greenvarianceperspawn)),
                   constrain_color(pointcolor[2]+random.randint(-t.bluevarianceperspawn, t.bluevarianceperspawn)))
+    print("after contraint")
+    print(pointcolor)
 
     while len(points) > 0:
         p = points.pop(0)
