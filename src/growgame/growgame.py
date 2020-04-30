@@ -1,4 +1,4 @@
-from Game import Game
+from Game import Game as NormalGame
 from .Game import Game
 
 
@@ -31,4 +31,4 @@ def onunpause(time):
     pass
 
 def creategame():
-    return Game("growgame", initgame, onkeydown, onkeyup, ontick, ondraw, onpause, onunpause)
+    return NormalGame("growgame", initgame, onkeydown, onkeyup, ontick, ondraw, onpause, onunpause)
