@@ -479,8 +479,11 @@ def makeplant(plantnode):
     def callplant():
         nonlocal plantpos
         surface, pos = drawplant(plantnode)
+        print("pos")
+        print(pos)
         plantpos = pos
         return surface
+    print(plantpos)
     plantname = generategraphic(callplant, "randomplant")
     
     return plantname, plantpos
