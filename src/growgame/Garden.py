@@ -1,5 +1,6 @@
 from pygame import Rect, gfxdraw, Surface
 
+from graphics import getpic
 
 import variables
 from DestructiveFrozenClass import DestructiveFrozenClass
@@ -44,9 +45,18 @@ class Garden(DestructiveFrozenClass):
                       (depthplist[-2][0], depthplist[-2][1]+shelfheight)]
         gfxdraw.filled_polygon(screen, rsideplist, variables.brighten(frontcolor, -3))
 
-    # returns the x position at which the cursor was drawn
-    def draw(self, time, settings, screen : Surface, scale, bottomypos : float, cursoroffset = 0, currentxscroll = 0, drawcursorindex = None, nodraw = False):
 
+    def tallest_height(self, scale):
+        if len(self.plants) == 0:
+            return 0
+        else:
+            def pich(plant):
+                return getpic(plant.pic, scale).get_height() + getpic(plant.potpic, scale).get_height()
+            return pich(max(self.plants, key= pich))
+        
+    # returns the x position at which the cursor was drawn
+    def draw(self, time, settings, screen : Surface, scale, cursoroffset = 0, currentxscroll = 0, drawcursorindex = None, nodraw = False):
+        bottomypos = self.tallest_height(scale)
         # first draw wood
         if not nodraw:
             self.drawwood(time, settings, screen, scale, currentxscroll, bottomypos)
@@ -71,7 +81,7 @@ class Garden(DestructiveFrozenClass):
 
     # returns the x position of the end of the currently highlighted plant
     def get_xpos_end_of_cursor_plant(self, cursorx : int, scale : float, oldcursoroffset : float, screen : Surface) -> Rect:
-        rect = self.draw(0, None, screen, scale, 0.0, cursoroffset = oldcursoroffset, drawcursorindex = cursorx, nodraw = True)
+        rect = self.draw(0, None, screen, scale, cursoroffset = oldcursoroffset, drawcursorindex = cursorx, nodraw = True)
         if rect != None:
             rect.x += (self.plants[cursorx].plantwidth-self.plants[cursorx].plantbasexoffset)*scale 
         return rect

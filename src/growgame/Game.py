@@ -47,8 +47,6 @@ class Game(DestructiveFrozenClass):
         return self.basescale * (1/(1+self.zoom))
 
     def draw(self, time, settings, screen):
-        rowyspacing = variables.height/2
-
         newcursoroffset = self.lastcursoroffset
         while self.garden.get_xpos_end_of_cursor_plant(self.cursorx, self.scale(), newcursoroffset, screen) == None:
             newcursoroffset -= 1
@@ -61,7 +59,7 @@ class Game(DestructiveFrozenClass):
         else:
             currentxscroll = 0
             
-        self.garden.draw(time, settings, screen, self.scale(), rowyspacing, currentxscroll = currentxscroll, cursoroffset = newcursoroffset, drawcursorindex = self.cursorx)
+        self.garden.draw(time, settings, screen, self.scale(), currentxscroll = currentxscroll, cursoroffset = newcursoroffset, drawcursorindex = self.cursorx)
 
         self = self.destructiveset("lastcursoroffset", newcursoroffset)
 
