@@ -9,6 +9,12 @@ pygame
 
 bugs
 -"l" note was the same note as "a", which cannot be correct
+- Save msg ?
+- Steve gone when comign back
+- high pitched notes have gaps when playing
+- Inconsistant volume, high=loud
+- Uniform repetition coldfly bad
+- accidentals should appear in the tutorial level for accidentals
 
 
 gameplay
@@ -81,6 +87,7 @@ Knob ideas for the beatmap generator
 
 
 graphics
+- frames around progress bars
 - random drumming octopus, drum mode
 - more life to the game- snow animations
 - automatically adjusting resolution, resolution option in settings
@@ -104,3 +111,4 @@ bmsbmsfmsfgsfgjfllllllllttttrrrr
 ieieieiekdkdkdkdjdjdjdjdejejwjwj
 ieieieiekdkdkdkdjdjdjdjdejejwjwj
 777777779999777745555555522222222
+	
