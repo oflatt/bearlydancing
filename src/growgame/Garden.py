@@ -15,18 +15,16 @@ class Garden(DestructiveFrozenClass):
         self._freeze()
 
 
-    def drawwood(self, time, settings, screen, scale, currentxscroll, bottomypos):
-
-        shelfwidth = currentxscroll + screen.get_width()
-        
-        
+    def drawwood(self, time, settings, screen, scale, bottomypos, currentxscroll, endscroll):
         shelfheight = 7*scale
         shelfdepth = 18*scale
         shelfdepthoffset = 7*scale
         shelfyoffset = 2*scale
         frontcolor = (127, 88, 26)
+        left = 10 * scale - currentxscroll
+        shelfwidth = endscroll - scale * 10
 
-        frontrect = Rect(-currentxscroll+10*scale, bottomypos-shelfheight+shelfyoffset, 80*scale, shelfheight)
+        frontrect = Rect(left, bottomypos-shelfheight+shelfyoffset, shelfwidth, shelfheight)
 
         # draw depth
         depthplist = [(frontrect[0], frontrect[1]),
@@ -53,13 +51,14 @@ class Garden(DestructiveFrozenClass):
             def pich(plant):
                 return getpic(plant.pic, scale).get_height() + getpic(plant.potpic, scale).get_height()
             return pich(max(self.plants, key= pich))
+            
         
     # returns the x position at which the cursor was drawn
-    def draw(self, time, settings, screen : Surface, scale, cursoroffset = 0, currentxscroll = 0, drawcursorindex = None, nodraw = False):
-        bottomypos = self.tallest_height(scale)
+    def draw(self, time, settings, screen : Surface, scale, cursoroffset = 0, currentxscroll = 0, endscroll = 0, drawcursorindex = None, nodraw = False, currenty = 0):
+        bottomypos = self.tallest_height(scale) + currenty
         # first draw wood
         if not nodraw:
-            self.drawwood(time, settings, screen, scale, currentxscroll, bottomypos)
+            self.drawwood(time, settings, screen, scale, bottomypos, currentxscroll, endscroll)
         
         xspace = screen.get_width()/50
         currentx = xspace
@@ -74,14 +73,15 @@ class Garden(DestructiveFrozenClass):
                 potpos = self.plants[i].pot_pos(currentpos, scale)
                 cursordrawpos = Rect(potpos[0]-xspace, potpos[1]-xspace,
                                      xspace, xspace)
-                gfxdraw.box(screen, cursordrawpos, (211, 214, 64))
+                if not nodraw:
+                    gfxdraw.box(screen, cursordrawpos, (211, 214, 64))
             currentx += self.plants[i].plantwidth*scale + xspace
         
-        return cursordrawpos
+        return (cursordrawpos, bottomypos)
 
     # returns the x position of the end of the currently highlighted plant
     def get_xpos_end_of_cursor_plant(self, cursorx : int, scale : float, oldcursoroffset : float, screen : Surface) -> Rect:
-        rect = self.draw(0, None, screen, scale, cursoroffset = oldcursoroffset, drawcursorindex = cursorx, nodraw = True)
+        rect, bottomypos = self.draw(0, None, screen, scale, cursoroffset = oldcursoroffset, drawcursorindex = cursorx, nodraw = True)
         if rect != None:
             rect.x += (self.plants[cursorx].plantwidth-self.plants[cursorx].plantbasexoffset)*scale 
         return rect

@@ -15,14 +15,15 @@ class Game(DestructiveFrozenClass):
 
         self.state = 'play'
         self.basescale = int(variables.height / 20 / 6)
-        self.zoom = 0
+        self.zoom = 1
 
         self.shopplants = make_shopplant_list()
-        self.garden = Garden()
+        self.gardens = [Garden(), Garden()]
 
         # add all shop plants cheat
         for p in self.shopplants:
-            self.garden.addplant(Plant(p.headnode))
+            self.gardens[0].addplant(Plant(p.headnode))
+            self.gardens[1].addplant(Plant(p.headnode))
         
 
         # position of cursor on items
@@ -31,6 +32,7 @@ class Game(DestructiveFrozenClass):
 
         # how many items to scroll to keep things on screen
         self.lastcursoroffset = 0
+        self.yscrolloffset = 0
 
             
         self._freeze()
@@ -46,37 +48,68 @@ class Game(DestructiveFrozenClass):
     def scale(self):
         return self.basescale * (1/(1+self.zoom))
 
+    def getgardenypositions(self, time, settings, screen):
+        currenty = 0
+        ylist = [0]
+        for gardeni in range(len(self.gardens)):
+            garden = self.gardens[gardeni]
+            cursorpos, currenty = garden.draw(time, settings, screen, self.scale(), currenty = currenty, nodraw = True)
+            ylist.append(currenty)
+            
+        return ylist
+    
     def draw(self, time, settings, screen):
+
+        selectedgarden = self.gardens[self.cursory]
+
         newcursoroffset = self.lastcursoroffset
-        while self.garden.get_xpos_end_of_cursor_plant(self.cursorx, self.scale(), newcursoroffset, screen) == None:
+        while selectedgarden.get_xpos_end_of_cursor_plant(self.cursorx, self.scale(), newcursoroffset, screen) == None:
             newcursoroffset -= 1
-        while self.garden.get_xpos_end_of_cursor_plant(self.cursorx, self.scale(), newcursoroffset, screen)[0] > variables.width:
+        while selectedgarden.get_xpos_end_of_cursor_plant(self.cursorx, self.scale(), newcursoroffset, screen)[0] > variables.width:
             newcursoroffset += 1
 
         # now to get how much it will scroll, calculate based upon a version without scrolling
         if newcursoroffset > 0:
-            currentxscroll = self.garden.get_xpos_end_of_cursor_plant(newcursoroffset-1, self.scale(), 0, screen)[0]
+            currentxscroll = selectedgarden.get_xpos_end_of_cursor_plant(newcursoroffset-1, self.scale(), 0, screen)[0]
         else:
             currentxscroll = 0
+
+        endscroll = selectedgarden.get_xpos_end_of_cursor_plant(len(selectedgarden.plants)-1, self.scale(), 0, screen)[0]
+
+        gardenypositions = self.getgardenypositions(time, settings, screen)
+        if gardenypositions[self.cursory]+self.yscrolloffset < 0:
+            self = self.destructiveset("yscrolloffset", -gardenypositions[self.cursory])
+        if gardenypositions[self.cursory+1]+self.yscrolloffset > screen.get_height():
+            self = self.destructiveset("yscrolloffset", -(gardenypositions[self.cursory+1]-screen.get_height() + 10*self.scale()))
+
+        currenty = self.yscrolloffset
+        
+        for gardeni in range(len(self.gardens)):
+            garden = self.gardens[gardeni]
+            drawcursorindex =-1
+            if gardeni == self.cursory:
+                drawcursorindex = self.cursorx
             
-        self.garden.draw(time, settings, screen, self.scale(), currentxscroll = currentxscroll, cursoroffset = newcursoroffset, drawcursorindex = self.cursorx)
+            cursorpos, currenty = garden.draw(time, settings, screen, self.scale(), currentxscroll = currentxscroll, cursoroffset = newcursoroffset, endscroll=endscroll, drawcursorindex = drawcursorindex, currenty = currenty)
 
         self = self.destructiveset("lastcursoroffset", newcursoroffset)
 
         return self
 
     def current_row_length(self):
-        return len(self.garden.plants) - self.cursory * potsperrow
+        return len(self.gardens[self.cursory].plants)
 
     def onkeydown(self, key, settings):
         if settings.iskey("right", key):
-            if self.cursorx < self.current_row_length()-1:
-                self = self.destructiveset("cursorx", (self.cursorx+1))
+            self = self.destructiveset("cursorx", (self.cursorx+1) % self.current_row_length())
         elif settings.iskey("left", key):
-            if self.cursorx > 0:
-                self = self.destructiveset("cursorx", (self.cursorx-1)%self.current_row_length())
+            self = self.destructiveset("cursorx", (self.cursorx-1)%self.current_row_length())
+        elif settings.iskey("up", key):
+            self = self.destructiveset("cursory", (self.cursory-1)%len(self.gardens))
+        elif settings.iskey("down", key):
+            self = self.destructiveset("cursory", (self.cursory+1)%len(self.gardens))
         elif settings.iskey("zoom", key):
-            self =self.destructiveset("zoom", (self.zoom + 1)% 3)
+            self =self.destructiveset("zoom", (self.zoom + 1)% 4)
             # also reset the offset for recalculation
             self = self.destructiveset("lastcursoroffset", 0)
         return self
