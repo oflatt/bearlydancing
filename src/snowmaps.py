@@ -4,7 +4,7 @@ from random import randint
 import variables, graphics, enemies
 from enemies import enemyforspecialbattle
 from conversations import getconversation
-from Map import Map
+from mapsvars import *
 from graphics import snowland
 from Exit import Exit
 from Rock import Rock

@@ -1,7 +1,7 @@
 import variables, classvar
 from EventRequirement import EventRequirement
 from graphics import GR
-
+from Map import Map
 
 # Coordinates for maps are based on the base of each map respectively
 honeyw = 21#GR["honeyside0"]["w"]
