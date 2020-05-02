@@ -9,6 +9,7 @@ class ChoiceButtons(FrozenClass):
         self.options = options
         self.current_option = 0
         self.buttons = []
+        self.currentxscroll = 0
 
         for optiontext in self.options:
             newb = Button(0, ypos, optiontext, buttontextsize)
@@ -42,11 +43,25 @@ class ChoiceButtons(FrozenClass):
         
         spacing = maxwidth / 4
         length = len(self.buttons)
-        centering = (1 - length * maxwidth - (length-1) * spacing) / 2
+
+        buttonpositions = []
+        for i in range(len(self.buttons)):
+            buttonpositions.append(i * (maxwidth+spacing) + spacing)
+            self.buttons[i].screenwidthoverride = maxwidth
+
+        
+        if length * maxwidth + (length-1) * spacing <= 1:
+            centering = (1 - length * maxwidth - (length-1) * spacing - 2*spacing) / 2
+            self.currentxscroll = centering
+        else:
+            if buttonpositions[self.current_option] + self.currentxscroll < spacing:
+                self.currentxscroll = -(buttonpositions[self.currentoption] - spacing)
+            if buttonpositions[self.current_option] + maxwidth + spacing + self.currentxscroll > variables.screen.get_width():
+                self.currentxscroll = -(buttonpositions[self.currentoption] + maxwidth + spacing - variables.screen.get_width())
+            
         
         for i in range(len(self.buttons)):
-            self.buttons[i].screenwidthoverride = maxwidth
-            self.buttons[i].x = i * (maxwidth + spacing) + centering
+            self.buttons[i].x = buttonpositions[i] + self.currentxscroll
         
         for i in range(len(self.buttons)):
             b = self.buttons[i]

@@ -3,7 +3,9 @@ from pygame import gfxdraw, Rect
 
 import variables
 from DestructiveFrozenClass import DestructiveFrozenClass
+from ChoiceButtons import ChoiceButtons
 from .Garden import Garden
+from pygame import Rect
 
 from .shopplants import make_shopplant_list
 from .constants import potsperrow
@@ -34,7 +36,16 @@ class Game(DestructiveFrozenClass):
         self.lastcursoroffset = 0
         self.yscrolloffset = 0
 
+
+        self.sun = 0
+        buttonnames = ["Breed (-10 Sun)", "Sell (+5 Sun)"]
+        for p in self.shopplants:
+            labelname = p.name + " (+" + str(p.cost) + " Sun)"
+            buttonnames.append(labelname)
             
+
+        self.shop = ChoiceButtons(buttonnames, 1/20)
+        
         self._freeze()
 
 
@@ -60,6 +71,8 @@ class Game(DestructiveFrozenClass):
     
     def draw(self, time, settings, screen):
 
+        gardensareay = (self.shop.buttons[0].y+self.shop.buttons[0].size) * screen.get_height()
+        
         selectedgarden = self.gardens[self.cursory]
 
         newcursoroffset = self.lastcursoroffset
@@ -79,10 +92,10 @@ class Game(DestructiveFrozenClass):
         gardenypositions = self.getgardenypositions(time, settings, screen)
         if gardenypositions[self.cursory]+self.yscrolloffset < 0:
             self = self.destructiveset("yscrolloffset", -gardenypositions[self.cursory])
-        if gardenypositions[self.cursory+1]+self.yscrolloffset > screen.get_height():
-            self = self.destructiveset("yscrolloffset", -(gardenypositions[self.cursory+1]-screen.get_height() + 10*self.scale()))
+        if gardenypositions[self.cursory+1]+self.yscrolloffset > screen.get_height()-gardensareay:
+            self = self.destructiveset("yscrolloffset", -(gardenypositions[self.cursory+1]-screen.get_height() + gardensareay + 10*self.scale()))
 
-        currenty = self.yscrolloffset
+        currenty = self.yscrolloffset + gardensareay
         
         for gardeni in range(len(self.gardens)):
             garden = self.gardens[gardeni]
@@ -94,6 +107,9 @@ class Game(DestructiveFrozenClass):
 
         self = self.destructiveset("lastcursoroffset", newcursoroffset)
 
+        screen.fill((0,43, 220), Rect(0, 0, screen.get_width(), gardensareay+ self.shop.buttons[0].y*screen.get_height()))
+        self.shop.draw()
+        
         return self
 
     def current_row_length(self):

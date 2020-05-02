@@ -52,6 +52,6 @@ class Button(FrozenClass):
         variables.screen.blit(textpic, [xpos + textpadding, ypos])
         
         # just always update screen
-        variables.dirtyrects.append(pygame.Rect(xpos, ypos, self.width(), self.height()))
+        variables.dirtyrects.append(pygame.Rect(xpos-1, ypos-1, self.width()+2, self.height()+2))
 
 
