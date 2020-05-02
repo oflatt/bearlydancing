@@ -10,13 +10,17 @@ pygame
 bugs
 -"l" note was the same note as "a", which cannot be correct
 
+
 gameplay
 - wolfram music http://tones.wolfram.com/generate/G1R3GnsJYz0ImX9KYVUwB8IwEuFTmmQkaDfuGy2md7Z97x56
+- winter path
+- pattern in snow challenge (timed?)
 - idle plant minigame
 - beetle sumo minigame
-- random avoid minigame using dp pathfinding
 - music for minigames
 - better music system on endpoints
+
+- rock cafe
 
 - bosses should use concepts from many enemies faced to give a sense of learning and accomplishment
 - knomi code name- bear winks at you
@@ -44,7 +48,10 @@ sound
 - playback mode- have computer replay song perfectly after finishing a battle
 
 battle
-- circles that give a visual cue around the note about to be played like lyrica
+- spam enter when leveling up to skip animation
+- Feedback on starting a note, not just ending it?
+- Croc too wide
+
 - change color of note while holding note
 - battle code is ugly and convoluted with all the time/health variables
 
