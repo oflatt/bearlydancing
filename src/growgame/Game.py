@@ -13,8 +13,8 @@ from .Plant import Plant
 
 class CursorState():
     def __init__(self, state = None, data = None):
-        self.state = None
-        self.data = None
+        self.state = state
+        self.data = data
 
 class Game(DestructiveFrozenClass):
 
@@ -132,8 +132,11 @@ class Game(DestructiveFrozenClass):
             endscroll = garden.get_xpos_end_of_cursor_plant(len(garden.plants)-1, self.scale(), 0, screen)
             if endscroll == None:
                 endscroll = 0
+            highlightset = set()
+            if self.cursorstate.state == "swap" and self.cursorstate.data[1] == gardeni:
+                highlightset.add(self.cursorstate.data[0])
                 
-            cursorpos, currenty = garden.draw(time, settings, screen, self.scale(), currentxscroll = currentxscroll, cursoroffset = newcursoroffset, endscroll=endscroll, drawcursorindex = drawcursorindex, currenty = currenty)
+            cursorpos, currenty = garden.draw(time, settings, screen, self.scale(), currentxscroll = currentxscroll, cursoroffset = newcursoroffset, endscroll=endscroll, drawcursorindex = drawcursorindex, currenty = currenty, drawhighlighted = highlightset)
 
         self = self.destructiveset("lastcursoroffset", newcursoroffset)
 
@@ -159,9 +162,9 @@ class Game(DestructiveFrozenClass):
             self = self.destructiveset("cursorstate", CursorState("swap", (self.cursorx, self.gardenindex())))
         elif self.cursorstate.state == "swap":
             xpos, gardeni = self.cursorstate.data
-            temp = self.gardens[gardeni][xpos]
-            self.gardens[gardeni][xpos] = self.gardens[self.gardenindex()][self.cursorx]
-            self.gardens[self.gardenindex()][self.cursorx] = temp
+            temp = self.gardens[gardeni].plants[xpos]
+            self.gardens[gardeni].plants[xpos] = self.gardens[self.gardenindex()].plants[self.cursorx]
+            self.gardens[self.gardenindex()].plants[self.cursorx] = temp
             self = self.destructiveset("cursorstate", CursorState(None, None))
         return self
             

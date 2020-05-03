@@ -54,7 +54,7 @@ class Garden(DestructiveFrozenClass):
             
         
     # returns the x position at which the cursor was drawn
-    def draw(self, time, settings, screen : Surface, scale, cursoroffset = 0, currentxscroll = 0, endscroll = 0, drawcursorindex = None, nodraw = False, currenty = 0):
+    def draw(self, time, settings, screen : Surface, scale, cursoroffset = 0, currentxscroll = 0, endscroll = 0, drawcursorindex = None, nodraw = False, currenty = 0, drawhighlighted = set()):
         bottomypos = self.tallest_height(scale) + currenty
         # first draw wood
         if not nodraw:
@@ -67,8 +67,13 @@ class Garden(DestructiveFrozenClass):
         for i in range(cursoroffset, len(self.plants)):
             currentpos = (currentx, bottomypos)
             if not nodraw:
+                highlightcolor = (211, 214, 64)
+                highlighted = drawcursorindex == i
+                if i in drawhighlighted and not highlighted:
+                    highlighted = True
+                    highlightcolor = (129, 242, 80)
                 self.plants[i].draw(time, settings, screen, scale,
-                                    currentpos, highlighted = drawcursorindex == i)
+                                    currentpos, highlighted = highlighted, highlightcolor = highlightcolor)
             currentx += self.plants[i].plantwidth*scale + xspace
             if drawcursorindex == i:
                 endofhighlighted = currentx

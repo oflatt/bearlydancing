@@ -32,7 +32,7 @@ class Plant(DestructiveFrozenClass):
         return (bottom_position[0]+self.plantbasexoffset*scale, bottom_position[1]-potsurface.get_height())
         
 
-    def draw(self, time, settings, screen, scale, position, highlighted = False):
+    def draw(self, time, settings, screen, scale, position, highlighted = False, highlightcolor = (211, 214, 64)):
         pic = getpic(self.pic, scale)
         potsurface = getpic(self.potpic, scale)
         potpos = self.pot_pos(position, scale)
@@ -45,4 +45,4 @@ class Plant(DestructiveFrozenClass):
             xspace = variables.potxspace()
             cursordrawpos = Rect(potpos[0]-xspace, potpos[1]-xspace,
                                      xspace, xspace)
-            gfxdraw.box(screen, cursordrawpos, (211, 214, 64))
+            gfxdraw.box(screen, cursordrawpos, highlightcolor)
