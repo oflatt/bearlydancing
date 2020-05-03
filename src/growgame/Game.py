@@ -21,7 +21,6 @@ class Game(DestructiveFrozenClass):
 
     def __init__(self):
 
-        self.state = 'play'
         self.basescale = int(variables.height / 20 / 6)
         self.zoom = 1
         self.gardenlimit = 12
@@ -48,8 +47,11 @@ class Game(DestructiveFrozenClass):
         if devoptions.devmode:
             self.sun = 2000
 
+        self.sellgain = 5
+        self.breedcost = 10
+
         
-        buttonnames = ["breed (-10 Sun)", "sell (+5 Sun)"]
+        buttonnames = ["breed (-" + str(self.breedcost) + " Sun)", "sell (+" + str(self.sellgain) + " Sun)"]
         self.specialbuttonslen = len(buttonnames)
         for p in self.shopplants:
             labelname = p.name + " (-" + str(p.cost) + " Sun)"
@@ -62,8 +64,15 @@ class Game(DestructiveFrozenClass):
 
 
     def buttonpressed(self, index):
-        flowerindex = index-self.specialbuttonslen
-        return self.addflower(self.shopplants[flowerindex])
+        if index < 2:
+            if index == 0:
+                self = self.destructiveset("cursorstate", CursorState("breed"))
+            elif index == 1:
+                self = self.destructiveset("cursorstate", CursorState("sell"))
+            return self
+        else:
+            flowerindex = index-self.specialbuttonslen
+            return self.addflower(self.shopplants[flowerindex])
         
 
     def addflower(self, shopplant):
@@ -158,12 +167,22 @@ class Game(DestructiveFrozenClass):
 
     def drawshop(self, screen, gardensareay):
         screen.fill(variables.GREY, Rect(0, 0, screen.get_width(), gardensareay))
+
+        
         
         self.shop.isselected = self.cursory == 0
         if self.cursory == 0:
             self.shop.currentoption = self.cursorx
         else:
             self.shop.currentoption = 0
+
+        if self.cursorstate.state == "breed":
+            self.shop.isselected = True
+            self.shop.currentoption = 0
+        elif self.cursorstate.state == "sell":
+            self.shop.isselected = True
+            self.shop.currentoption = 1
+        
         self.shop.draw()
 
     def drawsun(self, screen):
@@ -194,6 +213,13 @@ class Game(DestructiveFrozenClass):
     def plantpressed(self):
         if self.cursorstate.state == None:
             self = self.destructiveset("cursorstate", CursorState("swap", (self.cursorx, self.gardenindex())))
+        elif self.cursorstate.state == "sell":
+            self.gardens[self.gardenindex()].plants.pop(self.cursorx)
+            self = self.destructiveset("sun", self.sun + 5)
+            self = self.destructiveset("cursorstate", CursorState(None, None))
+            self = self.destructiveset("cursorx", 1)
+            self = self.destructiveset("cursory", 0)
+            
         elif self.cursorstate.state == "swap":
             xpos, gardeni = self.cursorstate.data
             temp = self.gardens[gardeni].plants[xpos]
