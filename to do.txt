@@ -95,9 +95,8 @@ graphics
 Sophie:
 -tent snow
 -wardrobe open, "why do I have this?"
-- update scare square
 - better dancing animations (polar giraffe)
-- some enemies outlined in black (snake, scare square has potential)
+- some enemies outlined in black (snake)
 
 megalovania
 sstzlzzzkzjzgzsgj

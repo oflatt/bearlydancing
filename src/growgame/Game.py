@@ -1,11 +1,12 @@
 from pygame import gfxdraw, Rect
 
-
+import devoptions
 import variables
 from DestructiveFrozenClass import DestructiveFrozenClass
 from ChoiceButtons import ChoiceButtons
 from .Garden import Garden
 from pygame import Rect
+from graphics import getpicbyheight, getTextPic
 
 from .shopplants import make_shopplant_list
 from .constants import potsperrow
@@ -44,6 +45,10 @@ class Game(DestructiveFrozenClass):
 
 
         self.sun = 0
+        if devoptions.devmode:
+            self.sun = 2000
+
+        
         buttonnames = ["breed (-10 Sun)", "sell (+5 Sun)"]
         self.specialbuttonslen = len(buttonnames)
         for p in self.shopplants:
@@ -58,16 +63,22 @@ class Game(DestructiveFrozenClass):
 
     def buttonpressed(self, index):
         flowerindex = index-self.specialbuttonslen
-        self.addflower(self.shopplants[flowerindex])
+        return self.addflower(self.shopplants[flowerindex])
+        
 
     def addflower(self, shopplant):
-        for garden in self.gardens:
-            if len(garden.plants) < self.gardenlimit:
-                garden.addplant(Plant(shopplant.headnode))
-                return
-        # otherwise all full
-        self.gardens.append(Garden())
-        self.gardens[-1].addplant(Plant(shopplant.headnode))
+        if self.sun >= shopplant.cost:
+            self = self.destructiveset("sun", self.sun-shopplant.cost)
+            added = False
+            for garden in self.gardens:
+                if len(garden.plants) < self.gardenlimit:
+                    garden.addplant(Plant(shopplant.headnode))
+                    added = True
+            # otherwise all full
+            if not added:
+                self.gardens.append(Garden())
+                self.gardens[-1].addplant(Plant(shopplant.headnode))
+        return self
         
     def shopgetplantbyname(self, name):
         for p in self.shopplants:
@@ -140,6 +151,12 @@ class Game(DestructiveFrozenClass):
 
         self = self.destructiveset("lastcursoroffset", newcursoroffset)
 
+        self.drawshop(screen, gardensareay)
+        self.drawsun(screen)
+        
+        return self
+
+    def drawshop(self, screen, gardensareay):
         screen.fill(variables.GREY, Rect(0, 0, screen.get_width(), gardensareay))
         
         self.shop.isselected = self.cursory == 0
@@ -148,8 +165,25 @@ class Game(DestructiveFrozenClass):
         else:
             self.shop.currentoption = 0
         self.shop.draw()
+
+    def drawsun(self, screen):
+        sunh = screen.get_height()*1/15
+        sunpic = getpicbyheight("sun3", sunh)
+        texth = sunh * 2/3
+        textpic = getTextPic(" " + str(self.sun) + " ", texth)
+        boxrect = Rect(screen.get_width()-textpic.get_width()-sunpic.get_width()
+                       ,screen.get_height()-sunh
+                       ,textpic.get_width()+sunpic.get_width()
+                       ,sunh)
+        screen.fill(variables.GREY, boxrect)
+        screen.blit(sunpic, boxrect)
+        screen.blit(textpic, (boxrect.x + sunpic.get_width(), boxrect.y + (sunh-texth)/2))
         
-        return self
+        
+        
+        
+        
+        
 
     def current_row_length(self):
         if(self.cursory == 0):
@@ -197,7 +231,7 @@ class Game(DestructiveFrozenClass):
         elif settings.iskey("action", key):
             if self.cursory == 0:
                 self = self.destructiveset("cursorstate", CursorState(None, None))
-                self.buttonpressed(self.cursorx)
+                self = self.buttonpressed(self.cursorx)
             else:
                 self = self.plantpressed()
         elif settings.iskey("zoom", key):
