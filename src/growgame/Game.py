@@ -8,6 +8,7 @@ from .Garden import Garden
 from pygame import Rect
 from graphics import getpicbyheight, getTextPic
 
+from .crossplants import crossplants
 from .shopplants import make_shopplant_list
 from .constants import potsperrow
 from .Plant import Plant
@@ -72,21 +73,21 @@ class Game(DestructiveFrozenClass):
             return self
         else:
             flowerindex = index-self.specialbuttonslen
-            return self.addflower(self.shopplants[flowerindex])
+            return self.addplant(Plant(self.shopplants[flowerindex].headnode), self.shopplants[flowerindex].cost)
         
 
-    def addflower(self, shopplant):
-        if self.sun >= shopplant.cost:
-            self = self.destructiveset("sun", self.sun-shopplant.cost)
+    def addplant(self, plant, cost):
+        if self.sun >= cost:
+            self = self.destructiveset("sun", self.sun-cost)
             added = False
             for garden in self.gardens:
                 if len(garden.plants) < self.gardenlimit:
-                    garden.addplant(Plant(shopplant.headnode))
+                    garden.addplant(plant)
                     added = True
             # otherwise all full
             if not added:
                 self.gardens.append(Garden())
-                self.gardens[-1].addplant(Plant(shopplant.headnode))
+                self.gardens[-1].addplant(plant)
         return self
         
     def shopgetplantbyname(self, name):
@@ -153,7 +154,7 @@ class Game(DestructiveFrozenClass):
             if endscroll == None:
                 endscroll = 0
             highlightset = set()
-            if self.cursorstate.state == "swap" and self.cursorstate.data[1] == gardeni:
+            if self.cursorstate.state in ("swap", "breed") and self.cursorstate.data != None and self.cursorstate.data[1] == gardeni:
                 highlightset.add(self.cursorstate.data[0])
                 
             cursorpos, currenty = garden.draw(time, settings, screen, self.scale(), currentxscroll = currentxscroll, cursoroffset = newcursoroffset, endscroll=endscroll, drawcursorindex = drawcursorindex, currenty = currenty, drawhighlighted = highlightset)
@@ -219,6 +220,17 @@ class Game(DestructiveFrozenClass):
             self = self.destructiveset("cursorstate", CursorState(None, None))
             self = self.destructiveset("cursorx", 1)
             self = self.destructiveset("cursory", 0)
+
+        elif self.cursorstate.state == "breed":
+            if self.cursorstate.data == None:
+                self.cursorstate.data = (self.cursorx, self.gardenindex())
+            else:
+                xpos, gardeni = self.cursorstate.data
+                plant1 = self.gardens[gardeni].plants[xpos]
+                plant2 = self.gardens[self.gardenindex()].plants[self.cursorx]
+                newplant = crossplants(plant1, plant2)
+                self = self.addplant(newplant, 0)
+                self = self.destructiveset("cursorstate", CursorState(None, None))
             
         elif self.cursorstate.state == "swap":
             xpos, gardeni = self.cursorstate.data
