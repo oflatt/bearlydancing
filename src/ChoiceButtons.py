@@ -50,8 +50,9 @@ class ChoiceButtons(FrozenClass):
             buttonpositions.append(i * (maxwidth+spacing) + spacing)
             self.buttons[i].screenwidthoverride = maxwidth
 
+        totalwidth = length * maxwidth + (length-1) * spacing
         
-        if length * maxwidth + (length-1) * spacing <= 1:
+        if totalwidth <= 1:
             centering = (1 - length * maxwidth - (length-1) * spacing - 2*spacing) / 2
             self.currentxscroll = centering
         else:
@@ -59,6 +60,11 @@ class ChoiceButtons(FrozenClass):
                 self.currentxscroll = -(buttonpositions[self.currentoption])
             if buttonpositions[self.currentoption] + maxwidth + self.currentxscroll > 1:
                 self.currentxscroll = -(buttonpositions[self.currentoption] + maxwidth - 1)
+                
+            if self.currentoption == 0:
+                self.currentxscroll = 0
+            elif self.currentoption == len(self.buttons)-1:
+                self.currentxscroll = -(totalwidth+2*spacing - 1)
             
         
         for i in range(len(self.buttons)):
