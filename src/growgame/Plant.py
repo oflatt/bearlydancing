@@ -1,5 +1,7 @@
 import math
 
+import variables
+from pygame import Rect, gfxdraw
 from DestructiveFrozenClass import DestructiveFrozenClass
 from graphics import getpic, makeplant
 
@@ -30,7 +32,7 @@ class Plant(DestructiveFrozenClass):
         return (bottom_position[0]+self.plantbasexoffset*scale, bottom_position[1]-potsurface.get_height())
         
 
-    def draw(self, time, settings, screen, scale, position):
+    def draw(self, time, settings, screen, scale, position, highlighted = False):
         pic = getpic(self.pic, scale)
         potsurface = getpic(self.potpic, scale)
         potpos = self.pot_pos(position, scale)
@@ -38,3 +40,9 @@ class Plant(DestructiveFrozenClass):
         screen.blit(potsurface, potpos)
         screen.blit(pic, (position[0],
                           -self.posoffset[1]*scale+ potpos[1] + 5*scale))
+
+        if highlighted:
+            xspace = variables.potxspace()
+            cursordrawpos = Rect(potpos[0]-xspace, potpos[1]-xspace,
+                                     xspace, xspace)
+            gfxdraw.box(screen, cursordrawpos, (211, 214, 64))

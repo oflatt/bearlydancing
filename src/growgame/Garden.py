@@ -22,7 +22,7 @@ class Garden(DestructiveFrozenClass):
         shelfyoffset = 2*scale
         frontcolor = (127, 88, 26)
         left = 10 * scale - currentxscroll
-        shelfwidth = max(endscroll - scale * 10, screen.get_width())
+        shelfwidth = max(endscroll - scale * 10, screen.get_width()/2)
 
         frontrect = Rect(left, bottomypos-shelfheight+shelfyoffset, shelfwidth, shelfheight)
 
@@ -59,32 +59,26 @@ class Garden(DestructiveFrozenClass):
         # first draw wood
         if not nodraw:
             self.drawwood(time, settings, screen, scale, bottomypos, currentxscroll, endscroll)
-        
-        xspace = screen.get_width()/50
+
+        xspace = variables.potxspace()
         currentx = xspace
-        cursordrawpos = None
+        endofhighlighted = None
         
         for i in range(cursoroffset, len(self.plants)):
             currentpos = (currentx, bottomypos)
             if not nodraw:
                 self.plants[i].draw(time, settings, screen, scale,
-                                    currentpos)
-            if drawcursorindex == i:
-                potpos = self.plants[i].pot_pos(currentpos, scale)
-                cursordrawpos = Rect(potpos[0]-xspace, potpos[1]-xspace,
-                                     xspace, xspace)
-                if not nodraw:
-                    gfxdraw.box(screen, cursordrawpos, (211, 214, 64))
+                                    currentpos, highlighted = drawcursorindex == i)
             currentx += self.plants[i].plantwidth*scale + xspace
+            if drawcursorindex == i:
+                endofhighlighted = currentx
         
-        return (cursordrawpos, bottomypos)
+        return (endofhighlighted, bottomypos)
 
     # returns the x position of the end of the currently highlighted plant
     def get_xpos_end_of_cursor_plant(self, cursorx : int, scale : float, oldcursoroffset : float, screen : Surface) -> Rect:
-        rect, bottomypos = self.draw(0, None, screen, scale, cursoroffset = oldcursoroffset, drawcursorindex = cursorx, nodraw = True)
-        if rect != None:
-            rect.x += (self.plants[cursorx].plantwidth-self.plants[cursorx].plantbasexoffset)*scale 
-        return rect
+        endofhighlighted, bottomypos = self.draw(0, None, screen, scale, cursoroffset = oldcursoroffset, drawcursorindex = cursorx, nodraw = True) 
+        return endofhighlighted
             
     def addplant(self, newplant):
         self.plants.append(newplant)

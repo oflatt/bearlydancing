@@ -317,6 +317,9 @@ def getphotosize():
 def getbuttonpadding():
     return int(width/70)
 
+def potxspace():
+    return width/50
+
 # used to ensure that no duplicate names exist
 conversationnames : List[str] = []
 
