@@ -1,5 +1,6 @@
 #Oliver Flatt
 import variables, pygame
+from pygame import Rect
 from graphics import scale_pure, getTextPic
 from FrozenClass import FrozenClass
 
@@ -22,19 +23,19 @@ class Button(FrozenClass):
     def width(self):
         if self.screenwidthoverride == None:
             textpic = getTextPic(self.text, self.size*variables.height)
-            return textpic.get_width() + variables.getbuttonpadding()
+            return textpic.get_width() + variables.getbuttonpadding()*2
         else:
             return self.screenwidthoverride * variables.width
 
     def height(self):
-        return self.size*variables.height
+        return self.size*variables.height + 2 * variables.getbuttonpadding()
         
 
     def draw(self, ison = False):
         if ison:
-            rectcolor = variables.GREEN
+            rectcolor = variables.BLUE
         else:
-            rectcolor = variables.WHITE
+            rectcolor = variables.BLUEGREY
             
         if self.iscentered:
             xpos = self.x*variables.width - self.width()/2
@@ -46,10 +47,15 @@ class Button(FrozenClass):
         textpic = getTextPic(self.text, self.size*variables.height)
 
         textpadding = (self.width() - textpic.get_width()) / 2
+        ypadding = (self.height() - textpic.get_height()) / 2
+        padding = variables.getbuttonpadding()
 
+        drawrect = Rect(xpos+padding, ypos+padding, self.width()-2*padding, self.height()-2*padding)
 
-        variables.screen.fill(rectcolor, [xpos, ypos, self.width(), self.height()])
-        variables.screen.blit(textpic, [xpos + textpadding, ypos])
+        pygame.draw.rect(variables.screen, rectcolor, drawrect, width = padding)
+        pygame.draw.rect(variables.screen, variables.BLUEWHITE, drawrect)
+
+        variables.screen.blit(textpic, [xpos + textpadding, ypos+ypadding])
         
         # just always update screen
         variables.dirtyrects.append(pygame.Rect(xpos-1, ypos-1, self.width()+2, self.height()+2))

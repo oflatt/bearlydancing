@@ -38,13 +38,13 @@ class Game(DestructiveFrozenClass):
 
 
         self.sun = 0
-        buttonnames = ["Breed (-10 Sun)", "Sell (+5 Sun)"]
+        buttonnames = ["breed (-10 Sun)", "sell (+5 Sun)"]
         for p in self.shopplants:
-            labelname = p.name + " (+" + str(p.cost) + " Sun)"
+            labelname = p.name + " (-" + str(p.cost) + " Sun)"
             buttonnames.append(labelname)
             
 
-        self.shop = ChoiceButtons(buttonnames, 1/20)
+        self.shop = ChoiceButtons(buttonnames, 1/25)
         
         self._freeze()
 
@@ -68,52 +68,67 @@ class Game(DestructiveFrozenClass):
             ylist.append(currenty)
             
         return ylist
+
+    def gardenindex(self):
+        return max(self.cursory-1, 0)
     
     def draw(self, time, settings, screen):
 
-        gardensareay = (self.shop.buttons[0].y+self.shop.buttons[0].size) * screen.get_height()
         
-        selectedgarden = self.gardens[self.cursory]
+        gardensareay = (self.shop.buttons[0].y*2) * screen.get_height() + self.shop.buttons[0].height()
+        
+        selectedgarden = self.gardens[self.gardenindex()]
 
         newcursoroffset = self.lastcursoroffset
-        while selectedgarden.get_xpos_end_of_cursor_plant(self.cursorx, self.scale(), newcursoroffset, screen) == None:
-            newcursoroffset -= 1
-        while selectedgarden.get_xpos_end_of_cursor_plant(self.cursorx, self.scale(), newcursoroffset, screen)[0] > variables.width:
-            newcursoroffset += 1
+        currentxscroll = 0
+        if self.cursory != 0:
+        
+            while selectedgarden.get_xpos_end_of_cursor_plant(self.cursorx, self.scale(), newcursoroffset, screen) == None:
+                newcursoroffset -= 1
+            while selectedgarden.get_xpos_end_of_cursor_plant(self.cursorx, self.scale(), newcursoroffset, screen)[0] > variables.width:
+                newcursoroffset += 1
 
-        # now to get how much it will scroll, calculate based upon a version without scrolling
-        if newcursoroffset > 0:
-            currentxscroll = selectedgarden.get_xpos_end_of_cursor_plant(newcursoroffset-1, self.scale(), 0, screen)[0]
-        else:
-            currentxscroll = 0
+            # now to get how much it will scroll, calculate based upon a version without scrolling
+            if newcursoroffset > 0:
+                currentxscroll = selectedgarden.get_xpos_end_of_cursor_plant(newcursoroffset-1, self.scale(), 0, screen)[0]
+                
 
         endscroll = selectedgarden.get_xpos_end_of_cursor_plant(len(selectedgarden.plants)-1, self.scale(), 0, screen)[0]
 
         gardenypositions = self.getgardenypositions(time, settings, screen)
-        if gardenypositions[self.cursory]+self.yscrolloffset < 0:
-            self = self.destructiveset("yscrolloffset", -gardenypositions[self.cursory])
-        if gardenypositions[self.cursory+1]+self.yscrolloffset > screen.get_height()-gardensareay:
-            self = self.destructiveset("yscrolloffset", -(gardenypositions[self.cursory+1]-screen.get_height() + gardensareay + 10*self.scale()))
+        if gardenypositions[self.gardenindex()]+self.yscrolloffset < 0:
+            self = self.destructiveset("yscrolloffset", -gardenypositions[self.gardenindex()])
+        if gardenypositions[self.gardenindex()+1]+self.yscrolloffset > screen.get_height()-gardensareay:
+            self = self.destructiveset("yscrolloffset", -(gardenypositions[self.gardenindex()+1]-screen.get_height() + gardensareay + 10*self.scale()))
 
         currenty = self.yscrolloffset + gardensareay
         
         for gardeni in range(len(self.gardens)):
             garden = self.gardens[gardeni]
             drawcursorindex =-1
-            if gardeni == self.cursory:
+            if gardeni == self.gardenindex() and self.cursory != 0:
                 drawcursorindex = self.cursorx
             
             cursorpos, currenty = garden.draw(time, settings, screen, self.scale(), currentxscroll = currentxscroll, cursoroffset = newcursoroffset, endscroll=endscroll, drawcursorindex = drawcursorindex, currenty = currenty)
 
         self = self.destructiveset("lastcursoroffset", newcursoroffset)
 
-        screen.fill((0,43, 220), Rect(0, 0, screen.get_width(), gardensareay+ self.shop.buttons[0].y*screen.get_height()))
+        screen.fill(variables.GREY, Rect(0, 0, screen.get_width(), gardensareay))
+        
+        self.shop.isselected = self.cursory == 0
+        if self.cursory == 0:
+            self.shop.currentoption = self.cursorx
+        else:
+            self.shop.currentoption = 0
         self.shop.draw()
         
         return self
 
     def current_row_length(self):
-        return len(self.gardens[self.cursory].plants)
+        if(self.cursory == 0):
+            return len(self.shop.buttons)
+        else:
+            return len(self.gardens[self.gardenindex()].plants)
 
     def onkeydown(self, key, settings):
         if settings.iskey("right", key):
@@ -121,9 +136,11 @@ class Game(DestructiveFrozenClass):
         elif settings.iskey("left", key):
             self = self.destructiveset("cursorx", (self.cursorx-1)%self.current_row_length())
         elif settings.iskey("up", key):
-            self = self.destructiveset("cursory", (self.cursory-1)%len(self.gardens))
+            self = self.destructiveset("cursory", (self.cursory-1)%(len(self.gardens)+1))
+            self = self.destructiveset("cursorx", self.cursorx % self.current_row_length())
         elif settings.iskey("down", key):
-            self = self.destructiveset("cursory", (self.cursory+1)%len(self.gardens))
+            self = self.destructiveset("cursory", (self.cursory+1)%(len(self.gardens)+1))
+            self = self.destructiveset("cursorx", self.cursorx % self.current_row_length())
         elif settings.iskey("zoom", key):
             self =self.destructiveset("zoom", (self.zoom + 1)% 4)
             # also reset the offset for recalculation

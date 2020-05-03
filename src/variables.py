@@ -175,6 +175,8 @@ def compscaleunrounded():
 
 # Define some colors
 BLACK = (0, 0, 0)
+BLUEWHITE = (220, 220, 247)
+BLUEGREY = (73, 73, 102)
 WHITE = (255, 255, 255)
 GREY = (150, 150, 150)
 GREEN = (0, 255, 0)
