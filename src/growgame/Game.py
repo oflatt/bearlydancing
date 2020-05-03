@@ -18,14 +18,15 @@ class Game(DestructiveFrozenClass):
         self.state = 'play'
         self.basescale = int(variables.height / 20 / 6)
         self.zoom = 1
+        self.gardenlimit = 12
 
         self.shopplants = make_shopplant_list()
-        self.gardens = [Garden(), Garden()]
+        self.gardens = [Garden()]
 
         # add all shop plants cheat
-        for p in self.shopplants:
-            self.gardens[0].addplant(Plant(p.headnode))
-            self.gardens[1].addplant(Plant(p.headnode))
+        #for p in self.shopplants:
+         #   self.gardens[0].addplant(Plant(p.headnode))
+          #  self.gardens[1].addplant(Plant(p.headnode))
         
 
         # position of cursor on items
@@ -39,6 +40,7 @@ class Game(DestructiveFrozenClass):
 
         self.sun = 0
         buttonnames = ["breed (-10 Sun)", "sell (+5 Sun)"]
+        self.specialbuttonslen = len(buttonnames)
         for p in self.shopplants:
             labelname = p.name + " (-" + str(p.cost) + " Sun)"
             buttonnames.append(labelname)
@@ -49,6 +51,19 @@ class Game(DestructiveFrozenClass):
         self._freeze()
 
 
+    def buttonpressed(self, index):
+        flowerindex = index-self.specialbuttonslen
+        self.addflower(self.shopplants[flowerindex])
+
+    def addflower(self, shopplant):
+        for garden in self.gardens:
+            if len(garden.plants) < self.gardenlimit:
+                garden.addplant(Plant(shopplant.headnode))
+                return
+        # otherwise all full
+        self.gardens.append(Garden())
+        self.gardens[-1].addplant(Plant(shopplant.headnode))
+        
     def shopgetplantbyname(self, name):
         for p in self.shopplants:
             if p.name == name:
@@ -93,7 +108,9 @@ class Game(DestructiveFrozenClass):
                 currentxscroll = selectedgarden.get_xpos_end_of_cursor_plant(newcursoroffset-1, self.scale(), 0, screen)[0]
                 
 
-        endscroll = selectedgarden.get_xpos_end_of_cursor_plant(len(selectedgarden.plants)-1, self.scale(), 0, screen)[0]
+        endscroll = 0
+        if len(selectedgarden.plants) > 0:
+            endscroll = selectedgarden.get_xpos_end_of_cursor_plant(len(selectedgarden.plants)-1, self.scale(), 0, screen)[0]
 
         gardenypositions = self.getgardenypositions(time, settings, screen)
         if gardenypositions[self.gardenindex()]+self.yscrolloffset < 0:
@@ -141,6 +158,9 @@ class Game(DestructiveFrozenClass):
         elif settings.iskey("down", key):
             self = self.destructiveset("cursory", (self.cursory+1)%(len(self.gardens)+1))
             self = self.destructiveset("cursorx", self.cursorx % self.current_row_length())
+        elif settings.iskey("action", key):
+            if self.cursory == 0:
+                self.buttonpressed(self.cursorx)
         elif settings.iskey("zoom", key):
             self =self.destructiveset("zoom", (self.zoom + 1)% 4)
             # also reset the offset for recalculation

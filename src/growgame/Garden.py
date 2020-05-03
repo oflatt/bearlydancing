@@ -22,7 +22,7 @@ class Garden(DestructiveFrozenClass):
         shelfyoffset = 2*scale
         frontcolor = (127, 88, 26)
         left = 10 * scale - currentxscroll
-        shelfwidth = endscroll - scale * 10
+        shelfwidth = max(endscroll - scale * 10, screen.get_width())
 
         frontrect = Rect(left, bottomypos-shelfheight+shelfyoffset, shelfwidth, shelfheight)
 
@@ -46,7 +46,7 @@ class Garden(DestructiveFrozenClass):
 
     def tallest_height(self, scale):
         if len(self.plants) == 0:
-            return 0
+            return 40*scale
         else:
             def pich(plant):
                 return getpic(plant.pic, scale).get_height() + getpic(plant.potpic, scale).get_height()
