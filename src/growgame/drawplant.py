@@ -77,10 +77,10 @@ def transformtopointlists(plantshapelist, shiftchance, angle, widthscalar, heigh
 # returns a list of index positions in a polygon list on which to spawn new nodes
 # takes the number of nodes to put on, the length of the parent node polygon list
 # and the percent of the polygon list that is available for spawning on
-def getfuturenodeindexpositions(numberofnodes, polygonlistlength, percentofbranch):
+def getfuturenodeindexpositions(numberofnodes, polygonlistlength, percentofbranch, branchoffset):
+
+    percentofbranch = min(percentofbranch, (1-branchoffset))
     
-    if percentofbranch > 1:
-        raise Exception("percent of branch must be 1 or less and 0 or more")
     # first make dispersed distruibution for the new nodes
     dispersedpositions = []
     total = 0
@@ -94,23 +94,33 @@ def getfuturenodeindexpositions(numberofnodes, polygonlistlength, percentofbranc
     normalize_factor = normalize_factor * polygonlistlength * percentofbranch
 
     # offset
-    offset = (polygonlistlength/2) - (polygonlistlength/2)*percentofbranch
+    offset = (polygonlistlength/2) - (polygonlistlength/2)*percentofbranch - (polygonlistlength/2) * branchoffset
     
     # omit the last space because it is now not needed
     dispersedpositions.pop()
 
     indexes = []
     currentpos = offset
+    insecondhalf = False
     
     # now translate it into the space of the part of the polygonlist
     for i in range(len(dispersedpositions)):
         currentpos += dispersedpositions[i] * normalize_factor
-        # half chance to be on the other side
+        if not insecondhalf:
+            if currentpos > (polygonlistlength/2) - (polygonlistlength/2)*branchoffset:
+                currentpos = currentpos + (polygonlistlength/2)*branchoffset * 2
+                insecondhalf = True
+        
         indexes.append(int(currentpos))
 
     # should be the same length as number of nodes
     if not numberofnodes == len(indexes):
         raise Exception("Bad number of indexes")
+    for i in indexes:
+        if i < 0:
+            raise Exception("Future index position negative")
+        elif i > polygonlistlength:
+            raise Exception ("Future index position to large")
     return indexes
 
 
@@ -248,7 +258,7 @@ def drawplant(head_node):
             
             # add all the children at the current position
             for childnode in node.children:
-                futureindexpositions = getfuturenodeindexpositions(childnode.repeatnumseparate, mainlistlen, childnode.brancharea)
+                futureindexpositions = getfuturenodeindexpositions(childnode.repeatnumseparate, mainlistlen, childnode.brancharea, childnode.branchoffset)
                 for i in range(childnode.repeatnumseparate):
                     futurex = mainltranslated[futureindexpositions[i]][0]+mainloffset[0]
                     futurey = mainltranslated[futureindexpositions[i]][1]+mainloffset[1]

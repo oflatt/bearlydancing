@@ -95,11 +95,12 @@ def makerose():
     innerpetalnode = innerpetalnode.destructiveset("brancharea", 0)
 
     spikes_list = [(0, 0.5), (2, 0)]
-    spikes_shape = PlantShape(spikes_list, (50, 70, 50), brighten((50, 85, 50), 20))
+    spikes_shape = PlantShape(spikes_list, (70, 10, 40), (100, 0, 40))
     spikes_node = PlantNode([spikes_shape], 1, math.pi)
-    spikes_node = spikes_node.destructiveset("angleoffset", math.pi/2)
-    spikes_node = spikes_node.destructiveset("repeatnumseparate", 4)
-    spikes_node = spikes_node.destructiveset("brancharea", 1)
+    spikes_node = spikes_node.destructiveset("repeatnumseparate", 3)
+    spikes_node = spikes_node.destructiveset("brancharea", 0.6)
+    spikes_node = spikes_node.destructiveset("branchoffset", 0.2)
+    spikes_node = spikes_node.destructiveset("heightvariance", 1)
     
     rose = PlantNode([bigstem_plantshape], 1, math.pi/10, children = [petalnode, innerpetalnode, spikes_node])
 
