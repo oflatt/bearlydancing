@@ -25,14 +25,34 @@ bigstem_plantshape = PlantShape(bigstem_list, (0, 200, 0), (0, 120, 0))
 
 def sunflower():
     flower_stem_list = [(0.0,0.0)]
-    
-    for x in range(40):
-        flower_stem_list.append((x,1.0))
-
+    for x in range(35):
+        flower_stem_list.append((x, 1.0))
     stem_plant_shape = PlantShape(flower_stem_list, (0, 200, 0), (0, 120, 0))
     
-    stem_node = PlantNode([stem_plant_shape], 1, math.pi/5)
-
+    petal_shape_list = [(0.0, 0.0)]
+    petal_num_points = 20
+    for x in range(petal_num_points):
+        petal_shape_list.append((x, 3*math.sin(x/petal_num_points * math.pi)))
+    petal_shape = PlantShape(petal_shape_list, (250, 227, 77), (250, 210, 77))
+    petal_node = PlantNode([petal_shape], 17, math.pi/4)
+    
+    center_radius = 7
+    center_shape_list = listarc(-center_radius, 0, center_radius*2, center_radius, 10)
+    center_shape = PlantShape(center_shape_list, (99, 72, 9), (125, 90, 9))
+    center_node = PlantNode([center_shape], 1, math.pi/20)
+    
+    leaf_shape_list = [(0.0, 0.0)]
+    for x in range(1, 10):
+        leaf_shape_list.append((x, 25*math.exp(-.5*x)*math.sin((1/5)*x)))
+    for x in range(9, -1, -1):
+        leaf_shape_list.append((x, 0))
+    leaf_shape = PlantShape(leaf_shape_list, (0, 120, 0), (0, 120, 0), completelistp = True)
+    leaf_node = PlantNode([leaf_shape], 2, math.pi)
+    leaf_node = leaf_node.destructiveset("shiftchance", 0.01)
+    leaf_node = leaf_node.destructiveset("brancharea", 1)
+    
+    stem_node = PlantNode([stem_plant_shape], 1, math.pi/5, children=[leaf_node])
+    #stem_node = PlantNode([stem_plant_shape], 1, math.pi/5, children=[center_node, petal_node, leaf_node])
     return ShopPlant("Sunflower", stem_node, 80)
             
     
