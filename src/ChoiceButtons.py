@@ -7,8 +7,10 @@ class ChoiceButtons(FrozenClass):
     def __init__(self, options, ypos, buttontextsize = variables.gettextsize()/variables.height):
         # a list of strings
         self.options = options
-        self.current_option = 0
+        self.currentoption = 0
         self.buttons = []
+        self.currentxscroll = 0
+        self.isselected = True
 
         for optiontext in self.options:
             newb = Button(0, ypos, optiontext, buttontextsize)
@@ -17,13 +19,13 @@ class ChoiceButtons(FrozenClass):
         self._freeze()
             
     def nextoption(self):
-        self.current_option = (self.current_option + 1) % len(self.buttons)
+        self.currentoption = (self.currentoption + 1) % len(self.buttons)
 
     def previousoption(self):
-        self.current_option = (self.current_option-1) % len(self.buttons)
+        self.currentoption = (self.currentoption-1) % len(self.buttons)
 
     def getoption(self):
-        return self.options[self.current_option]
+        return self.options[self.currentoption]
 
     def leftrightonkey(self, key):
         if variables.checkkey("left", key):
@@ -42,15 +44,36 @@ class ChoiceButtons(FrozenClass):
         
         spacing = maxwidth / 4
         length = len(self.buttons)
-        centering = (1 - length * maxwidth - (length-1) * spacing) / 2
+
+        buttonpositions = []
+        for i in range(len(self.buttons)):
+            buttonpositions.append(i * (maxwidth+spacing) + spacing)
+            self.buttons[i].screenwidthoverride = maxwidth
+
+        totalwidth = length * maxwidth + (length-1) * spacing
+        
+        if totalwidth <= 1:
+            centering = (1 - length * maxwidth - (length-1) * spacing - 2*spacing) / 2
+            self.currentxscroll = centering
+        else:
+            if buttonpositions[self.currentoption] + self.currentxscroll < 0:
+                self.currentxscroll = -(buttonpositions[self.currentoption])
+            if buttonpositions[self.currentoption] + maxwidth + self.currentxscroll > 1:
+                self.currentxscroll = -(buttonpositions[self.currentoption] + maxwidth - 1)
+                
+            if self.currentoption == 0:
+                self.currentxscroll = 0
+            elif self.currentoption == len(self.buttons)-1:
+                self.currentxscroll = -(totalwidth+2*spacing - 1)
+            
         
         for i in range(len(self.buttons)):
-            self.buttons[i].screenwidthoverride = maxwidth
-            self.buttons[i].x = i * (maxwidth + spacing) + centering
+            self.buttons[i].x = buttonpositions[i] + self.currentxscroll
         
         for i in range(len(self.buttons)):
             b = self.buttons[i]
-            if i == self.current_option:
-                b.draw(True)
-            else:
-                b.draw(False)
+            if b.x + maxwidth > 0:
+                if i == self.currentoption and self.isselected:
+                    b.draw(True)
+                else:
+                    b.draw(False)
