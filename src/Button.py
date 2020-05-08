@@ -52,7 +52,7 @@ class Button(FrozenClass):
 
         drawrect = Rect(xpos+padding, ypos+padding, self.width()-2*padding, self.height()-2*padding)
 
-        pygame.draw.rect(variables.screen, rectcolor, drawrect, width = padding)
+        pygame.draw.rect(variables.screen, rectcolor, drawrect, padding)
         pygame.draw.rect(variables.screen, variables.BLUEWHITE, drawrect)
 
         variables.screen.blit(textpic, [xpos + textpadding, ypos+ypadding])
