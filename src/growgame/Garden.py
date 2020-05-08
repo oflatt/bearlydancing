@@ -15,18 +15,16 @@ class Garden(DestructiveFrozenClass):
         self._freeze()
 
 
-    def drawwood(self, time, settings, screen, scale, currentxscroll, bottomypos):
-
-        shelfwidth = currentxscroll + screen.get_width()
-        
-        
+    def drawwood(self, time, settings, screen, scale, bottomypos, currentxscroll, endscroll):
         shelfheight = 7*scale
         shelfdepth = 18*scale
         shelfdepthoffset = 7*scale
         shelfyoffset = 2*scale
         frontcolor = (127, 88, 26)
+        left = 10 * scale - currentxscroll
+        shelfwidth = max(endscroll - scale * 10, screen.get_width()/2)
 
-        frontrect = Rect(-currentxscroll+10*scale, bottomypos-shelfheight+shelfyoffset, 80*scale, shelfheight)
+        frontrect = Rect(left, bottomypos-shelfheight+shelfyoffset, shelfwidth, shelfheight)
 
         # draw depth
         depthplist = [(frontrect[0], frontrect[1]),
@@ -48,43 +46,44 @@ class Garden(DestructiveFrozenClass):
 
     def tallest_height(self, scale):
         if len(self.plants) == 0:
-            return 0
+            return 40*scale
         else:
             def pich(plant):
                 return getpic(plant.pic, scale).get_height() + getpic(plant.potpic, scale).get_height()
             return pich(max(self.plants, key= pich))
+            
         
     # returns the x position at which the cursor was drawn
-    def draw(self, time, settings, screen : Surface, scale, cursoroffset = 0, currentxscroll = 0, drawcursorindex = None, nodraw = False):
-        bottomypos = self.tallest_height(scale)
+    def draw(self, time, settings, screen : Surface, scale, cursoroffset = 0, currentxscroll = 0, endscroll = 0, drawcursorindex = None, nodraw = False, currenty = 0, drawhighlighted = set()):
+        bottomypos = self.tallest_height(scale) + currenty
         # first draw wood
         if not nodraw:
-            self.drawwood(time, settings, screen, scale, currentxscroll, bottomypos)
-        
-        xspace = screen.get_width()/50
+            self.drawwood(time, settings, screen, scale, bottomypos, currentxscroll, endscroll)
+
+        xspace = variables.potxspace()
         currentx = xspace
-        cursordrawpos = None
+        endofhighlighted = None
         
         for i in range(cursoroffset, len(self.plants)):
             currentpos = (currentx, bottomypos)
             if not nodraw:
+                highlightcolor = (211, 214, 64)
+                highlighted = drawcursorindex == i
+                if i in drawhighlighted and not highlighted:
+                    highlighted = True
+                    highlightcolor = (129, 242, 80)
                 self.plants[i].draw(time, settings, screen, scale,
-                                    currentpos)
-            if drawcursorindex == i:
-                potpos = self.plants[i].pot_pos(currentpos, scale)
-                cursordrawpos = Rect(potpos[0]-xspace, potpos[1]-xspace,
-                                     xspace, xspace)
-                gfxdraw.box(screen, cursordrawpos, (211, 214, 64))
+                                    currentpos, highlighted = highlighted, highlightcolor = highlightcolor)
             currentx += self.plants[i].plantwidth*scale + xspace
+            if drawcursorindex == i:
+                endofhighlighted = currentx
         
-        return cursordrawpos
+        return (endofhighlighted, bottomypos)
 
     # returns the x position of the end of the currently highlighted plant
     def get_xpos_end_of_cursor_plant(self, cursorx : int, scale : float, oldcursoroffset : float, screen : Surface) -> Rect:
-        rect = self.draw(0, None, screen, scale, cursoroffset = oldcursoroffset, drawcursorindex = cursorx, nodraw = True)
-        if rect != None:
-            rect.x += (self.plants[cursorx].plantwidth-self.plants[cursorx].plantbasexoffset)*scale 
-        return rect
+        endofhighlighted, bottomypos = self.draw(0, None, screen, scale, cursoroffset = oldcursoroffset, drawcursorindex = cursorx, nodraw = True) 
+        return endofhighlighted
             
     def addplant(self, newplant):
         self.plants.append(newplant)

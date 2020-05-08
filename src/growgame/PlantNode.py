@@ -43,7 +43,10 @@ class PlantNode(DestructiveFrozenClass):
         self.widthvariance = 0.1
 
         # what percent of the plant you can branch from
+        # area starts at the tip of the plant
         self.brancharea = 0.05
+        # what percent of the plant to skip branching from
+        self.branchoffset = 0.0
 
                 
         self._freeze()
