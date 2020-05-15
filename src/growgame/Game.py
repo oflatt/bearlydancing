@@ -239,7 +239,13 @@ class Game(DestructiveFrozenClass):
             self.gardens[self.gardenindex()].plants[self.cursorx] = temp
             self = self.destructiveset("cursorstate", CursorState(None, None))
         return self
-            
+
+    def tick(self, time):
+        sun = 0
+        for i in range(len(self.gardens)):
+            self.gardens[i], sunforone = self.gardens[i].tick(time)
+            sun += sunforone
+        return self.destructiveset("sun", self.sun+sun)
 
     def onkeydown(self, key, settings):
         if settings.iskey("right", key):
