@@ -43,6 +43,13 @@ class Garden(DestructiveFrozenClass):
                       (depthplist[-2][0], depthplist[-2][1]+shelfheight)]
         gfxdraw.filled_polygon(screen, rsideplist, variables.brighten(frontcolor, -3))
 
+    def tick(self, time):
+        sun = 0
+        for i in range(len(self.plants)):
+            self.plants[i], sunforone = self.plants[i].tick(time)
+            sun += sunforone
+        return (self, sun)
+
 
     def tallest_height(self, scale):
         if len(self.plants) == 0:

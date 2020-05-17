@@ -23,18 +23,20 @@ class Animation():
         self.relativeframerate = False
         self.offsetlist = offsetlist
 
-    def current_frame(self, outerframerate = None):
-        at = variables.settings.current_time-self.beginning_time
+    def current_frame(self, outerframerate = None, begin_time = None, current_time = variables.settings.current_time):
+        if begin_time == None:
+            begin_time = self.beginning_time
+        at = current_time-begin_time
         
-        framenum = self.framenum(outerframerate)
+        framenum = self.framenum(outerframerate, at)
         f = self.framerate
         if outerframerate != None and self.relativeframerate:
             f = outerframerate*self.framerate
             
         if type(self.pics[framenum]) == Animation:
             # set the beginning time to the beginning of this animation's frame
-            self.pics[framenum].beginning_time = variables.settings.current_time - (at % f)
-            return self.pics[framenum].current_frame(self.framerate)
+            nextbegintime = current_time - (at % f)
+            return self.pics[framenum].current_frame(outerframerate = self.framerate, begin_time = nextbegintime)
         else:
             return self.pics[framenum]
 
@@ -53,11 +55,10 @@ class Animation():
         epic = getpicbyheight(self.current_frame(), height)
         return epic.get_width()
 
-    def framenum(self, outerframerate):
+    def framenum(self, outerframerate, at):
         f = self.framerate
         if outerframerate != None and self.relativeframerate:
             f = outerframerate*self.framerate
-        at = variables.settings.current_time-self.beginning_time
         
         if at>f*len(self.pics):
             if not self.loopp:

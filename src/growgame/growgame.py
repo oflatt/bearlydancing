@@ -16,7 +16,9 @@ def onkeyup(outsidetime, settings, key):
 
     
 def ontick(outsidetime, settings):
-    pass
+    game = settings.getgamedata("growgame")
+    game = game.tick(outsidetime)
+    settings.setgamedata("growgame", game)
         
 
 def ondraw(outsidetime, settings, screen):
