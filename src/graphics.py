@@ -39,7 +39,7 @@ def sscale(img, rounded = True):
         endsize = variables.unrounded_displayscale
     return variables.transformscale(img, [int(w*endsize), int(h*endsize)])
 
-#like sscale but instead of returning a scaled pic, it returns what the dimensions of the new pic would have been
+# like sscale but instead of returning a scaled pic, it returns what the dimensions of the new pic would have been
 def sscale_dimensions(img, rounded = True):
     w = img.get_width()
     h = img.get_height()

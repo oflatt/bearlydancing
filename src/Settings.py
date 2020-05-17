@@ -6,7 +6,7 @@ from FrozenClass import FrozenClass
 class Settings(FrozenClass):
 
     def __init__(self):
-        # keybindings
+        # keybinding
         self.keydict = OrderedDict()
         self.keydict["up"] =[pygame.K_UP, pygame.K_w, "joyaxis1-"]
         self.keydict["down"] = [pygame.K_DOWN, pygame.K_s, "joyaxis1+"]

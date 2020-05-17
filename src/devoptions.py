@@ -95,6 +95,6 @@ if exportmode:
 
     
 # only print if devmode is on
-def devprint(s):
+def devprint(s = ""):
     if devmode:
-        print(s)
+        print(s, flush=True)

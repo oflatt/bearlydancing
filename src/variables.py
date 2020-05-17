@@ -435,7 +435,8 @@ def draw_progress_bar():
 def checkkey(name, key):
     if name == "enter":
         name = "action"
-    return key in settings.keydict[name]
+    return settings.iskey(name, key)
+    
 
 # returns a bigger rect that contains both of the rects
 def combinerects(rect1, rect2):
