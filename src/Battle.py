@@ -706,13 +706,13 @@ class Battle(FrozenClass):
                         self.enemy.animation.change_frame(variables.octopusarmtomultipartpart[noteindex], newframe = 1)
         elif self.state == "choose":
             if variables.checkkey("enter", key):
-                if self.battlechoice.current_option == 0:
+                if self.battlechoice.currentoption == 0:
                     self.startnew()
-                elif self.battlechoice.current_option == 1:
+                elif self.battlechoice.currentoption == 1:
                     self.flee()
-                elif self.battlechoice.current_option == 2:
+                elif self.battlechoice.currentoption == 2:
                     change_soundpack(1)
-                elif self.battlechoice.current_option == 3:
+                elif self.battlechoice.currentoption == 3:
                     change_scale(1)
             else:
                 if variables.checkkey("left", key):
@@ -721,13 +721,13 @@ class Battle(FrozenClass):
                 elif variables.checkkey("right", key):
                     play_drum(4, self.enemy.drumpackname)
                     self.battlechoice.nextoption()
-                elif variables.checkkey("up", key) and self.battlechoice.current_option == 2:
+                elif variables.checkkey("up", key) and self.battlechoice.currentoption == 2:
                     change_soundpack(-1)
-                elif variables.checkkey("down", key) and self.battlechoice.current_option == 2:
+                elif variables.checkkey("down", key) and self.battlechoice.currentoption == 2:
                     change_soundpack(1)
-                elif variables.checkkey("up", key) and self.battlechoice.current_option == 3:
+                elif variables.checkkey("up", key) and self.battlechoice.currentoption == 3:
                     change_scale(-1)
-                elif variables.checkkey("down", key) and self.battlechoice.current_option == 3:
+                elif variables.checkkey("down", key) and self.battlechoice.currentoption == 3:
                     change_scale(1)
 
         elif self.state == "lose":

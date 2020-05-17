@@ -9,7 +9,7 @@ skipsteve = True
 # adds all the soundpacks and keys to the player
 addallrewards = False
 # generates a new world on load no matter what
-newworldeachloadq = True
+newworldeachloadq = False
 # allows specific graphics functions to override and make new generated graphics
 allownewworldoverridep = True
 # this overrides the generation of a new set of graphics for a new game
@@ -26,10 +26,10 @@ fasttestmodep = False
 lvcheat = 0
 
 # if None it does nothing, if it is a dictionary for "specs" it goes directly into a battle with those specs
-testspecs : Optional[Dict[str, object]] = None#{'maxtime' : 20, 'lv' : 4,
-                                           #'rules' : ["drummer"],
-                                           #'volumeenvelope' : 'bell'}
-testenemy : Optional[str] = None#"yoyo"
+testspecs : Optional[Dict[str, object]] = {'maxtime' : 20, 'lv' : 4,
+                                           'rules' : ["melodic", "repeatvariation", "doublenotes"],
+                                           'volumeenvelope' : 'bell'}
+testenemy : Optional[str] = "snow fly"#"yoyo"
 
 devlosebattlekey = pygame.K_BACKSLASH
 devwinbattlekey = pygame.K_END

@@ -139,7 +139,7 @@ wavetypetofunction = {"sine":sinesval,
 # processfunction is a function called on each of the values with the time and the value- it returns a new value
 def make_wave(frequency, wavetype, shapefactor, sampleduration = None):
     if sampleduration == None:
-        loopduration = (1 / frequency) * 50  # in seconds
+        loopduration = (1 / frequency) * 100  # assume at least 8 frame/second
     else:
         loopduration = sampleduration
     duration = loopduration
