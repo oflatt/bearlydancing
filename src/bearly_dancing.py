@@ -155,7 +155,7 @@ def onevent(event):
 
 
     if event.type == pygame.JOYAXISMOTION:
-        keydownpresses = variables.settings.joyaxistokeydown(event)
+        keydown = variables.settings.joyaxistokeydown(event)
         if keydown != None:
             onkeydown(keydown)
             

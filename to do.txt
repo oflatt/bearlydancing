@@ -7,6 +7,13 @@ pygame
 - make calling _freeze automatic for frozen objects
 - destructive object for lists?
 
+dancepad
+- Add some notes hold down
+- Colors for different beats
+- Highlight pressed
+- More spread out and faster coming down
+- restrict range of notes to not so high?
+
 bugs
 -"l" note was the same note as "a", which cannot be correct
 - Save msg ?
