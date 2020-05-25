@@ -24,15 +24,59 @@ bigstem_plantshape = PlantShape(bigstem_list, (0, 200, 0), (0, 120, 0))
 
 
 def sunflower():
+    #make a sunflower
     flower_stem_list = [(0.0,0.0)]
-    
-    for x in range(40):
-        flower_stem_list.append((x,1.0))
-
+    for x in range(60):
+        flower_stem_list.append((x, 1.0))
     stem_plant_shape = PlantShape(flower_stem_list, (0, 200, 0), (0, 120, 0))
     
-    stem_node = PlantNode([stem_plant_shape], 1, math.pi/5)
+    petal_shape_list = [(0.0, 0.0)]
+    petal_num_points = 15
+    for x in range(petal_num_points):
+        petal_shape_list.append((x, 2*math.sin(x/petal_num_points * math.pi)))
+    petal_shape = PlantShape(petal_shape_list, (250, 227, 77), (250, 210, 77))
+    petal_node = PlantNode([petal_shape], 17, math.pi/4)
 
+    center_outline = (125, 90, 9)
+    center_fill = (99, 72, 9)
+    center_radius = 6
+    
+    center_shape_list = listarc(-center_radius, 0, center_radius*2, center_radius, 10)
+    #adding texture to the center of the sunflower
+    center_texture_1 = Texture((43, 30, 2), 0.1, 0.05, 0.05, stopcolors = [center_outline], acceptedcolors = [center_fill])
+    center_texture_2 = Texture((74, 53, 4), 0.3, 0.05, 0.05, stopcolors = [center_outline], acceptedcolors = [center_fill])
+    center_texture_3 = Texture((102, 73, 6), 0.4, 0.05, 0.15, stopcolors = [center_outline], acceptedcolors = [center_fill])
+    center_texture_4 = Texture((125, 90, 16), 0.5, 0.3, 0.05, stopcolors = [center_outline], acceptedcolors = [center_fill])
+    
+    center_shape = PlantShape(center_shape_list, center_fill, center_outline)
+    center_shape = center_shape.destructiveset("textures", [center_texture_1, center_texture_2, center_texture_3, center_texture_4])
+    
+    center_node = PlantNode([center_shape], 1, math.pi/20)
+
+    #adding two leaves, and limiting the range of placement for each
+    leaf_shape_list_1 = [(0.0, 0.0)]
+    leaf_outline = (0, 84, 0)
+    leaf_fill = (0, 120, 0)
+    for x in range(1, 10):
+        leaf_shape_list_1.append((x, 25*math.exp(-.5*x)*math.sin((1/5)*x)))
+    for x in range(9, -1, -1):
+        leaf_shape_list_1.append((x, 0))
+    leaf_shape_1 = PlantShape(leaf_shape_list_1, leaf_fill, leaf_outline, completelistp = True)
+    leaf_node_1 = PlantNode([leaf_shape_1], 1, math.pi)
+    leaf_node_1 = leaf_node_1.destructiveset("shiftchance", 0.01)
+    leaf_node_1 = leaf_node_1.destructiveset("branchoffset", 0.5)
+
+    leaf_shape_list_2 = [(0.0, 0.0)]
+    for x in range(1, 10):
+        leaf_shape_list_2.append((x, 25*math.exp(-.5*x)*math.sin((1/5)*x)))
+    for x in range(9, -1, -1):
+        leaf_shape_list_2.append((x, 0))
+    leaf_shape_2 = PlantShape(leaf_shape_list_2, leaf_fill, leaf_outline, completelistp = True)
+    leaf_node_2 = PlantNode([leaf_shape_2], 1, math.pi)
+    leaf_node_2 = leaf_node_2.destructiveset("shiftchance", 0.01)
+    leaf_node_2 = leaf_node_2.destructiveset("branchoffset", 0.7)
+    
+    stem_node = PlantNode([stem_plant_shape], 1, math.pi/5, children=[center_node, petal_node, leaf_node_1, leaf_node_2])
     return ShopPlant("Sunflower", stem_node, 80)
             
     
