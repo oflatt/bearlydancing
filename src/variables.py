@@ -2,6 +2,7 @@ import pygame, os, copy, sys
 import platform
 import dill as pickle
 from pygame import Rect
+from typing import List, Dict
 
 
 from Settings import Settings
@@ -9,7 +10,9 @@ from Properties import Properties
 from random import randint
 from Game import Game
 
-from devoptions import *
+import devoptions
+from devoptions import devprint
+
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 # for export need the commented section
@@ -27,15 +30,21 @@ pypyp = platform.python_implementation() == "PyPy"
 
 # load settings
 savefolderpath = os.path.join(pathtoself, "save0/")
-manualsavebackuppath = os.path.join(pathtoself, "savebackup/");
+graphicssavefolderpath = os.path.join(savefolderpath, "graphics/")
+manualsavebackuppath = os.path.join(pathtoself, "savebackup/")
+os.makedirs(savefolderpath, exist_ok=True)
+os.makedirs(graphicssavefolderpath, exist_ok=True)
+os.makedirs(manualsavebackuppath, exist_ok = True)
+
 settingspath = os.path.join(savefolderpath, "bdsettings.txt")
 savepath = os.path.join(savefolderpath, "bdsave.txt")
 settings = Settings()
-if not dontloadsettings:
+if not devoptions.args.restart and not devoptions.dontloadsettings:
     if (os.path.isfile(os.path.abspath(settingspath))):
         if os.path.getsize(os.path.abspath(settingspath)) > 0:
             with open(settingspath, "rb") as f:
                 settings = pickle.load(f)
+                print(settings.state)
 settings.menuonq = True
 
 
@@ -93,7 +102,7 @@ icon = pygame.image.load(os.path.join(pathtoself, "icon.png"))
 
 mode = None
 
-if args.novideomode:
+if devoptions.args.novideomode:
     mode = (1200, 700)
 else:
     pygame.display.set_icon(icon)
@@ -104,7 +113,8 @@ else:
 
     modes = pygame.display.list_modes()
     mode = modes[0]
-    ratio = mode[0]/mode[1]
+    if not mode is None:
+        ratio = mode[0]/mode[1]
 
     if sys.platform == 'win32':
         import ctypes
@@ -121,10 +131,11 @@ else:
 
 #(ctypes.windll.user32.GetSystemMetrics(0),ctypes.windll.user32.GetSystemMetrics(1))
 # Set the width and height of the screen [width,height]
-height = mode[1]
-width = mode[0]
+if not mode is None:
+    height = mode[1]
+    width = mode[0]
 
-if testsmallp:
+if devoptions.testsmallp:
     height = int(height/2)
     width = int(width/2)
 
@@ -139,15 +150,15 @@ def setscreen(windowmode):
         flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
         screen = pygame.display.set_mode((width, height), flags, 32)
 
-if not args.novideomode:
+if not devoptions.args.novideomode:
     setscreen(settings.windowmode)
 
 # this is used so that time does not continue durng the frame that it generates the beatmap
 generatingbeatmapp = False
 
-olddirtyrects = []
+olddirtyrects : List[Rect] = []
 # keep track of areas of the screen to update. Blitting is done regardless of dirty rects, but when a dirtyrect is appended to this list it is updated twice- this frame and next
-dirtyrects = []
+dirtyrects : List[Rect] = []
 #screen = pygame.Surface([height, width])
 
 unrounded_displayscale = height*0.0025
@@ -164,6 +175,8 @@ def compscaleunrounded():
 
 # Define some colors
 BLACK = (0, 0, 0)
+BLUEWHITE = (220, 220, 247)
+BLUEGREY = (73, 73, 102)
 WHITE = (255, 255, 255)
 GREY = (150, 150, 150)
 GREEN = (0, 255, 0)
@@ -194,12 +207,15 @@ def brighten(c, amount):
                 max(0, min(c[1]+amount, 255)),
                 max(0, min(c[2]+amount, 255)))
 
+def darken(c, amount):
+    return brighten(c, -amount)
+
 # font
 font = pygame.font.Font(os.path.join(pathtoself, 'orangekidregular.ttf'), 30)
 
 # map stuff
 # keys are filenames like randompinetree and values are the number generated
-generatedgraphicsused = {}
+generatedgraphicsused : Dict[str, int] = {}
 
 def num_of_generated_graphics_used():
     s = 0
@@ -227,16 +243,35 @@ numofrounds = 2
 
 accidentallvthreshhold=8
 
-dancepadlevelincrease = 5
+dancepadlevelincrease = 4
+
+numberofoctopusheads = 3
+octopusarmdraworder = [4, 3, 6, 2, 7, 1, 0, 5]
+octopusarmtomultipartpart = []
+for armnum in range(8):
+    octopusarmtomultipartpart.append(octopusarmdraworder.index(armnum)+1) # add one because the body is drawn first
+octopusarmtomultipartpart.reverse()
 
 def getpadypos():
     return height*(13/16)
 
+def getpadheight():
+    return height / 80.0
+
+def get_border_width():
+    return max(1, int(getpadheight()/3))
+    
 def dancearrowwidth():
     return width/15
 
 def notewidth():
     return width / 20
+
+def noteendwidth():
+    return notewidth()*1.25
+
+def noteendwidthoffset():
+    return (noteendwidth()-notewidth())/2
 
 maxdifficulty = 200
 # maxtime is changed in the code, the goal for how long the song should be
@@ -282,8 +317,11 @@ def getphotosize():
 def getbuttonpadding():
     return int(width/70)
 
+def potxspace():
+    return width/50
+
 # used to ensure that no duplicate names exist
-conversationnames = []
+conversationnames : List[str] = []
 
 # menu
 beginningprompttextcolor = BLUE
@@ -302,7 +340,7 @@ def getdotwidth():
 
 #world
 playerspeed = 0.07
-if devmode:
+if devoptions.devmode:
     playerspeed *= 2
 accelpixelpermillisecond = 0.2359/1000
 floatinessagainstreality = 0.6
@@ -333,6 +371,8 @@ def save_properties():
         pickle.dump(properties, f)
 
 def draw_loading_text(string):
+    if devoptions.args.novideomode:
+        return
     text = pygame.transform.scale2x(font.render(string, 0, WHITE).convert())
     xpos = int((width / 2) - (text.get_width() / 2))
     ypos = int((height / 2) - text.get_height() - height/10)
@@ -340,6 +380,8 @@ def draw_loading_text(string):
     screen.blit(text, [xpos, ypos])
 
 def draw_loading_tips():
+    if devoptions.args.novideomode:
+        return
     text = pygame.transform.scale2x(font.render("tip: use the escape key to pause the game", 0, WHITE).convert())
     xpos = int((width / 2) - (text.get_width() / 2))
     ypos = int((height / 2) - text.get_height() - height/10) - text.get_height()*2.5
@@ -347,15 +389,18 @@ def draw_loading_tips():
     screen.blit(text, [xpos, ypos]) 
 
 def draw_graphic_name(name):
-    text = font.render(name, 0, WHITE).convert()
-    xpos = int((width / 2) - (text.get_width() / 2))
-    ypos = int((height -text.get_height() - height/20))
-    textrect = Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height())
-    pygame.draw.rect(screen, BLACK, textrect)
-    screen.blit(text, [xpos, ypos])
-    pygame.display.update(textrect)
+    if not devoptions.args.novideomode:
+        text = font.render(name, 0, WHITE).convert()
+        xpos = int((width / 2) - (text.get_width() / 2))
+        ypos = int((height -text.get_height() - height/20))
+        textrect = Rect(xpos-text.get_width(), ypos, text.get_width()*3, text.get_height())
+        pygame.draw.rect(screen, BLACK, textrect)
+        screen.blit(text, [xpos, ypos])
+        pygame.display.update(textrect)
     
 def draw_progress_bar():
+    if devoptions.args.novideomode:
+        return
     #clear all the events so it does not crash
     pygame.event.get()
     numused = num_of_generated_graphics_used()
@@ -390,11 +435,32 @@ def draw_progress_bar():
 def checkkey(name, key):
     if name == "enter":
         name = "action"
-    return key in settings.keydict[name]
+    return settings.iskey(name, key)
+    
 
 # returns a bigger rect that contains both of the rects
 def combinerects(rect1, rect2):
     return rect1.union(rect2)
+
+
+# wraps pygame transform.scale so that it checks width and height are not zero to avoid segfault
+def transformscale(img, newdimensions):
+    if img.get_width() == 0 or img.get_height() == 0:
+        return img
+    else:
+        return pygame.transform.scale(img, newdimensions)
+
+def transformrotozoom(img, angle, scale):
+    if img.get_width() == 0 or img.get_height() == 0:
+        return img
+    else:
+        return pygame.transform.rotozoom(img, angle, scale)
+
+def transformrotate(img, degrees):
+    if img.get_width() == 0 or img.get_height() == 0:
+        return img
+    else:
+        return pygame.transform.rotate(img, degrees)
 
 def dirtyupdateall():
     global dirtyrects

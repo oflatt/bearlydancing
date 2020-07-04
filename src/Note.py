@@ -19,12 +19,6 @@ def compare_around(num, comparedto, within = 0, modulus = 1):
 
 def compare_numbers_around(num, othernum, within = 0):
     return abs(num-othernum) <= 0.000001+within
-
-# tests
-if not compare_around(28.1, 0, 0.1, 1):
-    print("Note: compare_around test 1 failed")
-if not compare_around(28.5, 0.4, 0.2, 1):
-    print("Note: compare_around test 2 failed")
     
 def beatshape(time):
     if compare_around(time, 0, 0.005, 1):
@@ -128,32 +122,30 @@ class Note(FrozenClass):
         width = variables.notewidth()
         height = self.height(tempo)
         borderwidth = 0 # zero signals pygame to draw it filled in
-        
+
+        being_playedp = self.ison and variables.getpadypos() > self.pos[1] - height and self.beginning_score != None and self.end_score == None
 
         # subtract height to y because the pos is the bottom of the rectangle
+        color = variables.GREY
         if self.ison:
-            color = variables.notes_colors[self.screenvalue]
-        else:
-            color = variables.GREY
-
-        darkercolor = []
-        for rgbval in color:
-            if rgbval -50 < 0:
-                darkercolor.append(0)
+            if being_playedp:
+                color = variables.darken(variables.notes_colors[self.screenvalue], 10)
             else:
-                darkercolor.append(rgbval-50)
+                color = variables.darken(variables.notes_colors[self.screenvalue], 40)
+            
 
-        end_height = variables.height / 80
+        darkercolor = variables.darken(color, 50)
 
-        p = self.pos
+        end_height = variables.getpadheight()
 
-        topendy = p[1] - height - end_height
-        endx = p[0] - width/8
+
+        topendy = self.pos[1] - height - end_height
+        endx = self.pos[0] - width/8
         endwidth = width * 1.25
         middleofnoteoffset = 0
 
         if self.scoremultiplier != 1:
-            borderwidth = int(end_height/2)
+            borderwidth = variables.get_border_width()
             middleofnoteoffset = int((width-int(width*0.7))/2)
             width = int(width * 0.7)
             
@@ -173,7 +165,7 @@ class Note(FrozenClass):
                                     [x, y, endwidth, end_height], borderwidth)
 
         def drawmid(y, mheight, color):
-            x = p[0] + middleofnoteoffset
+            x = self.pos[0] + middleofnoteoffset
             if mheight > 0:
                 if self.shape() == "square":
                     pygame.draw.rect(variables.screen, color, [x, y, width, mheight], borderwidth)
@@ -202,27 +194,27 @@ class Note(FrozenClass):
 
         # subtract height from y because the pos is the bottom of the rectangle
         # the first case is if the note is currently being played
-        if self.ison and variables.getpadypos() > p[1] - height and self.beginning_score != None and self.end_score == None:
-            mheight = height+1 - (p[1]-variables.getpadypos())
-            drawmid(p[1]-height-1, mheight, darkercolor)
+        if being_playedp:
+            mheight = height+1 - (self.pos[1]-variables.getpadypos())
+            drawmid(self.pos[1]-height-1, mheight, darkercolor)
             drawend(endx, topendy, color, self.secondshape())
             variables.dirtyrects.append(pygame.Rect(endx, topendy-10, endwidth, mheight+end_height*20))
 
         # second case is if the note was interrupted in the middle and counted as a miss
         elif not self.height_offset == 0:
             if (height - self.height_offset > 1):
-                drawmid(p[1]-height-1, height+1-self.height_offset, darkercolor)
+                drawmid(self.pos[1]-height-1, height+1-self.height_offset, darkercolor)
                 drawend(endx, topendy, color, self.secondshape())
             variables.dirtyrects.append(pygame.Rect(endx, topendy-10, endwidth, height+end_height+1+self.height_offset+20))
 
         # third case is if it has either been missed or has not been played yet (normal draw)
         elif self.beginning_score == None or self.beginning_score == variables.miss_value or self.end_score == variables.miss_value:
             #middle of note
-            drawmid(p[1]-height-1, height+2-end_height, darkercolor)
+            drawmid(self.pos[1]-height-1, height+2-end_height, darkercolor)
             #top
             drawend(endx, topendy, color, self.secondshape())
             #bottom of note
-            drawend(endx, p[1]-end_height, color, self.shape())
+            drawend(endx, self.pos[1]-end_height, color, self.shape())
             variables.dirtyrects.append(pygame.Rect(endx, topendy-10, endwidth, height+end_height+2+20))
 
         # don't draw it if it has been played

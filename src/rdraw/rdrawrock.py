@@ -1,8 +1,11 @@
-import pygame, variables, random, math
+import pygame, random, math
 import pygame.gfxdraw
 from random import randint
-from addtexture import addtexture
-from Texture import Texture
+
+import variables
+
+from .addtexture import addtexture
+from .Texture import Texture
 
 rocknumofpoints = 15
 

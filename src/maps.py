@@ -1,24 +1,26 @@
 #!/usr/bin/python
 
-import variables, pygame
-variables.draw_loading_text("generating sounds (1/3)")
-pygame.display.flip()
+import pygame
+import variables, devoptions
+if not devoptions.args.novideomode:
+    variables.draw_loading_text("generating sounds (1/3)")
+    pygame.display.flip()
 from play_sound import play_music, grasslandmusictick, initiategrasslandmusic
 
-variables.draw_loading_text("importing graphics (2/3)")
-pygame.display.flip()
+if not devoptions.args.novideomode:
+    variables.draw_loading_text("importing graphics (2/3)")
+    pygame.display.flip()
 
 import classvar, enemies, graphics, copy, conversations
 from Animation import Animation
 from graphics import scale_pure
 from graphics import GR
-from Map import Map
 from Rock import Rock
 from Exit import Exit
 from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
-from variables import displayscale, fasttestmodep
+from variables import displayscale
 from EventRequirement import EventRequirement
 from random import randint
 
@@ -26,7 +28,10 @@ from mapsvars import *
 
 from honeyhomemaps import *
 
-if not fasttestmodep:
+def getbed():
+    return bed
+
+if not devoptions.fasttestmodep:
     from forestmaps import *
     from snowmaps import *
 
@@ -47,7 +52,7 @@ def get_map_coded(name):
     return m
 
 def get_mapdict():
-    if fasttestmodep:
+    if devoptions.fasttestmodep:
         return {"honeyhome": honeyhome,"letter":letter,"outside1":outside1}
     else:
         stringlist = [home_map_name]
@@ -84,7 +89,7 @@ for key in map_dict:
 
 def new_scale_offset():
     global current_map
-    variables.scaleoffset = current_map.map_scale_offset
+    variables.scaleoffset = current_map.map_scale_offset()
     classvar.player.new_scale_offset()
 
 def change_map_nonteleporting(name):
@@ -112,9 +117,11 @@ def change_map(name, newx, newy):
 
     #now current map is the new one
     change_map_nonteleporting(name)
-
-    halfhoneywidth = int(honeyw/2)*current_map.map_scale_offset
-    halfhoneyheight = int(honeyh/2) * current_map.map_scale_offset
+    honeyw = GR["honeyside0"]["w"]
+    honeyh = GR["honeyside0"]["h"]
+    
+    halfhoneywidth = int(honeyw/2)*current_map.map_scale_offset()
+    halfhoneyheight = int(honeyh/2) * current_map.map_scale_offset()
     # now handle newx and newy if they are a string
     if newx == "right" or newx == "r":
         xpos = GR[current_map.base]["w"] - halfhoneywidth-1
@@ -140,7 +147,7 @@ def change_map(name, newx, newy):
         if ypos > GR[current_map.base]["h"] - honeyh:
             ypos = GR[current_map.base]["h"] - honeyh
     else:
-        ypos *= current_map.map_scale_offset
+        ypos *= current_map.map_scale_offset()
 
     #for uselastposq
     if current_map.uselastposq and current_map.lastx != None:
@@ -153,7 +160,7 @@ def change_map(name, newx, newy):
     else:
         classvar.player.soft_change_of_state()
 
-    if classvar.player.collisioncheck(classvar.player.xpos, classvar.player.ypos):
+    if classvar.player.collisioncheck(classvar.player.xpos, classvar.player.ypos, current_map):
         change_map_nonteleporting(oldmapname)
         classvar.player.soft_change_of_state()
         classvar.player.teleport(oldplayerx, oldplayery)
@@ -253,7 +260,7 @@ def unhiderock(rockname):
 
 def playerenabledp():
     # just check if they have gotten out of bed at the beginning- from honeyhomemaps
-    return not outofbed.activatedp()
+    return classvar.player.getstoryevent("bed") >= len(getbed().animations)-1
 
 # calls the grassland music when appropriate
 def musictick():

@@ -4,15 +4,21 @@ import pygame, os, variables, random, datetime
 from pygame import Rect
 from pygame import Surface
 import string, math
+from typing import Union, Dict, List, Tuple
 
+from variables import devprint
+import devoptions
+from OutsideBaseImage import OutsideBaseImage
 
 from rdraw.rdrawrock import makerock
 from rdraw.rdrawtree import maketree, makechristmastree
-from rdraw.rdrawland import makegrassland, makesnowland
+from rdraw.rdrawland import makegrassland, makesnowland, path_collisions
 from rdraw.rdrawmodify import createshadow
 from rdraw.rdrawflower import makeflower
 from rdraw.rdrawarcade import makecabinet
 from rdraw.rdrawsoil import drawpot
+
+from growgame.drawplant import drawplant
 
 from Shadow import Shadow
 import special_graphics_loader
@@ -22,6 +28,8 @@ christmasp = False
 if today.month == 12:
     christmasp = True
 
+                   
+
 def sscale(img, rounded = True):
     w = img.get_width()
     h = img.get_height()
@@ -29,9 +37,9 @@ def sscale(img, rounded = True):
         endsize = variables.displayscale
     else:
         endsize = variables.unrounded_displayscale
-    return pygame.transform.scale(img, [int(w*endsize), int(h*endsize)])
+    return variables.transformscale(img, [int(w*endsize), int(h*endsize)])
 
-#like sscale but instead of returning a scaled pic, it returns what the dimensions of the new pic would have been
+# like sscale but instead of returning a scaled pic, it returns what the dimensions of the new pic would have been
 def sscale_dimensions(img, rounded = True):
     w = img.get_width()
     h = img.get_height()
@@ -48,9 +56,9 @@ def sscale_customfactor(img, factor, rounded = True):
         endsize = variables.displayscale
     else:
         endsize = variables.unrounded_displayscale
-    return pygame.transform.scale(img, [int(w*endsize*factor), int(h*endsize*factor)])
+    return variables.transformscale(img, [int(w*endsize*factor), int(h*endsize*factor)])
 
-#use if you want pictures where the smaller dimension is a set size
+# use if you want pictures where the smaller dimension is a set size
 def scale_pure(img, s, side = None):
     w = img.get_width()
     h = img.get_height()
@@ -62,11 +70,11 @@ def scale_pure(img, s, side = None):
         smaller = h
     else:
         smaller = w
-    return pygame.transform.scale(img, [int((w/smaller) * s), int((h/smaller) * s)])
+    return variables.transformscale(img, [int((w/smaller) * s), int((h/smaller) * s)])
 
-def importpic(filename):
+def importpic(filename, subpicp):
     
-    pic = pygame.image.load(os.path.join(variables.pathtoself, os.path.join('pics', filename)))
+    pic = pygame.image.load(filename)
     # a list of types of pictures with no alpha in them
     backgrounds = ["randomgrassland", "randomsnowland"]
     
@@ -75,36 +83,47 @@ def importpic(filename):
     else:
         return pic.convert_alpha()
 
+    
 #simport returns a dictionary with an image and what its new dimensions would be if scaled
-def simport(filename):
-    p = importpic(filename)
+def simport(filename, subpicp):
+    p = importpic(filename, subpicp)
     dimensions = [p.get_width(), p.get_height()]
     return {"img":p, "w":dimensions[0], "h":dimensions[1]}
 
 
 # GR is the master dictionary of all image assets
-GR = {}
+# keys are the name of the pic, and values are a dictionary with width, height, and the img
+GR : Dict[str, Dict[str, Union[Surface, int]]] = {}
+
 # TextGR is a dictionary of dictionaries for scaled text images and also has another dictionary layer for color
-TextGR = {}
+
+ColorType = Union[Tuple[int, int, int], Tuple[int, int, int, int]]
+GRType = Dict[str , Dict[float, Dict[ColorType, Surface]]]
+TextGR : GRType = {}
 # SGR is a dictionary of dictionaries. The inner dictionaries contain scales as the keys and images as the values
 # the purpose of SGR is to keep a list of all the scaled pictures for use
-SGR = {}
+SGR : GRType = {}
 # an SGR for masks
-MGR = {}
+MGR : GRType = {}
 # an SGR for shadows
-shadowGR = {}
+shadowGR : GRType = {}
 
-picnames = os.listdir(variables.pathtoself + "/pics")
 
-def nicename(filename):
-    return filename.replace(".png", "").lower()
+
+def nicename(filename, subpicp = False):
+    if subpicp:
+        return os.path.basename(os.path.dirname(filename)) + \
+            "/" + os.path.basename(filename).replace(".png", "").lower()
+    else:
+        return os.path.basename(filename).replace(".png", "").lower()
+
 
 def typename(filename):
     return nicename(filename).rstrip(string.digits)
 
-def addtoGR(filename):
-    p = simport(filename)
-    GR[nicename(filename)] = p
+def addtoGR(filename, subpicp = False):
+    p = simport(filename, subpicp)
+    GR[nicename(filename, subpicp)] = p
 
 def addsurfaceGR(s, name, dimensions = None):
     special_graphics_loader.addsurfaceGR(GR, s, name, dimensions)
@@ -126,17 +145,38 @@ def getTextPic(text, textheight, color = variables.BLACK, savep = True):
         
     return TextGR[text][textheight][color]
 
-        
-# load graphics, if video is on
-if not variables.args.novideomode:
+
+
+def load_pics_folder(picfolderpath):
     # add all the pics in the pic folder
-    for x in picnames:
+    picfolder = os.listdir(picfolderpath)
+    for x in picfolder:
         if x != "" and x[0] != ".":
-            addtoGR(x)
+            fullxpath = os.path.join(picfolderpath, x)
+            
+            # if it is a subfolder, add pics in that folder
+            if os.path.isdir(fullxpath):
+                subpicfolder = os.listdir(fullxpath)
+                for subpic in subpicfolder:
+                    if subpic != "" and subpic[0] != ".":
+                        addtoGR(os.path.join(fullxpath, subpic), True)
+            else:
+                addtoGR(fullxpath)
 
     
     special_graphics_loader.load_special_graphics(GR)
-        
+
+
+    
+
+# load graphics, if video is on
+if not devoptions.args.novideomode:
+    load_pics_folder(variables.pathtoself + "/pics")
+                                
+    if os.path.isdir(variables.graphicssavefolderpath):
+        load_pics_folder(variables.graphicssavefolderpath)
+
+    
 # count the number of player animations
 numofplayerframes = 0
 while "honeydance" + str(numofplayerframes) + "-0" in GR:
@@ -183,7 +223,7 @@ def getpic(picname, scale = None):
             return SGR[picname][scale]
         else:
             scaledimage = GR[picname]
-            scaledimage = pygame.transform.scale(scaledimage["img"], [int(scaledimage["w"]*scale), int(scaledimage["h"]*scale)])
+            scaledimage = variables.transformscale(scaledimage["img"], [int(scaledimage["w"]*scale), int(scaledimage["h"]*scale)])
             scaledimage = finalprocessimage(scaledimage)
             if picexistsp:
                 SGR[picname][scale] = scaledimage
@@ -237,7 +277,7 @@ def getshadow(picname, scale = None):
     if picexistsp and scale in shadowGR[sname]:
         return shadowGR[sname][scale]
     else:
-        shadowpic = pygame.transform.scale(sunscaled.surface, (int(scale*sunscaled.surface.get_width()), int(scale*sunscaled.surface.get_height())))
+        shadowpic = variables.transformscale(sunscaled.surface, (int(scale*sunscaled.surface.get_width()), int(scale*sunscaled.surface.get_height())))
         shadowpic = finalprocessimage(shadowpic)
         shadow = Shadow(shadowpic, sunscaled.xoffset*scale, sunscaled.yoffset*scale)
         if picexistsp:
@@ -368,18 +408,22 @@ def generategraphic(generatingfunction, graphicname, newworldoverride = False):
     
     filename = graphicname + str(variables.generatedgraphicsused[graphicname]-1) + ".png"
 
-    if not os.path.exists(variables.pathtoself + "/pics/" + filename):
+    filepath = os.path.join(variables.graphicssavefolderpath,  filename)
+    
+    
+    if not os.path.exists(filepath):
         newpic = generatingfunction()
-        pygame.image.save(newpic, variables.pathtoself + "/pics/" + filename)
-        addsurfaceGR(newpic, nicename(filename))
-    elif variables.newworldeachloadq or (newworldoverride and variables.allownewworldoverridep):
+        pygame.image.save(newpic, filepath)
+        addsurfaceGR(newpic, nicename(filepath))
+                                
+    elif devoptions.newworldeachloadq or (newworldoverride and devoptions.allownewworldoverridep):
         newpic = generatingfunction()
-        os.remove(variables.pathtoself + "/pics/" + filename)
-        pygame.image.save(newpic, variables.pathtoself + "/pics/" + filename)
-        addsurfaceGR(newpic, nicename(filename))
+        os.remove(filepath)
+        pygame.image.save(newpic, filepath)
+        addsurfaceGR(newpic, nicename(filepath))
 
     endofgeneration()
-    return nicename(filename)
+    return nicename(filepath)
     
 def pinetree():
     nicetreename = generategraphic(maketree, "randompinetree")
@@ -408,13 +452,13 @@ def grassland(width, height, leftpath = True, rightpath = True, uppath = False, 
     def callgrasslandfunction():
         return makegrassland(width, height, leftpath, rightpath, uppath, downpath)
     
-    return generategraphic(callgrasslandfunction, "randomgrassland")
+    return OutsideBaseImage(generategraphic(callgrasslandfunction, "randomgrassland"), path_collisions(width, height, leftpath, rightpath, uppath, downpath))
 
-def snowland(width, height, grasstosnowp = False):
+def snowland(width, height, grasstosnowp = False, leftpath = True, rightpath = True, uppath = False, downpath = False):
     def callsnowland():
-        return makesnowland(width, height, grasstosnowp)
+        return makesnowland(width, height, grasstosnowp, leftpath, rightpath, uppath, downpath)
 
-    return generategraphic(callsnowland, "randomsnowland")
+    return OutsideBaseImage(generategraphic(callsnowland, "randomsnowland"), path_collisions(width, height, leftpath, rightpath, uppath, downpath))
 
 def flower():
     return generategraphic(makeflower, "randomflower")
@@ -428,3 +472,18 @@ def flowerpot(potwidth):
     def calldrawpot():
         return drawpot(potwidth)
     return generategraphic(calldrawpot, "randompot")
+
+# for grow game
+def makeplant(plantnode):
+    plantpos = None
+    def callplant():
+        nonlocal plantpos
+        surface, pos = drawplant(plantnode)
+        print("pos")
+        print(pos)
+        plantpos = pos
+        return surface
+    print(plantpos)
+    plantname = generategraphic(callplant, "randomplant")
+    
+    return plantname, plantpos

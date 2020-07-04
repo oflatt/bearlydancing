@@ -1,8 +1,8 @@
-import pygame, variables, random, math
+import pygame, variables, random, math, devoptions
 from pygame import draw
 from random import randint
-from Texture import Texture
-from addtexture import addtexture
+from .Texture import Texture
+from .addtexture import addtexture
 from pygame import Rect
 from .rdrawtree import snowclump
 from .rdrawrock import addlump
@@ -10,14 +10,9 @@ from .rdrawrock import addlump
 dirtcolor = (70, 71, 14)
 pathwidth = 16
 
-def addroad(grasssurface, leftpath, rightpath, uppath, downpath):
-    surface = grasssurface
-    width = surface.get_width()
-    height = surface.get_height()
-    randcolor = (60, 61, randint(0, 50))
-    randcolor2 = (randcolor[0]-10, randcolor[1]-10, randcolor[2])
+def horizontal_road_fill_rect(width, height, leftpath, rightpath):
     horizontaltop = int((height/2)-(pathwidth/2))
-    verticalleft = int((width/2)-(pathwidth/2))
+    
 
     fillrect = None
     if leftpath and rightpath:
@@ -26,27 +21,12 @@ def addroad(grasssurface, leftpath, rightpath, uppath, downpath):
         fillrect = pygame.Rect(0, horizontaltop, int((width/2)+(pathwidth/2)), pathwidth)
     elif rightpath:
         fillrect = pygame.Rect(int((width/2)-(pathwidth/2)), horizontaltop, int((width/2)+(pathwidth/2)), pathwidth)
-
-    if fillrect != None:
-        surface.fill(dirtcolor, fillrect)
         
-        extendingtexture = Texture(dirtcolor, 1/25, 0.8, 0.8)
-        extendingtexture.bounds = [fillrect.x, horizontaltop-3, fillrect.width, 3]
-        extendingtexture.texturingbounds = [fillrect.x, horizontaltop-1, fillrect.width, 1]
-        addtexture(surface, extendingtexture)
+    return fillrect
 
-        extendingtexture = Texture(dirtcolor, 1/25, 0.8, 1/30)
-        extendingtexture.bounds = [fillrect.x, horizontaltop+pathwidth, fillrect.width, 3]
-        extendingtexture.texturingbounds = [fillrect.x, horizontaltop+pathwidth, fillrect.width, 1]
-        addtexture(surface, extendingtexture)
+def vertical_road_fill_rect(width, height, uppath, downpath):
+    verticalleft = int((width/2)-(pathwidth/2))
     
-        horizontaltexture = Texture(randcolor, 1/15, 1/3, 1/5, acceptedcolors=[dirtcolor])
-        horizontaltexture2 = Texture(randcolor2, 1/20, 1/40, 1/40, acceptedcolors=[dirtcolor])
-        horizontaltexture.bounds = [fillrect.x, horizontaltop-1, fillrect.width, pathwidth+2]
-        horizontaltexture2.bounds = horizontaltexture.bounds
-        addtexture(surface, horizontaltexture)
-        addtexture(surface, horizontaltexture2)
-
     fillrect = None
     if uppath and downpath:
         fillrect = Rect(verticalleft, 0, pathwidth, height)
@@ -55,27 +35,62 @@ def addroad(grasssurface, leftpath, rightpath, uppath, downpath):
     elif downpath:
         fillrect = Rect(verticalleft, int(height/2), pathwidth, int(height/2))
 
+    return fillrect
+
+def addroad(grasssurface, leftpath, rightpath, uppath, downpath):
+    
+    
+    randcolor = (60, 61, randint(0, 50))
+    randcolor2 = (randcolor[0]-10, randcolor[1]-10, randcolor[2])
+    
+
+    fillrect = horizontal_road_fill_rect(grasssurface.get_width(), grasssurface.get_height(), leftpath, rightpath)
+
     if fillrect != None:
-        surface.fill(dirtcolor, fillrect)
+        grasssurface.fill(dirtcolor, fillrect)
+        
+        extendingtexture = Texture(dirtcolor, 1/25, 0.8, 0.8)
+        extendingtexture.bounds = [fillrect.x, fillrect.top-3, fillrect.width, 3]
+        extendingtexture.texturingbounds = [fillrect.x, fillrect.top-1, fillrect.width, 1]
+        addtexture(grasssurface, extendingtexture)
+
+        extendingtexture = Texture(dirtcolor, 1/25, 0.8, 1/30)
+        extendingtexture.bounds = [fillrect.x, fillrect.top+pathwidth, fillrect.width, 3]
+        extendingtexture.texturingbounds = [fillrect.x, fillrect.top+pathwidth, fillrect.width, 1]
+        addtexture(grasssurface, extendingtexture)
+    
+        horizontaltexture = Texture(randcolor, 1/15, 1/3, 1/5, acceptedcolors=[dirtcolor])
+        horizontaltexture2 = Texture(randcolor2, 1/20, 1/40, 1/40, acceptedcolors=[dirtcolor])
+        horizontaltexture.bounds = [fillrect.x, fillrect.top-1, fillrect.width, pathwidth+2]
+        horizontaltexture2.bounds = horizontaltexture.bounds
+        addtexture(grasssurface, horizontaltexture)
+        addtexture(grasssurface, horizontaltexture2)
+
+
+    # now fill in the vertical roads
+    fillrect = vertical_road_fill_rect(grasssurface.get_width(), grasssurface.get_height(), uppath, downpath)
+
+    if fillrect != None:
+        grasssurface.fill(dirtcolor, fillrect)
         
         extendingtexture = Texture(dirtcolor, 1/25, 1/30, 0.8)
-        extendingtexture.bounds = [verticalleft-3, fillrect.y, 3, fillrect.height]
-        extendingtexture.texturingbounds = [verticalleft-1, fillrect.y, 1, fillrect.height]
-        addtexture(surface, extendingtexture)
+        extendingtexture.bounds = [fillrect.left-3, fillrect.y, 3, fillrect.height]
+        extendingtexture.texturingbounds = [fillrect.left-1, fillrect.y, 1, fillrect.height]
+        addtexture(grasssurface, extendingtexture)
         
         extendingtexture = Texture(dirtcolor, 1/25, 1/30, 0.8)
-        extendingtexture.bounds = [verticalleft+pathwidth, fillrect.y, 3, fillrect.height]
-        extendingtexture.texturingbounds = [verticalleft+pathwidth, fillrect.y, 1, fillrect.height]
-        addtexture(surface, extendingtexture)
+        extendingtexture.bounds = [fillrect.left+pathwidth, fillrect.y, 3, fillrect.height]
+        extendingtexture.texturingbounds = [fillrect.left+pathwidth, fillrect.y, 1, fillrect.height]
+        addtexture(grasssurface, extendingtexture)
         
         verticaltexture = Texture(randcolor, 1/15, 1/5, 1/3, acceptedcolors=[dirtcolor])
         verticaltexture2 = Texture(randcolor2, 1/20, 1/40, 1/40, acceptedcolors=[dirtcolor])
-        verticaltexture.bounds = [verticalleft-1, fillrect.y, pathwidth+2, fillrect.height]
+        verticaltexture.bounds = [fillrect.left-1, fillrect.y, pathwidth+2, fillrect.height]
         verticaltexture2.bounds = verticaltexture.bounds
-        addtexture(surface, verticaltexture)
-        addtexture(surface, verticaltexture2)
+        addtexture(grasssurface, verticaltexture)
+        addtexture(grasssurface, verticaltexture2)
     
-    return surface
+    return grasssurface
 
 def makepatch(randomcolorsunsorted, width, height):
     def brightness(color):
@@ -195,7 +210,7 @@ def addpatches(surface, patches, patchwidth, patchheight, maskhitbox = None):
 
 
 
-def makesnowland(width, height, grasstosnowp = False):
+def makesnowland(width, height, grasstosnowp = False, leftpath = True, rightpath = True, uppath = True, downpath = True):
     surface = None
     if grasstosnowp:
         surface = makegrassland(width, height, uppath = False, downpath = False)
@@ -304,3 +319,14 @@ def randomblob(swidth, sheight):
         p[1] += center[1]
 
     return pointlist
+
+def path_collisions(width, height, leftpath, rightpath, uppath, downpath):
+    collide_rects = []
+    horizontal = horizontal_road_fill_rect(width, height, leftpath, rightpath)
+    vertical = vertical_road_fill_rect(width, height, uppath, downpath)
+    if horizontal != None:
+        collide_rects.append(horizontal)
+    if vertical != None:
+        collide_rects.append(vertical)
+    
+    return collide_rects

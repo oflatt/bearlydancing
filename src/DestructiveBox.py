@@ -28,6 +28,12 @@ class DestructiveBox(object):
     def destructiveset(self, key, value):
         return self.__setattr__(key, value)
 
+    def destructivesetfields(self, keyvaluedict):
+        returnval = self
+        for key in keyvaluedict:
+            returnval = returnval.__setattr__(key, keyvaluedict[key])
+        return returnval
+
     # accessing accesses fields in the item
     def __getattr__(self, key):
         attr = object.__getattribute__(object.__getattribute__(self, "item"), key)

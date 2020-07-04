@@ -2,18 +2,38 @@ Bearly Dancing To-Do List
 
 pygame
 - checking if a surface has width or height 0 before scaling to avoid segfault
-- switch to pygame_sdl2
+- switch to pygame_sdl2 for production
+
+- make calling _freeze automatic for frozen objects
+- destructive object for lists?
+
+dancepad
+- Add some notes hold down
+- Colors for different beats
+- Highlight pressed
+- More spread out and faster coming down
+- restrict range of notes to not so high?
 
 bugs
 -"l" note was the same note as "a", which cannot be correct
+- Save msg ?
+- Steve gone when comign back
+- high pitched notes have gaps when playing
+- Inconsistant volume, high=loud
+- Uniform repetition coldfly bad
+- accidentals should appear in the tutorial level for accidentals
+
 
 gameplay
 - wolfram music http://tones.wolfram.com/generate/G1R3GnsJYz0ImX9KYVUwB8IwEuFTmmQkaDfuGy2md7Z97x56
+- winter path
+- pattern in snow challenge (timed?)
 - idle plant minigame
 - beetle sumo minigame
-- random avoid minigame using dp pathfinding
 - music for minigames
 - better music system on endpoints
+
+- rock cafe
 
 - bosses should use concepts from many enemies faced to give a sense of learning and accomplishment
 - knomi code name- bear winks at you
@@ -30,6 +50,7 @@ sound
 - load own sounds using the bowl pianoputer as example
 - random generation of wave?
 - add noise to one of the synthesizers- "noisey" given to you by a noisy character
+- vary the volume on drums
 - different drums for different enemies, multiple drum samples
   - which wave to start with
   - chance to flip sign with noise
@@ -40,6 +61,11 @@ sound
 - playback mode- have computer replay song perfectly after finishing a battle
 
 battle
+- spam enter when leveling up to skip animation
+- Feedback on starting a note, not just ending it?
+- Croc too wide
+
+- change color of note while holding note
 - battle code is ugly and convoluted with all the time/health variables
 
 - melodicmode:
@@ -55,6 +81,7 @@ rules ideas
 - repeating with variation chance to redo all of the rest of the notes? epecially halfway through or power of 2?
 - two simple melodies, then both at same time
 - left hand repeats while right is a song
+- repeating combinations- shift but change one section, ect
 
 - chance while holding a note to start a new note (don't always just add the duration of the note to the current time
 
@@ -67,6 +94,7 @@ Knob ideas for the beatmap generator
 
 
 graphics
+- frames around progress bars
 - random drumming octopus, drum mode
 - more life to the game- snow animations
 - automatically adjusting resolution, resolution option in settings
@@ -74,9 +102,19 @@ graphics
 Sophie:
 -tent snow
 -wardrobe open, "why do I have this?"
-- update scare square
 - better dancing animations (polar giraffe)
-- some enemies outlined in black (snake, scare square has potential)
+- some enemies outlined in black (snake)
 
 megalovania
-sstzlzzzkzjzgzsgjmmtzlzzzkzjzgzsgjnntzlzzzkzjzgzsgj
+sstzlzzzkzjzgzsgj
+mmtzlzzzkzjzgzsgj
+nntzlzzzkzjzgzsgj
+bbtzlzzzkzjzgzsgj
+sfgjgzggzgzgzszsz
+gzggzjzkzjgsgjz
+tzlzjzgzezjzgzf
+bmsbmsfmsfgsfgjfllllllllttttrrrr
+ieieieiekdkdkdkdjdjdjdjdejejwjwj
+ieieieiekdkdkdkdjdjdjdjdejejwjwj
+777777779999777745555555522222222
+	

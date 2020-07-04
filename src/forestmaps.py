@@ -1,9 +1,8 @@
-import variables, classvar, enemies, graphics, random, pygame, copy
+import variables, classvar, enemies, graphics, random, pygame, copy, devoptions
 from conversations import getconversation
 from Animation import Animation
 from graphics import scale_pure
 from graphics import GR
-from Map import Map
 from Rock import Rock
 from Exit import Exit
 from pygame import Rect
@@ -15,8 +14,9 @@ from EventRequirement import EventRequirement
 from mapsvars import *
 
 # jeremyhome####################################################################################
-rgrassland = graphics.grassland(800, 500)
-b = GR[rgrassland]["w"]/10
+jeremygrasslandwidth = 800
+rgrassland = graphics.grassland(jeremygrasslandwidth, 500)
+b = jeremygrasslandwidth/10
 
 hole = Rock("rabbithole", b * 5 + GR["rabbithole"]["w"], b * 5 - GR["rabbithole"]["h"], [0, 1 / 2, 1, 1 / 2])
 
@@ -65,9 +65,10 @@ jeremyhome.enemies = enemies.woodsenemies
 
 # outside2######################################################################################
 outside2width = 900
-rgrassland = graphics.grassland(900, 500, rightpath = False, uppath = True)
-outsideheight = GR[rgrassland]["h"]
-b = GR[rgrassland]["w"] / 10
+outsideheight = 500
+rgrassland = graphics.grassland(outside2width, outsideheight, rightpath = False, uppath = True)
+
+b = outside2width / 10
 outside2 = Map(rgrassland, [])
 outside2.populate_with("pinetree", 22)
 outside2.populate_with("greyrock", 3)
@@ -81,9 +82,9 @@ outside2.lvrange = [1]
 
 
 # outside3######################################################################################
-rgrassland = graphics.grassland(outside2width, 500, leftpath = False, downpath = True)
-b = GR[rgrassland]["w"] / 10
-outsideheight = GR[rgrassland]["h"]
+rgrassland = graphics.grassland(outside2width, outsideheight, leftpath = False, downpath = True)
+b = outside2width / 10
+
 outside3 = Map(rgrassland, [])
 outside3.populate_with("greyrock", 4)
 outside3.populate_with("pinetree", 12)
@@ -123,7 +124,6 @@ def make_rock_or_sheep_rocks():
     bigx += 30
     addgroup(6, 6, bigx)
     return rocklist
-
 
 outside4 = Map(rgrassland, [])
 outside4.populate_with("greyrock", 40)

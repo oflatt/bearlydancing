@@ -17,6 +17,8 @@ from notelistconverttodancepad import convertnotelisttodancepad
 import random, copy
 from random import randint
 import variables, math
+import devoptions
+from devoptions import devprint
 
 
 ''' rule types for beatmaps that are stored in rules in the specs dictionary
@@ -115,7 +117,6 @@ def addnote(notelist, time, ischord, specs, valuestouse, accidentalp):
 
 # returns none if not a special layer, otherwise returns a new list and duration of the layer in a tuple
 def speciallayer(notelist, time, specs, specialmarkers):
-
     if hasrule("seperatedchordchance", specs) and not myrand(4+specs['lv']/2):
         notelist = notelist.copy()
         restdur = random_duration(time, notelist, specs, True, False)
@@ -204,9 +205,9 @@ def speciallayer(notelist, time, specs, specialmarkers):
 
         time = finalstarttime + (finalstarttime - middletime)
 
-        if variables.devmode:
-            print("Combined melodies- oldtime: " + str(oldtime) + \
-                  " melodyduration: " + str(melodyduration) + " newtime: " + str(time))
+        
+        devprint("Combined melodies- oldtime: " + str(oldtime) + \
+                 " melodyduration: " + str(melodyduration) + " newtime: " + str(time))
         
         return (l, time-timepassedin)
         
@@ -255,7 +256,7 @@ def addlayer(notelist, time, specs, valuestouse = [], specialmarkers = []):
 
 def maxtimefromspecs(specs):
     maxtime = specs['maxtime']
-    return maxtime + specs['lv']*2
+    return maxtime + int(specs['lv']*3)
 
 # loops through until maxtime, adding layers
 # returns a tuple with a list of notes and the new time
@@ -271,7 +272,7 @@ def looplayers(time, maxtime, notelist, specs, specialmarkers = []):
 
     # masterloop for adding on notes
     while time < maxtime:
-        addlayerp = False
+        addlayerp = True
         if repeatmodep:
             # chance to do a repetition
             if repeatp(l, specs, time, maxtime):
@@ -282,11 +283,10 @@ def looplayers(time, maxtime, notelist, specs, specialmarkers = []):
                 # add on the last repeatduration notes again, varied
                 r = repetition(time, randint(-4, 4), l, repeatduration, specs, maxtime, skipdepth)
                 l = r['list']
-                time = r['time']
-            else:
-                addlayerp = True
-        else:
-            addlayerp = True
+                if r['time'] != time:
+                    time = r['time']
+                    addlayerp = False
+                 
             
         if addlayerp:
             addl = addlayer(l, time, specs, specialmarkers=specialmarkers)
@@ -294,21 +294,21 @@ def looplayers(time, maxtime, notelist, specs, specialmarkers = []):
             time += addl[1]
             
     return (l, time)
-    
+
 def random_beatmap(specs):
     # lower level for double notes rule
     if hasrule('doublenotes', specs):
-        specs['lv'] = max(specs['lv'] - 6, 2)
+        specs['lv'] = max(specs['lv'] - 4, 2)
 
     # higher level for beatmap mode
     if variables.settings.dancepadmodep:
         specs['lv'] = specs['lv'] + variables.dancepadlevelincrease
     
-    if variables.devmode:
-        print()
-        print('output of:')
-        print("   " + str(specs['rules']) + " lv: " + str(specs['lv']))
-        print()
+    
+    devprint()
+    devprint('output of:')
+    devprint("   " + str(specs['rules']) + " lv: " + str(specs['lv']))
+    devprint()
 
     # first update the screen to say it is being generated
     drawthismessage("generating new beatmap")
@@ -333,7 +333,7 @@ def random_beatmap(specs):
     # tempo is milliseconds per beat
     tempo = (1200 * 3) / (math.sqrt(lv)*0.4+ 0.08*lv + 3.5)
 
-    if variables.devmode:
+    if devoptions.devmode:
         printnotelist(l)
 
     # then perform checks
@@ -519,6 +519,28 @@ def movednotes(old_notes, movelength):
             n.newvalue(n.value + movelength)
         return l
 
+
+def areboring(notelist):
+    if len(notelist) == 0:
+        return True
+    isboring = True
+    notesSeen = set()
+    firstTime = notelist[0].time
+    i = 0
+    while i < len(notelist):
+        if notelist[i].time != firstTime:
+            break
+        else:
+            notesSeen.add(notelist[i].getscreenvalue())
+            i += 1
+
+    while i < len(notelist):
+        if not notelist[i].getscreenvalue() in notesSeen:
+            isboring = False
+            break
+        i += 1
+    return isboring
+    
     
 # returns a dictionary with the new time and the list
 # repeatduration is how long the section to repeat should be
@@ -526,11 +548,10 @@ def movednotes(old_notes, movelength):
 # startingtime is the time the main loop left off
 # maxtime is the (soft) limit on time to use
 def repetition(time, movelength, listofnotes, repeatduration, specs, maxtime, skipduration):
-    if variables.devmode:
-        print('repetition: time: ' + str(time) + ' repeatduration: ' +
-              str(repeatduration) + ' last note time: ' +
-              str(listofnotes[-1].time) + ' list depth: ' +
-              str(notedepth(listofnotes)) + ' skipduration: ' + str(skipduration))
+    devprint('repetition: time: ' + str(time) + ' repeatduration: ' +
+             str(repeatduration) + ' last note time: ' +
+             str(listofnotes[-1].time) + ' list depth: ' +
+             str(notedepth(listofnotes)) + ' skipduration: ' + str(skipduration))
 
     newtimeandlist = None
         
@@ -538,8 +559,8 @@ def repetition(time, movelength, listofnotes, repeatduration, specs, maxtime, sk
         newtimeandlist =  repeatvaluesrepetition(time, movelength, listofnotes, repeatduration, specs, maxtime, skipduration = skipduration)
     else:
         newtimeandlist = normalrepetition(time, movelength, listofnotes, repeatduration, specs, maxtime, skipduration = skipduration)
-    if variables.devmode:
-        print('newtime: ' + str(newtimeandlist['time']))
+    
+    devprint('newtime: ' + str(newtimeandlist['time']))
     return newtimeandlist
 
 # repeat only values in order, picking new durations and times and using only the main melody values (add on chords new again)
@@ -548,6 +569,8 @@ def repeatvaluesrepetition(starttime, movelength, listofnotes, repeatduration, s
 
     # get the last repeatduration notes to add on again
     notestoadd = getnoteswithintime(l, starttime-repeatduration-skipduration, starttime-skipduration)
+    if areboring(notestoadd):
+        return {'time' : time, 'list': l}
     
     valuelist = valuelistfromnotesskipchords(notestoadd)
     valuelistoriginal = valuelist.copy()
@@ -599,15 +622,16 @@ def normalrepetition(time, movelength, listofnotes, repeatduration, specs, maxti
         notestoadd = variation_of_notes(notestoadd, specs)
 
     if hasrule('repeatmove', specs):
-        if variables.devmode and iterations == 0:
-            print("movelength: " + str(movelength))
+        if iterations == 0:
+            devprint("movelength: " + str(movelength))
         notestoadd = movednotes(notestoadd, movelength)
 
     if hasrule('repeatrhythm', specs):
         notestoadd = newvaluesfornotes(notestoadd, specs)
 
         
-    
+    if areboring(notestoadd):
+        return {'time': time, 'list': l}
         
     newstarttime = time
     
@@ -651,34 +675,20 @@ def normalrepetition(time, movelength, listofnotes, repeatduration, specs, maxti
             newrepeatduration = getrepeatduration(l, specs, maxtime, newtime)
             returnval = normalrepetition(newtime, movelength, l, newrepeatduration, specs, maxtime, iterations+1)
         else:
-            if variables.devmode:
-                print(str(iterations+1) + " times")
+            devprint(str(iterations+1) + " times")
         return returnval
     else:
-        if variables.devmode:
-            print(str(iterations+1) + " times")
+        devprint(str(iterations+1) + " times")
         return {'time': newtime, 'list': l}
 
 
-# assumes num % base == 0
 # the log of the largest exponent of base that fits in num
 def getremainderlog(num, base):
-    if not num%base == 0:
-        raise ValueError("getremainderlog needs num%base == 0")
-    elif num<base:
+    if num<base:
         return 0
 
-    power = base
-    
-    while power*base<=num:
-        power *= base
+    return math.floor(math.log(num, base))
 
-    # if time is two to a power
-    if power == num:
-        return math.log(num, base)
-    else:
-        return getremainderlog(num-power, base)
-    
 # returns if there should be a repetition
 # when time is closer to a power of two it is more likely to repeat
 def repeatp(notelist, specs, ctime, maxtime):

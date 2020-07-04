@@ -1,9 +1,9 @@
 import pygame, variables, copy, random, math
 import pygame.gfxdraw
-from addtexture import addtexture
+from .addtexture import addtexture
 from .rdrawrock import addlump
 from random import randint
-from Texture import Texture
+from .Texture import Texture
 from variables import TREEWIDTH, TREEHEIGHT
 
 TREEFILLCOLOR = (33, 52, 27, 255)

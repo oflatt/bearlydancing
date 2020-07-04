@@ -1,21 +1,24 @@
 import pygame
 from pygame import Surface
-
+from devoptions import args
 
 import variables
 
 def addsurfaceGR(GR, s, name, dimensions = None):
     if dimensions == None:
         dimensions = [s.get_width(), s.get_height()]
-    GR[name] = {"img":s.convert_alpha(),"w":dimensions[0],"h":dimensions[1]}
+    if args.novideomode:
+        GR[name] = {"img":s,"w":dimensions[0],"h":dimensions[1]}
+    else:
+        GR[name] = {"img":s.convert_alpha(),"w":dimensions[0],"h":dimensions[1]}
 
 
 def adddancearrows(GR):
     # duplicate and rotate the left arrow
     leftdancearrow = GR["leftdancearrow"]["img"]
-    rightdancearrow = pygame.transform.rotate(leftdancearrow,180)
-    downdancearrow = pygame.transform.rotate(leftdancearrow,270)
-    updancearrow = pygame.transform.rotate(leftdancearrow,90)
+    rightdancearrow = variables.transformrotate(leftdancearrow,180)
+    downdancearrow = variables.transformrotate(leftdancearrow,270)
+    updancearrow = variables.transformrotate(leftdancearrow,90)
 
     leftdancearrowdark = leftdancearrow.copy()
     rightdancearrowdark = rightdancearrow.copy()
@@ -54,6 +57,7 @@ def adddancearrows(GR):
     addsurfaceGR(GR, downdancearrowdark, "downdancearrowdark")
     
 def load_special_graphics(GR):
+    
     #add empty surface
     addsurfaceGR(GR, Surface((1,1), pygame.SRCALPHA), "empty")
 
@@ -61,7 +65,7 @@ def load_special_graphics(GR):
     DOWNARROW = pygame.Surface([5, 8], pygame.SRCALPHA)
     pygame.draw.polygon(DOWNARROW, variables.WHITE, [[0, 4], [4, 4], [2, 7]])
     DOWNARROW.fill(variables.WHITE, pygame.Rect(1, 0, 3, 3))
-    RIGHTARROW = pygame.transform.rotate(DOWNARROW, 90)
+    RIGHTARROW = variables.transformrotate(DOWNARROW, 90)
     addsurfaceGR(GR, DOWNARROW, "downarrow")
     addsurfaceGR(GR, RIGHTARROW, "rightarrow")
 

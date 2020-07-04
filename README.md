@@ -11,7 +11,7 @@ Install python 3.
 Run python3 setup.py. If this fails, install dependencies listed in src/dependencies.py using pip.
 
 
-To play the game without development features, use python3 "bearly dancing.py" -exportmode
+To play the game without development features, use python3 "bearly dancing.py" --exportmode
 
 ## building an executable
 

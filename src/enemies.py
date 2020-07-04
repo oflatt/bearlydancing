@@ -1,9 +1,52 @@
+import random, copy
+from typing import List, Union
+
+
+import variables, devoptions
+from variables import devprint
 from Enemy import Enemy
 from Animation import Animation
-from graphics import GR
-import random, copy
+from MultiPartAnimation import AnimationPart, MultiPartAnimation
+from graphics import getpic
 
 defaultanimspeed = 1000
+
+# build the octopus
+octopus_parts = []
+# load the head
+octopus_head = []
+for i in range(variables.numberofoctopusheads):
+    octopus_head.append(AnimationPart("octopus/head" + str(i)))
+octopus_parts.append(octopus_head)
+octopus_arms = []
+
+
+for i in variables.octopusarmdraworder:
+    armupdown = []
+    
+    armupdown.append(AnimationPart("octopus/arm" + str(i) + "-0"))
+    armupdown.append(AnimationPart("octopus/arm" + str(i) + "-1"))
+
+    octopus_arms.append(armupdown)
+    
+octopus_parts.extend(octopus_arms)
+
+# add the body of the octopus
+octopus_parts.append([AnimationPart("octopus/body")])
+
+# now flip the list, because the body and the arms are drawn before the head
+octopus_parts.reverse()
+
+octopus_width = 20 # dummy values for novideomode
+octopus_height = 20
+if not devoptions.args.novideomode:
+    octopus_width = getpic("octopus/body").get_width()
+    octopus_height = getpic("octopus/body").get_height()
+
+octopus_animation = MultiPartAnimation(octopus_parts,
+                                       octopus_width,
+                                       octopus_height)
+
 
 raisewing = Animation(["flyingchimney7", "flyingchimney4"], 100, False)
 lowerwing = Animation(["flyingchimney5", "flyingchimney6"], 60, False)
@@ -30,7 +73,9 @@ for a in stevehat:
     a.relativeframerate = True
     a.loopp = False
 
-steveanimation = Animation(["scarysteven00", "scarysteven01", "scarysteven02", "scarysteven03", "scarysteven04"]+stevewave+stevehat, defaultanimspeed)
+stevelist : List[Union[Animation, str]] = ["scarysteven00", "scarysteven01", "scarysteven02", "scarysteven03", "scarysteven04"]+stevewave+stevehat # type: ignore
+    
+steveanimation = Animation(stevelist, defaultanimspeed)
 steveanimation.updatealwaysbattle = True
             
 animations = []
@@ -103,6 +148,8 @@ addEnemy("snow fly", ["melodic", "repeatvariation", "doublenotes"],
 
 addEnemy("polar giraffe", ["melodic", "combinemelodies"],
          Animation(["polargiraffe0", "polargiraffe1"], defaultanimspeed))
+
+addEnemy("yoyo", ["drummer"], octopus_animation)
 
 woodsenemies = getenemies(["perp", "spoe", "croc", "bogo", "rad turtle"])
 snowenemies = getenemies(["pile o' snow", "snow fly", "polar giraffe"])

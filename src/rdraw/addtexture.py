@@ -1,5 +1,5 @@
 import random, pygame
-from Texture import Texture
+from .Texture import Texture
 
 # fills a polygon with a point in the polygon
 # s is the surface, firstpoint is the starting point, fillcolor is the color to fill
@@ -88,12 +88,25 @@ def pointinbounds(point, bounds):
     b = bounds
     return p[0] >= b[0] and p[0] < b[0] + b[2] and p[1] >= b[1] and p[1] < b[1] + b[3]
 
+def constrain_color(colorval):
+    return max(min(colorval, 255), 0)
+
 def texturepoint(surface, x, y, t, bounds):
     # each point is a list of xpos, ypos, invisibleq
     points = [[x, y, False]]
     pointcolor = t.color
+
+    if t.acceptedcolorsspawn != None:
+        p = points[0]
+        pcolor = surface.get_at(p[0:2])
+        pcolorreduced = (pcolor[0], pcolor[1], pcolor[2])
+        if not (pcolor in t.acceptedcolorsspawn or pcolorreduced in t.acceptedcolorsspawn):
+            return
+    
     # vary it by the spawn variance
-    pointcolor = (pointcolor[0]+random.randint(-t.redvarianceperspawn, t.redvarianceperspawn), pointcolor[1]+random.randint(-t.greenvarianceperspawn, t.greenvarianceperspawn), pointcolor[2]+random.randint(-t.bluevarianceperspawn, t.bluevarianceperspawn))
+    pointcolor = (constrain_color(pointcolor[0]+random.randint(-t.redvarianceperspawn, t.redvarianceperspawn)),
+                  constrain_color(pointcolor[1]+random.randint(-t.greenvarianceperspawn, t.greenvarianceperspawn)),
+                  constrain_color(pointcolor[2]+random.randint(-t.bluevarianceperspawn, t.bluevarianceperspawn)))
 
     while len(points) > 0:
         p = points.pop(0)

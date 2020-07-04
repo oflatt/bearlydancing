@@ -1,4 +1,5 @@
 import graphics, variables, pygame, enemies, classvar, maps, random, stathandeling, copy
+
 from pygame import Rect
 from classvar import player
 from graphics import getpicbyheight, getTextPic, getpic, difficultytocolor
@@ -206,9 +207,12 @@ class Menu(FrozenClass):
                           dotwidth])
         
         if self.mainmenup:
-            enemyframe = getpicbyheight(self.enemyanimation.current_frame(), variables.height/5)
-            variables.screen.blit(enemyframe,
-                                  [int(variables.width/2 - enemyframe.get_width()/2), (len(opics) + 1) * variables.getmenutextyspace()])
+            enemywidth = self.enemyanimation.pic_width(variables.height/5)
+            self.enemyanimation.draw_topright(variables.screen,
+                                              variables.height/5,
+                                              topoffset = (len(opics) + 1) * variables.getmenutextyspace(),
+                                              rightoffset = int(variables.width/2 - enemywidth/2))
+            
 
 
     # in drawname option is used as how far they have gotten through the process
@@ -303,8 +307,17 @@ class Menu(FrozenClass):
                         variables.settings.difficulty = self.tempdifficulty
                         classvar.player.exp = stathandeling.lvexp(self.tempdifficulty + 1)
                 if self.option == len(self.nameprompts)-1:
-                    self.mainmenup = False
-                    self.resume()
+                    # check if bear needs to be woken up
+                    if player.getstoryevent("bed") < len(maps.getbed().animations)-1:
+                        maps.getbed().nextanimation()
+                        player.addstoryevent("bed")
+
+                        if player.getstoryevent("bed") == len(maps.getbed().animations)-1:
+                            self.mainmenup = False
+                            self.resume()
+                    else:
+                        self.mainmenup = False
+                        self.resume()
                 else:
                     self.option += 1
                     

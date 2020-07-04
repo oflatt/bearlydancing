@@ -3,21 +3,24 @@ from conversations import getconversation
 from Animation import Animation
 from graphics import scale_pure
 from graphics import GR
-from Map import Map
 from Rock import Rock
 from Exit import Exit
 from pygame import Rect
 from Conversation import Conversation
 from Speak import Speak
-from variables import displayscale, fasttestmodep
+from variables import displayscale
 from EventRequirement import EventRequirement
 from random import randint
 from mapsvars import *
 
+
+
+
+
 housewidth = GR["honeyhouseoutside"]["w"]
 househeight = GR["honeyhouseoutside"]["h"]
 houserock = Rock("honeyhouseoutside", housewidth, 0,
-                 [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())])
+                 [0,1/2,1,1/2 - (20/GR["honeyhouseoutside"]["img"].get_height())]) # type: ignore
 
 # honeyhome#####################################################################################
 insidewidth = GR["honeyhouseinside"]["w"]
@@ -44,12 +47,6 @@ honeyhome = Map("honeyhouseinside",
                  Rock(stashlist, 131, 55, [0, 0.9, 1, 0.1], name="stash")],
                 shadowsp = False)
 
-outofbed = getconversation("outofbed")
-outofbed.storyevent = "bed"
-outofbed.area = [0, 0, insidewidth, insideheight]
-outofbed.eventrequirements = [EventRequirement("bed", -1, len(bed.animations)-1)]
-outofbed.showbutton = False
-
 eatfromstash = Conversation("eatfromstash",
                             [],
                             speaksafter = [[],[],[],[],[],[],[],[],
@@ -68,7 +65,7 @@ blockexit = getconversation("hungry")
 blockexit.area = doorexit.area
 blockexit.eventrequirements = [EventRequirement("letter", -1, 1)]
 
-honeyhome.conversations = [eatfromstash, outofbed, blockexit]
+honeyhome.conversations = [eatfromstash, blockexit]
 
 honeyhome.startpoint = [28, 39]
 
@@ -89,7 +86,7 @@ honeyhome.uselastposq = True
 # letter########################################################################################
 paperscale = int((GR["honeyhouseinside"]["h"]/GR["paper"]["h"])+1) # so it is as big as inside to put the text in it
 
-GR["backgroundforpaper"]["img"] = pygame.transform.scale(GR["backgroundforpaper"]["img"],
+GR["backgroundforpaper"]["img"] = variables.transformscale(GR["backgroundforpaper"]["img"],
                                                          [GR["backgroundforpaper"]["w"]*paperscale,
                                                           GR["backgroundforpaper"]["h"]*paperscale])
                                                           
@@ -97,7 +94,7 @@ GR["backgroundforpaper"]["w"] *= paperscale
 GR["backgroundforpaper"]["h"] *= paperscale
 b = GR['backgroundforpaper']['w'] / 10
 
-GR["paper"]["img"] = pygame.transform.scale(GR["paper"]["img"],
+GR["paper"]["img"] = variables.transformscale(GR["paper"]["img"],
                                             [GR["paper"]["w"]*paperscale,
                                              GR["paper"]["h"]*paperscale])
 GR["paper"]["w"] *= paperscale
@@ -107,8 +104,8 @@ bigpaper.background_range = None  # always in front
 s1 = variables.font.render("I stole your lunch.", 0, variables.BLACK).convert()
 s2 = variables.font.render("-Trash Panda", 0, variables.BLACK).convert()
 lettertextscalefactor = (GR["paper"]['w'] * (3/4)) / s1.get_width()
-s1 = pygame.transform.scale(s1, [int(lettertextscalefactor*s1.get_width()), int(lettertextscalefactor*s1.get_height())])
-s2 = pygame.transform.scale(s2, [int(lettertextscalefactor*s2.get_width()), int(lettertextscalefactor*s2.get_height())])
+s1 = variables.transformscale(s1, [int(lettertextscalefactor*s1.get_width()), int(lettertextscalefactor*s1.get_height())])
+s2 = variables.transformscale(s2, [int(lettertextscalefactor*s2.get_width()), int(lettertextscalefactor*s2.get_height())])
 graphics.addsurfaceGR(s1, "stolelunchtext", [s1.get_width(), s1.get_height()])
 graphics.addsurfaceGR(s2, "tplunchtext", [s2.get_width(), s2.get_height()])
 
@@ -138,7 +135,10 @@ b = GR["horizontal"]["w"] / 10
 
 #stands for random pine tree
 rpt = graphics.pinetree()
-rgrassland = graphics.grassland(900, 500)
+outsidewidth = 900
+outsideheight = 500
+
+rgrassland = graphics.grassland(outsidewidth, outsideheight)
 treerock = Rock(rpt, 3.5 * b + housewidth, 1.5 * b, treecollidesection)
 meangreeny = treerock.y + GR[rpt]["h"] - GR["meangreen0"]["h"]
 meangreenrock = Rock("meangreen0", treerock.x + 0.5 * b, meangreeny, [0, 0.81, 1, 0.19])
@@ -175,8 +175,7 @@ outside1 = Map(rgrassland,
 outside1.populate_with("pinetree", 4, [cleararearect])
 outside1.populate_with("flower", randint(3, 7), [cleararearect])
 
-outsidewidth = GR[rgrassland]["w"]
-outsideheight = GR[rgrassland]["h"]
+
 outside1.startpoint = [b * 8, b * 4]
 outside1.exitareas = [Exit("right", False, 'outside2', "left", "same"),
                       Exit("left", False, 'jeremyhome', "right",

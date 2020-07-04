@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, copy, conversations, play_sound
+import variables, pygame, stathandeling, classvar, random, maps, randombeatmap, copy, conversations, play_sound, devoptions
 from ChoiceButtons import ChoiceButtons
 from Button import Button
 from Note import Note
@@ -10,6 +10,11 @@ from pygame import Rect
 from notelistfunctions import shorten_doubles
 from Soundpack import max_sample
 from initiatestate import returntoworld
+
+
+
+def enemypic_height():
+    return variables.height/4.0
 
 
 # battle is the class that runs the battle- information about the game such as storyeventonwin is stored in enemy
@@ -289,12 +294,13 @@ class Battle(FrozenClass):
         # draw enemy first
         if self.state != "dance":
             self.enemy.animation.reset() # if not dancing, use first frame
-        epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
             
 
+        # draw enemy
+        self.enemy.animation.draw_topright(variables.screen, enemypic_height())
+            
         playerpicandrect = self.getplayerpicandrect()
         
-        variables.screen.blit(epic, [w - epic.get_width(), 0])
 
         # draw the player
         if self.state == "dance":
@@ -366,7 +372,6 @@ class Battle(FrozenClass):
                 text = variables.font.render("you win!", 0, variables.WHITE)
             textscaled = sscale(text)
             variables.screen.blit(textscaled, [w / 2 - (textscaled.get_width() / 2), h / 2])
-            self.drawscoretable()
 
         
         elif self.state == "exp" or self.state == "got exp":
@@ -409,10 +414,10 @@ class Battle(FrozenClass):
         playermaxh = stathandeling.max_health(p.lv())
         healthh = h * (1 / 18)
         enemyhealthh = h * (1 / 50)
-        e = self.enemy
-        epicw = epic.get_width()
-        epich = epic.get_height()
-        percenthealthlefte = e.health / stathandeling.max_health(e.lv)
+        
+        epich = enemypic_height()
+        epicw = self.enemy.animation.pic_width(epich)
+        percenthealthlefte = self.enemy.health / stathandeling.max_health(self.enemy.lv)
         healthbarcolor = variables.GREEN
         if p.health != playermaxh:
             percenthealthleft = p.health / playermaxh
@@ -431,9 +436,11 @@ class Battle(FrozenClass):
             variables.screen.blit(ptext, coordinates)
             variables.dirtyrects.append(Rect(coordinates[0], coordinates[1], ptext.get_width(), ptext.get_height()))
 
+        if self.state == "lose" or self.state == "win" or self.state == "exp" or self.state == "got exp":
+            self.drawscoretable()
+
     def updatescreenforenemy(self):
-        epic = getpicbyheight(self.enemy.animation.current_frame(), variables.height/5)
-        variables.dirtyrects.append(Rect(variables.width-epic.get_width(), 0, epic.get_width(), epic.get_height()))
+        self.enemy.animation.update_topright(enemypic_height())
 
     def partofbeatlist(self):
         pofbeatlist = [0]
@@ -572,6 +579,9 @@ class Battle(FrozenClass):
                 currentb.scores = []
                 maps.engage_conversation(self.tutorialconversations[3], True)
                 self.exittutorial()
+
+    def drummermodep(self):
+        return "drummer" in self.beatmaps[self.current_beatmap].enemyspecs["rules"]
         
     # for things like the attack animation
     def ontick(self):
@@ -580,7 +590,7 @@ class Battle(FrozenClass):
             currentb = self.beatmaps[self.current_beatmap]
             olddrum = currentb.drumcounter
             currentb.ontick()
-            if currentb.drumcounter > olddrum:
+            if currentb.drumcounter > olddrum and not self.drummermodep():
                 self.drumbeat(currentb.drumcounter%4)
         
         dt = variables.settings.current_time - self.animationtime
@@ -677,10 +687,10 @@ class Battle(FrozenClass):
             variables.settings.scaleindex = (variables.settings.scaleindex + offset) % len(classvar.player.scales)
             self.battlechoice.buttons[-1].assign_text(self.getscalename())
         
-        if(variables.devmode):
-            if(key == variables.devlosebattlekey):
+        if(devoptions.devmode):
+            if(key == devoptions.devlosebattlekey):
                 self.lose()
-            elif(key == variables.devwinbattlekey):
+            elif(key == devoptions.devwinbattlekey):
                 self.win()
         if self.state == 'dance':
             if self.tutorialp:
@@ -688,15 +698,21 @@ class Battle(FrozenClass):
                     self.beatmaps[self.current_beatmap].onkey(key)
             else:
                 self.beatmaps[self.current_beatmap].onkey(key)
+
+            # check for octopus animation change
+            if self.drummermodep():
+                for noteindex in range(8):
+                    if variables.checkkey("note" + str(noteindex+1), key):
+                        self.enemy.animation.change_frame(variables.octopusarmtomultipartpart[noteindex], newframe = 1)
         elif self.state == "choose":
             if variables.checkkey("enter", key):
-                if self.battlechoice.current_option == 0:
+                if self.battlechoice.currentoption == 0:
                     self.startnew()
-                elif self.battlechoice.current_option == 1:
+                elif self.battlechoice.currentoption == 1:
                     self.flee()
-                elif self.battlechoice.current_option == 2:
+                elif self.battlechoice.currentoption == 2:
                     change_soundpack(1)
-                elif self.battlechoice.current_option == 3:
+                elif self.battlechoice.currentoption == 3:
                     change_scale(1)
             else:
                 if variables.checkkey("left", key):
@@ -705,13 +721,13 @@ class Battle(FrozenClass):
                 elif variables.checkkey("right", key):
                     play_drum(4, self.enemy.drumpackname)
                     self.battlechoice.nextoption()
-                elif variables.checkkey("up", key) and self.battlechoice.current_option == 2:
+                elif variables.checkkey("up", key) and self.battlechoice.currentoption == 2:
                     change_soundpack(-1)
-                elif variables.checkkey("down", key) and self.battlechoice.current_option == 2:
+                elif variables.checkkey("down", key) and self.battlechoice.currentoption == 2:
                     change_soundpack(1)
-                elif variables.checkkey("up", key) and self.battlechoice.current_option == 3:
+                elif variables.checkkey("up", key) and self.battlechoice.currentoption == 3:
                     change_scale(-1)
-                elif variables.checkkey("down", key) and self.battlechoice.current_option == 3:
+                elif variables.checkkey("down", key) and self.battlechoice.currentoption == 3:
                     change_scale(1)
 
         elif self.state == "lose":
@@ -743,7 +759,14 @@ class Battle(FrozenClass):
             else:
                 releasep = True
         if releasep:
+            # check for octopus animation change
+            if self.drummermodep():
+                for noteindex in range(8):
+                    if variables.checkkey("note" + str(noteindex+1), key):
+                        self.enemy.animation.change_frame(variables.octopusarmtomultipartpart[noteindex], newframe = 0)
+
             self.beatmaps[self.current_beatmap].onrelease(key)
+            
 
     def addexp(self):
         self.state = "exp"

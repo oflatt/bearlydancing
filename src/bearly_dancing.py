@@ -9,14 +9,20 @@ from pygame import Rect
 variables.load_properties()
 variables.draw_loading_tips()
 
+import devoptions
+
 # determine if everything should be re-loaded
-if not os.path.isfile(os.path.abspath(variables.settingspath)) and not variables.newworldnever:
-    variables.newworldeachloadq = True
+if devoptions.args.restart or \
+   (not os.path.isfile(os.path.abspath(variables.settingspath)) and \
+    not devoptions.newworldnever):
+    devoptions.newworldeachloadq = True
+
 
 # now go ahead and load everything in
 import maps
 import conversations, classvar
 from saveandload import save, load
+
 
 # save the properties to record how many things needed to be loaded
 variables.save_properties()
@@ -31,7 +37,7 @@ menu = load()
 maps.new_scale_offset()
 
 # for skipsteve add the event
-if variables.skipsteve:
+if devoptions.skipsteve:
     classvar.player.addstoryevent("beatsteve")
 
 #clear all the events so it does not mess up the game when it loads
@@ -42,16 +48,25 @@ done = False
 
 # if the testspecs are set, use it and initiate a battle
 from initiatebattle import initiatebattle
+import enemies
 from enemies import random_enemy
 from enemies import devbattletest
 import copy
-if variables.testspecs != None:
-    testenemy = copy.copy(random_enemy("woods"))
-    testenemy.lv = variables.testspecs['lv']
-    testenemy.beatmaprules = variables.testspecs['rules']
+
+
+if not devoptions.testspecs is None:
+    
+    if devoptions.testenemy is None:
+        testenemy = copy.copy(enemies.enemyforspecialbattle(devoptions.testenemy))
+    else:
+        testenemy = copy.copy(random_enemy("woods"))
+    
+    testenemy.lv = devoptions.testspecs['lv']
+    testenemy.beatmapspecs = devoptions.testspecs
     initiatebattle(testenemy)
     menu.firstbootup = False
     variables.settings.menuonq = False
+
 
 # play main menu music
 from play_sound import play_music
@@ -64,7 +79,7 @@ menu.enemyanimation.beginning_time = variables.settings.current_time
 # key is either a pygame key (an int) or a string for what key was pressed, used for joy stick presses
 def onkeydown(key):
     # emergency dev quit
-    if variables.devmode and key == variables.devquitkey:
+    if devoptions.devmode and key == devoptions.devquitkey:
         pygame.quit()
         sys.exit()
 
@@ -87,7 +102,7 @@ def onkeydown(key):
             menu.onkey(key)
 
     # check for dev battle key
-    elif variables.devmode and key == variables.devengagebattlekey and variables.settings.state == "world":
+    elif devoptions.devmode and key == devoptions.devengagebattlekey and variables.settings.state == "world":
         if devbattletest == None:
             initiatebattle(random_enemy())
         else:
@@ -140,7 +155,7 @@ def onevent(event):
 
 
     if event.type == pygame.JOYAXISMOTION:
-        keydownpresses = variables.settings.joyaxistokeydown(event)
+        keydown = variables.settings.joyaxistokeydown(event)
         if keydown != None:
             onkeydown(keydown)
             
@@ -178,7 +193,7 @@ def ontick():
         
     if (not variables.settings.menuonq):
         if variables.settings.state == "world":
-            classvar.player.move()
+            classvar.player.move(maps.current_map)
             maps.checkconversation()
             maps.checkexit()
             maps.current_map.on_tick()
@@ -194,6 +209,8 @@ def ondraw():
 
     
     def draw_world():
+        current_map = maps.current_map
+        
         #fill edges in with black
         screenxoffset = maps.current_map.screenxoffset()
         if screenxoffset != 0:
@@ -202,11 +219,11 @@ def ondraw():
             variables.screen.fill(variables.BLACK,
                                   Rect(variables.width-screenxoffset-2, 0, screenxoffset+3, variables.height))
             
-        classvar.player.update_drawpos()
+        classvar.player.update_drawpos(current_map)
         
         maps.current_map.draw([classvar.player.mapdrawx, classvar.player.mapdrawy])
         if maps.playerenabledp() and maps.current_map.playerenabledp:
-            classvar.player.draw()
+            classvar.player.draw(current_map)
         maps.current_map.draw_foreground([classvar.player.mapdrawx, classvar.player.mapdrawy])
 
 
@@ -244,7 +261,7 @@ def ondraw():
 
 
     
-    if variables.testsmallp:
+    if devoptions.testsmallp:
         # blit red boarder for testing
         variables.screen.fill(variables.RED, Rect(variables.width, 0, 10, variables.height))
         variables.screen.fill(variables.RED, Rect(0, variables.height, variables.width, 10))
@@ -257,7 +274,7 @@ def ondraw():
         
 
     # update the screen
-    if len(variables.dirtyrects) > 0 and variables.devmode:
+    if len(variables.dirtyrects) > 0 and devoptions.devmode:
         pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
 
 
@@ -301,8 +318,9 @@ def main():
         clock.tick_busy_loop(0)
 
 
-main()
+if not devoptions.args.testsuitemode:
+    main()
 
-# Close the window and quit, this is after the main loop has finished
-pygame.quit()
+    # Close the window and quit, this is after the main loop has finished
+    pygame.quit()
 

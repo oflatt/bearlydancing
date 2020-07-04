@@ -5,10 +5,11 @@ from Conversation import Conversation
 from copy import deepcopy
 from Speak import Speak
 
-outofbed = Conversation("outofbed", [], speaksafter = [[],[],[]], switchtheserocks = "bed")
+# not used anymore- handled by the name menu
+#outofbed = Conversation("outofbed", [], speaksafter = [[],[],[]], switchtheserocks = "bed")
 
-everyyears = Speak("honeyside0", ["Every year the same thing. I'm going into hibernation,",
-                                      "and TP makes things difficult."])
+everyyears = Speak("honeyside0", ["I'm sleepy.",
+                                      "I'm more hungry than sleepy. Let's go get my lunch back from TP."])
 everyyears.side = 'l'
 
 hungry = Conversation("hungry",[Speak("honeyside0", ["I'm hungry...",
@@ -26,12 +27,12 @@ thatracoon = Conversation("thatracoon", [Speak("honeyside0", ["That raccoon...",
 honeydotspeak = Speak("honeyside3", ["..."])
 
 monster = ["Greenie Meanie: Who goes there!"]
-ohhoney4 = ["You know who it is, Meanie. I'm looking for TP."]
+ohhoney4 = ["I'm looking for TP."]
 monster2 = ["No one may pass!"]
-ohhoney5 = ["So what...you want to fight?"]
+ohhoney5 = ["You want to fight?"]
 monster3 = ["No no, that would be stupid.", "We'll settle this with a DANCE-OFF!"]
-ohhoney8 = ["Fine, dance-off it is.",
-            "Hey, User, why don't you do something useful?",
+ohhoney8 = ["...",
+            "Hey, User.",
             "You be the bard and play the music.",
             "I'll handle the dancing myself."]
 

@@ -6,7 +6,7 @@ from FrozenClass import FrozenClass
 class Settings(FrozenClass):
 
     def __init__(self):
-        # keybindings
+        # keybinding
         self.keydict = OrderedDict()
         self.keydict["up"] =[pygame.K_UP, pygame.K_w, "joyaxis1-"]
         self.keydict["down"] = [pygame.K_DOWN, pygame.K_s, "joyaxis1+"]
@@ -70,7 +70,7 @@ class Settings(FrozenClass):
         # this is an offset for all enemy levels
         self.difficulty = 0
 
-        self.dancepadmodep = True
+        self.dancepadmodep = False
 
         # gamedata is a dict that can be populated by Game objects
         self.gamedata = {}
@@ -81,6 +81,9 @@ class Settings(FrozenClass):
         # used to keep track of the state of joystick, a set containing all joy stick axis that are pressed. Example: {"joyaxis0+"} is the x-axis to the right
         self.joyaxispressed = set()
         self.stickthreshhold = 0.2
+
+        # money used in minigames
+        self.money = 0
         
         self._freeze()
 
@@ -111,6 +114,9 @@ class Settings(FrozenClass):
             return self.gamedata[gamename]
         except KeyError:
             return None
+
+    def addmoney(self, amount):
+        self.money += amount
 
     def getjoyeventname(self, event):
         eventname = "joyaxis" + str(event.axis)

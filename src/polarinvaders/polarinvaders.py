@@ -1,13 +1,14 @@
 import pygame, math, random, sys, os, gc
-from .spriteSheetToList import *
+from typing import Dict
 
 import variables
+from .spriteSheetToList import *
 from graphics import getTextPic
 from Game import Game
 from .PolarGame import PolarGame
 
 
-rotatecache = {}
+rotatecache : Dict[str, pygame.Surface] = {}
 def rotateandcache(name, pic, degrees):
     name = name + str(int(degrees))
     if not name in rotatecache:

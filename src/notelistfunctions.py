@@ -1,4 +1,4 @@
-import variables, random
+import variables, random, devoptions
 from Note import compare_numbers_around
 from Note import Note
 
@@ -384,7 +384,7 @@ def checkexpectnotelist(got, expected, errormessage):
                 printnotelist(got)
 
 # test combining lists
-if variables.devmode:
+if devoptions.devmode:
     testl = [Note(2, 0, 2), Note(3, 2, 1)]
     testchordl = [Note(7, 2, 2, chordadditionp = True), Note(3, 2, 4), Note(8, 8, 8)]
     
