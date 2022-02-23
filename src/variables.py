@@ -120,8 +120,8 @@ else:
         import ctypes
         ctypes.windll.user32.SetProcessDPIAware()
     elif sys.platform == 'darwin':
-        import AppKit
-        AppKit.NSMenu.setMenuBarVisible_(False)
+        #import AppKit
+        #AppKit.NSMenu.setMenuBarVisible_(False)
         
         for m in modes:
             if m[0]/m[1] == ratio:
