@@ -5,7 +5,7 @@ from typing import Optional, Dict
 testsmallp = False
 devmode = True
 # skip the fight with steve, add the event to the player
-skipsteve = True
+skipsteve = False
 # adds all the soundpacks and keys to the player
 addallrewards = False
 # generates a new world on load no matter what

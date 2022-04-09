@@ -274,8 +274,8 @@ def ondraw():
         
 
     # update the screen
-    if len(variables.dirtyrects) > 0 and devoptions.devmode:
-        pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
+    #if len(variables.dirtyrects) > 0 and devoptions.devmode:
+    #pygame.draw.rect(variables.screen, variables.BLUE, variables.dirtyrects[0], 1)
 
     variables.updatescreen()
 

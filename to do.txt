@@ -58,7 +58,6 @@ sound
 battle
 - Feedback on starting a note, not just ending it?
 - Croc too wide
-
 - change color of note while holding note
 - battle code is ugly and convoluted with all the time/health variables
 
@@ -84,7 +83,6 @@ Knob ideas for the beatmap generator
 
 - sway pitch to higher or lower for different enemies
 - sway probabilities for repeating at different lengths, and the size of these repetitions
-
 
 
 graphics

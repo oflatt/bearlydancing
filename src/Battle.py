@@ -92,7 +92,7 @@ class Battle(FrozenClass):
         self.battlechoice = ChoiceButtons(
             ["   DANCE!   ", "leave", variables.settings.soundpack, self.getscalename()], 13 / 16)
 
-        self.retrychoice = ChoiceButtons(["retry", "go home"], 13/16)
+        self.retrychoice = ChoiceButtons(["retry", "flee"], 13/16)
 
         # if pausetime is 0 it is not paused, otherwise it is paused and it records when it was paused
         self.pausetime = 0
@@ -629,6 +629,10 @@ class Battle(FrozenClass):
                     classvar.player.health = self.newplayerhealth  # set it to the new health when done
                     if self.newplayerhealth <= 0:
                         self.state = "lose"
+                        classvar.player.addstoryevents(
+                            self.enemy.storyeventsonlose)
+                        classvar.player.timeslost += 1
+                        classvar.player.totalbattles += 1
                         if self.enemy.name == "chimney":
                             maps.engage_conversation("losetochimney", True)
                     elif self.newenemyhealth == self.enemy.health:  # if done with the animation
@@ -647,6 +651,7 @@ class Battle(FrozenClass):
                 if self.enemy.health <= self.newenemyhealth:
                     self.enemy.health = self.newenemyhealth
                     if self.newenemyhealth <= 0:
+                        classvar.player.totalbattles += 1
                         self.state = "win"
                     elif classvar.player.health == self.newplayerhealth:  # if done with the animation
                         self.state = "dance"  # exit
@@ -676,21 +681,15 @@ class Battle(FrozenClass):
             classvar.player.heal()
         self.state = "got exp"
 
+    # go home (currently unused)
 
-    def lose(self):
-        # go home
-        classvar.player.addstoryevents(self.enemy.storyeventsonlose)
-        
+    def teleport_home(self):
         maps.teleportplayerhome()
-        
-        classvar.player.timeslost += 1
-        classvar.player.totalbattles += 1
         returntoworld()
 
         
     def win(self):
         classvar.player.addstoryevents(self.enemy.storyeventsonwin)
-        classvar.player.totalbattles += 1
         returntoworld()
         
     def flee(self):
@@ -711,7 +710,7 @@ class Battle(FrozenClass):
         
         if(devoptions.devmode):
             if(key == devoptions.devlosebattlekey):
-                self.lose()
+                self.flee()
             elif(key == devoptions.devwinbattlekey):
                 self.win()
         if self.state == 'dance':
@@ -759,7 +758,7 @@ class Battle(FrozenClass):
                 if self.retrychoice.getoption() == "retry":
                     self.startnew()
                 else:
-                    self.lose()
+                    self.flee()
             else:
                 self.retrychoice.leftrightonkey(key)
         elif self.state == "win" and variables.checkkey("enter", key):

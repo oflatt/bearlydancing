@@ -23,7 +23,9 @@ class Animation():
         self.relativeframerate = False
         self.offsetlist = offsetlist
 
-    def current_frame(self, outerframerate = None, begin_time = None, current_time = variables.settings.current_time):
+    def current_frame(self, outerframerate = None, begin_time = None, current_time = None):
+        if current_time == None:
+            current_time = variables.settings.current_time
         if begin_time == None:
             begin_time = self.beginning_time
         at = current_time-begin_time
