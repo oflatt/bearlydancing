@@ -98,7 +98,9 @@ class Menu(FrozenClass):
             if self.message == "saved!":
                 icon = getTextPic("saved", variables.gettextsize(), variables.WHITE)
                 srect = Rect(0, variables.height-icon.get_height(), icon.get_width(), icon.get_height())
-                variables.screen.blit(icon, [srect.x, srect.y])
+
+                variables.screen.fill(variables.BLACK, srect)
+                variables.screen.blit(icon, srect)
                 variables.dirtyrects.append(srect)
             else:
                 graphics.drawthismessage(self.message)

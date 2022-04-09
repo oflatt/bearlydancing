@@ -56,7 +56,6 @@ sound
 - playback mode- have computer replay song perfectly after finishing a battle
 
 battle
-- spam enter when leveling up to skip animation
 - Feedback on starting a note, not just ending it?
 - Croc too wide
 
