@@ -145,10 +145,8 @@ def displaywave(buf, channel, drawnsofar):
     wavex = t[0]
     wavey = t[1]
     skiplen = len(buf)/wavelen
-    drawwave(buf, skiplen, wavex, wavey, waveamp, wavelen, t[2], False)
-
-    # now just update once and let it stay on screen
-    pygame.display.update(Rect(wavex, wavey-waveamp, wavelen, waveamp*2))
+    drawwave(variables.battle_background, buf, skiplen,
+             wavex, wavey, waveamp, wavelen, t[2], False)
 
     maxwavex = (variables.width*9/12)
     newwavex = wavex+wavelen

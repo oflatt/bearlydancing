@@ -39,9 +39,9 @@ class Beatmap():
         self.feedback = []
         self.setfeedbacktocontrols(False)
 
-        self.currentcombo = 0;
-        self.roundmaxcombo = 0;
-        self.timeoflastcomboaddition = 0;
+        self.currentcombo = 0
+        self.roundmaxcombo = 0
+        self.timeoflastcomboaddition = 0
 
         self.drumcounter = 0
 

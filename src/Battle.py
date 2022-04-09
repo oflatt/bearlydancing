@@ -21,7 +21,7 @@ def enemypic_height():
 class Battle(FrozenClass):
 
     def __init__(self, enemy):
-
+        variables.battle_background = None
         self.current_beatmap = 0
         self.damage_multiplier = 1
         self.beatmaps = []
@@ -34,18 +34,19 @@ class Battle(FrozenClass):
         self.enemy.reset()
         # offset enemy lv by difficulty
         self.enemy.lv += variables.settings.difficulty
-        
+
         # state can be choose, dance, or attacking, win, lose, exp, got exp
         self.state = "choose"
         self.tutorialstate = None
         self.tutorialconversations = None
-        
-        
+
         # if the enemy's level is 0 and there have been no battles, the tutorial is triggered
-        self.tutorialp = self.enemy.lv - variables.settings.difficulty == 0 and classvar.player.totalbattles == 0 and not variables.settings.dancepadmodep
+        self.tutorialp = self.enemy.lv - \
+            variables.settings.difficulty == 0 and classvar.player.totalbattles == 0 and not variables.settings.dancepadmodep
 
         # if the accidental tutorial has not been activated and lv is above the threshhold, trigger accidental tutorial
-        self.accidentaltutorialp = classvar.player.getstoryevent("accidentaltutorial") == 0 and self.enemy.lv >= variables.accidentallvthreshhold and not variables.settings.dancepadmodep
+        self.accidentaltutorialp = classvar.player.getstoryevent(
+            "accidentaltutorial") == 0 and self.enemy.lv >= variables.accidentallvthreshhold and not variables.settings.dancepadmodep
 
         # accidental tutorial will never be in the same battle as the normal tutorial
         # or if there are no accidentals in the beatmap
@@ -70,8 +71,7 @@ class Battle(FrozenClass):
                                               "releasewnow",
                                               "endtutorial",
                                               "releasedwearly"]
-        
-        
+
         # for attacking animation
         self.isplayernext = False  # if the player is currently being damaged
         self.oldenemyhealth = 0
@@ -89,7 +89,8 @@ class Battle(FrozenClass):
 
         # drawing buttons
         # extra space around dance to leave space for synth options
-        self.battlechoice = ChoiceButtons(["   DANCE!   ", "leave", variables.settings.soundpack, self.getscalename()], 13 / 16)
+        self.battlechoice = ChoiceButtons(
+            ["   DANCE!   ", "leave", variables.settings.soundpack, self.getscalename()], 13 / 16)
 
         self.retrychoice = ChoiceButtons(["retry", "go home"], 13/16)
 
@@ -110,11 +111,11 @@ class Battle(FrozenClass):
     def startnew(self):
         self.enemy.sethealth()
         classvar.player.heal()
-        
+
         self.state = "dance"
         self.setfirstbeatmap()
         # clear screen
-        variables.dirtyrects = [Rect(0,0,variables.width,variables.height)]
+        variables.dirtyrects = [Rect(0, 0, variables.width, variables.height)]
 
     def getscalename(self):
         if self.enemy.specialscale != None:
@@ -129,7 +130,7 @@ class Battle(FrozenClass):
         self.initiatenewbeatmap()
         self.reset_time()
         self.reset_enemy()
-        
+
         if self.tutorialp:
             self.tutorialstate = "starting"
             # if it is the tutorial, add two notes for the player to fail on, and change first note to a
@@ -140,7 +141,7 @@ class Battle(FrozenClass):
             # set it to be an accidental for the accidental tutorial
             if self.accidentaltutorialp:
                 b.notes[0].accidentalp = True
-            
+
             # first add ten to give space for the new notes
             for note in b.notes:
                 note.time += 24
@@ -149,13 +150,12 @@ class Battle(FrozenClass):
             if not self.accidentaltutorialp:
                 b.notes = [Note(0, 1, 1), Note(1, 2, 1)] + b.notes
             else:
-                newn = Note(0, 1, 2, accidentalp = True)
+                newn = Note(0, 1, 2, accidentalp=True)
                 b.notes.insert(0, newn)
 
     def reset_time(self):
         self.starttime = variables.settings.current_time
         self.beatmaps[self.current_beatmap].reset(self.starttime, True)
-        
 
     def pause(self):
         self.pausetime = variables.settings.current_time
@@ -172,12 +172,13 @@ class Battle(FrozenClass):
 
     def getcombo(self):
         currentb = self.beatmaps[self.current_beatmap]
-        if len(currentb.scores)>currentb.currentcombo:
+        if len(currentb.scores) > currentb.currentcombo:
             self.runningcombo = 0
         return self.runningcombo + currentb.currentcombo
 
     def new_beatmaps(self):
-        self.beatmaps = [randombeatmap.variation_of_notes_to_beatmap(self.beatmaps[0].originalnotes, self.beatmaps[0].tempo, self.enemy.beatmapspecs)]
+        self.beatmaps = [randombeatmap.variation_of_notes_to_beatmap(
+            self.beatmaps[0].originalnotes, self.beatmaps[0].tempo, self.enemy.beatmapspecs)]
 
     def initiatenewbeatmap(self):
         self.beatmaps[0].scale = scales[self.getscalename()]
@@ -185,15 +186,16 @@ class Battle(FrozenClass):
 
     def next_beatmap(self):
         # first set the carry over for the combo
-        self.runningcombo = self.runningcombo + self.beatmaps[self.current_beatmap].currentcombo
-        
+        self.runningcombo = self.runningcombo + \
+            self.beatmaps[self.current_beatmap].currentcombo
+
         if self.current_beatmap + 1 == len(self.beatmaps):
             self.new_beatmaps()
             self.current_beatmap = 0
         else:
             print("should only have one beatmap in the list!")
             self.current_beatmap += 1
-            
+
         self.beatmaps[self.current_beatmap].reset(self.starttime, False)
         self.initiatenewbeatmap()
         self.reset_enemy()
@@ -213,23 +215,27 @@ class Battle(FrozenClass):
         if self.state != "dance":
             playerpic = getpicbyheight("honeydance0-0", variables.height/4)
         else:
-            playerpic = getpicbyheight(self.currentplayerframename(), variables.height/4)
+            playerpic = getpicbyheight(
+                self.currentplayerframename(), variables.height/4)
         playery = variables.height-playerpic.get_height()*1.5
-        playerrect = Rect(variables.width-playerpic.get_width(), playery, playerpic.get_width(), variables.height-playery)
+        playerrect = Rect(variables.width-playerpic.get_width(),
+                          playery, playerpic.get_width(), variables.height-playery)
         return (playerpic, playerrect)
 
     def drawspecialmove(self):
         if self.specialmovep:
             playerr = self.getplayerpicandrect()[1]
             playerr.height = variables.height - playerr.y
-            effectpic = getpicbyheight("specialmoveeffect" + str(self.currentspecialmove), playerr.height)
+            effectpic = getpicbyheight(
+                "specialmoveeffect" + str(self.currentspecialmove), playerr.height)
             variables.screen.blit(effectpic, playerr)
 
     def drawcombo(self):
-        currentb=self.beatmaps[self.current_beatmap]
+        currentb = self.beatmaps[self.current_beatmap]
         totalcombo = self.getcombo()
         if totalcombo >= 10:
-            combocolor = difficultytocolor(((totalcombo-9)/variables.numofrounds)/len(currentb.originalnotes))
+            combocolor = difficultytocolor(
+                ((totalcombo-9)/variables.numofrounds)/len(currentb.originalnotes))
             # find combo height based on the last time it was increased
             comboheight = variables.gettextsize()
             deltatcombo = variables.settings.current_time-currentb.timeoflastcomboaddition
@@ -239,13 +245,15 @@ class Battle(FrozenClass):
                 comboheight *= 1 + (1 - deltatcombo/comboanimthreshhold)*0.5
 
             playerpicandrect = self.getplayerpicandrect()
-                
-            combopic = getTextPic("COMBO: " + str(totalcombo), comboheight, combocolor)
+
+            combopic = getTextPic(
+                "COMBO: " + str(totalcombo), comboheight, combocolor)
             combox = variables.width-combopic.get_width()
             combodif = combox-(variables.width-playerpicandrect[1].width)
             if combodif > 0:
                 combox = combox-combodif/2
-            comborect = Rect(combox, playerpicandrect[1].y-comboheight*1.5, combopic.get_width(), combopic.get_height())
+            comborect = Rect(
+                combox, playerpicandrect[1].y-comboheight*1.5, combopic.get_width(), combopic.get_height())
             variables.screen.blit(combopic, comborect)
             variables.dirtyrects.append(comborect)
 
@@ -269,18 +277,20 @@ class Battle(FrozenClass):
                     perfects += 1
 
             tabletext = str(percent) + "%   perfects: " + str(perfects) + \
-            "  goods: " + str(goods) + "  okays: " + str(okays) + \
-            "  misses: " + str(misses) + "  total: " + str(len(scores))
-            
-            tablepic = getTextPic(tabletext, variables.gettextsize(), variables.WHITE)
+                "  goods: " + str(goods) + "  okays: " + str(okays) + \
+                "  misses: " + str(misses) + "  total: " + str(len(scores))
+
+            tablepic = getTextPic(
+                tabletext, variables.gettextsize(), variables.WHITE)
             tabley = variables.height-tablepic.get_height()
-            tablerect = Rect((variables.width-tablepic.get_width())/2, tabley, tablepic.get_width(), tablepic.get_height())
-            
+            tablerect = Rect((variables.width-tablepic.get_width())/2,
+                             tabley, tablepic.get_width(), tablepic.get_height())
+
             variables.screen.blit(tablepic, tablerect)
             variables.dirtyrects.append(tablerect)
-            
+
     def draw(self):
-        if self.current_beatmap<len(self.beatmaps):
+        if self.current_beatmap < len(self.beatmaps):
             currentb = self.beatmaps[self.current_beatmap]
         else:
             currentb = None
@@ -289,18 +299,19 @@ class Battle(FrozenClass):
         b = h * 13 / 16
         p = classvar.player
         # background
-        variables.screen.fill(variables.BLACK)
+        if variables.battle_background != None:
+            variables.screen.blit(variables.battle_background, (0, 0))
+        else:
+            variables.screen.fill(variables.BLACK)
 
         # draw enemy first
         if self.state != "dance":
-            self.enemy.animation.reset() # if not dancing, use first frame
-            
+            self.enemy.animation.reset()  # if not dancing, use first frame
 
         # draw enemy
         self.enemy.animation.draw_topright(variables.screen, enemypic_height())
-            
+
         playerpicandrect = self.getplayerpicandrect()
-        
 
         # draw the player
         if self.state == "dance":
@@ -314,7 +325,7 @@ class Battle(FrozenClass):
 
         if self.enemy.animation.updatealwaysbattle:
             self.updatescreenforenemy()
-        
+
         # draw beatmap
         if self.state == "dance":
             self.beatmaps[self.current_beatmap].draw()
@@ -326,20 +337,22 @@ class Battle(FrozenClass):
             enemyname = variables.font.render("LV " + str(self.enemy.lv) + " " + self.enemy.name + " appears!", 0,
                                               variables.WHITE)
             enemynamescaled = sscale(enemyname)
-            variables.screen.blit(enemynamescaled, [w / 2 - (enemynamescaled.get_width() / 2), h / 2])
+            variables.screen.blit(
+                enemynamescaled, [w / 2 - (enemynamescaled.get_width() / 2), h / 2])
 
             self.battlechoice.draw()
-            
+
             # draw the wave above the battlechoice
             wavex = self.battlechoice.buttons[-2].x * variables.width
             # the height of the wave
             waveamp = (self.battlechoice.buttons[-2].height()*3/4) * 0.5
-            
+
             wavelen = self.battlechoice.buttons[-2].width()*3/4
             wavey = self.battlechoice.buttons[-2].y*variables.height-waveamp
             loopbuffer = play_sound.all_tones[variables.settings.soundpack].loopbuffers[0]
             skiplen = (len(loopbuffer)/25)/wavelen
-            drawwave(loopbuffer, skiplen, wavex, wavey, waveamp, wavelen, (255,255,255))
+            drawwave(variables.screen, loopbuffer, skiplen, wavex,
+                     wavey, waveamp, wavelen, (255, 255, 255))
 
             # draw the scale above battlechoice
             firstscalex = self.battlechoice.buttons[-1].x * variables.width
@@ -585,6 +598,10 @@ class Battle(FrozenClass):
         
     # for things like the attack animation
     def ontick(self):
+        if variables.battle_background == None:
+            variables.battle_background = pygame.Surface(
+                variables.screen.get_size())
+
         currentb = None
         if self.state == "dance":
             currentb = self.beatmaps[self.current_beatmap]

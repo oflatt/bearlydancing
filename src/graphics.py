@@ -335,7 +335,7 @@ def startofgeneration(nameofgraphic):
     variables.draw_graphic_name(nameofgraphic)
     
 max_sample = 2 ** (16 - 1) - 1
-def drawwave(loopbuffer, skiplen, wavex, wavey, waveamp, wavelen, color, dirtyrectp = True):
+def drawwave(surface, loopbuffer, skiplen, wavex, wavey, waveamp, wavelen, color, dirtyrectp = True):
     wavescalar = waveamp*0.8/(max_sample)
     oldpos = (wavex, wavey)
     for waveoffset in range(int(wavelen)):
@@ -344,9 +344,9 @@ def drawwave(loopbuffer, skiplen, wavex, wavey, waveamp, wavelen, color, dirtyre
             # when it is a 2d buffer, just use one side
             loopscale = loopscale[0]
         
-        variables.screen.fill(variables.BLUE, Rect(int(wavex+waveoffset), int(wavey), variables.displayscale, variables.displayscale))
+        surface.fill(variables.BLUE, Rect(int(wavex+waveoffset), int(wavey), variables.displayscale, variables.displayscale))
         newpos = (int(wavex+waveoffset),int(wavey+(loopscale*wavescalar)))
-        pygame.draw.line(variables.screen, color, oldpos, newpos)
+        pygame.draw.line(surface, color, oldpos, newpos)
         oldpos = newpos
         #variables.screen.fill(color, Rect, variables.displayscale, variables.displayscale))
 

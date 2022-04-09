@@ -3,7 +3,6 @@ Bearly Dancing To-Do List
 pygame
 - checking if a surface has width or height 0 before scaling to avoid segfault
 - switch to pygame_sdl2 for production
-
 - make calling _freeze automatic for frozen objects
 - destructive object for lists?
 
@@ -34,6 +33,7 @@ gameplay
 - better music system on endpoints
 
 - rock cafe
+  - "Judge jam" idea?
 
 - bosses should use concepts from many enemies faced to give a sense of learning and accomplishment
 - knomi code name- bear winks at you

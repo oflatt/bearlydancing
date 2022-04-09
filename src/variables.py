@@ -141,6 +141,7 @@ if devoptions.testsmallp:
 
 
 screen = None
+battle_background = None
 def setscreen(windowmode):
     global screen
     if windowmode == "windowed":
@@ -315,7 +316,7 @@ def getlinesinscreen():
 def getphotosize():
     return width/6
 def getbuttonpadding():
-    return int(width/70)
+    return int(width/140)
 
 def potxspace():
     return width/50
@@ -467,6 +468,8 @@ def dirtyupdateall():
     dirtyrects = [Rect(0, 0, width, height)]
 
 def updatescreen():
+    # we just update the whole screen now
+    dirtyupdateall()
     if len(dirtyrects) > 0:
         if dirtyrects[0] == Rect(0,0,width,height):
             pygame.display.update(Rect(0,0,width, height))
