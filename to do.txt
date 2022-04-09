@@ -1,10 +1,5 @@
 Bearly Dancing To-Do List
 
-pygame
-- checking if a surface has width or height 0 before scaling to avoid segfault
-- switch to pygame_sdl2 for production
-- make calling _freeze automatic for frozen objects
-- destructive object for lists?
 
 dancepad
 - Add some notes hold down
@@ -15,10 +10,12 @@ dancepad
 
 bugs
 - Mac fullscreen bar at the top
+  - can't cmd tab!
 -"l" note was the same note as "a", which cannot be correct
 - Steve gone when comign back
 - Uniform repetition coldfly bad
 - accidentals should appear in the tutorial level for accidentals
+- make calling _freeze automatic for frozen objects
 
 
 gameplay

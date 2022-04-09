@@ -661,16 +661,20 @@ class Battle(FrozenClass):
             expgained = self.newexp - self.oldexp
             classvar.player.exp = self.oldexp + expgained * timefactor
             if classvar.player.exp >= self.newexp:
-                classvar.player.exp = self.newexp
-                if stathandeling.explv(self.oldexp) < stathandeling.explv(self.newexp):
-                    classvar.player.heal()
-                self.state = "got exp"
+                self.togotexp()
+                
 
         # check for end of beatmap
         elif self.state == "dance":
             if len(currentb.notes) == 0:
                 self.trade(currentb.scores)
                 currentb.reset_buttons()
+
+    def togotexp(self):
+        classvar.player.exp = self.newexp
+        if stathandeling.explv(self.oldexp) < stathandeling.explv(self.newexp):
+            classvar.player.heal()
+        self.state = "got exp"
 
 
     def lose(self):
@@ -748,6 +752,8 @@ class Battle(FrozenClass):
                 elif variables.checkkey("down", key) and self.battlechoice.currentoption == 3:
                     change_scale(1)
 
+        elif self.state == "exp":
+            self.togotexp()
         elif self.state == "lose":
             if  variables.checkkey("enter", key):
                 if self.retrychoice.getoption() == "retry":

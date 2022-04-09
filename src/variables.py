@@ -1,6 +1,5 @@
 import pygame
 import os
-import copy
 import sys
 import platform
 import dill as pickle
@@ -131,7 +130,7 @@ else:
                 if m[0] < 1800:
                     mode = m
                     break
-        mode = (mode[0], mode[1] * 19 / 20)
+        mode = (mode[0], int(mode[1] * 19 / 20))
 
 # (ctypes.windll.user32.GetSystemMetrics(0),ctypes.windll.user32.GetSystemMetrics(1))
 # Set the width and height of the screen [width,height]
