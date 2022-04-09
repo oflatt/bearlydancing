@@ -14,11 +14,9 @@ dancepad
 - restrict range of notes to not so high?
 
 bugs
+- Mac fullscreen bar at the top
 -"l" note was the same note as "a", which cannot be correct
-- Save msg ?
 - Steve gone when comign back
-- high pitched notes have gaps when playing
-- Inconsistant volume, high=loud
 - Uniform repetition coldfly bad
 - accidentals should appear in the tutorial level for accidentals
 

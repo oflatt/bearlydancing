@@ -116,6 +116,7 @@ class Battle(FrozenClass):
         self.setfirstbeatmap()
         # clear screen
         variables.dirtyrects = [Rect(0, 0, variables.width, variables.height)]
+        variables.battle_background = pygame.Surface(variables.screen.get_size())
 
     def getscalename(self):
         if self.enemy.specialscale != None:
