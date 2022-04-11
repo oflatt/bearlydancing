@@ -12,7 +12,7 @@ from pygame import Rect
 # value of 0 corresponds to A4, -12 is A3
 all_tones = {"sine": Soundpack("sine", 1), "square": Soundpack("square", 25),
              "triangle": Soundpack("triangle", 30), "sawtooth": Soundpack("sawtooth", 30),
-             "noisy": Soundpack("noisysine", 25), # TODO: add noise to it, 0.5 normal with 0.1 st dev
+             "noisy": Soundpack("noisysine", 25),
              "random":Soundpack("random", 8)}
 
 def currentsoundpack():
@@ -27,8 +27,8 @@ drumpacks = {"normalnoise" : DrumPack("noisedrum", 30, "sharp", 0, 36),
 # all possible soundpacks
 soundpackkeys = list(all_tones.keys())
 
-scales = {"C major" : [2, 2, 1, 2, 2, 2, 1],
-          "C minor" : [2, 1, 2, 2, 1, 3, 1],
+scales = {"major": [2, 2, 1, 2, 2, 2, 1],
+          "minor": [2, 1, 2, 2, 1, 3, 1],
           "chromatic" : [1, 1, 1, 6, 1, 1, 1]}# list of offsets for the scale
 
 def loadmusic(filename):
@@ -47,9 +47,9 @@ effects = {
 channeltimes = [None]*37
 
 
-
 def buffertosound(b):
     return pygame.sndarray.make_sound(b)
+lasttone = -12
 
 def play_tone(tonein, volenvelope, numofupdatetonessofar):
     if not variables.settings.soundonp():
@@ -57,7 +57,7 @@ def play_tone(tonein, volenvelope, numofupdatetonessofar):
     t = tonein
     # make t always in range if out of range
     if t+12>=len(all_tones[variables.settings.soundpack].loopbuffers):
-        t = len(all_tones[variables.settings.soundpack].loopbuffers)-1-12
+        t = (len(all_tones[variables.settings.soundpack].loopbuffers)-1)-12
     elif t+12 < 0:
         t = 0-12
 
@@ -100,7 +100,6 @@ def update_tone(tonein, volenvelope, numofupdatetonessofar):
         c.queue(buffertosound(buf))
         channeltimes[t+12] += sp.loopbufferdurationmillis[t+12]
         displaywave(buf, t+12, numofupdatetonessofar)
-        firstbuf = sp.getbufferattime(t+12, 0, volenvelope, True)
 
 def stop_tone(tonein):
     if not variables.settings.soundonp():

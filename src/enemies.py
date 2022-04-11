@@ -83,10 +83,13 @@ animations = []
 enemies = {}
 
 counter = 0
-def addEnemy(name, rules, animation, volumeenvelope = None, drumpackname = None):
+
+
+def addEnemy(name, rules, animation, volumeenvelope=None, drumpackname=None, defaultnotes=None):
     global counter
     animations.append(animation)
-    enemies[name] = Enemy(counter, 1, name, rules, volumeenvelope, drumpackname)
+    enemies[name] = Enemy(counter, 1, name, rules, volumeenvelope=volumeenvelope,
+                          drumpackname=drumpackname, defaultnotes=defaultnotes)
     counter += 1
 
 def getenemies(listofnames):
@@ -105,7 +108,8 @@ addEnemy("sheep", [],
 # just tutorial enemy
 addEnemy("mean green", ["melodic", "repeat", "rests", "noaccidentals"],
          Animation(["meangreen0", "meangreen1"], defaultanimspeed),
-         drumpackname = "deepnoise")
+         drumpackname="deepnoise",
+         defaultnotes=[2, 5, 4, 2, 5, 4, 2, 5, 4, 6, 7])
 
 addEnemy("perp", ["alternating"],
          Animation(["purpleperp0", "purpleperp1", "purpleperp2", "purpleperp3"], defaultanimspeed),

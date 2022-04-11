@@ -58,7 +58,7 @@ class Player(FrozenClass):
         self.health = stathandeling.max_health(1)
 
         # a list of all the scales the player has
-        self.scales = ["C major"]
+        self.scales = ["major"]
 
         # a list of all the soundpacks the player has
         self.soundpacks = ["sine"]

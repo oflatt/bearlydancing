@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #import pygame_sdl2
 #pygame_sdl2.import_as_pygame()
+from play_sound import play_music
 import pygame, variables, copy, os, sys, gc, random
 from platform import python_implementation
 from pygame import Rect
@@ -54,24 +55,27 @@ from enemies import devbattletest
 import copy
 
 
-if not devoptions.testspecs is None:
-    
+if devoptions.devmode and not devoptions.testspecs is None:
+
     if devoptions.testenemy is None:
-        testenemy = copy.copy(enemies.enemyforspecialbattle(devoptions.testenemy))
+        testenemy = copy.copy(
+            enemies.enemyforspecialbattle(devoptions.testenemy))
     else:
         testenemy = copy.copy(random_enemy("woods"))
-    
+
     testenemy.lv = devoptions.testspecs['lv']
     testenemy.beatmapspecs = devoptions.testspecs
     initiatebattle(testenemy)
     menu.firstbootup = False
     variables.settings.menuonq = False
+elif devoptions.devmode and not devoptions.testenemy is None:
+    initiatebattle(copy.copy(enemies.enemies[devoptions.testenemy]))
+    menu.firstbootup = False
+    variables.settings.menuonq = False
+else:
+    play_music("menumusic")
 
 
-# play main menu music
-from play_sound import play_music
-
-play_music("menumusic")
 menu.enemyanimation.framerate = (60000/160)*2
 menu.enemyanimation.beginning_time = variables.settings.current_time
 

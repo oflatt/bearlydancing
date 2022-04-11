@@ -11,7 +11,7 @@ addallrewards = False
 # generates a new world on load no matter what
 newworldeachloadq = False
 # allows specific graphics functions to override and make new generated graphics
-allownewworldoverridep = True
+allownewworldoverridep = False
 # this overrides the generation of a new set of graphics for a new game
 newworldnever = False
 # this is for not loading the maps from the save file, to test new map changes
@@ -21,15 +21,15 @@ dontloadplayer = False
 # get a fresh settings file
 dontloadsettings = False
 # only loads first couple of maps
-fasttestmodep = False
+fasttestmodep = True
 # adds to player level when loading
 lvcheat = 0
 
 # if None it does nothing, if it is a dictionary for "specs" it goes directly into a battle with those specs
-testspecs : Optional[Dict[str, object]] = None#{'maxtime' : 20, 'lv' : 4,
-                                          # 'rules' : ["melodic", "repeatvariation", "doublenotes"],
-                                          # 'volumeenvelope' : 'bell'}
-testenemy : Optional[str] = "snow fly"#"yoyo"
+testspecs: Optional[Dict[str, object]] = None#{'maxtime': 20, 'lv': 4,
+                                         # 'rules': ["melodic", "repeat", "rests"],
+                                         # 'volumeenvelope': 'bell'}
+testenemy: Optional[str] = "mean green"  # "yoyo"
 
 devlosebattlekey = pygame.K_BACKSLASH
 devwinbattlekey = pygame.K_END

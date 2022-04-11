@@ -6,12 +6,13 @@ from FrozenClass import FrozenClass
 
 class Enemy(FrozenClass):
 
-    def __init__(self, animationnum, rarity, name, beatmaprules, volumeenvelope = None, drumpackname = None):
+    def __init__(self, animationnum, rarity, name, beatmaprules, defaultnotes=[], volumeenvelope=None, drumpackname=None):
         self.lv = 0
         self.animationnum = animationnum
         self.rarity = rarity
         self.name = name
         self.beatmapspecs = copy.deepcopy(variables.generic_specs)
+        self.beatmapspecs["defaultnotes"] = defaultnotes
         self.beatmapspecs["rules"].extend(beatmaprules)
         if volumeenvelope != None:
             self.beatmapspecs["volumeenvelope"] = volumeenvelope

@@ -58,7 +58,7 @@ dancelionbattle.eventrequirements = [EventRequirement("beatsteve")]
 dancelionbattle.area = [dancelion.x, dancelion.y, dancelion.w+10, dancelion.h+10]
 dancelionbattle.special_battle = copy.copy(enemies.enemies["dance lion"])
 dancelionbattle.special_battle.lv = 6
-dancelionbattle.special_battle.specialscale = "C minor"
+dancelionbattle.special_battle.specialscale = "minor"
 
 jeremyhome.conversations = [jeremy, jeremyaftersteve, dancelionpass, dancelionbattle]
 jeremyhome.enemies = enemies.woodsenemies
@@ -292,14 +292,14 @@ sagainoptions.special_battle.lv = 5
 sagain.eventrequirements = [EventRequirement("beatsteve")]
 
 # make the boss battle force C minor
-scarysteve.special_battle.specialscale = "C minor"
+scarysteve.special_battle.specialscale = "minor"
 
 slose = getconversation("steveloses")
 slose.area = [0,0,outside7width, outside7height]
 slose.isbutton = False
 slose.storyevent = "steveloseconversation"
 slose.eventrequirements = [EventRequirement("steveloseconversation", -1, 1), EventRequirement("beatsteve")]
-slose.reward = "C minor"
+slose.reward = "minor"
 
 outside7.conversations = [tpboss1, animstarter, scarysteve,slose, sagain]
 

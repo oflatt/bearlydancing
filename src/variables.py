@@ -149,11 +149,12 @@ battle_background = None
 
 def setscreen(windowmode):
     global screen
+    flagsdefault = pygame.SCALED | pygame.DOUBLEBUF | pygame.HWSURFACE
     if windowmode == "windowed":
-        flags = pygame.NOFRAME | pygame.DOUBLEBUF | pygame.HWSURFACE
+        flags = pygame.NOFRAME | flagsdefault
         screen = pygame.display.set_mode((width, height), flags, 32)
     if windowmode == "fullscreen":
-        flags = pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE
+        flags = pygame.FULLSCREEN | flagsdefault
         screen = pygame.display.set_mode((width, height), flags, 32)
 
 
