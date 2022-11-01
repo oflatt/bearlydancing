@@ -3,7 +3,7 @@ from typing import Optional, Dict
 
 
 testsmallp = False
-devmode = True
+devmode = False
 # skip the fight with steve, add the event to the player
 skipsteve = False
 # adds all the soundpacks and keys to the player
@@ -21,7 +21,7 @@ dontloadplayer = False
 # get a fresh settings file
 dontloadsettings = False
 # only loads first couple of maps
-fasttestmodep = True
+fasttestmodep = False
 # adds to player level when loading
 lvcheat = 0
 
@@ -29,7 +29,7 @@ lvcheat = 0
 testspecs: Optional[Dict[str, object]] = None#{'maxtime': 20, 'lv': 4,
                                          # 'rules': ["melodic", "repeat", "rests"],
                                          # 'volumeenvelope': 'bell'}
-testenemy: Optional[str] = "mean green"  # "yoyo"
+testenemy: Optional[str] = None# "mean green"  # "yoyo"
 
 devlosebattlekey = pygame.K_BACKSLASH
 devwinbattlekey = pygame.K_END

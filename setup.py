@@ -19,8 +19,8 @@ def install(name, version=None):
 
 
 for d in dependencies:
-    print("bearly dancing setup installing " + d)
-    if d is tuple:
+    print("bearly dancing setup installing " + str(d))
+    if type(d) is tuple:
         install(d[0], d[1])
     else:
         install(d)

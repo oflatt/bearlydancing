@@ -277,7 +277,7 @@ def maxtimefromspecs(specs):
 
 
 def looplayers(time, maxtime, notelist, specs, specialmarkers=[], initialvalues=[]):
-    if len(specs["defaultnotes"]) > 0:
+    if specs["defaultnotes"] and len(specs["defaultnotes"]) > 0:
         initialvalues = specs["defaultnotes"]
 
     specsrec = specs.copy()
