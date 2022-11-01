@@ -92,8 +92,8 @@ if exportmode:
     fasttestmodep = False
     lvcheat = 0
     testspecs = None
+    testenemy = None
 
-    
 # only print if devmode is on
 def devprint(s = ""):
     if devmode:

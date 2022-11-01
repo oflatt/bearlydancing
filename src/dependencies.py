@@ -1,4 +1,4 @@
-dependencies = [("pygame", "2.1.2"),
+dependencies = [("pygame", "2.1.2"), "wheel",
                 "numpy", "cx-Freeze", "typing",
                 "mypy", "colormath", "dill"]
 
