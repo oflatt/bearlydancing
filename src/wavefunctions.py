@@ -147,7 +147,7 @@ def make_wave(frequency, wavetype, shapefactor, sampleduration = None):
     n_samples = int(round(duration * sample_rate))
 
     # setup our numpy array to handle  bit ints, which is what we set our mixer to expect with "bits"
-    buf = numpy.zeros((n_samples, 2), dtype=numpy.int)
+    buf = numpy.zeros((n_samples, 2), dtype=int)
 
     randfunction = None
     if wavetype == "random":

@@ -13,7 +13,7 @@ def install(name, version=None):
     if version is not None:
         vstring = "==" + version
     if platform == "win32":
-        subprocess.call(['pip', 'install', name + vstring])
+        subprocess.call(['pip3', 'install', name + vstring])
     else:
         subprocess.call(['pip3', 'install', name + vstring])
 

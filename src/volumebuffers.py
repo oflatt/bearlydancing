@@ -25,7 +25,7 @@ for k in volumeenvelopes:
     # then put about a second worth of the oscilation part on to the end
     n_samples2 = int(round(envelope.endoscilationrate/1000*sample_rate))
     n_samples2 = n_samples2 * (int(sample_rate/n_samples2)+1)
-    firstbuf = numpy.empty((n_samples+n_samples2, 2), dtype=numpy.float)
+    firstbuf = numpy.empty((n_samples+n_samples2, 2), dtype=float)
     
     for s in range(n_samples+n_samples2):
         t = float(s)/sample_rate
